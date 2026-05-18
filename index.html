@@ -538,6 +538,24 @@
       border-color: #000;
     }
 
+    .booking-textarea {
+      width: 100%;
+      min-height: 72px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 14px;
+      font-weight: 700;
+      outline: none;
+      background: #fff;
+      resize: vertical;
+      font-family: Arial, sans-serif;
+    }
+
+    .booking-textarea:focus {
+      border-color: #000;
+    }
+
     .confirm-btn {
       width: 100%;
       height: 48px;
@@ -687,6 +705,7 @@
 
         <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone number" autocomplete="tel" />
         <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
+        <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
 
         <button id="confirmBookingBtn" class="confirm-btn" type="button">
           Confirm Booking
@@ -700,6 +719,7 @@
   <script>
     const daysShort = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     const daysDisplay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const CUSTOMER_STORAGE_KEY = "bsideu_pasadena_customer_info";
 
     const STAFF_DATA = {
       William: {
@@ -805,6 +825,7 @@
     const lastNameEl = document.getElementById("lastName");
     const customerPhoneEl = document.getElementById("customerPhone");
     const customerEmailEl = document.getElementById("customerEmail");
+    const customerNoteEl = document.getElementById("customerNote");
     const confirmBookingBtn = document.getElementById("confirmBookingBtn");
     const bookingStatusEl = document.getElementById("bookingStatus");
 
@@ -815,6 +836,28 @@
     let statusRequestId = 0;
     let nextAvailableTargetDate = null;
     let staffStatusCache = {};
+
+    function loadSavedCustomerInfo() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CUSTOMER_STORAGE_KEY) || "{}");
+
+        firstNameEl.value = saved.firstName || "";
+        lastNameEl.value = saved.lastName || "";
+        customerPhoneEl.value = saved.phone || "";
+        customerEmailEl.value = saved.email || "";
+      } catch (error) {}
+    }
+
+    function saveCustomerInfo() {
+      const info = {
+        firstName: firstNameEl.value.trim(),
+        lastName: lastNameEl.value.trim(),
+        phone: customerPhoneEl.value.trim(),
+        email: customerEmailEl.value.trim()
+      };
+
+      localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(info));
+    }
 
     function toIsoDateLocal(date) {
       const y = date.getFullYear();
@@ -1106,6 +1149,7 @@
     function openBookingModal(slot) {
       selectedSlot = slot;
       clearBookingModal();
+      loadSavedCustomerInfo();
 
       const staff = STAFF_DATA[selectedStaffKey];
       const service = staff.services[selectedServiceKey];
@@ -1419,6 +1463,7 @@
       const lastName = lastNameEl.value.trim();
       const customerPhone = customerPhoneEl.value.trim();
       const customerEmail = customerEmailEl.value.trim();
+      const customerNote = customerNoteEl.value.trim();
 
       if (!firstName) {
         bookingStatusEl.textContent = "Please enter your first name.";
@@ -1461,7 +1506,8 @@
             start_at: selectedSlot.start_at,
             customerName: `${firstName} ${lastName}`,
             customerPhone,
-            customerEmail
+            customerEmail,
+            customerNote
           })
         });
 
@@ -1471,14 +1517,13 @@
           throw new Error(data.error || "Booking failed.");
         }
 
+        saveCustomerInfo();
+
         bookingStatusEl.textContent = "Booked successfully. Thank you!";
         bookingStatusEl.className = "booking-status booking-success";
         confirmBookingBtn.textContent = "Booked";
 
-        firstNameEl.value = "";
-        lastNameEl.value = "";
-        customerPhoneEl.value = "";
-        customerEmailEl.value = "";
+        customerNoteEl.value = "";
 
         staffStatusCache = {};
         renderStaffStrip(true);
@@ -1552,6 +1597,8 @@
       currentDate = new Date(nextAvailableTargetDate);
       refreshForDateChange();
     });
+
+    loadSavedCustomerInfo();
 
     updateDateUI();
     selectBestDefaultStaff();
