@@ -2,48 +2,65 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>B SIDE U Pasadena Booking MVP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B SIDE U Pasadena Booking</title>
+
   <style>
     * {
       box-sizing: border-box;
     }
 
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      max-width: 720px;
-      margin: 28px auto;
-      padding: 14px;
-      color: #111;
       background: #fff;
+      color: #111;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px;
+      padding-bottom: 40px;
+    }
+
+    .header {
+      padding: 10px 2px 14px;
     }
 
     h1 {
-      font-size: 30px;
-      margin: 0 0 6px 0;
-      letter-spacing: -0.5px;
+      font-size: 28px;
+      line-height: 1.05;
+      margin: 0 0 6px;
+      letter-spacing: -0.6px;
+      font-weight: 900;
     }
 
     .sub {
       color: #666;
-      font-size: 15px;
-      margin-bottom: 18px;
-      line-height: 1.4;
+      font-size: 14px;
+      line-height: 1.35;
+      margin: 0;
     }
 
-    .top-card {
-      border: 1px solid #e5e5e5;
+    .top-card,
+    .slot-card {
+      border: 1px solid #e8e8e8;
       border-radius: 18px;
-      padding: 18px;
       background: #fff;
       box-shadow: 0 8px 24px rgba(0,0,0,0.04);
     }
 
+    .top-card {
+      padding: 14px;
+    }
+
     .date-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 42px 1fr 42px;
       gap: 10px;
-      margin-bottom: 18px;
+      align-items: center;
       padding-bottom: 14px;
       border-bottom: 1px solid #eee;
     }
@@ -51,32 +68,35 @@
     .date-nav {
       width: 42px;
       height: 42px;
-      border-radius: 12px;
       border: 0;
+      border-radius: 12px;
       background: #000;
       color: #fff;
       font-size: 22px;
       font-weight: 900;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .date-center {
       position: relative;
-      flex: 1;
       text-align: center;
+      min-width: 0;
     }
 
     .date-label {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
-      cursor: pointer;
-      display: inline-block;
-      padding: 8px 12px;
+      line-height: 42px;
       border-radius: 12px;
-    }
-
-    .date-label:hover {
-      background: #f5f5f5;
+      background: #f7f7f7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 10px;
     }
 
     #dateInput {
@@ -88,26 +108,26 @@
       cursor: pointer;
     }
 
-    .small-label {
-      font-size: 13px;
+    .section-label {
+      font-size: 12px;
       color: #666;
-      font-weight: 800;
-      margin-bottom: 10px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      margin: 16px 0 10px;
     }
 
     .staff-strip {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       overflow-x: auto;
-      padding: 4px 2px 12px 2px;
+      padding: 2px 2px 12px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
     }
 
     .staff-strip::-webkit-scrollbar {
-      height: 6px;
+      height: 4px;
     }
 
     .staff-strip::-webkit-scrollbar-thumb {
@@ -116,47 +136,46 @@
     }
 
     .staff-card {
-      flex: 0 0 92px;
-      scroll-snap-align: start;
-      border: 1px solid #e5e5e5;
+      flex: 0 0 86px;
+      min-height: 122px;
+      border: 1px solid #e6e6e6;
       border-radius: 16px;
       background: #fff;
-      padding: 12px 8px;
-      cursor: pointer;
+      padding: 10px 7px;
       text-align: center;
-      transition: all 0.18s ease;
-      position: relative;
-      min-height: 126px;
+      cursor: pointer;
+      scroll-snap-align: start;
+      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .staff-card:hover {
-      border-color: #111;
-      transform: translateY(-1px);
+    .staff-card:active {
+      transform: scale(0.98);
     }
 
     .staff-card.is-active {
-      background: #111;
+      background: #000;
       color: #fff;
-      border-color: #111;
+      border-color: #000;
     }
 
     .staff-card.is-off {
-      opacity: 0.45;
+      opacity: 0.52;
     }
 
     .avatar {
-      width: 54px;
-      height: 54px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      margin: 0 auto 8px auto;
-      object-fit: cover;
+      margin: 0 auto 8px;
       background: #eee;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
+      font-size: 20px;
       color: #111;
-      overflow: hidden;
     }
 
     .staff-card.is-active .avatar {
@@ -174,53 +193,49 @@
     .staff-name {
       font-size: 14px;
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
     .staff-status {
       margin-top: 6px;
       font-size: 11px;
-      font-weight: 800;
-      color: #666;
+      font-weight: 900;
+      color: #777;
+      line-height: 1.15;
+    }
+
+    .staff-card.is-working .staff-status {
+      color: #16833d;
     }
 
     .staff-card.is-active .staff-status {
       color: #ddd;
     }
 
-    .staff-card.is-working .staff-status {
-      color: #167a36;
-    }
-
     .staff-card.is-active.is-working .staff-status {
       color: #bff0cd;
     }
 
-    .service-area {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #eee;
-    }
-
     .service-pills {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
-      padding-bottom: 8px;
+      padding: 0 2px 10px;
       -webkit-overflow-scrolling: touch;
     }
 
     .service-pill {
       flex: 0 0 auto;
       border: 1px solid #ddd;
+      border-radius: 999px;
       background: #fff;
       color: #111;
-      border-radius: 999px;
       padding: 11px 14px;
+      font-size: 14px;
       font-weight: 900;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .service-pill.is-active {
@@ -230,24 +245,21 @@
     }
 
     .message {
-      margin-top: 16px;
+      min-height: 22px;
+      margin-top: 10px;
       color: #666;
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.4;
       word-break: break-word;
     }
 
-    .slot-summary {
+    .slot-card {
       display: none;
-      margin-top: 18px;
-      border: 1px solid #e5e5e5;
-      border-radius: 18px;
-      padding: 18px;
-      background: #fff;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+      margin-top: 14px;
+      padding: 14px;
     }
 
-    .slot-summary.is-visible {
+    .slot-card.is-visible {
       display: block;
     }
 
@@ -255,8 +267,8 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .slot-title {
@@ -267,23 +279,25 @@
 
     .slot-count {
       font-size: 13px;
+      font-weight: 900;
       color: #666;
-      font-weight: 800;
       white-space: nowrap;
     }
 
     .slot-group {
-      margin-top: 20px;
+      margin-top: 18px;
     }
 
     .slot-group-title {
-      font-size: 14px;
-      font-weight: 900;
-      color: #111;
-      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      color: #111;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
 
     .slot-group-title::after {
@@ -295,24 +309,20 @@
 
     .times {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
     }
 
     .time-btn {
-      background: #fff;
-      color: #000;
+      min-height: 52px;
       border: 1px solid #111;
       border-radius: 12px;
+      background: #fff;
+      color: #111;
+      font-size: 16px;
       font-weight: 900;
       cursor: pointer;
-      min-height: 52px;
-      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
-    }
-
-    .time-btn:hover {
-      background: #f5f5f5;
-      transform: translateY(-1px);
+      -webkit-tap-highlight-color: transparent;
     }
 
     .time-btn.is-selected {
@@ -322,10 +332,10 @@
 
     .selected-panel {
       display: none;
-      margin-top: 24px;
+      margin-top: 20px;
       border: 1px solid #111;
       border-radius: 16px;
-      padding: 18px;
+      padding: 16px;
       background: #fafafa;
     }
 
@@ -334,12 +344,12 @@
     }
 
     .selected-label {
-      font-size: 13px;
+      font-size: 12px;
       color: #666;
-      font-weight: 800;
-      margin-bottom: 6px;
-      text-transform: uppercase;
+      font-weight: 900;
       letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
     }
 
     .selected-time {
@@ -352,97 +362,87 @@
       color: #666;
       font-size: 14px;
       font-weight: 700;
+      line-height: 1.35;
       margin-bottom: 14px;
     }
 
     .continue-btn {
+      width: 100%;
+      height: 54px;
+      border: 0;
+      border-radius: 12px;
       background: #000;
       color: #fff;
-      border: none;
-      border-radius: 12px;
+      font-size: 16px;
       font-weight: 900;
       cursor: pointer;
-      height: 54px;
-      width: 100%;
-      font-size: 16px;
     }
 
     .note {
-      margin-top: 12px;
+      margin-top: 10px;
       color: #777;
       font-size: 13px;
-      line-height: 1.4;
+      line-height: 1.35;
     }
 
-    @media (max-width: 640px) {
-      body {
-        margin: 16px auto;
-        padding: 10px;
-      }
-
-      h1 {
-        font-size: 28px;
-      }
-
-      .top-card,
-      .slot-summary {
-        padding: 16px;
-        border-radius: 16px;
+    @media (min-width: 641px) {
+      .page {
+        padding-top: 28px;
       }
 
       .staff-card {
-        flex-basis: 86px;
+        flex-basis: 96px;
       }
 
       .times {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
     }
   </style>
 </head>
 
 <body>
-  <h1>Book Pasadena</h1>
-  <div class="sub">Pick a stylist, choose a service, and select an available time.</div>
+  <div class="page">
+    <div class="header">
+      <h1>Book Pasadena</h1>
+      <p class="sub">Pick a stylist, choose a service, and select an available time.</p>
+    </div>
 
-  <div class="top-card">
-    <div class="date-bar">
-      <button id="prevDay" class="date-nav" type="button">‹</button>
+    <div class="top-card">
+      <div class="date-bar">
+        <button id="prevDay" class="date-nav" type="button">‹</button>
 
-      <div class="date-center">
-        <div id="dateLabel" class="date-label">Today</div>
-        <input id="dateInput" type="date" />
+        <div class="date-center">
+          <div id="dateLabel" class="date-label">Today</div>
+          <input id="dateInput" type="date" />
+        </div>
+
+        <button id="nextDay" class="date-nav" type="button">›</button>
       </div>
 
-      <button id="nextDay" class="date-nav" type="button">›</button>
-    </div>
+      <div class="section-label">Stylists</div>
+      <div id="staffStrip" class="staff-strip"></div>
 
-    <div class="small-label">Stylists</div>
-    <div id="staffStrip" class="staff-strip"></div>
-
-    <div class="service-area">
-      <div class="small-label">Services</div>
+      <div class="section-label">Services</div>
       <div id="servicePills" class="service-pills"></div>
+
+      <div id="message" class="message"></div>
     </div>
 
-    <div id="message" class="message"></div>
-  </div>
+    <div id="slotCard" class="slot-card">
+      <div class="slot-topline">
+        <h2 class="slot-title">Available Times</h2>
+        <div id="slotCount" class="slot-count"></div>
+      </div>
 
-  <div id="slotSummary" class="slot-summary">
-    <div class="slot-topline">
-      <h2 class="slot-title">Available Times</h2>
-      <div id="slotCount" class="slot-count"></div>
-    </div>
+      <div id="slotGroups"></div>
 
-    <div id="slotGroups"></div>
-
-    <div id="selectedPanel" class="selected-panel">
-      <div class="selected-label">Selected appointment</div>
-      <div id="selectedTime" class="selected-time"></div>
-      <div id="selectedDetail" class="selected-detail"></div>
-      <button id="continueBtn" class="continue-btn">Continue</button>
-      <div class="note">
-        Next step: customer name, phone, and email.
+      <div id="selectedPanel" class="selected-panel">
+        <div class="selected-label">Selected appointment</div>
+        <div id="selectedTime" class="selected-time"></div>
+        <div id="selectedDetail" class="selected-detail"></div>
+        <button id="continueBtn" class="continue-btn">Continue</button>
+        <div class="note">Next step: customer name, phone, and email.</div>
       </div>
     </div>
   </div>
@@ -455,6 +455,7 @@
       William: {
         name: "William",
         order: 1,
+        startDate: "2026-05-27",
         days: ["mon", "thu", "fri", "sat", "sun"],
         image: "",
         defaultService: "haircut",
@@ -535,7 +536,7 @@
     const prevDayBtn = document.getElementById("prevDay");
     const nextDayBtn = document.getElementById("nextDay");
     const messageEl = document.getElementById("message");
-    const slotSummaryEl = document.getElementById("slotSummary");
+    const slotCardEl = document.getElementById("slotCard");
     const slotCountEl = document.getElementById("slotCount");
     const slotGroupsEl = document.getElementById("slotGroups");
     const selectedPanelEl = document.getElementById("selectedPanel");
@@ -561,10 +562,8 @@
     }
 
     function formatDateLabel(date) {
-      const today = new Date();
-      const todayIso = toIsoDateLocal(today);
+      const todayIso = toIsoDateLocal(new Date());
       const dateIso = toIsoDateLocal(date);
-
       const dow = daysDisplay[date.getDay()];
       const md = `${date.getMonth() + 1}/${date.getDate()}`;
 
@@ -577,29 +576,61 @@
       dateLabelEl.textContent = formatDateLabel(currentDate);
     }
 
+    function hasStarted(staffKey, date) {
+      const staff = STAFF_DATA[staffKey];
+      if (!staff.startDate) return true;
+      return toIsoDateLocal(date) >= staff.startDate;
+    }
+
     function isWorking(staffKey, date) {
       const staff = STAFF_DATA[staffKey];
+
+      if (!hasStarted(staffKey, date)) return false;
+
       const dow = daysShort[date.getDay()];
       return staff.days.includes(dow);
     }
 
+    function getStaffStatus(staffKey, date) {
+      if (!hasStarted(staffKey, date)) return "Starts 5/27";
+      return isWorking(staffKey, date) ? "Working" : "Off today";
+    }
+
     function getOrderedStaffKeys(date) {
-      const keys = Object.keys(STAFF_DATA).filter(k => k !== "Jacob");
+      const keys = Object.keys(STAFF_DATA).filter(key => key !== "Jacob");
 
       const working = keys
-        .filter(k => isWorking(k, date))
+        .filter(key => isWorking(key, date))
         .sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
 
       const off = keys
-        .filter(k => !isWorking(k, date))
+        .filter(key => !isWorking(key, date))
         .sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
 
       return [...working, ...off, "Jacob"];
     }
 
     function formatPrice(price) {
-      if (typeof price === "string") return `$${price}`;
-      return `$${price}`;
+      return typeof price === "string" ? `$${price}` : `$${price}`;
+    }
+
+    function clearResults() {
+      selectedSlot = null;
+      messageEl.textContent = "";
+      slotGroupsEl.innerHTML = "";
+      slotCardEl.classList.remove("is-visible");
+      selectedPanelEl.classList.remove("is-visible");
+    }
+
+    function clearSelection() {
+      selectedSlot = null;
+      selectedPanelEl.classList.remove("is-visible");
+      selectedTimeEl.textContent = "";
+      selectedDetailEl.textContent = "";
+
+      document.querySelectorAll(".time-btn").forEach(btn => {
+        btn.classList.remove("is-selected");
+      });
     }
 
     function renderStaffStrip() {
@@ -614,10 +645,12 @@
       orderedKeys.forEach(staffKey => {
         const staff = STAFF_DATA[staffKey];
         const working = isWorking(staffKey, currentDate);
+        const status = getStaffStatus(staffKey, currentDate);
 
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "staff-card";
+
         if (staffKey === selectedStaffKey) btn.classList.add("is-active");
         if (working) btn.classList.add("is-working");
         else btn.classList.add("is-off");
@@ -629,15 +662,22 @@
         btn.innerHTML = `
           ${avatarHTML}
           <div class="staff-name">${staff.name}</div>
-          <div class="staff-status">${working ? "Working" : "Off today"}</div>
+          <div class="staff-status">${status}</div>
         `;
 
         btn.addEventListener("click", () => {
           selectedStaffKey = staffKey;
           selectedServiceKey = STAFF_DATA[staffKey].defaultService;
+
           renderStaffStrip();
           renderServicePills();
           clearResults();
+
+          if (!hasStarted(staffKey, currentDate)) {
+            messageEl.textContent = `${STAFF_DATA[staffKey].name} starts on 5/27. Please choose 5/27 or later.`;
+            return;
+          }
+
           searchAvailability();
         });
 
@@ -661,7 +701,10 @@
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "service-pill";
-        if (serviceKey === selectedServiceKey) btn.classList.add("is-active");
+
+        if (serviceKey === selectedServiceKey) {
+          btn.classList.add("is-active");
+        }
 
         btn.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
 
@@ -669,6 +712,12 @@
           selectedServiceKey = serviceKey;
           renderServicePills();
           clearResults();
+
+          if (!hasStarted(selectedStaffKey, currentDate)) {
+            messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
+            return;
+          }
+
           searchAvailability();
         });
 
@@ -678,6 +727,7 @@
 
     function formatPasadenaTime(utcString) {
       const date = new Date(utcString);
+
       return date.toLocaleTimeString("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
@@ -687,11 +737,13 @@
 
     function getPasadenaHour(utcString) {
       const date = new Date(utcString);
+
       const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         hour12: false
       }).formatToParts(date);
+
       const hourPart = parts.find(part => part.type === "hour");
       return Number(hourPart.value);
     }
@@ -701,25 +753,6 @@
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
       return "Evening";
-    }
-
-    function clearSelection() {
-      selectedSlot = null;
-      selectedPanelEl.classList.remove("is-visible");
-      selectedTimeEl.textContent = "";
-      selectedDetailEl.textContent = "";
-
-      document.querySelectorAll(".time-btn").forEach(btn => {
-        btn.classList.remove("is-selected");
-      });
-    }
-
-    function clearResults() {
-      selectedSlot = null;
-      messageEl.textContent = "";
-      slotGroupsEl.innerHTML = "";
-      slotSummaryEl.classList.remove("is-visible");
-      selectedPanelEl.classList.remove("is-visible");
     }
 
     function renderSlots(availabilities) {
@@ -739,6 +772,7 @@
 
       Object.keys(groups).forEach(groupName => {
         const slots = groups[groupName];
+
         if (!slots.length) return;
 
         const groupEl = document.createElement("div");
@@ -783,13 +817,13 @@
     }
 
     async function searchAvailability() {
-      const date = toIsoDateLocal(currentDate);
-
       if (!selectedStaffKey || !selectedServiceKey) return;
+
+      const date = toIsoDateLocal(currentDate);
 
       messageEl.textContent = "Checking available times...";
       slotGroupsEl.innerHTML = "";
-      slotSummaryEl.classList.remove("is-visible");
+      slotCardEl.classList.remove("is-visible");
       selectedPanelEl.classList.remove("is-visible");
 
       try {
@@ -816,13 +850,14 @@
 
         if (!availabilities.length) {
           const staff = STAFF_DATA[selectedStaffKey];
-          messageEl.textContent = `${staff.name} has no openings for this service on this date.`;
+          const service = staff.services[selectedServiceKey];
+          messageEl.textContent = `${staff.name} has no openings for ${service.label} on this date.`;
           return;
         }
 
         messageEl.textContent = "";
         slotCountEl.textContent = `${availabilities.length} openings`;
-        slotSummaryEl.classList.add("is-visible");
+        slotCardEl.classList.add("is-visible");
 
         renderSlots(availabilities);
 
@@ -850,6 +885,12 @@
       renderStaffStrip();
       renderServicePills();
       clearResults();
+
+      if (!hasStarted(selectedStaffKey, currentDate)) {
+        messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
+        return;
+      }
+
       searchAvailability();
     }
 
@@ -885,7 +926,12 @@
     selectBestDefaultStaff();
     renderStaffStrip();
     renderServicePills();
-    searchAvailability();
+
+    if (!hasStarted(selectedStaffKey, currentDate)) {
+      messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
+    } else {
+      searchAvailability();
+    }
   </script>
 </body>
 </html>
