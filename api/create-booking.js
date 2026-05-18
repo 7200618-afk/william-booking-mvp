@@ -207,6 +207,70 @@ export default async function handler(req, res) {
     const givenName = nameParts[0] || customerName;
     const familyName = nameParts.slice(1).join(" ");
 
+    async function checkExactAvailability() {
+      const startDate = new Date(start_at);
+      const endDate = new Date(startDate.getTime() + service.duration_minutes * 60 * 1000);
+
+      const response = await fetch("https://connect.squareup.com/v2/bookings/availability/search", {
+        method: "POST",
+        headers: squareHeaders,
+        body: JSON.stringify({
+          query: {
+            filter: {
+              start_at_range: {
+                start_at: startDate.toISOString(),
+                end_at: endDate.toISOString()
+              },
+              location_id: LOCATION_ID,
+              segment_filters: [
+                {
+                  service_variation_id: service.service_variation_id,
+                  team_member_id_filter: {
+                    any: [staff.team_member_id]
+                  }
+                }
+              ]
+            }
+          }
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          ok: false,
+          available: false,
+          data
+        };
+      }
+
+      const exactAvailable = (data.availabilities || []).some(availability => {
+        return availability.start_at === start_at;
+      });
+
+      return {
+        ok: true,
+        available: exactAvailable,
+        data
+      };
+    }
+
+    const availabilityCheck = await checkExactAvailability();
+
+    if (!availabilityCheck.ok) {
+      return res.status(409).json({
+        error: "Could not verify availability. Please refresh and try again.",
+        square: availabilityCheck.data
+      });
+    }
+
+    if (!availabilityCheck.available) {
+      return res.status(409).json({
+        error: "Sorry, this time is no longer available. Please choose another time."
+      });
+    }
+
     async function searchCustomerByEmail(email) {
       const response = await fetch("https://connect.squareup.com/v2/customers/search", {
         method: "POST",
@@ -296,31 +360,34 @@ export default async function handler(req, res) {
       });
     }
 
-    const noteText = customerNote
-      ? `Booked online. Service: ${staffKey} - ${service.label}\nNote: ${customerNote}`
-      : `Booked online. Service: ${staffKey} - ${service.label}`;
+    const cleanCustomerNote = String(customerNote || "").trim();
+
+    const createBookingBody = {
+      idempotency_key: makeId(),
+      booking: {
+        location_id: LOCATION_ID,
+        location_type: "BUSINESS_LOCATION",
+        customer_id: customerId,
+        start_at,
+        appointment_segments: [
+          {
+            team_member_id: staff.team_member_id,
+            duration_minutes: service.duration_minutes,
+            service_variation_id: service.service_variation_id,
+            service_variation_version: service.service_variation_version
+          }
+        ]
+      }
+    };
+
+    if (cleanCustomerNote) {
+      createBookingBody.booking.customer_note = cleanCustomerNote;
+    }
 
     const createBookingResponse = await fetch("https://connect.squareup.com/v2/bookings", {
       method: "POST",
       headers: squareHeaders,
-      body: JSON.stringify({
-        idempotency_key: makeId(),
-        booking: {
-          location_id: LOCATION_ID,
-          location_type: "BUSINESS_LOCATION",
-          customer_id: customerId,
-          start_at,
-          appointment_segments: [
-            {
-              team_member_id: staff.team_member_id,
-              duration_minutes: service.duration_minutes,
-              service_variation_id: service.service_variation_id,
-              service_variation_version: service.service_variation_version
-            }
-          ],
-          customer_note: noteText
-        }
-      })
+      body: JSON.stringify(createBookingBody)
     });
 
     const bookingData = await createBookingResponse.json();
