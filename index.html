@@ -4,78 +4,167 @@
   <meta charset="UTF-8" />
   <title>William Booking MVP</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      max-width: 620px;
-      margin: 40px auto;
-      padding: 20px;
+      background: #f4f4f1;
       color: #111;
-      background: #fff;
+    }
+
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px;
+      padding-bottom: 120px;
+    }
+
+    .hero {
+      background: #050505;
+      color: #fff;
+      border-radius: 26px;
+      padding: 28px;
+      margin-top: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      color: #aaa;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
     }
 
     h1 {
-      font-size: 34px;
-      margin: 0 0 8px 0;
-      letter-spacing: -0.6px;
+      font-size: 42px;
+      line-height: 1;
+      margin: 0 0 12px 0;
+      letter-spacing: -1.2px;
     }
 
-    .sub {
-      color: #666;
+    .hero-sub {
+      color: #d8d8d8;
+      font-size: 16px;
+      line-height: 1.45;
+      margin-bottom: 22px;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .panel {
+      background: #fff;
+      border-radius: 24px;
+      padding: 22px;
+      margin-top: 18px;
+      border: 1px solid #e5e5e5;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.06);
+    }
+
+    .section-title {
       font-size: 18px;
-      margin-bottom: 28px;
+      font-weight: 900;
+      margin: 0 0 14px 0;
+    }
+
+    .service-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .service-card {
+      border: 1px solid #ddd;
+      border-radius: 18px;
+      padding: 16px;
+      cursor: pointer;
+      background: #fff;
+      transition: all 0.18s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-1px);
+      border-color: #111;
+    }
+
+    .service-card.is-active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .service-name {
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .service-meta {
+      font-size: 13px;
+      color: #666;
+      font-weight: 700;
       line-height: 1.4;
     }
 
-    .booking-card {
-      border: 1px solid #e5e5e5;
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-      background: #fff;
+    .service-card.is-active .service-meta {
+      color: #ddd;
+    }
+
+    .date-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin-top: 18px;
+      align-items: end;
     }
 
     label {
       display: block;
-      font-weight: 800;
-      font-size: 16px;
-      margin-top: 18px;
+      font-weight: 900;
+      font-size: 14px;
       margin-bottom: 8px;
     }
 
-    select,
-    input,
-    button {
+    input {
       width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      box-sizing: border-box;
-      border-radius: 12px;
-      border: 1px solid #cfcfcf;
+      height: 54px;
+      border-radius: 16px;
+      border: 1px solid #ccc;
+      padding: 0 14px;
+      font-size: 17px;
+      font-weight: 800;
       background: #fff;
     }
 
-    select,
-    input {
-      height: 54px;
-    }
-
     .search-btn {
-      margin-top: 22px;
-      background: #000;
-      color: #fff;
+      height: 54px;
+      min-width: 150px;
       border: none;
-      font-weight: 800;
+      border-radius: 16px;
+      background: #111;
+      color: #fff;
+      font-weight: 900;
+      font-size: 15px;
       cursor: pointer;
-      height: 58px;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .search-btn:hover {
-      opacity: 0.88;
-    }
-
-    .search-btn:active {
-      transform: scale(0.99);
+      padding: 0 20px;
     }
 
     .search-btn:disabled {
@@ -84,209 +173,286 @@
     }
 
     .message {
-      margin-top: 22px;
+      margin-top: 16px;
       color: #666;
-      font-size: 16px;
-      line-height: 1.4;
+      font-weight: 700;
+      line-height: 1.45;
     }
 
-    .slot-summary {
+    .slots-panel {
       display: none;
-      margin-top: 26px;
-      padding-top: 22px;
-      border-top: 1px solid #eee;
+      margin-top: 18px;
     }
 
-    .slot-summary.is-visible {
+    .slots-panel.is-visible {
       display: block;
     }
 
-    .slot-topline {
+    .slots-head {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      margin-bottom: 14px;
       gap: 12px;
-      margin-bottom: 16px;
     }
 
-    .slot-title {
-      font-size: 20px;
-      font-weight: 900;
+    .slots-title {
+      font-size: 24px;
+      font-weight: 950;
       margin: 0;
+      letter-spacing: -0.5px;
     }
 
-    .slot-count {
+    .slots-count {
       font-size: 13px;
       color: #666;
-      font-weight: 700;
+      font-weight: 900;
       white-space: nowrap;
     }
 
-    .slot-group {
-      margin-top: 20px;
-    }
-
-    .slot-group-title {
-      font-size: 14px;
-      font-weight: 900;
-      color: #111;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .slot-group-title::after {
-      content: "";
-      height: 1px;
-      background: #eee;
-      flex: 1;
-    }
-
-    .times {
+    .timeline {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
-    .time-btn {
+    .slot-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 104px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #e5e5e5;
       background: #fff;
-      color: #000;
-      border: 1px solid #111;
-      border-radius: 12px;
-      font-weight: 900;
+      border-radius: 18px;
+      padding: 14px 16px;
       cursor: pointer;
-      min-height: 52px;
-      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+      transition: all 0.18s ease;
+      text-align: left;
     }
 
-    .time-btn:hover {
-      background: #f5f5f5;
+    .slot-row:hover {
+      border-color: #111;
       transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
     }
 
-    .time-btn.is-selected {
-      background: #000;
+    .slot-row.is-selected {
+      background: #111;
       color: #fff;
+      border-color: #111;
+      box-shadow: 0 12px 26px rgba(0,0,0,0.18);
     }
 
-    .selected-panel {
-      display: none;
-      margin-top: 24px;
-      border: 1px solid #111;
-      border-radius: 16px;
-      padding: 18px;
-      background: #fafafa;
+    .slot-time {
+      font-size: 20px;
+      font-weight: 950;
+      letter-spacing: -0.3px;
     }
 
-    .selected-panel.is-visible {
-      display: block;
-    }
-
-    .selected-label {
+    .slot-period {
       font-size: 13px;
       color: #666;
-      font-weight: 800;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+      font-weight: 900;
     }
 
-    .selected-time {
-      font-size: 24px;
+    .slot-row.is-selected .slot-period {
+      color: #ddd;
+    }
+
+    .slot-status {
+      font-size: 12px;
       font-weight: 900;
-      margin-bottom: 14px;
+      color: #0b6b2f;
+      background: #e9f8ee;
+      border-radius: 999px;
+      padding: 7px 10px;
+      white-space: nowrap;
+    }
+
+    .slot-row.is-selected .slot-status {
+      background: #fff;
+      color: #111;
+    }
+
+    .bottom-bar {
+      position: fixed;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: min(720px, calc(100vw - 28px));
+      background: #111;
+      color: #fff;
+      border-radius: 22px;
+      padding: 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.28);
+      z-index: 50;
+    }
+
+    .bottom-bar.is-visible {
+      display: flex;
+    }
+
+    .bottom-label {
+      font-size: 12px;
+      color: #aaa;
+      font-weight: 800;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .bottom-time {
+      font-size: 19px;
+      font-weight: 950;
     }
 
     .continue-btn {
-      background: #000;
-      color: #fff;
       border: none;
-      border-radius: 12px;
-      font-weight: 900;
+      background: #fff;
+      color: #111;
+      border-radius: 15px;
+      height: 48px;
+      padding: 0 20px;
+      font-weight: 950;
       cursor: pointer;
-      height: 54px;
-    }
-
-    .note {
-      margin-top: 12px;
-      color: #777;
-      font-size: 13px;
-      line-height: 1.4;
+      white-space: nowrap;
     }
 
     @media (max-width: 640px) {
-      body {
-        margin: 20px auto;
-        padding: 14px;
+      .page {
+        padding: 12px;
+        padding-bottom: 120px;
+      }
+
+      .hero {
+        padding: 24px;
+        border-radius: 24px;
       }
 
       h1 {
-        font-size: 30px;
+        font-size: 36px;
       }
 
-      .booking-card {
-        padding: 18px;
-        border-radius: 16px;
+      .service-cards {
+        grid-template-columns: 1fr;
       }
 
-      .times {
-        grid-template-columns: repeat(2, 1fr);
+      .date-row {
+        grid-template-columns: 1fr;
+      }
+
+      .search-btn {
+        width: 100%;
+      }
+
+      .slot-row {
+        grid-template-columns: 1fr auto;
+      }
+
+      .slot-period {
+        grid-column: 1 / -1;
+      }
+
+      .bottom-bar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .continue-btn {
+        width: 100%;
       }
     }
   </style>
 </head>
 
 <body>
-  <h1>Book William</h1>
-  <div class="sub">Choose a service and date to view available times.</div>
-
-  <div class="booking-card">
-    <label>Service</label>
-    <select id="serviceType">
-      <option value="scissors">Scissors Cut - $75</option>
-      <option value="haircut">Men’s Haircut - $60</option>
-    </select>
-
-    <label>Date</label>
-    <input id="date" type="date" value="2026-05-27" />
-
-    <button id="searchBtn" class="search-btn">Search Available Times</button>
-
-    <div id="message" class="message"></div>
-
-    <div id="slotSummary" class="slot-summary">
-      <div class="slot-topline">
-        <h2 class="slot-title">Available Times</h2>
-        <div id="slotCount" class="slot-count"></div>
+  <div class="page">
+    <div class="hero">
+      <div class="eyebrow">Pasadena · B SIDE U</div>
+      <h1>Book William</h1>
+      <div class="hero-sub">
+        Choose your service, pick a date, then select an available appointment time.
       </div>
-
-      <div id="slotGroups"></div>
-
-      <div id="selectedPanel" class="selected-panel">
-        <div class="selected-label">Selected time</div>
-        <div id="selectedTime" class="selected-time"></div>
-        <button id="continueBtn" class="continue-btn">Continue</button>
-        <div class="note">
-          Next step: we will add customer name, phone, and email, then create the Square appointment.
-        </div>
+      <div class="hero-meta">
+        <div class="pill">50 min</div>
+        <div class="pill">Men’s Haircut · $60</div>
+        <div class="pill">Scissors Cut · $75</div>
       </div>
     </div>
+
+    <div class="panel">
+      <h2 class="section-title">Select Service</h2>
+
+      <div class="service-cards">
+        <div class="service-card is-active" data-service="scissors">
+          <div class="service-name">Scissors Cut</div>
+          <div class="service-meta">$75 · 50 min<br>Layers, curtain, mullet, longer styles</div>
+        </div>
+
+        <div class="service-card" data-service="haircut">
+          <div class="service-name">Men’s Haircut</div>
+          <div class="service-meta">$60 · 50 min<br>Fade, taper, clipper + scissors top</div>
+        </div>
+      </div>
+
+      <div class="date-row">
+        <div>
+          <label>Date</label>
+          <input id="date" type="date" value="2026-05-27" />
+        </div>
+
+        <button id="searchBtn" class="search-btn">Show Times</button>
+      </div>
+
+      <div id="message" class="message"></div>
+    </div>
+
+    <div id="slotsPanel" class="panel slots-panel">
+      <div class="slots-head">
+        <h2 class="slots-title">Available openings</h2>
+        <div id="slotsCount" class="slots-count"></div>
+      </div>
+
+      <div id="timeline" class="timeline"></div>
+    </div>
+  </div>
+
+  <div id="bottomBar" class="bottom-bar">
+    <div>
+      <div class="bottom-label">Selected appointment</div>
+      <div id="bottomTime" class="bottom-time"></div>
+    </div>
+    <button id="continueBtn" class="continue-btn">Continue</button>
   </div>
 
   <script>
     const searchBtn = document.getElementById("searchBtn");
-    const serviceTypeEl = document.getElementById("serviceType");
     const dateEl = document.getElementById("date");
     const messageEl = document.getElementById("message");
-    const slotSummaryEl = document.getElementById("slotSummary");
-    const slotCountEl = document.getElementById("slotCount");
-    const slotGroupsEl = document.getElementById("slotGroups");
-    const selectedPanelEl = document.getElementById("selectedPanel");
-    const selectedTimeEl = document.getElementById("selectedTime");
+    const slotsPanelEl = document.getElementById("slotsPanel");
+    const slotsCountEl = document.getElementById("slotsCount");
+    const timelineEl = document.getElementById("timeline");
+    const bottomBarEl = document.getElementById("bottomBar");
+    const bottomTimeEl = document.getElementById("bottomTime");
     const continueBtn = document.getElementById("continueBtn");
+    const serviceCards = document.querySelectorAll(".service-card");
 
+    let selectedService = "scissors";
     let selectedSlot = null;
+
+    serviceCards.forEach(card => {
+      card.addEventListener("click", () => {
+        serviceCards.forEach(c => c.classList.remove("is-active"));
+        card.classList.add("is-active");
+        selectedService = card.dataset.service;
+
+        clearSlots();
+      });
+    });
 
     function formatPasadenaTime(utcString) {
       const date = new Date(utcString);
@@ -300,6 +466,7 @@
 
     function getPasadenaHour(utcString) {
       const date = new Date(utcString);
+
       const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
@@ -310,7 +477,7 @@
       return Number(hourPart.value);
     }
 
-    function getSlotGroupName(utcString) {
+    function getPeriod(utcString) {
       const hour = getPasadenaHour(utcString);
 
       if (hour < 12) return "Morning";
@@ -318,72 +485,52 @@
       return "Evening";
     }
 
-    function clearSelection() {
+    function clearSlots() {
       selectedSlot = null;
-      selectedPanelEl.classList.remove("is-visible");
-      selectedTimeEl.textContent = "";
+      timelineEl.innerHTML = "";
+      slotsPanelEl.classList.remove("is-visible");
+      bottomBarEl.classList.remove("is-visible");
+      messageEl.textContent = "";
+    }
 
-      document.querySelectorAll(".time-btn").forEach(btn => {
-        btn.classList.remove("is-selected");
+    function clearSelectedRows() {
+      document.querySelectorAll(".slot-row").forEach(row => {
+        row.classList.remove("is-selected");
       });
     }
 
     function renderSlots(availabilities) {
-      slotGroupsEl.innerHTML = "";
-      clearSelection();
-
-      const groups = {
-        Morning: [],
-        Afternoon: [],
-        Evening: []
-      };
+      timelineEl.innerHTML = "";
+      selectedSlot = null;
+      bottomBarEl.classList.remove("is-visible");
 
       availabilities.forEach(slot => {
-        const groupName = getSlotGroupName(slot.start_at);
-        groups[groupName].push(slot);
-      });
+        const row = document.createElement("button");
+        row.className = "slot-row";
 
-      Object.keys(groups).forEach(groupName => {
-        const slots = groups[groupName];
+        const time = formatPasadenaTime(slot.start_at);
+        const period = getPeriod(slot.start_at);
 
-        if (!slots.length) return;
+        row.innerHTML = `
+          <div class="slot-time">${time}</div>
+          <div class="slot-period">${period} · William</div>
+          <div class="slot-status">Available</div>
+        `;
 
-        const groupEl = document.createElement("div");
-        groupEl.className = "slot-group";
+        row.addEventListener("click", () => {
+          clearSelectedRows();
+          row.classList.add("is-selected");
 
-        const titleEl = document.createElement("div");
-        titleEl.className = "slot-group-title";
-        titleEl.textContent = groupName;
-
-        const timesEl = document.createElement("div");
-        timesEl.className = "times";
-
-        slots.forEach(slot => {
-          const btn = document.createElement("button");
-          btn.className = "time-btn";
-          btn.textContent = formatPasadenaTime(slot.start_at);
-
-          btn.addEventListener("click", () => {
-            clearSelection();
-
-            selectedSlot = slot;
-            btn.classList.add("is-selected");
-
-            selectedTimeEl.textContent = formatPasadenaTime(slot.start_at);
-            selectedPanelEl.classList.add("is-visible");
-          });
-
-          timesEl.appendChild(btn);
+          selectedSlot = slot;
+          bottomTimeEl.textContent = `${time} · ${period}`;
+          bottomBarEl.classList.add("is-visible");
         });
 
-        groupEl.appendChild(titleEl);
-        groupEl.appendChild(timesEl);
-        slotGroupsEl.appendChild(groupEl);
+        timelineEl.appendChild(row);
       });
     }
 
     searchBtn.addEventListener("click", async () => {
-      const serviceType = serviceTypeEl.value;
       const date = dateEl.value;
 
       if (!date) {
@@ -392,11 +539,11 @@
       }
 
       searchBtn.disabled = true;
-      searchBtn.textContent = "Searching...";
+      searchBtn.textContent = "Checking...";
       messageEl.textContent = "";
-      slotGroupsEl.innerHTML = "";
-      slotSummaryEl.classList.remove("is-visible");
-      selectedPanelEl.classList.remove("is-visible");
+      timelineEl.innerHTML = "";
+      slotsPanelEl.classList.remove("is-visible");
+      bottomBarEl.classList.remove("is-visible");
 
       try {
         const response = await fetch("/api/search-availability", {
@@ -405,7 +552,7 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            serviceType,
+            serviceType: selectedService,
             date
           })
         });
@@ -419,22 +566,20 @@
 
         const availabilities = data.availabilities || [];
 
-        if (availabilities.length === 0) {
+        if (!availabilities.length) {
           messageEl.textContent = "No available times for this date.";
           return;
         }
 
-        messageEl.textContent = "";
-        slotCountEl.textContent = `${availabilities.length} openings`;
-        slotSummaryEl.classList.add("is-visible");
-
+        slotsCountEl.textContent = `${availabilities.length} times`;
+        slotsPanelEl.classList.add("is-visible");
         renderSlots(availabilities);
 
       } catch (error) {
         messageEl.textContent = "Network error: " + error.message;
       } finally {
         searchBtn.disabled = false;
-        searchBtn.textContent = "Search Available Times";
+        searchBtn.textContent = "Show Times";
       }
     });
 
@@ -444,10 +589,7 @@
         return;
       }
 
-      alert(
-        "Next step: customer form.\n\nSelected time: " +
-        formatPasadenaTime(selectedSlot.start_at)
-      );
+      alert("Next step: customer information form.");
     });
   </script>
 </body>
