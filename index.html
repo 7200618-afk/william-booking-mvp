@@ -19,9 +19,9 @@
 
     .page {
       width: 100%;
-      max-width: 720px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 10px;
+      padding: 12px;
       padding-bottom: 30px;
     }
 
@@ -44,6 +44,13 @@
       margin: 0;
     }
 
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 390px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
     .top-card,
     .slot-card {
       border: 1px solid #e8e8e8;
@@ -58,21 +65,21 @@
 
     .date-bar {
       display: grid;
-      grid-template-columns: 34px 1fr 34px;
-      gap: 8px;
+      grid-template-columns: 32px 1fr 32px;
+      gap: 7px;
       align-items: center;
-      padding-bottom: 10px;
+      padding-bottom: 9px;
       border-bottom: 1px solid #eee;
     }
 
     .date-nav {
-      width: 34px;
-      height: 34px;
+      width: 32px;
+      height: 32px;
       border: 0;
       border-radius: 9px;
       background: #000;
       color: #fff;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
       cursor: pointer;
       display: flex;
@@ -90,7 +97,7 @@
     .date-label {
       font-size: 15px;
       font-weight: 900;
-      line-height: 34px;
+      line-height: 32px;
       border-radius: 9px;
       background: #f7f7f7;
       white-space: nowrap;
@@ -114,7 +121,7 @@
       font-weight: 900;
       letter-spacing: 0.45px;
       text-transform: uppercase;
-      margin: 11px 0 7px;
+      margin: 10px 0 7px;
     }
 
     .staff-strip {
@@ -329,8 +336,8 @@
 
     .slot-card {
       display: none;
-      margin-top: 10px;
       padding: 10px;
+      min-height: 220px;
     }
 
     .slot-card.is-visible {
@@ -460,9 +467,39 @@
       line-height: 1.3;
     }
 
-    @media (min-width: 641px) {
+    @media (max-width: 760px) {
+      .page {
+        padding: 10px;
+      }
+
+      .booking-layout {
+        display: block;
+      }
+
+      .slot-card {
+        margin-top: 10px;
+      }
+
+      .times {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (min-width: 761px) {
       .page {
         padding-top: 24px;
+      }
+
+      .header {
+        padding-bottom: 14px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      .sub {
+        font-size: 14px;
       }
 
       .staff-card {
@@ -472,6 +509,11 @@
       .time-btn {
         min-height: 48px;
         font-size: 15px;
+      }
+
+      .slot-card {
+        position: sticky;
+        top: 18px;
       }
     }
   </style>
@@ -484,54 +526,56 @@
       <p class="sub">Pick a stylist, choose a service, and select an available time.</p>
     </div>
 
-    <div class="top-card">
-      <div class="date-bar">
-        <button id="prevDay" class="date-nav" type="button">‹</button>
+    <div class="booking-layout">
+      <div class="top-card">
+        <div class="date-bar">
+          <button id="prevDay" class="date-nav" type="button">‹</button>
 
-        <div class="date-center">
-          <div id="dateLabel" class="date-label">Today</div>
-          <input id="dateInput" type="date" />
+          <div class="date-center">
+            <div id="dateLabel" class="date-label">Today</div>
+            <input id="dateInput" type="date" />
+          </div>
+
+          <button id="nextDay" class="date-nav" type="button">›</button>
         </div>
 
-        <button id="nextDay" class="date-nav" type="button">›</button>
+        <div class="section-label">Stylists</div>
+        <div id="staffStrip" class="staff-strip"></div>
+
+        <div class="selected-staff-row">
+          <div id="selectedStaffName" class="selected-staff-name"></div>
+          <a id="profileLink" class="profile-link" href="#" target="_blank" rel="noopener noreferrer">View Profile</a>
+        </div>
+
+        <div class="section-label">Services</div>
+        <div id="servicePills" class="service-pills"></div>
+
+        <div id="message" class="message"></div>
+
+        <div id="emptyState" class="empty-state">
+          <div id="emptyTitle" class="empty-title"></div>
+          <div id="emptySub" class="empty-sub"></div>
+          <button id="nextAvailableBtn" class="next-available-btn" type="button">
+            Go to next available date
+          </button>
+        </div>
       </div>
 
-      <div class="section-label">Stylists</div>
-      <div id="staffStrip" class="staff-strip"></div>
+      <div id="slotCard" class="slot-card">
+        <div class="slot-topline">
+          <h2 class="slot-title">Available Times</h2>
+          <div id="slotCount" class="slot-count"></div>
+        </div>
 
-      <div class="selected-staff-row">
-        <div id="selectedStaffName" class="selected-staff-name"></div>
-        <a id="profileLink" class="profile-link" href="#" target="_blank" rel="noopener noreferrer">View Profile</a>
-      </div>
+        <div id="slotGroups"></div>
 
-      <div class="section-label">Services</div>
-      <div id="servicePills" class="service-pills"></div>
-
-      <div id="message" class="message"></div>
-
-      <div id="emptyState" class="empty-state">
-        <div id="emptyTitle" class="empty-title"></div>
-        <div id="emptySub" class="empty-sub"></div>
-        <button id="nextAvailableBtn" class="next-available-btn" type="button">
-          Go to next available date
-        </button>
-      </div>
-    </div>
-
-    <div id="slotCard" class="slot-card">
-      <div class="slot-topline">
-        <h2 class="slot-title">Available Times</h2>
-        <div id="slotCount" class="slot-count"></div>
-      </div>
-
-      <div id="slotGroups"></div>
-
-      <div id="selectedPanel" class="selected-panel">
-        <div class="selected-label">Selected appointment</div>
-        <div id="selectedTime" class="selected-time"></div>
-        <div id="selectedDetail" class="selected-detail"></div>
-        <button id="continueBtn" class="continue-btn">Continue</button>
-        <div class="note">Next step: customer name, phone, and email.</div>
+        <div id="selectedPanel" class="selected-panel">
+          <div class="selected-label">Selected appointment</div>
+          <div id="selectedTime" class="selected-time"></div>
+          <div id="selectedDetail" class="selected-detail"></div>
+          <button id="continueBtn" class="continue-btn">Continue</button>
+          <div class="note">Next step: customer name, phone, and email.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -645,8 +689,6 @@
     let selectedSlot = null;
     let statusRequestId = 0;
     let nextAvailableTargetDate = null;
-
-    // 缓存员工状态，防止每次点员工头像都重新查全部员工
     let staffStatusCache = {};
 
     function toIsoDateLocal(date) {
@@ -768,15 +810,22 @@
       return "Evening";
     }
 
-    function getNextWorkingDate(staffKey, fromDate, startTomorrow = false) {
-      for (let i = startTomorrow ? 1 : 0; i <= 45; i++) {
+    function getCandidateWorkingDates(staffKey, fromDate, startTomorrow, limit = 8) {
+      const dates = [];
+
+      for (let i = startTomorrow ? 1 : 0; i <= 60; i++) {
         const d = new Date(fromDate);
         d.setDate(d.getDate() + i);
 
-        if (isWorking(staffKey, d)) return d;
+        if (!hasStarted(staffKey, d)) continue;
+        if (!isWorking(staffKey, d)) continue;
+
+        dates.push(d);
+
+        if (dates.length >= limit) break;
       }
 
-      return null;
+      return dates;
     }
 
     async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
@@ -801,36 +850,24 @@
       return data.availabilities || [];
     }
 
-    async function fetchFirstOpening(staffKey, dateObj) {
-      const staff = STAFF_DATA[staffKey];
-      const serviceType = staff.defaultService;
-      const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
+    async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
+      const candidateDates = getCandidateWorkingDates(staffKey, fromDate, startTomorrow, 8);
 
-      if (!openings.length) return null;
+      if (!candidateDates.length) return null;
 
-      return openings[0].start_at;
-    }
+      const results = await Promise.all(
+        candidateDates.map(async dateObj => {
+          const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
 
-    async function findNextAvailableDate(staffKey, serviceType, fromDate, startTomorrow) {
-      for (let i = startTomorrow ? 1 : 0; i <= 45; i++) {
-        const d = new Date(fromDate);
-        d.setDate(d.getDate() + i);
-
-        if (!hasStarted(staffKey, d)) continue;
-        if (!isWorking(staffKey, d)) continue;
-
-        const openings = await fetchAvailabilityFor(staffKey, serviceType, d);
-
-        if (openings.length) {
           return {
-            date: d,
-            firstOpening: openings[0].start_at,
+            date: dateObj,
+            firstOpening: openings[0]?.start_at || null,
             openings
           };
-        }
-      }
+        })
+      );
 
-      return null;
+      return results.find(result => result.openings.length > 0) || null;
     }
 
     function showEmptyState(title, sub, nextResult) {
@@ -851,76 +888,75 @@
       emptyStateEl.classList.add("is-visible");
     }
 
+    async function computeStaffStatus(staffKey, dateObj) {
+      const staff = STAFF_DATA[staffKey];
+      const serviceType = staff.defaultService;
+      const cacheKey = getStatusCacheKey(staffKey, serviceType, dateObj);
+
+      if (staffStatusCache[cacheKey]) return staffStatusCache[cacheKey];
+
+      if (!hasStarted(staffKey, dateObj)) {
+        staffStatusCache[cacheKey] = {
+          text: "Starts 5/27",
+          isFull: false,
+          hasOpening: false
+        };
+        return staffStatusCache[cacheKey];
+      }
+
+      if (isWorking(staffKey, dateObj)) {
+        const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
+
+        if (todayOpenings.length) {
+          staffStatusCache[cacheKey] = {
+            text: `Today · ${formatPasadenaTime(todayOpenings[0].start_at)}`,
+            isFull: false,
+            hasOpening: true
+          };
+          return staffStatusCache[cacheKey];
+        }
+
+        staffStatusCache[cacheKey] = {
+          text: "Fully booked",
+          isFull: true,
+          hasOpening: false
+        };
+        return staffStatusCache[cacheKey];
+      }
+
+      const nextResult = await findNextAvailableDateFast(staffKey, serviceType, dateObj, true);
+
+      if (nextResult) {
+        staffStatusCache[cacheKey] = {
+          text: `${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`,
+          isFull: false,
+          hasOpening: true
+        };
+      } else {
+        staffStatusCache[cacheKey] = {
+          text: "No openings",
+          isFull: false,
+          hasOpening: false
+        };
+      }
+
+      return staffStatusCache[cacheKey];
+    }
+
     async function loadStaffStatuses(requestId) {
       const staffKeys = Object.keys(STAFF_DATA);
 
-      // 先显示缓存或 Checking，不要每次点击员工都重新查
       renderStaffStrip(false);
 
-      for (const staffKey of staffKeys) {
-        if (requestId !== statusRequestId) return;
-
-        const staff = STAFF_DATA[staffKey];
-        const serviceType = staff.defaultService;
-        const cacheKey = getStatusCacheKey(staffKey, serviceType, currentDate);
-
-        if (staffStatusCache[cacheKey]) continue;
-
-        if (!hasStarted(staffKey, currentDate)) {
-          staffStatusCache[cacheKey] = {
-            text: "Starts 5/27",
-            isFull: false,
-            hasOpening: false
-          };
-          continue;
-        }
-
-        const nextWorkingDate = getNextWorkingDate(staffKey, currentDate, false);
-
-        if (!nextWorkingDate) {
-          staffStatusCache[cacheKey] = {
-            text: "No schedule",
-            isFull: true,
-            hasOpening: false
-          };
-          continue;
-        }
-
-        try {
-          const firstOpening = await fetchFirstOpening(staffKey, nextWorkingDate);
-
-          if (firstOpening) {
-            staffStatusCache[cacheKey] = {
-              text: `${formatShortDate(nextWorkingDate)} · ${formatPasadenaTime(firstOpening)}`,
-              isFull: false,
-              hasOpening: true
-            };
-          } else {
-            staffStatusCache[cacheKey] = {
-              text: isWorking(staffKey, currentDate)
-                ? "Fully booked"
-                : `${formatShortDate(nextWorkingDate)} · Full`,
-              isFull: isWorking(staffKey, currentDate),
-              hasOpening: false
-            };
-          }
-        } catch (error) {
-          staffStatusCache[cacheKey] = {
-            text: `${formatShortDate(nextWorkingDate)}`,
-            isFull: false,
-            hasOpening: false
-          };
-        }
-
-        if (requestId !== statusRequestId) return;
-
-        // 每查完一个员工就刷新一次，但不重新发请求
-        renderStaffStrip(false);
-      }
+      await Promise.all(
+        staffKeys.map(async staffKey => {
+          if (requestId !== statusRequestId) return;
+          await computeStaffStatus(staffKey, currentDate);
+        })
+      );
 
       if (requestId !== statusRequestId) return;
 
-      // 查完以后重新排序：工作有空位在前，工作满员放后面
       renderStaffStrip(false);
     }
 
@@ -996,7 +1032,6 @@
           selectedStaffKey = staffKey;
           selectedServiceKey = STAFF_DATA[staffKey].defaultService;
 
-          // 点击员工：只切换选中，不重新查全部员工状态
           renderStaffStrip(false);
           renderServicePills();
           updateSelectedStaffRow();
@@ -1127,7 +1162,7 @@
         if (!hasStarted(selectedStaffKey, currentDate)) {
           messageEl.textContent = "";
 
-          const nextResult = await findNextAvailableDate(
+          const nextResult = await findNextAvailableDateFast(
             selectedStaffKey,
             selectedServiceKey,
             currentDate,
@@ -1144,20 +1179,20 @@
         }
 
         if (!isWorking(selectedStaffKey, currentDate)) {
-          messageEl.textContent = "";
+          messageEl.textContent = "Finding next available...";
 
-          const nextResult = await findNextAvailableDate(
+          const nextResult = await findNextAvailableDateFast(
             selectedStaffKey,
             selectedServiceKey,
             currentDate,
             true
           );
 
+          messageEl.textContent = "";
+
           showEmptyState(
-            `${staff.name} is not working today`,
-            nextResult
-              ? `Next available for ${service.label}:`
-              : `No available date found for ${service.label}.`,
+            "Not working today",
+            nextResult ? "Next available:" : "No available date found.",
             nextResult
           );
 
@@ -1171,20 +1206,20 @@
         );
 
         if (!availabilities.length) {
-          messageEl.textContent = "";
+          messageEl.textContent = "Finding next available...";
 
-          const nextResult = await findNextAvailableDate(
+          const nextResult = await findNextAvailableDateFast(
             selectedStaffKey,
             selectedServiceKey,
             currentDate,
             true
           );
 
+          messageEl.textContent = "";
+
           showEmptyState(
             "Fully booked today",
-            nextResult
-              ? `Next available for ${staff.name} · ${service.label}:`
-              : `No available date found for ${staff.name} · ${service.label}.`,
+            nextResult ? "Next available:" : "No available date found.",
             nextResult
           );
 
@@ -1211,7 +1246,6 @@
     function refreshForDateChange() {
       updateDateUI();
 
-      // 只有日期改变时才清空员工状态缓存，重新查全部员工
       staffStatusCache = {};
 
       const orderedKeys = getOrderedStaffKeys(currentDate);
