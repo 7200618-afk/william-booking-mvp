@@ -260,24 +260,25 @@
     }
 
     .service-pills {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 7px;
-      overflow-x: auto;
       padding: 0 1px 2px;
-      -webkit-overflow-scrolling: touch;
     }
 
     .service-pill {
-      flex: 0 0 auto;
+      width: 100%;
       border: 1px solid #ddd;
-      border-radius: 999px;
+      border-radius: 12px;
       background: #fff;
       color: #111;
-      padding: 9px 11px;
+      padding: 9px 8px;
       font-size: 13px;
       font-weight: 900;
       cursor: pointer;
-      white-space: nowrap;
+      white-space: normal;
+      line-height: 1.25;
+      text-align: center;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -743,7 +744,7 @@
     }
 
     function getOrderedStaffKeys(date) {
-      const keys = Object.keys(STAFF_DATA).filter(key => key !== "Jacob");
+      const keys = Object.keys(STAFF_DATA);
       const workingWithOpenings = [];
       const workingFull = [];
       const off = [];
@@ -769,7 +770,7 @@
       workingFull.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
       off.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
 
-      return [...workingWithOpenings, ...workingFull, ...off, "Jacob"];
+      return [...workingWithOpenings, ...workingFull, ...off];
     }
 
     function getProfileUrl(staffKey) {
