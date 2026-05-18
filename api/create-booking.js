@@ -1,8 +1,8 @@
+import { LOCATION_ID, STAFF_DATA } from "../staff-config.js";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed. Use POST."
-    });
+    return res.status(405).json({ error: "Method not allowed. Use POST." });
   }
 
   try {
@@ -16,156 +16,8 @@ export default async function handler(req, res) {
       customerNote
     } = req.body || {};
 
-    const LOCATION_ID = "L3QJNBCTPSYW7";
-
-    const STAFF_API = {
-      William: {
-        team_member_id: "TMWIhbRkPFn61SpR",
-        services: {
-          haircut: {
-            label: "Men’s Haircut",
-            price: 60,
-            duration_minutes: 50,
-            service_variation_id: "U5TNWU6VYAJNRGIMBFGA2545",
-            service_variation_version: 1778829893873
-          },
-          scissors: {
-            label: "Scissors Cut",
-            price: 75,
-            duration_minutes: 50,
-            service_variation_id: "22YZ5VMOQO4K2IKYY6R2OIPM",
-            service_variation_version: 1778926320167
-          }
-        }
-      },
-
-      Ryan: {
-        team_member_id: "TMm7W1ZmprhAbD-Q",
-        services: {
-          haircut: {
-            label: "Men’s Haircut",
-            price: 45,
-            duration_minutes: 45,
-            service_variation_id: "3O36RYDUKSXRIYJRSCVMUR7W",
-            service_variation_version: 1774408255432
-          },
-          scissors: {
-            label: "Scissors Cut",
-            price: 60,
-            duration_minutes: 45,
-            service_variation_id: "273LNJSEBG5NXUJZI5HYC7RI",
-            service_variation_version: 1774412546058
-          }
-        }
-      },
-
-      Ken: {
-        team_member_id: "TMbO57WbplZRl2vp",
-        services: {
-          haircut: {
-            label: "Men’s Haircut",
-            price: 50,
-            duration_minutes: 40,
-            service_variation_id: "2GP3AHZEVUISBXNJJC7XFVE2",
-            service_variation_version: 1778926266305
-          },
-          scissors: {
-            label: "Scissors Cut",
-            price: 70,
-            duration_minutes: 40,
-            service_variation_id: "ADGMMV6KLH3TECLX6ZOB62T4",
-            service_variation_version: 1778926278241
-          }
-        }
-      },
-
-      Fiona: {
-        team_member_id: "TMZ4Soxe_hDKg3Ht",
-        services: {
-          haircut: {
-            label: "Men’s Haircut",
-            price: 55,
-            duration_minutes: 40,
-            service_variation_id: "37ARLNEQ32HMPB2VSAWOHQ7A",
-            service_variation_version: 1774408226366
-          },
-          scissors: {
-            label: "Scissors Cut",
-            price: 70,
-            duration_minutes: 40,
-            service_variation_id: "NNVHTCNXKGR2WA2CKPOJRNIG",
-            service_variation_version: 1774407851988
-          },
-          perm: {
-            label: "Perm",
-            price: "220+",
-            duration_minutes: 120,
-            service_variation_id: "BFHUUTJC6KPXE3NSCHF5YIWS",
-            service_variation_version: 1779001952576
-          },
-          color_gray: {
-            label: "Cover Gray",
-            price: 65,
-            duration_minutes: 40,
-            service_variation_id: "5VLGRSZYIO5AL3SU6AGZU6KP",
-            service_variation_version: 1777094072086
-          },
-          color_full: {
-            label: "Full Color",
-            price: 120,
-            duration_minutes: 120,
-            service_variation_id: "FPADYBGJBAVOXMTJHXFQ43H4",
-            service_variation_version: 1769964790194
-          }
-        }
-      },
-
-      Nami: {
-        team_member_id: "TMm4INT2vtpvuQRo",
-        services: {
-          haircut: {
-            label: "Men’s Haircut",
-            price: 55,
-            duration_minutes: 50,
-            service_variation_id: "FQODRAN4TNKURP3RNW7GO4FL",
-            service_variation_version: 1774408248385
-          },
-          scissors: {
-            label: "Scissors Cut",
-            price: 70,
-            duration_minutes: 50,
-            service_variation_id: "7RZHSI75HOC3CULO37IDRN3G",
-            service_variation_version: 1774412538238
-          }
-        }
-      },
-
-      Jacob: {
-        team_member_id: "TMGkdiUy-xaRP5_W",
-        services: {
-          haircut: {
-            label: "Men’s Haircut",
-            price: 60,
-            duration_minutes: 45,
-            service_variation_id: "NSHYZU2NHY4VFXOBYESKGZGW",
-            service_variation_version: 1774408235308
-          },
-          scissors: {
-            label: "Scissors Cut",
-            price: 75,
-            duration_minutes: 45,
-            service_variation_id: "P6OZF4GTRF5JMBB6VQDU6ZLK",
-            service_variation_version: 1774407860059
-          }
-        }
-      }
-    };
-
     function makeId() {
-      if (typeof crypto !== "undefined" && crypto.randomUUID) {
-        return crypto.randomUUID();
-      }
-
+      if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
       return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     }
 
@@ -175,35 +27,21 @@ export default async function handler(req, res) {
 
     function normalizePhone(phone) {
       let value = String(phone || "").trim();
-
       if (!value) return "";
 
       let digits = value.replace(/\D/g, "");
-
       if (!digits) return "";
 
-      if (digits.length === 12 && digits.startsWith("11")) {
-        digits = digits.slice(1);
-      }
-
-      if (digits.length === 10) {
-        return `+1${digits}`;
-      }
-
-      if (digits.length === 11 && digits.startsWith("1")) {
-        return `+${digits}`;
-      }
-
-      if (value.startsWith("+")) {
-        return `+${digits}`;
-      }
+      if (digits.length === 12 && digits.startsWith("11")) digits = digits.slice(1);
+      if (digits.length === 10) return `+1${digits}`;
+      if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+      if (value.startsWith("+")) return `+${digits}`;
 
       return `+${digits}`;
     }
 
     function getSquareErrorMessage(data, fallback) {
       const firstError = data?.errors?.[0];
-
       if (!firstError) return fallback;
 
       const detail = firstError.detail || firstError.code || fallback;
@@ -223,38 +61,22 @@ export default async function handler(req, res) {
     const normalizedPhone = normalizePhone(customerPhone);
 
     if (!staffKey || !serviceType || !start_at) {
-      return res.status(400).json({
-        error: "Missing required booking information."
-      });
+      return res.status(400).json({ error: "Missing required booking information." });
     }
 
     if (!customerName || !normalizedPhone || !cleanedEmail) {
-      return res.status(400).json({
-        error: "Name, phone, and email are required."
-      });
+      return res.status(400).json({ error: "Name, phone, and email are required." });
     }
 
     if (!cleanedEmail.includes("@") || !cleanedEmail.includes(".")) {
-      return res.status(400).json({
-        error: "Please enter a valid email address."
-      });
+      return res.status(400).json({ error: "Please enter a valid email address." });
     }
 
-    const staff = STAFF_API[staffKey];
+    const staff = STAFF_DATA[staffKey];
+    if (!staff) return res.status(400).json({ error: "Invalid staffKey." });
 
-    if (!staff) {
-      return res.status(400).json({
-        error: "Invalid staffKey."
-      });
-    }
-
-    const service = staff.services[serviceType];
-
-    if (!service) {
-      return res.status(400).json({
-        error: "Invalid serviceType."
-      });
-    }
+    const service = staff.services?.[serviceType];
+    if (!service) return res.status(400).json({ error: "Invalid serviceType." });
 
     const squareHeaders = {
       "Square-Version": "2026-01-22",
@@ -273,25 +95,12 @@ export default async function handler(req, res) {
         return {
           ok: false,
           available: false,
-          data: {
-            errors: [
-              {
-                detail: "Invalid appointment time."
-              }
-            ]
-          }
+          data: { errors: [{ detail: "Invalid appointment time." }] }
         };
       }
 
-      const minimumSearchMinutes = 60;
-      const searchMinutes = Math.max(
-        Number(service.duration_minutes || 0),
-        minimumSearchMinutes
-      );
-
-      const endDate = new Date(
-        startDate.getTime() + searchMinutes * 60 * 1000
-      );
+      const searchMinutes = Math.max(Number(service.duration_minutes || 0), 60);
+      const endDate = new Date(startDate.getTime() + searchMinutes * 60 * 1000);
 
       const response = await fetch(
         "https://connect.squareup.com/v2/bookings/availability/search",
@@ -323,11 +132,7 @@ export default async function handler(req, res) {
       const data = await response.json();
 
       if (!response.ok) {
-        return {
-          ok: false,
-          available: false,
-          data
-        };
+        return { ok: false, available: false, data };
       }
 
       const selectedTimeMs = new Date(start_at).getTime();
@@ -336,11 +141,7 @@ export default async function handler(req, res) {
         return new Date(availability.start_at).getTime() === selectedTimeMs;
       });
 
-      return {
-        ok: true,
-        available: exactAvailable,
-        data
-      };
+      return { ok: true, available: exactAvailable, data };
     }
 
     const availabilityCheck = await checkExactAvailability();
@@ -378,7 +179,6 @@ export default async function handler(req, res) {
       });
 
       const data = await response.json();
-
       if (!response.ok) return null;
 
       return data.customers?.[0] || null;
@@ -401,7 +201,6 @@ export default async function handler(req, res) {
       });
 
       const data = await response.json();
-
       if (!response.ok) return null;
 
       return data.customers?.[0] || null;
@@ -444,9 +243,7 @@ export default async function handler(req, res) {
     const customerId = customer?.id;
 
     if (!customerId) {
-      return res.status(500).json({
-        error: "Could not find or create customer."
-      });
+      return res.status(500).json({ error: "Could not find or create customer." });
     }
 
     const cleanCustomerNote = String(customerNote || "").trim();
@@ -496,7 +293,6 @@ export default async function handler(req, res) {
       customer,
       booking: bookingData.booking
     });
-
   } catch (error) {
     return res.status(500).json({
       error: "Server error",
