@@ -3,9 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <title>William Booking MVP</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 520px;
+      margin: 40px auto;
+      padding: 20px;
+      color: #111;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 16px;
+      margin-bottom: 6px;
+    }
+
+    select,
+    input,
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      background: #000;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+
+    .times {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .time-btn {
+      background: #fff;
+      color: #000;
+      border: 1px solid #111;
+      margin-top: 0;
+    }
+
+    .message {
+      margin-top: 20px;
+      color: #666;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>William Booking MVP</h1>
-  <p>If you can see this page, Vercel deployed successfully.</p>
+  <h1>Book William</h1>
+  <div class="sub">Choose a service and date to view available times.</div>
+
+  <label>Service</label>
+  <select id="serviceType">
+    <option value="scissors">Scissors Cut - $75</option>
+    <option value="haircut">Men’s Haircut - $60</option>
+  </select>
+
+  <label>Date</label>
+  <input id="date" type="date" value="2026-05-27" />
+
+  <button id="searchBtn">Search Available Times</button>
+
+  <div id="message" class="message"></div>
+  <div id="times" class="times"></div>
+
+  <script>
+    const searchBtn = document.getElementById("searchBtn");
+    const serviceTypeEl = document.getElementById("serviceType");
+    const dateEl = document.getElementById("date");
+    const messageEl = document.getElementById("message");
+    const timesEl = document.getElementById("times");
+
+    function formatPasadenaTime(utcString) {
+      const date = new Date(utcString);
+
+      return date.toLocaleTimeString("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    searchBtn.addEventListener("click", async () => {
+      const serviceType = serviceTypeEl.value;
+      const date = dateEl.value;
+
+      if (!date) {
+        messageEl.textContent = "Please choose a date.";
+        return;
+      }
+
+      searchBtn.disabled = true;
+      searchBtn.textContent = "Searching...";
+      messageEl.textContent = "";
+      timesEl.innerHTML = "";
+
+      try {
+        const response = await fetch("/api/search-availability", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            serviceType,
+            date
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          messageEl.textContent = "Error: " + JSON.stringify(data);
+          return;
+        }
+
+        const availabilities = data.availabilities || [];
+
+        if (availabilities.length === 0) {
+          messageEl.textContent = "No available times for this date.";
+          return;
+        }
+
+        messageEl.textContent = `Available times: ${availabilities.length}`;
+
+        availabilities.forEach(slot => {
+          const btn = document.createElement("button");
+          btn.className = "time-btn";
+          btn.textContent = formatPasadenaTime(slot.start_at);
+
+          btn.addEventListener("click", () => {
+            alert("You selected: " + formatPasadenaTime(slot.start_at));
+          });
+
+          timesEl.appendChild(btn);
+        });
+
+      } catch (error) {
+        messageEl.textContent = "Network error: " + error.message;
+      } finally {
+        searchBtn.disabled = false;
+        searchBtn.textContent = "Search Available Times";
+      }
+    });
+  </script>
 </body>
 </html>
