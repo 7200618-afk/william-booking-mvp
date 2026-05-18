@@ -566,6 +566,7 @@
         name: "William",
         order: 1,
         startDate: "2026-05-27",
+        specialWorkDates: ["2026-05-27"],
         days: ["mon", "thu", "fri", "sat", "sun"],
         image: "",
         defaultService: "haircut",
@@ -708,6 +709,12 @@
       const staff = STAFF_DATA[staffKey];
 
       if (!hasStarted(staffKey, date)) return false;
+
+      const dateIso = toIsoDateLocal(date);
+
+      if (staff.specialWorkDates && staff.specialWorkDates.includes(dateIso)) {
+        return true;
+      }
 
       const dow = daysShort[date.getDay()];
       return staff.days.includes(dow);
