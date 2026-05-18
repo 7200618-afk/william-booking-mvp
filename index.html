@@ -199,9 +199,7 @@
       line-height: 1.1;
     }
 
-    .staff-item.is-active .profile-link-under-card {
-      display: block;
-    }
+    .staff-item.is-active .profile-link-under-card { display: block; }
 
     .service-pills {
       display: grid;
@@ -286,7 +284,13 @@
       margin-bottom: 9px;
     }
 
-    .next-available-btn {
+    .empty-actions {
+      display: grid;
+      gap: 8px;
+    }
+
+    .next-available-btn,
+    .waitlist-btn {
       width: 100%;
       height: 40px;
       border: 0;
@@ -296,6 +300,15 @@
       font-size: 13px;
       font-weight: 900;
       cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .waitlist-btn {
+      background: #f1f1f1;
+      color: #111;
     }
 
     .slot-card {
@@ -481,20 +494,7 @@
       gap: 8px;
     }
 
-    .country-select {
-      width: 100%;
-      height: 42px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 0 8px;
-      font-size: 14px;
-      font-weight: 800;
-      outline: none;
-      background: #fff;
-    }
-
-    .country-select:focus { border-color: #000; }
-
+    .country-select,
     .booking-input {
       width: 100%;
       height: 42px;
@@ -507,7 +507,16 @@
       background: #fff;
     }
 
-    .booking-input:focus { border-color: #000; }
+    .country-select {
+      padding: 0 8px;
+      font-weight: 800;
+    }
+
+    .country-select:focus,
+    .booking-input:focus,
+    .booking-textarea:focus {
+      border-color: #000;
+    }
 
     .booking-textarea {
       width: 100%;
@@ -522,8 +531,6 @@
       resize: vertical;
       font-family: Arial, sans-serif;
     }
-
-    .booking-textarea:focus { border-color: #000; }
 
     .sms-consent-text {
       color: #777;
@@ -714,27 +721,20 @@
 
     @media (min-width: 761px) {
       .page { padding-top: 24px; }
-
       .top-card,
       .slot-card { border-radius: 18px; }
-
       .top-card { padding: 14px; }
-
       .staff-item { flex-basis: 94px; }
-
       .staff-card {
         width: 94px;
         min-height: 128px;
       }
-
       .time-btn {
         min-height: 48px;
         font-size: 15px;
       }
-
       .service-name { font-size: 14px; }
       .service-meta { font-size: 11px; }
-
       .booking-modal { align-items: center; }
     }
   </style>
@@ -766,9 +766,16 @@
         <div id="emptyState" class="empty-state">
           <div id="emptyTitle" class="empty-title"></div>
           <div id="emptySub" class="empty-sub"></div>
-          <button id="nextAvailableBtn" class="next-available-btn" type="button">
-            Go to next available date
-          </button>
+
+          <div class="empty-actions">
+            <button id="nextAvailableBtn" class="next-available-btn" type="button">
+              Go to next available date
+            </button>
+
+            <a id="waitlistBtn" class="waitlist-btn" target="_blank" rel="noopener noreferrer">
+              Join Waitlist
+            </a>
+          </div>
         </div>
       </div>
 
@@ -846,89 +853,12 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { STAFF_DATA, BUSINESS } from "./staff-config.js";
+
     const daysShort = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     const daysDisplay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const CUSTOMER_STORAGE_KEY = "bsideu_pasadena_customer_info";
-
-    const STAFF_DATA = {
-      William: {
-        name: "William",
-        order: 1,
-        startDate: "2026-05-27",
-        specialWorkDates: ["2026-05-27"],
-        days: ["mon", "thu", "fri", "sat", "sun"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2177_1779099876.jpeg?width=400&optimize=medium",
-        defaultService: "haircut",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 50 },
-          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 50 }
-        }
-      },
-
-      Ryan: {
-        name: "Ryan",
-        order: 2,
-        days: ["mon", "tue", "thu", "fri", "sat", "sun"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/123121212_1764920283.JPG?width=400&optimize=medium",
-        defaultService: "haircut",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 45, duration_minutes: 45 },
-          scissors: { label: "Scissors Cut", price: 60, duration_minutes: 45 }
-        }
-      },
-
-      Ken: {
-        name: "Ken",
-        order: 3,
-        days: ["tue", "wed", "fri", "sat", "sun"],
-        image: "https://appointments-production-f.squarecdn.com/files/8ab010be3ad4f51892e1c75509dc0572/original.jpeg",
-        defaultService: "haircut",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 50, duration_minutes: 40 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 }
-        }
-      },
-
-      Fiona: {
-        name: "Fiona",
-        order: 4,
-        days: ["mon", "tue", "wed", "fri", "sat"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/fiona_1744180262.jpeg",
-        defaultService: "haircut",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 40 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 },
-          perm: { label: "Perm", price: "220+", duration_minutes: 120 },
-          color_gray: { label: "Cover Gray", price: 65, duration_minutes: 40 },
-          color_full: { label: "Full Color", price: 120, duration_minutes: 120 }
-        }
-      },
-
-      Nami: {
-        name: "Nami",
-        order: 5,
-        days: ["tue", "wed", "thu", "sun"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/nami_1744180260.jpeg",
-        defaultService: "haircut",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 50 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 50 }
-        }
-      },
-
-      Jacob: {
-        name: "Jacob",
-        order: 999,
-        days: ["wed", "thu", "fri", "sat"],
-        image: "https://appointments-production-f.squarecdn.com/files/fa093c26c9f36366886b8ed1a776878a/original.jpeg",
-        defaultService: "haircut",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 45 },
-          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 45 }
-        }
-      }
-    };
 
     const staffStripEl = document.getElementById("staffStrip");
     const servicePillsEl = document.getElementById("servicePills");
@@ -941,15 +871,14 @@
     const emptyTitleEl = document.getElementById("emptyTitle");
     const emptySubEl = document.getElementById("emptySub");
     const nextAvailableBtn = document.getElementById("nextAvailableBtn");
+    const waitlistBtn = document.getElementById("waitlistBtn");
     const slotCardEl = document.getElementById("slotCard");
     const slotCountEl = document.getElementById("slotCount");
     const slotGroupsEl = document.getElementById("slotGroups");
-
     const bookingModalEl = document.getElementById("bookingModal");
     const bookingModalCardEl = document.getElementById("bookingModalCard");
     const closeBookingModalBtn = document.getElementById("closeBookingModal");
     const confirmBookingBtn = document.getElementById("confirmBookingBtn");
-
     const originalBookingModalHTML = bookingModalCardEl.innerHTML;
 
     let currentDate = new Date();
@@ -1037,11 +966,6 @@
       return `${dow} ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     }
 
-    function updateDateUI() {
-      dateInputEl.value = toIsoDateLocal(currentDate);
-      dateLabelEl.textContent = formatDateLabel(currentDate);
-    }
-
     function hasStarted(staffKey, date) {
       const staff = STAFF_DATA[staffKey];
       if (!staff.startDate) return true;
@@ -1050,17 +974,19 @@
 
     function isWorking(staffKey, date) {
       const staff = STAFF_DATA[staffKey];
-
       if (!hasStarted(staffKey, date)) return false;
 
       const dateIso = toIsoDateLocal(date);
 
-      if (staff.specialWorkDates && staff.specialWorkDates.includes(dateIso)) {
-        return true;
-      }
+      if (staff.specialWorkDates && staff.specialWorkDates.includes(dateIso)) return true;
 
       const dow = daysShort[date.getDay()];
       return staff.days.includes(dow);
+    }
+
+    function updateDateUI() {
+      dateInputEl.value = toIsoDateLocal(currentDate);
+      dateLabelEl.textContent = formatDateLabel(currentDate);
     }
 
     function getStatusCacheKey(staffKey, serviceType, dateObj) {
@@ -1080,11 +1006,8 @@
         const cached = staffStatusCache[cacheKey];
 
         if (isWorking(key, date)) {
-          if (cached && cached.isFull) {
-            workingFull.push(key);
-          } else {
-            workingWithOpenings.push(key);
-          }
+          if (cached && cached.isFull) workingFull.push(key);
+          else workingWithOpenings.push(key);
         } else {
           off.push(key);
         }
@@ -1106,9 +1029,7 @@
     }
 
     function formatPasadenaTime(utcString) {
-      const date = new Date(utcString);
-
-      return date.toLocaleTimeString("en-US", {
+      return new Date(utcString).toLocaleTimeString("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         minute: "2-digit"
@@ -1116,13 +1037,11 @@
     }
 
     function getPasadenaHour(utcString) {
-      const date = new Date(utcString);
-
       const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         hour12: false
-      }).formatToParts(date);
+      }).formatToParts(new Date(utcString));
 
       const hourPart = parts.find(part => part.type === "hour");
       return Number(hourPart.value);
@@ -1146,7 +1065,6 @@
         if (!isWorking(staffKey, d)) continue;
 
         dates.push(d);
-
         if (dates.length >= limit) break;
       }
 
@@ -1165,7 +1083,6 @@
       });
 
       const data = await response.json();
-
       if (!response.ok) return [];
 
       return data.availabilities || [];
@@ -1173,7 +1090,6 @@
 
     async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
       const candidateDates = getCandidateWorkingDates(staffKey, fromDate, startTomorrow, 8);
-
       if (!candidateDates.length) return null;
 
       const results = await Promise.all(
@@ -1197,12 +1113,19 @@
 
       if (nextResult && nextResult.date) {
         nextAvailableTargetDate = nextResult.date;
-        nextAvailableBtn.style.display = "block";
+        nextAvailableBtn.style.display = "flex";
         nextAvailableBtn.textContent =
           `Next available · ${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`;
       } else {
         nextAvailableTargetDate = null;
         nextAvailableBtn.style.display = "none";
+      }
+
+      if (BUSINESS.waitlistUrl) {
+        waitlistBtn.style.display = "flex";
+        waitlistBtn.href = BUSINESS.waitlistUrl;
+      } else {
+        waitlistBtn.style.display = "none";
       }
 
       emptyStateEl.classList.add("is-visible");
@@ -1386,21 +1309,19 @@
         if (working) card.classList.add("is-working");
         else card.classList.add("is-off");
 
-        if (cached && cached.isFull && working) {
-          card.classList.add("is-full");
-        }
+        if (cached && cached.isFull && working) card.classList.add("is-full");
 
         const avatarHTML = staff.image
-          ? `<div class="avatar"><img src="${staff.image}" alt="${staff.name}"></div>`
-          : `<div class="avatar">${staff.name.slice(0, 1)}</div>`;
+          ? `<div class="avatar"><img src="${staff.image}" alt="${escapeHTML(staff.name)}"></div>`
+          : `<div class="avatar">${escapeHTML(staff.name.slice(0, 1))}</div>`;
 
         const statusText = cached ? cached.text : "Checking...";
         const profileUrl = getProfileUrl(staffKey);
 
         card.innerHTML = `
           ${avatarHTML}
-          <div class="staff-name">${staff.name}</div>
-          <div class="staff-status">${statusText}</div>
+          <div class="staff-name">${escapeHTML(staff.name)}</div>
+          <div class="staff-status">${escapeHTML(statusText)}</div>
         `;
 
         const profileLink = document.createElement("a");
@@ -1448,13 +1369,11 @@
         btn.type = "button";
         btn.className = "service-pill";
 
-        if (serviceKey === selectedServiceKey) {
-          btn.classList.add("is-active");
-        }
+        if (serviceKey === selectedServiceKey) btn.classList.add("is-active");
 
         btn.innerHTML = `
-          <span class="service-name">${service.label}</span>
-          <span class="service-meta">${formatPrice(service.price)} · ${service.duration_minutes} min</span>
+          <span class="service-name">${escapeHTML(service.label)}</span>
+          <span class="service-meta">${escapeHTML(formatPrice(service.price))} · ${service.duration_minutes} min</span>
         `;
 
         btn.addEventListener("click", () => {
@@ -1485,7 +1404,6 @@
 
       Object.keys(groups).forEach(groupName => {
         const slots = groups[groupName];
-
         if (!slots.length) return;
 
         const groupEl = document.createElement("div");
@@ -1602,7 +1520,6 @@
         slotCardEl.classList.add("is-visible");
 
         renderSlots(availabilities);
-
       } catch (error) {
         messageEl.textContent = "Network error: " + error.message;
       }
@@ -1717,7 +1634,9 @@
 
         const serviceForCalendar = STAFF_DATA[selectedStaffKey].services[selectedServiceKey];
         const startDateForCalendar = new Date(selectedSlot.start_at);
-        const endDateForCalendar = new Date(startDateForCalendar.getTime() + serviceForCalendar.duration_minutes * 60 * 1000);
+        const endDateForCalendar = new Date(
+          startDateForCalendar.getTime() + serviceForCalendar.duration_minutes * 60 * 1000
+        );
 
         function toGoogleCalendarDate(date) {
           return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
@@ -1728,7 +1647,7 @@
           `&text=${encodeURIComponent(successService)}` +
           `&dates=${toGoogleCalendarDate(startDateForCalendar)}/${toGoogleCalendarDate(endDateForCalendar)}` +
           `&details=${encodeURIComponent("B SIDE U Pasadena appointment with " + successStylist)}` +
-          `&location=${encodeURIComponent("350 S Lake Ave Ste 115, Pasadena, CA 91101")}`;
+          `&location=${encodeURIComponent(BUSINESS.address)}`;
 
         bookingModalCardEl.innerHTML = `
           <div class="success-page">
@@ -1769,13 +1688,13 @@
 
               <div class="location-box">
                 <div>
-                  <div class="location-name">B SIDE U - Pasadena</div>
-                  <div class="location-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
+                  <div class="location-name">${escapeHTML(BUSINESS.name)}</div>
+                  <div class="location-address">${escapeHTML(BUSINESS.address)}</div>
                 </div>
 
                 <a
                   class="direction-btn"
-                  href="https://www.google.com/maps/search/?api=1&query=350%20S%20Lake%20Ave%20Ste%20115%2C%20Pasadena%2C%20CA%2091101"
+                  href="${BUSINESS.mapUrl}"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -1797,7 +1716,6 @@
         staffStatusCache = {};
         renderStaffStrip(true);
         searchAvailability();
-
       } catch (error) {
         statusEl.textContent = error.message || "Booking failed. Please try again.";
         statusEl.className = "booking-status booking-error";
@@ -1865,7 +1783,6 @@
 
     nextAvailableBtn.addEventListener("click", () => {
       if (!nextAvailableTargetDate) return;
-
       currentDate = new Date(nextAvailableTargetDate);
       refreshForDateChange();
     });
