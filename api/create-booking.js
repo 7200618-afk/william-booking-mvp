@@ -202,7 +202,6 @@ export default async function handler(req, res) {
         return `+${digits}`;
       }
 
-      // 其他国际号码兜底
       return `+${digits}`;
     }
 
@@ -215,6 +214,10 @@ export default async function handler(req, res) {
 
       if (detail === "The string did not match the expected pattern.") {
         return "Phone number or email format is not valid. Please check and try again.";
+      }
+
+      if (detail === "Min query range is 1 hour.") {
+        return "Availability check range was too short. Please try again.";
       }
 
       return detail;
@@ -284,8 +287,15 @@ export default async function handler(req, res) {
         };
       }
 
+      // Square 要求 Search Availability 的时间范围最少 1 小时
+      const minimumSearchMinutes = 60;
+      const searchMinutes = Math.max(
+        Number(service.duration_minutes || 0),
+        minimumSearchMinutes
+      );
+
       const endDate = new Date(
-        startDate.getTime() + service.duration_minutes * 60 * 1000
+        startDate.getTime() + searchMinutes * 60 * 1000
       );
 
       const response = await fetch(
