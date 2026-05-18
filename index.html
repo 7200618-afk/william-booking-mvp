@@ -25,35 +25,80 @@
       padding-bottom: 30px;
     }
 
-    .header {
-      padding: 6px 2px 10px;
-    }
-
-    h1 {
-      font-size: 26px;
-      line-height: 1.05;
-      margin: 0 0 4px;
-      letter-spacing: -0.6px;
-      font-weight: 900;
-    }
-
-    .sub {
-      color: #666;
-      font-size: 13px;
-      line-height: 1.3;
-      margin: 0;
-    }
-
-    .booking-layout {
-      display: block;
-    }
-
+    .hero-card,
     .top-card,
-    .slot-card {
+    .slot-card,
+    .policy-card {
       border: 1px solid #e8e8e8;
       border-radius: 15px;
       background: #fff;
       box-shadow: 0 5px 18px rgba(0,0,0,0.035);
+    }
+
+    .hero-card {
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .hero-kicker {
+      font-size: 13px;
+      color: #666;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 28px;
+      line-height: 1.05;
+      margin: 0 0 6px;
+      letter-spacing: -0.6px;
+      font-weight: 900;
+    }
+
+    .hero-hours {
+      font-size: 13px;
+      font-weight: 800;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      line-height: 1.35;
+      color: #333;
+      margin: 0 0 10px;
+    }
+
+    .hero-address {
+      font-size: 13px;
+      line-height: 1.35;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hero-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: #f5f5f5;
+      color: #111;
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      border: 1px solid #e5e5e5;
+    }
+
+    .booking-layout {
+      display: block;
     }
 
     .top-card {
@@ -140,8 +185,8 @@
     }
 
     .staff-card {
-      flex: 0 0 82px;
-      min-height: 132px;
+      flex: 0 0 84px;
+      min-height: 144px;
       border: 1px solid #e6e6e6;
       border-radius: 14px;
       background: #fff;
@@ -204,6 +249,20 @@
       line-height: 1.1;
     }
 
+    .profile-link-in-card {
+      display: none;
+      margin-top: 5px;
+      color: inherit;
+      font-size: 10px;
+      font-weight: 900;
+      text-decoration: underline;
+      line-height: 1.1;
+    }
+
+    .staff-card.is-active .profile-link-in-card {
+      display: block;
+    }
+
     .staff-status {
       margin-top: 5px;
       font-size: 10px;
@@ -231,20 +290,6 @@
 
     .staff-card.is-active.is-full .staff-status {
       color: #ffd39a;
-    }
-
-    .profile-link-in-card {
-      display: none;
-      margin-top: 5px;
-      color: inherit;
-      font-size: 10px;
-      font-weight: 900;
-      text-decoration: underline;
-      line-height: 1.1;
-    }
-
-    .staff-card.is-active .profile-link-in-card {
-      display: block;
     }
 
     .service-pills {
@@ -480,26 +525,86 @@
       line-height: 1.3;
     }
 
+    .policy-card {
+      margin-top: 12px;
+      padding: 14px;
+    }
+
+    .policy-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin: 0 0 4px;
+    }
+
+    .policy-sub {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .policy-list {
+      display: grid;
+      gap: 7px;
+      margin: 0 0 12px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .policy-list li {
+      border: 1px solid #eee;
+      border-radius: 11px;
+      padding: 9px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      background: #fafafa;
+    }
+
+    .policy-extra-title {
+      font-size: 13px;
+      font-weight: 900;
+      margin: 12px 0 6px;
+    }
+
+    .policy-extra {
+      margin: 0;
+      padding-left: 18px;
+      color: #555;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .policy-extra li {
+      margin-bottom: 5px;
+    }
+
+    .policy-agree {
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #111;
+    }
+
     @media (min-width: 761px) {
       .page {
         padding-top: 24px;
       }
 
-      .header {
-        padding-bottom: 14px;
+      .hero-card {
         text-align: center;
+        padding: 20px;
+      }
+
+      .hero-links {
+        justify-content: center;
       }
 
       h1 {
-        font-size: 32px;
-      }
-
-      .sub {
-        font-size: 14px;
+        font-size: 34px;
       }
 
       .top-card,
-      .slot-card {
+      .slot-card,
+      .policy-card {
         border-radius: 18px;
       }
 
@@ -509,7 +614,7 @@
 
       .staff-card {
         flex-basis: 94px;
-        min-height: 138px;
+        min-height: 146px;
       }
 
       .time-btn {
@@ -530,9 +635,16 @@
 
 <body>
   <div class="page">
-    <div class="header">
+    <div class="hero-card">
+      <div class="hero-kicker">Have a Good Hair Day</div>
       <h1>Book Pasadena</h1>
-      <p class="sub">Pick a stylist, choose a service, and select an available time.</p>
+      <div class="hero-hours">Opening Monday 10:00 am • (213) 273-5462</div>
+      <p class="hero-desc">Get a haircut that suits your hair type, lifestyle, and look.</p>
+      <div class="hero-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
+      <div class="hero-links">
+        <a class="hero-link" href="https://www.google.com/maps/search/?api=1&query=350%20S%20Lake%20Ave%20Ste%20115%2C%20Pasadena%2C%20CA%2091101" target="_blank" rel="noopener noreferrer">Parking Direction</a>
+        <a class="hero-link" href="https://bsideuhair.com/san-gabriel" target="_blank" rel="noopener noreferrer">Switch to San Gabriel</a>
+      </div>
     </div>
 
     <div class="booking-layout">
@@ -581,6 +693,28 @@
           <div class="note">Next step: customer name, phone, and email.</div>
         </div>
       </div>
+    </div>
+
+    <div class="policy-card">
+      <h2 class="policy-title">Appointment Policy</h2>
+      <div class="policy-sub">Quick summary of our appointment rules.</div>
+
+      <ul class="policy-list">
+        <li>Free changes ≥ 3 hours</li>
+        <li>Late changes &lt; 3 hours = 25%</li>
+        <li>Late arrival &gt; 10 min = may reschedule</li>
+        <li>No-show = 50%</li>
+      </ul>
+
+      <div class="policy-extra-title">Extra notes:</div>
+      <ul class="policy-extra">
+        <li>If you are not happy with your haircut, please contact us within 1 day for a complimentary fix.</li>
+        <li>Requests made after 1 day are not eligible for refund or a free fix.</li>
+        <li>We may waive the fee one time for your first late cancellation or no-show as a courtesy.</li>
+        <li>We understand emergencies happen. Please let us know as soon as you can so we can help.</li>
+      </ul>
+
+      <div class="policy-agree">By booking, you agree to this policy.</div>
     </div>
   </div>
 
