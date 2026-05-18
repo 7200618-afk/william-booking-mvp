@@ -277,6 +277,44 @@
       word-break: break-word;
     }
 
+    .empty-state {
+      display: none;
+      margin-top: 8px;
+      border: 1px solid #e8e8e8;
+      border-radius: 13px;
+      padding: 10px;
+      background: #fafafa;
+    }
+
+    .empty-state.is-visible {
+      display: block;
+    }
+
+    .empty-title {
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .empty-sub {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.35;
+      margin-bottom: 9px;
+    }
+
+    .next-available-btn {
+      width: 100%;
+      height: 40px;
+      border: 0;
+      border-radius: 10px;
+      background: #000;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
     .slot-card {
       display: none;
       margin-top: 10px;
@@ -458,6 +496,14 @@
       <div id="servicePills" class="service-pills"></div>
 
       <div id="message" class="message"></div>
+
+      <div id="emptyState" class="empty-state">
+        <div id="emptyTitle" class="empty-title"></div>
+        <div id="emptySub" class="empty-sub"></div>
+        <button id="nextAvailableBtn" class="next-available-btn" type="button">
+          Go to next available date
+        </button>
+      </div>
     </div>
 
     <div id="slotCard" class="slot-card">
@@ -569,6 +615,10 @@
     const prevDayBtn = document.getElementById("prevDay");
     const nextDayBtn = document.getElementById("nextDay");
     const messageEl = document.getElementById("message");
+    const emptyStateEl = document.getElementById("emptyState");
+    const emptyTitleEl = document.getElementById("emptyTitle");
+    const emptySubEl = document.getElementById("emptySub");
+    const nextAvailableBtn = document.getElementById("nextAvailableBtn");
     const slotCardEl = document.getElementById("slotCard");
     const slotCountEl = document.getElementById("slotCount");
     const slotGroupsEl = document.getElementById("slotGroups");
@@ -582,6 +632,7 @@
     let selectedServiceKey = "";
     let selectedSlot = null;
     let statusRequestId = 0;
+    let nextAvailableTargetDate = null;
 
     function toIsoDateLocal(date) {
       const y = date.getFullYear();
@@ -683,7 +734,7 @@
     }
 
     function getNextWorkingDate(staffKey, fromDate) {
-      for (let i = 0; i <= 21; i++) {
+      for (let i = 0; i <= 45; i++) {
         const d = new Date(fromDate);
         d.setDate(d.getDate() + i);
 
@@ -693,10 +744,7 @@
       return null;
     }
 
-    async function fetchFirstOpening(staffKey, dateObj) {
-      const staff = STAFF_DATA[staffKey];
-      const serviceType = staff.defaultService;
-
+    async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
       const response = await fetch("/api/search-availability", {
         method: "POST",
         headers: {
@@ -711,12 +759,61 @@
 
       const data = await response.json();
 
-      if (!response.ok) return null;
+      if (!response.ok) {
+        return [];
+      }
 
-      const availabilities = data.availabilities || [];
-      if (!availabilities.length) return null;
+      return data.availabilities || [];
+    }
 
-      return availabilities[0].start_at;
+    async function fetchFirstOpening(staffKey, dateObj) {
+      const staff = STAFF_DATA[staffKey];
+      const serviceType = staff.defaultService;
+      const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
+
+      if (!openings.length) return null;
+
+      return openings[0].start_at;
+    }
+
+    async function findNextAvailableDate(staffKey, serviceType, fromDate, startTomorrow) {
+      for (let i = startTomorrow ? 1 : 0; i <= 45; i++) {
+        const d = new Date(fromDate);
+        d.setDate(d.getDate() + i);
+
+        if (!hasStarted(staffKey, d)) continue;
+        if (!isWorking(staffKey, d)) continue;
+
+        const openings = await fetchAvailabilityFor(staffKey, serviceType, d);
+
+        if (openings.length) {
+          return {
+            date: d,
+            firstOpening: openings[0].start_at,
+            openings
+          };
+        }
+      }
+
+      return null;
+    }
+
+    function showEmptyState(title, sub, nextResult) {
+      emptyTitleEl.textContent = title;
+      emptySubEl.textContent = sub || "";
+
+      if (nextResult && nextResult.date) {
+        nextAvailableTargetDate = nextResult.date;
+
+        nextAvailableBtn.style.display = "block";
+        nextAvailableBtn.textContent =
+          `Next available · ${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`;
+      } else {
+        nextAvailableTargetDate = null;
+        nextAvailableBtn.style.display = "none";
+      }
+
+      emptyStateEl.classList.add("is-visible");
     }
 
     async function loadStaffStatuses(requestId) {
@@ -740,11 +837,7 @@
           return;
         }
 
-        if (isWorking(staffKey, currentDate)) {
-          statusEl.textContent = "Checking...";
-        } else {
-          statusEl.textContent = `${formatShortDate(nextWorkingDate)}`;
-        }
+        statusEl.textContent = "Checking...";
       });
 
       for (const card of cards) {
@@ -767,7 +860,11 @@
           if (firstOpening) {
             statusEl.textContent = `${formatShortDate(nextWorkingDate)} · ${formatPasadenaTime(firstOpening)}`;
           } else {
-            statusEl.textContent = `${formatShortDate(nextWorkingDate)} · No time`;
+            if (isWorking(staffKey, currentDate)) {
+              statusEl.textContent = "Fully booked";
+            } else {
+              statusEl.textContent = `${formatShortDate(nextWorkingDate)} · Full`;
+            }
           }
         } catch (error) {
           if (requestId !== statusRequestId) return;
@@ -779,16 +876,18 @@
     function updateSelectedStaffRow() {
       const staff = STAFF_DATA[selectedStaffKey];
 
-      selectedStaffNameEl.textContent = `${staff.name}`;
+      selectedStaffNameEl.textContent = staff.name;
       profileLinkEl.href = getProfileUrl(selectedStaffKey);
     }
 
     function clearResults() {
       selectedSlot = null;
+      nextAvailableTargetDate = null;
       messageEl.textContent = "";
       slotGroupsEl.innerHTML = "";
       slotCardEl.classList.remove("is-visible");
       selectedPanelEl.classList.remove("is-visible");
+      emptyStateEl.classList.remove("is-visible");
     }
 
     function clearSelection() {
@@ -846,11 +945,6 @@
           statusRequestId++;
           loadStaffStatuses(statusRequestId);
 
-          if (!hasStarted(staffKey, currentDate)) {
-            messageEl.textContent = `${STAFF_DATA[staffKey].name} starts on 5/27. Please choose 5/27 or later.`;
-            return;
-          }
-
           searchAvailability();
         });
 
@@ -890,12 +984,6 @@
           selectedServiceKey = serviceKey;
           renderServicePills();
           clearResults();
-
-          if (!hasStarted(selectedStaffKey, currentDate)) {
-            messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
-            return;
-          }
-
           searchAvailability();
         });
 
@@ -967,39 +1055,80 @@
     async function searchAvailability() {
       if (!selectedStaffKey || !selectedServiceKey) return;
 
-      const date = toIsoDateLocal(currentDate);
+      const staff = STAFF_DATA[selectedStaffKey];
+      const service = staff.services[selectedServiceKey];
 
       messageEl.textContent = "Checking available times...";
       slotGroupsEl.innerHTML = "";
       slotCardEl.classList.remove("is-visible");
       selectedPanelEl.classList.remove("is-visible");
+      emptyStateEl.classList.remove("is-visible");
 
       try {
-        const response = await fetch("/api/search-availability", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            staffKey: selectedStaffKey,
-            serviceType: selectedServiceKey,
-            date
-          })
-        });
+        if (!hasStarted(selectedStaffKey, currentDate)) {
+          messageEl.textContent = "";
 
-        const data = await response.json();
+          const nextResult = await findNextAvailableDate(
+            selectedStaffKey,
+            selectedServiceKey,
+            currentDate,
+            false
+          );
 
-        if (!response.ok) {
-          messageEl.textContent = "Error: " + JSON.stringify(data);
+          showEmptyState(
+            `${staff.name} starts on 5/27`,
+            "Please choose 5/27 or later.",
+            nextResult
+          );
+
           return;
         }
 
-        const availabilities = data.availabilities || [];
+        if (!isWorking(selectedStaffKey, currentDate)) {
+          messageEl.textContent = "";
+
+          const nextResult = await findNextAvailableDate(
+            selectedStaffKey,
+            selectedServiceKey,
+            currentDate,
+            true
+          );
+
+          showEmptyState(
+            `${staff.name} is not working today`,
+            nextResult
+              ? `Next available for ${service.label}:`
+              : `No available date found for ${service.label}.`,
+            nextResult
+          );
+
+          return;
+        }
+
+        const availabilities = await fetchAvailabilityFor(
+          selectedStaffKey,
+          selectedServiceKey,
+          currentDate
+        );
 
         if (!availabilities.length) {
-          const staff = STAFF_DATA[selectedStaffKey];
-          const service = staff.services[selectedServiceKey];
-          messageEl.textContent = `${staff.name} has no openings for ${service.label} on this date.`;
+          messageEl.textContent = "";
+
+          const nextResult = await findNextAvailableDate(
+            selectedStaffKey,
+            selectedServiceKey,
+            currentDate,
+            true
+          );
+
+          showEmptyState(
+            "Fully booked today",
+            nextResult
+              ? `Next available for ${staff.name} · ${service.label}:`
+              : `No available date found for ${staff.name} · ${service.label}.`,
+            nextResult
+          );
+
           return;
         }
 
@@ -1034,12 +1163,6 @@
       renderServicePills();
       updateSelectedStaffRow();
       clearResults();
-
-      if (!hasStarted(selectedStaffKey, currentDate)) {
-        messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
-        return;
-      }
-
       searchAvailability();
     }
 
@@ -1056,6 +1179,13 @@
     dateInputEl.addEventListener("change", () => {
       if (!dateInputEl.value) return;
       currentDate = fromIsoDateLocal(dateInputEl.value);
+      refreshForDateChange();
+    });
+
+    nextAvailableBtn.addEventListener("click", () => {
+      if (!nextAvailableTargetDate) return;
+
+      currentDate = new Date(nextAvailableTargetDate);
       refreshForDateChange();
     });
 
@@ -1076,12 +1206,7 @@
     renderStaffStrip();
     renderServicePills();
     updateSelectedStaffRow();
-
-    if (!hasStarted(selectedStaffKey, currentDate)) {
-      messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
-    } else {
-      searchAvailability();
-    }
+    searchAvailability();
   </script>
 </body>
 </html>
