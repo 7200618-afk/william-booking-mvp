@@ -412,63 +412,114 @@
       color: #fff;
     }
 
-    .selected-panel {
+    .booking-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
       display: none;
-      margin-top: 14px;
-      border: 1px solid #111;
-      border-radius: 14px;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0,0,0,0.42);
       padding: 12px;
-      background: #fafafa;
     }
 
-    .selected-panel.is-visible {
-      display: block;
+    .booking-modal.is-visible {
+      display: flex;
     }
 
-    .selected-label {
-      font-size: 11px;
-      color: #666;
-      font-weight: 900;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+    .booking-modal-card {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 16px 60px rgba(0,0,0,0.25);
+      animation: modalUp 0.18s ease-out;
     }
 
-    .selected-time {
-      font-size: 22px;
-      font-weight: 900;
-      margin-bottom: 4px;
+    @keyframes modalUp {
+      from {
+        transform: translateY(18px);
+        opacity: 0.75;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
-    .selected-detail {
-      color: #666;
-      font-size: 13px;
-      font-weight: 700;
-      line-height: 1.35;
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
       margin-bottom: 10px;
     }
 
-    .continue-btn {
-      width: 100%;
-      height: 48px;
-      border: 0;
-      border-radius: 11px;
-      background: #000;
-      color: #fff;
-      font-size: 15px;
+    .modal-title {
+      font-size: 19px;
       font-weight: 900;
-      cursor: pointer;
+      margin: 0;
     }
 
-    .continue-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
+    .modal-close {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 50%;
+      background: #f2f2f2;
+      color: #111;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .booking-summary {
+      border: 1px solid #eee;
+      border-radius: 13px;
+      background: #fafafa;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .summary-row:last-child {
+      border-bottom: 0;
+    }
+
+    .summary-label {
+      color: #666;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .summary-value {
+      color: #111;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: right;
     }
 
     .booking-form {
       display: grid;
       gap: 8px;
       margin-top: 10px;
+    }
+
+    .name-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
 
     .booking-input {
@@ -485,6 +536,23 @@
 
     .booking-input:focus {
       border-color: #000;
+    }
+
+    .confirm-btn {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 11px;
+      background: #000;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .confirm-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     .booking-status {
@@ -538,6 +606,10 @@
       .service-meta {
         font-size: 11px;
       }
+
+      .booking-modal {
+        align-items: center;
+      }
     }
   </style>
 </head>
@@ -581,24 +653,46 @@
         </div>
 
         <div id="slotGroups"></div>
+      </div>
+    </div>
+  </div>
 
-        <div id="selectedPanel" class="selected-panel">
-          <div class="selected-label">Selected appointment</div>
-          <div id="selectedTime" class="selected-time"></div>
-          <div id="selectedDetail" class="selected-detail"></div>
+  <div id="bookingModal" class="booking-modal">
+    <div class="booking-modal-card">
+      <div class="modal-top">
+        <h2 class="modal-title">Confirm Booking</h2>
+        <button id="closeBookingModal" class="modal-close" type="button">×</button>
+      </div>
 
-          <div class="booking-form">
-            <input id="customerName" class="booking-input" type="text" placeholder="Name" autocomplete="name" />
-            <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone" autocomplete="tel" />
-            <input id="customerEmail" class="booking-input" type="email" placeholder="Email optional" autocomplete="email" />
-
-            <button id="confirmBookingBtn" class="continue-btn" type="button">
-              Confirm Booking
-            </button>
-
-            <div id="bookingStatus" class="booking-status"></div>
-          </div>
+      <div class="booking-summary">
+        <div class="summary-row">
+          <div class="summary-label">Time</div>
+          <div id="modalTime" class="summary-value"></div>
         </div>
+        <div class="summary-row">
+          <div class="summary-label">Stylist</div>
+          <div id="modalStylist" class="summary-value"></div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-label">Service</div>
+          <div id="modalService" class="summary-value"></div>
+        </div>
+      </div>
+
+      <div class="booking-form">
+        <div class="name-row">
+          <input id="firstName" class="booking-input" type="text" placeholder="First name" autocomplete="given-name" />
+          <input id="lastName" class="booking-input" type="text" placeholder="Last name" autocomplete="family-name" />
+        </div>
+
+        <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone number" autocomplete="tel" />
+        <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
+
+        <button id="confirmBookingBtn" class="confirm-btn" type="button">
+          Confirm Booking
+        </button>
+
+        <div id="bookingStatus" class="booking-status"></div>
       </div>
     </div>
   </div>
@@ -700,11 +794,15 @@
     const slotCardEl = document.getElementById("slotCard");
     const slotCountEl = document.getElementById("slotCount");
     const slotGroupsEl = document.getElementById("slotGroups");
-    const selectedPanelEl = document.getElementById("selectedPanel");
-    const selectedTimeEl = document.getElementById("selectedTime");
-    const selectedDetailEl = document.getElementById("selectedDetail");
 
-    const customerNameEl = document.getElementById("customerName");
+    const bookingModalEl = document.getElementById("bookingModal");
+    const closeBookingModalBtn = document.getElementById("closeBookingModal");
+    const modalTimeEl = document.getElementById("modalTime");
+    const modalStylistEl = document.getElementById("modalStylist");
+    const modalServiceEl = document.getElementById("modalService");
+
+    const firstNameEl = document.getElementById("firstName");
+    const lastNameEl = document.getElementById("lastName");
     const customerPhoneEl = document.getElementById("customerPhone");
     const customerEmailEl = document.getElementById("customerEmail");
     const confirmBookingBtn = document.getElementById("confirmBookingBtn");
@@ -743,6 +841,11 @@
     function formatShortDate(date) {
       const dow = daysDisplay[date.getDay()];
       return `${dow} ${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
+    function formatFullDate(date) {
+      const dow = daysDisplay[date.getDay()];
+      return `${dow} ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     }
 
     function updateDateUI() {
@@ -993,45 +1096,51 @@
       renderStaffStrip(false);
     }
 
+    function clearBookingModal() {
+      bookingStatusEl.textContent = "";
+      bookingStatusEl.className = "booking-status";
+      confirmBookingBtn.disabled = false;
+      confirmBookingBtn.textContent = "Confirm Booking";
+    }
+
+    function openBookingModal(slot) {
+      selectedSlot = slot;
+      clearBookingModal();
+
+      const staff = STAFF_DATA[selectedStaffKey];
+      const service = staff.services[selectedServiceKey];
+
+      modalTimeEl.textContent = `${formatFullDate(currentDate)} · ${formatPasadenaTime(slot.start_at)} · Pasadena Time`;
+      modalStylistEl.textContent = staff.name;
+      modalServiceEl.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
+
+      bookingModalEl.classList.add("is-visible");
+      setTimeout(() => firstNameEl.focus(), 80);
+    }
+
+    function closeBookingModal() {
+      bookingModalEl.classList.remove("is-visible");
+      clearBookingModal();
+    }
+
     function clearResults() {
       selectedSlot = null;
       nextAvailableTargetDate = null;
       messageEl.textContent = "";
       slotGroupsEl.innerHTML = "";
       slotCardEl.classList.remove("is-visible");
-      selectedPanelEl.classList.remove("is-visible");
       emptyStateEl.classList.remove("is-visible");
-
-      if (bookingStatusEl) {
-        bookingStatusEl.textContent = "";
-        bookingStatusEl.className = "booking-status";
-      }
-
-      if (confirmBookingBtn) {
-        confirmBookingBtn.disabled = false;
-        confirmBookingBtn.textContent = "Confirm Booking";
-      }
+      closeBookingModal();
     }
 
     function clearSelection() {
       selectedSlot = null;
-      selectedPanelEl.classList.remove("is-visible");
-      selectedTimeEl.textContent = "";
-      selectedDetailEl.textContent = "";
 
       document.querySelectorAll(".time-btn").forEach(btn => {
         btn.classList.remove("is-selected");
       });
 
-      if (bookingStatusEl) {
-        bookingStatusEl.textContent = "";
-        bookingStatusEl.className = "booking-status";
-      }
-
-      if (confirmBookingBtn) {
-        confirmBookingBtn.disabled = false;
-        confirmBookingBtn.textContent = "Confirm Booking";
-      }
+      clearBookingModal();
     }
 
     function renderStaffStrip(shouldLoadStatuses = false) {
@@ -1197,18 +1306,8 @@
 
           btn.addEventListener("click", () => {
             clearSelection();
-
-            selectedSlot = slot;
             btn.classList.add("is-selected");
-
-            const staff = STAFF_DATA[selectedStaffKey];
-            const service = staff.services[selectedServiceKey];
-
-            selectedTimeEl.textContent = formatPasadenaTime(slot.start_at);
-            selectedDetailEl.textContent =
-              `${staff.name} · ${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
-
-            selectedPanelEl.classList.add("is-visible");
+            openBookingModal(slot);
           });
 
           timesEl.appendChild(btn);
@@ -1224,12 +1323,10 @@
       if (!selectedStaffKey || !selectedServiceKey) return;
 
       const staff = STAFF_DATA[selectedStaffKey];
-      const service = staff.services[selectedServiceKey];
 
       messageEl.textContent = "Checking available times...";
       slotGroupsEl.innerHTML = "";
       slotCardEl.classList.remove("is-visible");
-      selectedPanelEl.classList.remove("is-visible");
       emptyStateEl.classList.remove("is-visible");
 
       try {
@@ -1318,18 +1415,31 @@
         return;
       }
 
-      const customerName = customerNameEl.value.trim();
+      const firstName = firstNameEl.value.trim();
+      const lastName = lastNameEl.value.trim();
       const customerPhone = customerPhoneEl.value.trim();
       const customerEmail = customerEmailEl.value.trim();
 
-      if (!customerName) {
-        bookingStatusEl.textContent = "Please enter your name.";
+      if (!firstName) {
+        bookingStatusEl.textContent = "Please enter your first name.";
+        bookingStatusEl.className = "booking-status booking-error";
+        return;
+      }
+
+      if (!lastName) {
+        bookingStatusEl.textContent = "Please enter your last name.";
         bookingStatusEl.className = "booking-status booking-error";
         return;
       }
 
       if (!customerPhone) {
         bookingStatusEl.textContent = "Please enter your phone number.";
+        bookingStatusEl.className = "booking-status booking-error";
+        return;
+      }
+
+      if (!customerEmail) {
+        bookingStatusEl.textContent = "Please enter your email.";
         bookingStatusEl.className = "booking-status booking-error";
         return;
       }
@@ -1349,7 +1459,7 @@
             staffKey: selectedStaffKey,
             serviceType: selectedServiceKey,
             start_at: selectedSlot.start_at,
-            customerName,
+            customerName: `${firstName} ${lastName}`,
             customerPhone,
             customerEmail
           })
@@ -1365,7 +1475,8 @@
         bookingStatusEl.className = "booking-status booking-success";
         confirmBookingBtn.textContent = "Booked";
 
-        customerNameEl.value = "";
+        firstNameEl.value = "";
+        lastNameEl.value = "";
         customerPhoneEl.value = "";
         customerEmailEl.value = "";
 
@@ -1378,6 +1489,20 @@
         bookingStatusEl.className = "booking-status booking-error";
         confirmBookingBtn.disabled = false;
         confirmBookingBtn.textContent = "Confirm Booking";
+      }
+    });
+
+    closeBookingModalBtn.addEventListener("click", closeBookingModal);
+
+    bookingModalEl.addEventListener("click", event => {
+      if (event.target === bookingModalEl) {
+        closeBookingModal();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && bookingModalEl.classList.contains("is-visible")) {
+        closeBookingModal();
       }
     });
 
