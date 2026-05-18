@@ -21,58 +21,58 @@
       width: 100%;
       max-width: 720px;
       margin: 0 auto;
-      padding: 14px;
-      padding-bottom: 40px;
+      padding: 10px;
+      padding-bottom: 30px;
     }
 
     .header {
-      padding: 10px 2px 14px;
+      padding: 6px 2px 10px;
     }
 
     h1 {
-      font-size: 28px;
+      font-size: 26px;
       line-height: 1.05;
-      margin: 0 0 6px;
+      margin: 0 0 4px;
       letter-spacing: -0.6px;
       font-weight: 900;
     }
 
     .sub {
       color: #666;
-      font-size: 14px;
-      line-height: 1.35;
+      font-size: 13px;
+      line-height: 1.3;
       margin: 0;
     }
 
     .top-card,
     .slot-card {
       border: 1px solid #e8e8e8;
-      border-radius: 18px;
+      border-radius: 15px;
       background: #fff;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+      box-shadow: 0 5px 18px rgba(0,0,0,0.035);
     }
 
     .top-card {
-      padding: 14px;
+      padding: 10px;
     }
 
     .date-bar {
       display: grid;
-      grid-template-columns: 42px 1fr 42px;
-      gap: 10px;
+      grid-template-columns: 34px 1fr 34px;
+      gap: 8px;
       align-items: center;
-      padding-bottom: 14px;
+      padding-bottom: 10px;
       border-bottom: 1px solid #eee;
     }
 
     .date-nav {
-      width: 42px;
-      height: 42px;
+      width: 34px;
+      height: 34px;
       border: 0;
-      border-radius: 12px;
+      border-radius: 9px;
       background: #000;
       color: #fff;
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 900;
       cursor: pointer;
       display: flex;
@@ -88,15 +88,15 @@
     }
 
     .date-label {
-      font-size: 17px;
+      font-size: 15px;
       font-weight: 900;
-      line-height: 42px;
-      border-radius: 12px;
+      line-height: 34px;
+      border-radius: 9px;
       background: #f7f7f7;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding: 0 10px;
+      padding: 0 8px;
     }
 
     #dateInput {
@@ -109,25 +109,25 @@
     }
 
     .section-label {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
       font-weight: 900;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.45px;
       text-transform: uppercase;
-      margin: 16px 0 10px;
+      margin: 11px 0 7px;
     }
 
     .staff-strip {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       overflow-x: auto;
-      padding: 2px 2px 12px;
+      padding: 1px 1px 8px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
     }
 
     .staff-strip::-webkit-scrollbar {
-      height: 4px;
+      height: 3px;
     }
 
     .staff-strip::-webkit-scrollbar-thumb {
@@ -136,12 +136,12 @@
     }
 
     .staff-card {
-      flex: 0 0 86px;
-      min-height: 122px;
+      flex: 0 0 78px;
+      min-height: 118px;
       border: 1px solid #e6e6e6;
-      border-radius: 16px;
+      border-radius: 14px;
       background: #fff;
-      padding: 10px 7px;
+      padding: 8px 5px;
       text-align: center;
       cursor: pointer;
       scroll-snap-align: start;
@@ -160,21 +160,21 @@
     }
 
     .staff-card.is-off {
-      opacity: 0.52;
+      opacity: 0.66;
     }
 
     .avatar {
-      width: 56px;
-      height: 56px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      margin: 0 auto 8px;
+      margin: 0 auto 6px;
       background: #eee;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 18px;
       color: #111;
     }
 
@@ -191,17 +191,18 @@
     }
 
     .staff-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
-      line-height: 1.15;
+      line-height: 1.1;
     }
 
     .staff-status {
-      margin-top: 6px;
-      font-size: 11px;
+      margin-top: 5px;
+      font-size: 10px;
       font-weight: 900;
       color: #777;
       line-height: 1.15;
+      min-height: 24px;
     }
 
     .staff-card.is-working .staff-status {
@@ -216,11 +217,34 @@
       color: #bff0cd;
     }
 
+    .selected-staff-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 2px 2px;
+      margin-top: -2px;
+    }
+
+    .selected-staff-name {
+      font-size: 13px;
+      color: #666;
+      font-weight: 800;
+    }
+
+    .profile-link {
+      color: #111;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: underline;
+      white-space: nowrap;
+    }
+
     .service-pills {
       display: flex;
-      gap: 8px;
+      gap: 7px;
       overflow-x: auto;
-      padding: 0 2px 10px;
+      padding: 0 1px 2px;
       -webkit-overflow-scrolling: touch;
     }
 
@@ -230,8 +254,8 @@
       border-radius: 999px;
       background: #fff;
       color: #111;
-      padding: 11px 14px;
-      font-size: 14px;
+      padding: 9px 11px;
+      font-size: 13px;
       font-weight: 900;
       cursor: pointer;
       white-space: nowrap;
@@ -245,18 +269,18 @@
     }
 
     .message {
-      min-height: 22px;
-      margin-top: 10px;
+      min-height: 18px;
+      margin-top: 6px;
       color: #666;
-      font-size: 14px;
-      line-height: 1.4;
+      font-size: 13px;
+      line-height: 1.35;
       word-break: break-word;
     }
 
     .slot-card {
       display: none;
-      margin-top: 14px;
-      padding: 14px;
+      margin-top: 10px;
+      padding: 10px;
     }
 
     .slot-card.is-visible {
@@ -268,34 +292,34 @@
       justify-content: space-between;
       align-items: flex-end;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .slot-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
       margin: 0;
     }
 
     .slot-count {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       color: #666;
       white-space: nowrap;
     }
 
     .slot-group {
-      margin-top: 18px;
+      margin-top: 14px;
     }
 
     .slot-group-title {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       color: #111;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
@@ -309,20 +333,21 @@
 
     .times {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
     }
 
     .time-btn {
-      min-height: 52px;
+      min-height: 43px;
       border: 1px solid #111;
-      border-radius: 12px;
+      border-radius: 10px;
       background: #fff;
       color: #111;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 900;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      padding: 0 4px;
     }
 
     .time-btn.is-selected {
@@ -332,10 +357,10 @@
 
     .selected-panel {
       display: none;
-      margin-top: 20px;
+      margin-top: 14px;
       border: 1px solid #111;
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 14px;
+      padding: 12px;
       background: #fafafa;
     }
 
@@ -344,58 +369,59 @@
     }
 
     .selected-label {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
       font-weight: 900;
       letter-spacing: 0.4px;
       text-transform: uppercase;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .selected-time {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .selected-detail {
       color: #666;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       line-height: 1.35;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
 
     .continue-btn {
       width: 100%;
-      height: 54px;
+      height: 48px;
       border: 0;
-      border-radius: 12px;
+      border-radius: 11px;
       background: #000;
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       cursor: pointer;
     }
 
     .note {
-      margin-top: 10px;
+      margin-top: 8px;
       color: #777;
-      font-size: 13px;
-      line-height: 1.35;
+      font-size: 12px;
+      line-height: 1.3;
     }
 
     @media (min-width: 641px) {
       .page {
-        padding-top: 28px;
+        padding-top: 24px;
       }
 
       .staff-card {
-        flex-basis: 96px;
+        flex-basis: 88px;
       }
 
-      .times {
-        grid-template-columns: repeat(3, 1fr);
+      .time-btn {
+        min-height: 48px;
+        font-size: 15px;
       }
     }
   </style>
@@ -422,6 +448,11 @@
 
       <div class="section-label">Stylists</div>
       <div id="staffStrip" class="staff-strip"></div>
+
+      <div class="selected-staff-row">
+        <div id="selectedStaffName" class="selected-staff-name"></div>
+        <a id="profileLink" class="profile-link" href="#" target="_blank" rel="noopener noreferrer">View Profile</a>
+      </div>
 
       <div class="section-label">Services</div>
       <div id="servicePills" class="service-pills"></div>
@@ -530,6 +561,8 @@
     };
 
     const staffStripEl = document.getElementById("staffStrip");
+    const selectedStaffNameEl = document.getElementById("selectedStaffName");
+    const profileLinkEl = document.getElementById("profileLink");
     const servicePillsEl = document.getElementById("servicePills");
     const dateInputEl = document.getElementById("dateInput");
     const dateLabelEl = document.getElementById("dateLabel");
@@ -548,6 +581,7 @@
     let selectedStaffKey = "";
     let selectedServiceKey = "";
     let selectedSlot = null;
+    let statusRequestId = 0;
 
     function toIsoDateLocal(date) {
       const y = date.getFullYear();
@@ -571,6 +605,11 @@
       return `${dow} ${md}`;
     }
 
+    function formatShortDate(date) {
+      const dow = daysDisplay[date.getDay()];
+      return `${dow} ${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
     function updateDateUI() {
       dateInputEl.value = toIsoDateLocal(currentDate);
       dateLabelEl.textContent = formatDateLabel(currentDate);
@@ -591,11 +630,6 @@
       return staff.days.includes(dow);
     }
 
-    function getStaffStatus(staffKey, date) {
-      if (!hasStarted(staffKey, date)) return "Starts 5/27";
-      return isWorking(staffKey, date) ? "Working" : "Off today";
-    }
-
     function getOrderedStaffKeys(date) {
       const keys = Object.keys(STAFF_DATA).filter(key => key !== "Jacob");
 
@@ -610,8 +644,143 @@
       return [...working, ...off, "Jacob"];
     }
 
+    function getProfileUrl(staffKey) {
+      return `https://bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
+    }
+
     function formatPrice(price) {
       return typeof price === "string" ? `$${price}` : `$${price}`;
+    }
+
+    function formatPasadenaTime(utcString) {
+      const date = new Date(utcString);
+
+      return date.toLocaleTimeString("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function getPasadenaHour(utcString) {
+      const date = new Date(utcString);
+
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric",
+        hour12: false
+      }).formatToParts(date);
+
+      const hourPart = parts.find(part => part.type === "hour");
+      return Number(hourPart.value);
+    }
+
+    function getSlotGroupName(utcString) {
+      const hour = getPasadenaHour(utcString);
+      if (hour < 12) return "Morning";
+      if (hour < 17) return "Afternoon";
+      return "Evening";
+    }
+
+    function getNextWorkingDate(staffKey, fromDate) {
+      for (let i = 0; i <= 21; i++) {
+        const d = new Date(fromDate);
+        d.setDate(d.getDate() + i);
+
+        if (isWorking(staffKey, d)) return d;
+      }
+
+      return null;
+    }
+
+    async function fetchFirstOpening(staffKey, dateObj) {
+      const staff = STAFF_DATA[staffKey];
+      const serviceType = staff.defaultService;
+
+      const response = await fetch("/api/search-availability", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          staffKey,
+          serviceType,
+          date: toIsoDateLocal(dateObj)
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) return null;
+
+      const availabilities = data.availabilities || [];
+      if (!availabilities.length) return null;
+
+      return availabilities[0].start_at;
+    }
+
+    async function loadStaffStatuses(requestId) {
+      const cards = document.querySelectorAll(".staff-card");
+
+      cards.forEach(card => {
+        const staffKey = card.dataset.staffKey;
+        const statusEl = card.querySelector(".staff-status");
+
+        if (!statusEl) return;
+
+        if (!hasStarted(staffKey, currentDate)) {
+          statusEl.textContent = "Starts 5/27";
+          return;
+        }
+
+        const nextWorkingDate = getNextWorkingDate(staffKey, currentDate);
+
+        if (!nextWorkingDate) {
+          statusEl.textContent = "No schedule";
+          return;
+        }
+
+        if (isWorking(staffKey, currentDate)) {
+          statusEl.textContent = "Checking...";
+        } else {
+          statusEl.textContent = `${formatShortDate(nextWorkingDate)}`;
+        }
+      });
+
+      for (const card of cards) {
+        if (requestId !== statusRequestId) return;
+
+        const staffKey = card.dataset.staffKey;
+        const statusEl = card.querySelector(".staff-status");
+
+        if (!statusEl) continue;
+        if (!hasStarted(staffKey, currentDate)) continue;
+
+        const nextWorkingDate = getNextWorkingDate(staffKey, currentDate);
+        if (!nextWorkingDate) continue;
+
+        try {
+          const firstOpening = await fetchFirstOpening(staffKey, nextWorkingDate);
+
+          if (requestId !== statusRequestId) return;
+
+          if (firstOpening) {
+            statusEl.textContent = `${formatShortDate(nextWorkingDate)} · ${formatPasadenaTime(firstOpening)}`;
+          } else {
+            statusEl.textContent = `${formatShortDate(nextWorkingDate)} · No time`;
+          }
+        } catch (error) {
+          if (requestId !== statusRequestId) return;
+          statusEl.textContent = `${formatShortDate(nextWorkingDate)}`;
+        }
+      }
+    }
+
+    function updateSelectedStaffRow() {
+      const staff = STAFF_DATA[selectedStaffKey];
+
+      selectedStaffNameEl.textContent = `${staff.name}`;
+      profileLinkEl.href = getProfileUrl(selectedStaffKey);
     }
 
     function clearResults() {
@@ -645,11 +814,11 @@
       orderedKeys.forEach(staffKey => {
         const staff = STAFF_DATA[staffKey];
         const working = isWorking(staffKey, currentDate);
-        const status = getStaffStatus(staffKey, currentDate);
 
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "staff-card";
+        btn.dataset.staffKey = staffKey;
 
         if (staffKey === selectedStaffKey) btn.classList.add("is-active");
         if (working) btn.classList.add("is-working");
@@ -662,7 +831,7 @@
         btn.innerHTML = `
           ${avatarHTML}
           <div class="staff-name">${staff.name}</div>
-          <div class="staff-status">${status}</div>
+          <div class="staff-status">Loading...</div>
         `;
 
         btn.addEventListener("click", () => {
@@ -671,7 +840,11 @@
 
           renderStaffStrip();
           renderServicePills();
+          updateSelectedStaffRow();
           clearResults();
+
+          statusRequestId++;
+          loadStaffStatuses(statusRequestId);
 
           if (!hasStarted(staffKey, currentDate)) {
             messageEl.textContent = `${STAFF_DATA[staffKey].name} starts on 5/27. Please choose 5/27 or later.`;
@@ -683,6 +856,11 @@
 
         staffStripEl.appendChild(btn);
       });
+
+      updateSelectedStaffRow();
+
+      statusRequestId++;
+      loadStaffStatuses(statusRequestId);
     }
 
     function renderServicePills() {
@@ -723,36 +901,6 @@
 
         servicePillsEl.appendChild(btn);
       });
-    }
-
-    function formatPasadenaTime(utcString) {
-      const date = new Date(utcString);
-
-      return date.toLocaleTimeString("en-US", {
-        timeZone: "America/Los_Angeles",
-        hour: "numeric",
-        minute: "2-digit"
-      });
-    }
-
-    function getPasadenaHour(utcString) {
-      const date = new Date(utcString);
-
-      const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Los_Angeles",
-        hour: "numeric",
-        hour12: false
-      }).formatToParts(date);
-
-      const hourPart = parts.find(part => part.type === "hour");
-      return Number(hourPart.value);
-    }
-
-    function getSlotGroupName(utcString) {
-      const hour = getPasadenaHour(utcString);
-      if (hour < 12) return "Morning";
-      if (hour < 17) return "Afternoon";
-      return "Evening";
     }
 
     function renderSlots(availabilities) {
@@ -884,6 +1032,7 @@
 
       renderStaffStrip();
       renderServicePills();
+      updateSelectedStaffRow();
       clearResults();
 
       if (!hasStarted(selectedStaffKey, currentDate)) {
@@ -926,6 +1075,7 @@
     selectBestDefaultStaff();
     renderStaffStrip();
     renderServicePills();
+    updateSelectedStaffRow();
 
     if (!hasStarted(selectedStaffKey, currentDate)) {
       messageEl.textContent = `${STAFF_DATA[selectedStaffKey].name} starts on 5/27. Please choose 5/27 or later.`;
