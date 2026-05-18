@@ -4,98 +4,247 @@
   <meta charset="UTF-8" />
   <title>B SIDE U Pasadena Booking MVP</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      max-width: 620px;
-      margin: 40px auto;
-      padding: 20px;
+      max-width: 720px;
+      margin: 28px auto;
+      padding: 14px;
       color: #111;
       background: #fff;
     }
 
     h1 {
-      font-size: 34px;
-      margin: 0 0 8px 0;
-      letter-spacing: -0.6px;
+      font-size: 30px;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.5px;
     }
 
     .sub {
       color: #666;
-      font-size: 17px;
-      margin-bottom: 28px;
+      font-size: 15px;
+      margin-bottom: 18px;
       line-height: 1.4;
     }
 
-    .booking-card {
+    .top-card {
       border: 1px solid #e5e5e5;
       border-radius: 18px;
-      padding: 22px;
+      padding: 18px;
+      background: #fff;
       box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-      background: #fff;
     }
 
-    label {
-      display: block;
-      font-weight: 800;
-      font-size: 16px;
-      margin-top: 18px;
-      margin-bottom: 8px;
+    .date-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #eee;
     }
 
-    select,
-    input,
-    button {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      box-sizing: border-box;
+    .date-nav {
+      width: 42px;
+      height: 42px;
       border-radius: 12px;
-      border: 1px solid #cfcfcf;
-      background: #fff;
-    }
-
-    select,
-    input {
-      height: 54px;
-    }
-
-    .search-btn {
-      margin-top: 22px;
+      border: 0;
       background: #000;
       color: #fff;
-      border: none;
-      font-weight: 800;
+      font-size: 22px;
+      font-weight: 900;
       cursor: pointer;
-      height: 58px;
-      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .search-btn:hover {
-      opacity: 0.88;
+    .date-center {
+      position: relative;
+      flex: 1;
+      text-align: center;
     }
 
-    .search-btn:active {
-      transform: scale(0.99);
+    .date-label {
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 12px;
     }
 
-    .search-btn:disabled {
-      background: #999;
-      cursor: not-allowed;
+    .date-label:hover {
+      background: #f5f5f5;
+    }
+
+    #dateInput {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .small-label {
+      font-size: 13px;
+      color: #666;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .staff-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 2px 12px 2px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .staff-strip::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .staff-strip::-webkit-scrollbar-thumb {
+      background: #ddd;
+      border-radius: 999px;
+    }
+
+    .staff-card {
+      flex: 0 0 92px;
+      scroll-snap-align: start;
+      border: 1px solid #e5e5e5;
+      border-radius: 16px;
+      background: #fff;
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.18s ease;
+      position: relative;
+      min-height: 126px;
+    }
+
+    .staff-card:hover {
+      border-color: #111;
+      transform: translateY(-1px);
+    }
+
+    .staff-card.is-active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
+    .staff-card.is-off {
+      opacity: 0.45;
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      margin: 0 auto 8px auto;
+      object-fit: cover;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #111;
+      overflow: hidden;
+    }
+
+    .staff-card.is-active .avatar {
+      background: #fff;
+      color: #111;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .staff-name {
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .staff-status {
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #666;
+    }
+
+    .staff-card.is-active .staff-status {
+      color: #ddd;
+    }
+
+    .staff-card.is-working .staff-status {
+      color: #167a36;
+    }
+
+    .staff-card.is-active.is-working .staff-status {
+      color: #bff0cd;
+    }
+
+    .service-area {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #eee;
+    }
+
+    .service-pills {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .service-pill {
+      flex: 0 0 auto;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #111;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+    }
+
+    .service-pill.is-active {
+      background: #000;
+      color: #fff;
+      border-color: #000;
     }
 
     .message {
-      margin-top: 22px;
+      margin-top: 16px;
       color: #666;
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1.4;
       word-break: break-word;
     }
 
     .slot-summary {
       display: none;
-      margin-top: 26px;
-      padding-top: 22px;
-      border-top: 1px solid #eee;
+      margin-top: 18px;
+      border: 1px solid #e5e5e5;
+      border-radius: 18px;
+      padding: 18px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
     }
 
     .slot-summary.is-visible {
@@ -119,7 +268,7 @@
     .slot-count {
       font-size: 13px;
       color: #666;
-      font-weight: 700;
+      font-weight: 800;
       white-space: nowrap;
     }
 
@@ -214,6 +363,8 @@
       font-weight: 900;
       cursor: pointer;
       height: 54px;
+      width: 100%;
+      font-size: 16px;
     }
 
     .note {
@@ -225,17 +376,22 @@
 
     @media (max-width: 640px) {
       body {
-        margin: 20px auto;
-        padding: 14px;
+        margin: 16px auto;
+        padding: 10px;
       }
 
       h1 {
-        font-size: 30px;
+        font-size: 28px;
       }
 
-      .booking-card {
-        padding: 18px;
+      .top-card,
+      .slot-summary {
+        padding: 16px;
         border-radius: 16px;
+      }
+
+      .staff-card {
+        flex-basis: 86px;
       }
 
       .times {
@@ -247,54 +403,97 @@
 
 <body>
   <h1>Book Pasadena</h1>
-  <div class="sub">Choose a stylist, service, and date to view available times.</div>
+  <div class="sub">Pick a stylist, choose a service, and select an available time.</div>
 
-  <div class="booking-card">
-    <label>Stylist</label>
-    <select id="staffKey"></select>
+  <div class="top-card">
+    <div class="date-bar">
+      <button id="prevDay" class="date-nav" type="button">‹</button>
 
-    <label>Service</label>
-    <select id="serviceType"></select>
-
-    <label>Date</label>
-    <input id="date" type="date" value="2026-05-27" />
-
-    <button id="searchBtn" class="search-btn">Search Available Times</button>
-
-    <div id="message" class="message"></div>
-
-    <div id="slotSummary" class="slot-summary">
-      <div class="slot-topline">
-        <h2 class="slot-title">Available Times</h2>
-        <div id="slotCount" class="slot-count"></div>
+      <div class="date-center">
+        <div id="dateLabel" class="date-label">Today</div>
+        <input id="dateInput" type="date" />
       </div>
 
-      <div id="slotGroups"></div>
+      <button id="nextDay" class="date-nav" type="button">›</button>
+    </div>
 
-      <div id="selectedPanel" class="selected-panel">
-        <div class="selected-label">Selected appointment</div>
-        <div id="selectedTime" class="selected-time"></div>
-        <div id="selectedDetail" class="selected-detail"></div>
-        <button id="continueBtn" class="continue-btn">Continue</button>
-        <div class="note">
-          Next step: we will add customer name, phone, and email, then create the Square appointment.
-        </div>
+    <div class="small-label">Stylists</div>
+    <div id="staffStrip" class="staff-strip"></div>
+
+    <div class="service-area">
+      <div class="small-label">Services</div>
+      <div id="servicePills" class="service-pills"></div>
+    </div>
+
+    <div id="message" class="message"></div>
+  </div>
+
+  <div id="slotSummary" class="slot-summary">
+    <div class="slot-topline">
+      <h2 class="slot-title">Available Times</h2>
+      <div id="slotCount" class="slot-count"></div>
+    </div>
+
+    <div id="slotGroups"></div>
+
+    <div id="selectedPanel" class="selected-panel">
+      <div class="selected-label">Selected appointment</div>
+      <div id="selectedTime" class="selected-time"></div>
+      <div id="selectedDetail" class="selected-detail"></div>
+      <button id="continueBtn" class="continue-btn">Continue</button>
+      <div class="note">
+        Next step: customer name, phone, and email.
       </div>
     </div>
   </div>
 
   <script>
+    const daysShort = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+    const daysDisplay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
     const STAFF_DATA = {
-      Nami: {
-        name: "Nami",
+      William: {
+        name: "William",
+        order: 1,
+        days: ["mon", "thu", "fri", "sat", "sun"],
+        image: "",
+        defaultService: "haircut",
         services: {
-          haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 50 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 50 }
+          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 50 },
+          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 50 }
+        }
+      },
+
+      Ryan: {
+        name: "Ryan",
+        order: 2,
+        days: ["mon", "tue", "thu", "fri", "sat", "sun"],
+        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/123121212_1764920283.JPG?width=400&optimize=medium",
+        defaultService: "haircut",
+        services: {
+          haircut: { label: "Men’s Haircut", price: 45, duration_minutes: 45 },
+          scissors: { label: "Scissors Cut", price: 60, duration_minutes: 45 }
+        }
+      },
+
+      Ken: {
+        name: "Ken",
+        order: 3,
+        days: ["tue", "wed", "fri", "sat", "sun"],
+        image: "https://appointments-production-f.squarecdn.com/files/8ab010be3ad4f51892e1c75509dc0572/original.jpeg",
+        defaultService: "haircut",
+        services: {
+          haircut: { label: "Men’s Haircut", price: 50, duration_minutes: 40 },
+          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 }
         }
       },
 
       Fiona: {
         name: "Fiona",
+        order: 4,
+        days: ["mon", "tue", "wed", "fri", "sat"],
+        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/fiona_1744180262.jpeg",
+        defaultService: "haircut",
         services: {
           haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 40 },
           scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 },
@@ -304,43 +503,37 @@
         }
       },
 
-      Ryan: {
-        name: "Ryan",
+      Nami: {
+        name: "Nami",
+        order: 5,
+        days: ["tue", "wed", "thu", "sun"],
+        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/nami_1744180260.jpeg",
+        defaultService: "haircut",
         services: {
-          haircut: { label: "Men’s Haircut", price: 45, duration_minutes: 45 },
-          scissors: { label: "Scissors Cut", price: 60, duration_minutes: 45 }
-        }
-      },
-
-      Ken: {
-        name: "Ken",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 50, duration_minutes: 40 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 }
+          haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 50 },
+          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 50 }
         }
       },
 
       Jacob: {
         name: "Jacob",
+        order: 999,
+        days: ["wed", "thu", "fri", "sat"],
+        image: "https://appointments-production-f.squarecdn.com/files/fa093c26c9f36366886b8ed1a776878a/original.jpeg",
+        defaultService: "haircut",
         services: {
           haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 45 },
           scissors: { label: "Scissors Cut", price: 75, duration_minutes: 45 }
         }
-      },
-
-      William: {
-        name: "William",
-        services: {
-          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 50 },
-          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 50 }
-        }
       }
     };
 
-    const staffKeyEl = document.getElementById("staffKey");
-    const serviceTypeEl = document.getElementById("serviceType");
-    const dateEl = document.getElementById("date");
-    const searchBtn = document.getElementById("searchBtn");
+    const staffStripEl = document.getElementById("staffStrip");
+    const servicePillsEl = document.getElementById("servicePills");
+    const dateInputEl = document.getElementById("dateInput");
+    const dateLabelEl = document.getElementById("dateLabel");
+    const prevDayBtn = document.getElementById("prevDay");
+    const nextDayBtn = document.getElementById("nextDay");
     const messageEl = document.getElementById("message");
     const slotSummaryEl = document.getElementById("slotSummary");
     const slotCountEl = document.getElementById("slotCount");
@@ -350,47 +543,141 @@
     const selectedDetailEl = document.getElementById("selectedDetail");
     const continueBtn = document.getElementById("continueBtn");
 
+    let currentDate = new Date();
+    let selectedStaffKey = "";
+    let selectedServiceKey = "";
     let selectedSlot = null;
+
+    function toIsoDateLocal(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function fromIsoDateLocal(value) {
+      const [y, m, d] = value.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function formatDateLabel(date) {
+      const today = new Date();
+      const todayIso = toIsoDateLocal(today);
+      const dateIso = toIsoDateLocal(date);
+
+      const dow = daysDisplay[date.getDay()];
+      const md = `${date.getMonth() + 1}/${date.getDate()}`;
+
+      if (dateIso === todayIso) return `Today · ${dow} ${md}`;
+      return `${dow} ${md}`;
+    }
+
+    function updateDateUI() {
+      dateInputEl.value = toIsoDateLocal(currentDate);
+      dateLabelEl.textContent = formatDateLabel(currentDate);
+    }
+
+    function isWorking(staffKey, date) {
+      const staff = STAFF_DATA[staffKey];
+      const dow = daysShort[date.getDay()];
+      return staff.days.includes(dow);
+    }
+
+    function getOrderedStaffKeys(date) {
+      const keys = Object.keys(STAFF_DATA).filter(k => k !== "Jacob");
+
+      const working = keys
+        .filter(k => isWorking(k, date))
+        .sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+
+      const off = keys
+        .filter(k => !isWorking(k, date))
+        .sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+
+      return [...working, ...off, "Jacob"];
+    }
 
     function formatPrice(price) {
       if (typeof price === "string") return `$${price}`;
       return `$${price}`;
     }
 
-    function fillStaffOptions() {
-      staffKeyEl.innerHTML = "";
+    function renderStaffStrip() {
+      staffStripEl.innerHTML = "";
 
-      Object.keys(STAFF_DATA).forEach(staffKey => {
-        const option = document.createElement("option");
-        option.value = staffKey;
-        option.textContent = STAFF_DATA[staffKey].name;
-        staffKeyEl.appendChild(option);
+      const orderedKeys = getOrderedStaffKeys(currentDate);
+
+      if (!selectedStaffKey || !orderedKeys.includes(selectedStaffKey)) {
+        selectedStaffKey = orderedKeys[0];
+      }
+
+      orderedKeys.forEach(staffKey => {
+        const staff = STAFF_DATA[staffKey];
+        const working = isWorking(staffKey, currentDate);
+
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "staff-card";
+        if (staffKey === selectedStaffKey) btn.classList.add("is-active");
+        if (working) btn.classList.add("is-working");
+        else btn.classList.add("is-off");
+
+        const avatarHTML = staff.image
+          ? `<div class="avatar"><img src="${staff.image}" alt="${staff.name}"></div>`
+          : `<div class="avatar">${staff.name.slice(0, 1)}</div>`;
+
+        btn.innerHTML = `
+          ${avatarHTML}
+          <div class="staff-name">${staff.name}</div>
+          <div class="staff-status">${working ? "Working" : "Off today"}</div>
+        `;
+
+        btn.addEventListener("click", () => {
+          selectedStaffKey = staffKey;
+          selectedServiceKey = STAFF_DATA[staffKey].defaultService;
+          renderStaffStrip();
+          renderServicePills();
+          clearResults();
+          searchAvailability();
+        });
+
+        staffStripEl.appendChild(btn);
       });
-
-      staffKeyEl.value = "William";
-      fillServiceOptions();
     }
 
-    function fillServiceOptions() {
-      const staffKey = staffKeyEl.value;
-      const staff = STAFF_DATA[staffKey];
+    function renderServicePills() {
+      servicePillsEl.innerHTML = "";
 
-      serviceTypeEl.innerHTML = "";
+      const staff = STAFF_DATA[selectedStaffKey];
+      const serviceKeys = Object.keys(staff.services);
 
-      Object.keys(staff.services).forEach(serviceKey => {
+      if (!selectedServiceKey || !staff.services[selectedServiceKey]) {
+        selectedServiceKey = staff.defaultService || serviceKeys[0];
+      }
+
+      serviceKeys.forEach(serviceKey => {
         const service = staff.services[serviceKey];
-        const option = document.createElement("option");
-        option.value = serviceKey;
-        option.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
-        serviceTypeEl.appendChild(option);
-      });
 
-      clearResults();
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "service-pill";
+        if (serviceKey === selectedServiceKey) btn.classList.add("is-active");
+
+        btn.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
+
+        btn.addEventListener("click", () => {
+          selectedServiceKey = serviceKey;
+          renderServicePills();
+          clearResults();
+          searchAvailability();
+        });
+
+        servicePillsEl.appendChild(btn);
+      });
     }
 
     function formatPasadenaTime(utcString) {
       const date = new Date(utcString);
-
       return date.toLocaleTimeString("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
@@ -400,20 +687,17 @@
 
     function getPasadenaHour(utcString) {
       const date = new Date(utcString);
-
       const parts = new Intl.DateTimeFormat("en-US", {
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         hour12: false
       }).formatToParts(date);
-
       const hourPart = parts.find(part => part.type === "hour");
       return Number(hourPart.value);
     }
 
     function getSlotGroupName(utcString) {
       const hour = getPasadenaHour(utcString);
-
       if (hour < 12) return "Morning";
       if (hour < 17) return "Afternoon";
       return "Evening";
@@ -455,7 +739,6 @@
 
       Object.keys(groups).forEach(groupName => {
         const slots = groups[groupName];
-
         if (!slots.length) return;
 
         const groupEl = document.createElement("div");
@@ -470,6 +753,7 @@
 
         slots.forEach(slot => {
           const btn = document.createElement("button");
+          btn.type = "button";
           btn.className = "time-btn";
           btn.textContent = formatPasadenaTime(slot.start_at);
 
@@ -479,10 +763,8 @@
             selectedSlot = slot;
             btn.classList.add("is-selected");
 
-            const staffKey = staffKeyEl.value;
-            const serviceKey = serviceTypeEl.value;
-            const staff = STAFF_DATA[staffKey];
-            const service = staff.services[serviceKey];
+            const staff = STAFF_DATA[selectedStaffKey];
+            const service = staff.services[selectedServiceKey];
 
             selectedTimeEl.textContent = formatPasadenaTime(slot.start_at);
             selectedDetailEl.textContent =
@@ -500,23 +782,12 @@
       });
     }
 
-    staffKeyEl.addEventListener("change", fillServiceOptions);
-    serviceTypeEl.addEventListener("change", clearResults);
-    dateEl.addEventListener("change", clearResults);
+    async function searchAvailability() {
+      const date = toIsoDateLocal(currentDate);
 
-    searchBtn.addEventListener("click", async () => {
-      const staffKey = staffKeyEl.value;
-      const serviceType = serviceTypeEl.value;
-      const date = dateEl.value;
+      if (!selectedStaffKey || !selectedServiceKey) return;
 
-      if (!date) {
-        messageEl.textContent = "Please choose a date.";
-        return;
-      }
-
-      searchBtn.disabled = true;
-      searchBtn.textContent = "Searching...";
-      messageEl.textContent = "";
+      messageEl.textContent = "Checking available times...";
       slotGroupsEl.innerHTML = "";
       slotSummaryEl.classList.remove("is-visible");
       selectedPanelEl.classList.remove("is-visible");
@@ -528,8 +799,8 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            staffKey,
-            serviceType,
+            staffKey: selectedStaffKey,
+            serviceType: selectedServiceKey,
             date
           })
         });
@@ -543,8 +814,9 @@
 
         const availabilities = data.availabilities || [];
 
-        if (availabilities.length === 0) {
-          messageEl.textContent = "No available times for this date.";
+        if (!availabilities.length) {
+          const staff = STAFF_DATA[selectedStaffKey];
+          messageEl.textContent = `${staff.name} has no openings for this service on this date.`;
           return;
         }
 
@@ -556,10 +828,45 @@
 
       } catch (error) {
         messageEl.textContent = "Network error: " + error.message;
-      } finally {
-        searchBtn.disabled = false;
-        searchBtn.textContent = "Search Available Times";
       }
+    }
+
+    function selectBestDefaultStaff() {
+      const orderedKeys = getOrderedStaffKeys(currentDate);
+      selectedStaffKey = orderedKeys[0];
+      selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
+    }
+
+    function refreshForDateChange() {
+      updateDateUI();
+
+      const orderedKeys = getOrderedStaffKeys(currentDate);
+
+      if (!isWorking(selectedStaffKey, currentDate)) {
+        selectedStaffKey = orderedKeys[0];
+        selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
+      }
+
+      renderStaffStrip();
+      renderServicePills();
+      clearResults();
+      searchAvailability();
+    }
+
+    prevDayBtn.addEventListener("click", () => {
+      currentDate.setDate(currentDate.getDate() - 1);
+      refreshForDateChange();
+    });
+
+    nextDayBtn.addEventListener("click", () => {
+      currentDate.setDate(currentDate.getDate() + 1);
+      refreshForDateChange();
+    });
+
+    dateInputEl.addEventListener("change", () => {
+      if (!dateInputEl.value) return;
+      currentDate = fromIsoDateLocal(dateInputEl.value);
+      refreshForDateChange();
     });
 
     continueBtn.addEventListener("click", () => {
@@ -569,12 +876,16 @@
       }
 
       alert(
-        "Next step: customer form.\n\nSelected time: " +
+        "Next step: customer form.\\n\\nSelected time: " +
         formatPasadenaTime(selectedSlot.start_at)
       );
     });
 
-    fillStaffOptions();
+    updateDateUI();
+    selectBestDefaultStaff();
+    renderStaffStrip();
+    renderServicePills();
+    searchAvailability();
   </script>
 </body>
 </html>
