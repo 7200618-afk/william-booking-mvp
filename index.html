@@ -19,9 +19,9 @@
 
     .page {
       width: 100%;
-      max-width: 1100px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 12px;
+      padding: 10px;
       padding-bottom: 30px;
     }
 
@@ -45,10 +45,7 @@
     }
 
     .booking-layout {
-      display: grid;
-      grid-template-columns: 390px 1fr;
-      gap: 12px;
-      align-items: start;
+      display: block;
     }
 
     .top-card,
@@ -143,8 +140,8 @@
     }
 
     .staff-card {
-      flex: 0 0 78px;
-      min-height: 118px;
+      flex: 0 0 82px;
+      min-height: 132px;
       border: 1px solid #e6e6e6;
       border-radius: 14px;
       background: #fff;
@@ -236,27 +233,18 @@
       color: #ffd39a;
     }
 
-    .selected-staff-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 2px 2px;
-      margin-top: -2px;
-    }
-
-    .selected-staff-name {
-      font-size: 13px;
-      color: #666;
-      font-weight: 800;
-    }
-
-    .profile-link {
-      color: #111;
-      font-size: 13px;
+    .profile-link-in-card {
+      display: none;
+      margin-top: 5px;
+      color: inherit;
+      font-size: 10px;
       font-weight: 900;
       text-decoration: underline;
-      white-space: nowrap;
+      line-height: 1.1;
+    }
+
+    .staff-card.is-active .profile-link-in-card {
+      display: block;
     }
 
     .service-pills {
@@ -272,20 +260,43 @@
       border-radius: 12px;
       background: #fff;
       color: #111;
-      padding: 9px 8px;
-      font-size: 13px;
-      font-weight: 900;
+      padding: 8px 7px;
       cursor: pointer;
-      white-space: normal;
-      line-height: 1.25;
       text-align: center;
       -webkit-tap-highlight-color: transparent;
+      min-height: 44px;
     }
 
     .service-pill.is-active {
       background: #000;
       color: #fff;
       border-color: #000;
+    }
+
+    .service-name {
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .service-meta {
+      display: block;
+      margin-top: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      color: #666;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .service-pill.is-active .service-meta {
+      color: #ddd;
     }
 
     .message {
@@ -337,6 +348,7 @@
 
     .slot-card {
       display: none;
+      margin-top: 10px;
       padding: 10px;
       min-height: 220px;
     }
@@ -468,24 +480,6 @@
       line-height: 1.3;
     }
 
-    @media (max-width: 760px) {
-      .page {
-        padding: 10px;
-      }
-
-      .booking-layout {
-        display: block;
-      }
-
-      .slot-card {
-        margin-top: 10px;
-      }
-
-      .times {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
     @media (min-width: 761px) {
       .page {
         padding-top: 24px;
@@ -493,6 +487,7 @@
 
       .header {
         padding-bottom: 14px;
+        text-align: center;
       }
 
       h1 {
@@ -503,8 +498,18 @@
         font-size: 14px;
       }
 
+      .top-card,
+      .slot-card {
+        border-radius: 18px;
+      }
+
+      .top-card {
+        padding: 14px;
+      }
+
       .staff-card {
-        flex-basis: 88px;
+        flex-basis: 94px;
+        min-height: 138px;
       }
 
       .time-btn {
@@ -512,9 +517,12 @@
         font-size: 15px;
       }
 
-      .slot-card {
-        position: sticky;
-        top: 18px;
+      .service-name {
+        font-size: 14px;
+      }
+
+      .service-meta {
+        font-size: 11px;
       }
     }
   </style>
@@ -542,11 +550,6 @@
 
         <div class="section-label">Stylists</div>
         <div id="staffStrip" class="staff-strip"></div>
-
-        <div class="selected-staff-row">
-          <div id="selectedStaffName" class="selected-staff-name"></div>
-          <a id="profileLink" class="profile-link" href="#" target="_blank" rel="noopener noreferrer">View Profile</a>
-        </div>
 
         <div class="section-label">Services</div>
         <div id="servicePills" class="service-pills"></div>
@@ -664,8 +667,6 @@
     };
 
     const staffStripEl = document.getElementById("staffStrip");
-    const selectedStaffNameEl = document.getElementById("selectedStaffName");
-    const profileLinkEl = document.getElementById("profileLink");
     const servicePillsEl = document.getElementById("servicePills");
     const dateInputEl = document.getElementById("dateInput");
     const dateLabelEl = document.getElementById("dateLabel");
@@ -961,13 +962,6 @@
       renderStaffStrip(false);
     }
 
-    function updateSelectedStaffRow() {
-      const staff = STAFF_DATA[selectedStaffKey];
-
-      selectedStaffNameEl.textContent = staff.name;
-      profileLinkEl.href = getProfileUrl(selectedStaffKey);
-    }
-
     function clearResults() {
       selectedSlot = null;
       nextAvailableTargetDate = null;
@@ -1004,17 +998,17 @@
         const cacheKey = getStatusCacheKey(staffKey, staff.defaultService, currentDate);
         const cached = staffStatusCache[cacheKey];
 
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "staff-card";
-        btn.dataset.staffKey = staffKey;
+        const card = document.createElement("div");
+        card.className = "staff-card";
+        card.dataset.staffKey = staffKey;
+        card.tabIndex = 0;
 
-        if (staffKey === selectedStaffKey) btn.classList.add("is-active");
-        if (working) btn.classList.add("is-working");
-        else btn.classList.add("is-off");
+        if (staffKey === selectedStaffKey) card.classList.add("is-active");
+        if (working) card.classList.add("is-working");
+        else card.classList.add("is-off");
 
         if (cached && cached.isFull && working) {
-          btn.classList.add("is-full");
+          card.classList.add("is-full");
         }
 
         const avatarHTML = staff.image
@@ -1022,29 +1016,44 @@
           : `<div class="avatar">${staff.name.slice(0, 1)}</div>`;
 
         const statusText = cached ? cached.text : "Checking...";
+        const profileUrl = getProfileUrl(staffKey);
 
-        btn.innerHTML = `
+        card.innerHTML = `
           ${avatarHTML}
           <div class="staff-name">${staff.name}</div>
+          <a class="profile-link-in-card" href="${profileUrl}" target="_blank" rel="noopener noreferrer">View Profile</a>
           <div class="staff-status">${statusText}</div>
         `;
 
-        btn.addEventListener("click", () => {
+        card.addEventListener("click", event => {
+          if (event.target.closest("a")) return;
+
           selectedStaffKey = staffKey;
           selectedServiceKey = STAFF_DATA[staffKey].defaultService;
 
           renderStaffStrip(false);
           renderServicePills();
-          updateSelectedStaffRow();
           clearResults();
 
           searchAvailability();
         });
 
-        staffStripEl.appendChild(btn);
-      });
+        card.addEventListener("keydown", event => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
 
-      updateSelectedStaffRow();
+          selectedStaffKey = staffKey;
+          selectedServiceKey = STAFF_DATA[staffKey].defaultService;
+
+          renderStaffStrip(false);
+          renderServicePills();
+          clearResults();
+
+          searchAvailability();
+        });
+
+        staffStripEl.appendChild(card);
+      });
 
       if (shouldLoadStatuses) {
         statusRequestId++;
@@ -1073,7 +1082,10 @@
           btn.classList.add("is-active");
         }
 
-        btn.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
+        btn.innerHTML = `
+          <span class="service-name">${service.label}</span>
+          <span class="service-meta">${formatPrice(service.price)} · ${service.duration_minutes} min</span>
+        `;
 
         btn.addEventListener("click", () => {
           selectedServiceKey = serviceKey;
@@ -1258,7 +1270,6 @@
 
       renderStaffStrip(true);
       renderServicePills();
-      updateSelectedStaffRow();
       clearResults();
       searchAvailability();
     }
@@ -1302,7 +1313,6 @@
     selectBestDefaultStaff();
     renderStaffStrip(true);
     renderServicePills();
-    updateSelectedStaffRow();
     searchAvailability();
   </script>
 </body>
