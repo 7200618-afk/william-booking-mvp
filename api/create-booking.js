@@ -1,1843 +1,503 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B SIDE U Pasadena Booking</title>
-
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #111;
-    }
-
-    .page {
-      width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 10px;
-      padding-bottom: 30px;
-    }
-
-    .top-card,
-    .slot-card {
-      border: 1px solid #e8e8e8;
-      border-radius: 15px;
-      background: #fff;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.035);
-    }
-
-    .top-card { padding: 10px; }
-
-    .date-bar {
-      display: grid;
-      grid-template-columns: 32px 1fr 32px;
-      gap: 7px;
-      align-items: center;
-      padding-bottom: 9px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .date-nav {
-      width: 32px;
-      height: 32px;
-      border: 0;
-      border-radius: 9px;
-      background: #000;
-      color: #fff;
-      font-size: 17px;
-      font-weight: 900;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .date-center {
-      position: relative;
-      text-align: center;
-      min-width: 0;
-    }
-
-    .date-label {
-      font-size: 15px;
-      font-weight: 900;
-      line-height: 32px;
-      border-radius: 9px;
-      background: #f7f7f7;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 0 8px;
-    }
-
-    #dateInput {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .section-label {
-      font-size: 11px;
-      color: #666;
-      font-weight: 900;
-      letter-spacing: 0.45px;
-      text-transform: uppercase;
-      margin: 8px 0 6px;
-    }
-
-    .staff-strip {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 1px 1px 4px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      align-items: flex-start;
-    }
-
-    .staff-strip::-webkit-scrollbar { height: 3px; }
-    .staff-strip::-webkit-scrollbar-thumb {
-      background: #ddd;
-      border-radius: 999px;
-    }
-
-    .staff-item {
-      flex: 0 0 84px;
-      scroll-snap-align: start;
-      text-align: center;
-    }
-
-    .staff-card {
-      width: 84px;
-      min-height: 126px;
-      border: 1px solid #e6e6e6;
-      border-radius: 14px;
-      background: #fff;
-      padding: 8px 5px;
-      text-align: center;
-      cursor: pointer;
-      transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .staff-card:active { transform: scale(0.98); }
-
-    .staff-card.is-active {
-      background: #000;
-      color: #fff;
-      border-color: #000;
-    }
-
-    .staff-card.is-off { opacity: 0.66; }
-    .staff-card.is-full { opacity: 0.78; }
-
-    .avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      margin: 0 auto 6px;
-      background: #eee;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 18px;
-      color: #111;
-    }
-
-    .staff-card.is-active .avatar {
-      background: #fff;
-      color: #111;
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .staff-name {
-      font-size: 13px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
-
-    .staff-status {
-      margin-top: 5px;
-      font-size: 10px;
-      font-weight: 900;
-      color: #777;
-      line-height: 1.15;
-      min-height: 24px;
-    }
-
-    .staff-card.is-working .staff-status { color: #1a73e8; }
-    .staff-card.is-full .staff-status { color: #a05a00; }
-    .staff-card.is-active .staff-status { color: #ddd; }
-    .staff-card.is-active.is-working .staff-status { color: #9ec5ff; }
-    .staff-card.is-active.is-full .staff-status { color: #ffd39a; }
-
-    .profile-link-under-card {
-      display: none;
-      margin-top: 4px;
-      color: #111;
-      font-size: 10px;
-      font-weight: 900;
-      text-decoration: underline;
-      line-height: 1.1;
-    }
-
-    .staff-item.is-active .profile-link-under-card {
-      display: block;
-    }
-
-    .service-pills {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-      padding: 0;
-    }
-
-    .service-pill {
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      background: #fff;
-      color: #111;
-      padding: 8px 7px;
-      cursor: pointer;
-      text-align: center;
-      -webkit-tap-highlight-color: transparent;
-      min-height: 44px;
-    }
-
-    .service-pill.is-active {
-      background: #000;
-      color: #fff;
-      border-color: #000;
-    }
-
-    .service-name {
-      display: block;
-      font-size: 13px;
-      font-weight: 900;
-      line-height: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .service-meta {
-      display: block;
-      margin-top: 4px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #666;
-      line-height: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .service-pill.is-active .service-meta { color: #ddd; }
-
-    .message {
-      min-height: 0;
-      margin-top: 2px;
-      color: #666;
-      font-size: 13px;
-      line-height: 1.25;
-      word-break: break-word;
-    }
-
-    .empty-state {
-      display: none;
-      margin-top: 8px;
-      border: 1px solid #e8e8e8;
-      border-radius: 13px;
-      padding: 10px;
-      background: #fafafa;
-    }
-
-    .empty-state.is-visible { display: block; }
-
-    .empty-title {
-      font-size: 14px;
-      font-weight: 900;
-      margin-bottom: 4px;
-    }
-
-    .empty-sub {
-      font-size: 12px;
-      color: #666;
-      line-height: 1.35;
-      margin-bottom: 9px;
-    }
-
-    .next-available-btn {
-      width: 100%;
-      height: 40px;
-      border: 0;
-      border-radius: 10px;
-      background: #000;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .slot-card {
-      display: none;
-      margin-top: 10px;
-      padding: 10px;
-      min-height: 220px;
-    }
-
-    .slot-card.is-visible { display: block; }
-
-    .slot-topline {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .slot-title {
-      font-size: 18px;
-      font-weight: 900;
-      margin: 0;
-    }
-
-    .slot-count {
-      font-size: 12px;
-      font-weight: 900;
-      color: #666;
-      white-space: nowrap;
-    }
-
-    .slot-group { margin-top: 14px; }
-
-    .slot-group-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 900;
-      color: #111;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .slot-group-title::after {
-      content: "";
-      height: 1px;
-      background: #eee;
-      flex: 1;
-    }
-
-    .times {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
-    }
-
-    .time-btn {
-      min-height: 43px;
-      border: 1px solid #111;
-      border-radius: 10px;
-      background: #fff;
-      color: #111;
-      font-size: 14px;
-      font-weight: 900;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      padding: 0 4px;
-    }
-
-    .time-btn.is-selected {
-      background: #000;
-      color: #fff;
-    }
-
-    .booking-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      background: rgba(0,0,0,0.42);
-      padding: 12px;
-      overflow-y: auto;
-    }
-
-    .booking-modal.is-visible { display: flex; }
-
-    .booking-modal-card {
-      width: 100%;
-      max-width: 480px;
-      background: #fff;
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 16px 60px rgba(0,0,0,0.25);
-      animation: modalUp 0.18s ease-out;
-      max-height: calc(100vh - 24px);
-      overflow-y: auto;
-    }
-
-    @keyframes modalUp {
-      from { transform: translateY(18px); opacity: 0.75; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .modal-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 10px;
-    }
-
-    .modal-title {
-      font-size: 19px;
-      font-weight: 900;
-      margin: 0;
-    }
-
-    .modal-close {
-      width: 34px;
-      height: 34px;
-      border: 0;
-      border-radius: 50%;
-      background: #f2f2f2;
-      color: #111;
-      font-size: 22px;
-      font-weight: 900;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .booking-summary {
-      border: 1px solid #eee;
-      border-radius: 13px;
-      background: #fafafa;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .summary-row:last-child { border-bottom: 0; }
-
-    .summary-label {
-      color: #666;
-      font-size: 12px;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .summary-value {
-      color: #111;
-      font-size: 13px;
-      font-weight: 900;
-      text-align: right;
-    }
-
-    .booking-form {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .name-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .phone-row {
-      display: grid;
-      grid-template-columns: 105px 1fr;
-      gap: 8px;
-    }
-
-    .country-select {
-      width: 100%;
-      height: 42px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 0 8px;
-      font-size: 14px;
-      font-weight: 800;
-      outline: none;
-      background: #fff;
-    }
-
-    .country-select:focus { border-color: #000; }
-
-    .booking-input {
-      width: 100%;
-      height: 42px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 0 11px;
-      font-size: 14px;
-      font-weight: 700;
-      outline: none;
-      background: #fff;
-    }
-
-    .booking-input:focus { border-color: #000; }
-
-    .booking-textarea {
-      width: 100%;
-      min-height: 72px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 10px 11px;
-      font-size: 14px;
-      font-weight: 700;
-      outline: none;
-      background: #fff;
-      resize: vertical;
-      font-family: Arial, sans-serif;
-    }
-
-    .booking-textarea:focus { border-color: #000; }
-
-    .confirm-btn,
-    .success-done-btn {
-      width: 100%;
-      height: 48px;
-      border: 0;
-      border-radius: 11px;
-      background: #000;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .confirm-btn:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .booking-status {
-      min-height: 18px;
-      color: #666;
-      font-size: 12px;
-      font-weight: 800;
-      line-height: 1.3;
-    }
-
-    .booking-success { color: #16833d; }
-    .booking-error { color: #b00020; }
-
-    .success-page { padding: 4px; }
-
-    .success-header { margin-bottom: 14px; }
-
-    .success-header h2 {
-      font-size: 26px;
-      line-height: 1.1;
-      margin: 0 0 6px;
-      font-weight: 900;
-    }
-
-    .success-header p {
-      margin: 0;
-      color: #666;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .success-appointment-card,
-    .success-location-card {
-      border: 1px solid #e8e8e8;
-      border-radius: 16px;
-      background: #fff;
-      padding: 14px;
-      margin-bottom: 14px;
-    }
-
-    .success-date {
-      font-size: 17px;
-      font-weight: 900;
-      margin-bottom: 18px;
-    }
-
-    .success-service-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #eee;
-      margin-bottom: 14px;
-    }
-
-    .success-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #eee;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      flex: 0 0 48px;
-    }
-
-    .success-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .success-service-title {
-      font-size: 16px;
-      font-weight: 900;
-      line-height: 1.2;
-    }
-
-    .success-with {
-      margin-top: 3px;
-      color: #666;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .calendar-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 48px;
-      border-radius: 12px;
-      background: #000;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 900;
-      text-decoration: none;
-      margin-bottom: 12px;
-    }
-
-    .success-actions {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .success-actions button,
-    .success-actions a {
-      height: 44px;
-      border: 0;
-      border-radius: 11px;
-      background: #f1f1f1;
-      color: #111;
-      font-size: 13px;
-      font-weight: 900;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .success-location-card h3 {
-      margin: 0 0 10px;
-      font-size: 19px;
-      font-weight: 900;
-    }
-
-    .location-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .location-name {
-      font-size: 15px;
-      font-weight: 900;
-      margin-bottom: 4px;
-    }
-
-    .location-address {
-      font-size: 13px;
-      color: #666;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .direction-btn {
-      flex: 0 0 48px;
-      height: 48px;
-      border-radius: 12px;
-      background: #f1f1f1;
-      color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 23px;
-      font-weight: 900;
-      text-decoration: none;
-    }
-
-    @media (min-width: 761px) {
-      .page { padding-top: 24px; }
-
-      .top-card,
-      .slot-card { border-radius: 18px; }
-
-      .top-card { padding: 14px; }
-
-      .staff-item { flex-basis: 94px; }
-
-      .staff-card {
-        width: 94px;
-        min-height: 128px;
-      }
-
-      .time-btn {
-        min-height: 48px;
-        font-size: 15px;
-      }
-
-      .service-name { font-size: 14px; }
-      .service-meta { font-size: 11px; }
-
-      .booking-modal { align-items: center; }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="page">
-    <div class="booking-layout">
-      <div class="top-card">
-        <div class="date-bar">
-          <button id="prevDay" class="date-nav" type="button">‹</button>
-
-          <div class="date-center">
-            <div id="dateLabel" class="date-label">Today</div>
-            <input id="dateInput" type="date" />
-          </div>
-
-          <button id="nextDay" class="date-nav" type="button">›</button>
-        </div>
-
-        <div class="section-label">Stylists</div>
-        <div id="staffStrip" class="staff-strip"></div>
-
-        <div class="section-label">Services</div>
-        <div id="servicePills" class="service-pills"></div>
-
-        <div id="message" class="message"></div>
-
-        <div id="emptyState" class="empty-state">
-          <div id="emptyTitle" class="empty-title"></div>
-          <div id="emptySub" class="empty-sub"></div>
-          <button id="nextAvailableBtn" class="next-available-btn" type="button">
-            Go to next available date
-          </button>
-        </div>
-      </div>
-
-      <div id="slotCard" class="slot-card">
-        <div class="slot-topline">
-          <h2 class="slot-title">Available Times</h2>
-          <div id="slotCount" class="slot-count"></div>
-        </div>
-
-        <div id="slotGroups"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="bookingModal" class="booking-modal">
-    <div id="bookingModalCard" class="booking-modal-card">
-      <div class="modal-top">
-        <h2 class="modal-title">Confirm Booking</h2>
-        <button id="closeBookingModal" class="modal-close" type="button">×</button>
-      </div>
-
-      <div class="booking-summary">
-        <div class="summary-row">
-          <div class="summary-label">Time</div>
-          <div id="modalTime" class="summary-value"></div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-label">Stylist</div>
-          <div id="modalStylist" class="summary-value"></div>
-        </div>
-        <div class="summary-row">
-          <div class="summary-label">Service</div>
-          <div id="modalService" class="summary-value"></div>
-        </div>
-      </div>
-
-      <div class="booking-form">
-        <div class="name-row">
-          <input id="firstName" class="booking-input" type="text" placeholder="First name" autocomplete="given-name" />
-          <input id="lastName" class="booking-input" type="text" placeholder="Last name" autocomplete="family-name" />
-        </div>
-
-        <div class="phone-row">
-          <select id="countryCode" class="country-select">
-            <option value="+1" selected>🇺🇸 +1</option>
-            <option value="+86">🇨🇳 +86</option>
-            <option value="+81">🇯🇵 +81</option>
-            <option value="+82">🇰🇷 +82</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+33">🇫🇷 +33</option>
-            <option value="+49">🇩🇪 +49</option>
-            <option value="+61">🇦🇺 +61</option>
-            <option value="+65">🇸🇬 +65</option>
-            <option value="+886">🇹🇼 +886</option>
-            <option value="+852">🇭🇰 +852</option>
-            <option value="+853">🇲🇴 +853</option>
-          </select>
-
-          <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone number" autocomplete="tel" />
-        </div>
-
-        <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
-        <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
-
-        <button id="confirmBookingBtn" class="confirm-btn" type="button">
-          Confirm Booking
-        </button>
-
-        <div id="bookingStatus" class="booking-status"></div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const daysShort = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
-    const daysDisplay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const CUSTOMER_STORAGE_KEY = "bsideu_pasadena_customer_info";
-
-    const STAFF_DATA = {
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed. Use POST."
+    });
+  }
+
+  try {
+    const {
+      staffKey,
+      serviceType,
+      start_at,
+      customerName,
+      customerPhone,
+      customerEmail,
+      customerNote
+    } = req.body || {};
+
+    const LOCATION_ID = "L3QJNBCTPSYW7";
+
+    const STAFF_API = {
       William: {
-        name: "William",
-        order: 1,
-        startDate: "2026-05-27",
-        specialWorkDates: ["2026-05-27"],
-        days: ["mon", "thu", "fri", "sat", "sun"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2177_1779099876.jpeg?width=400&optimize=medium",
-        defaultService: "haircut",
+        team_member_id: "TMWIhbRkPFn61SpR",
         services: {
-          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 50 },
-          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 50 }
+          haircut: {
+            label: "Men’s Haircut",
+            price: 60,
+            duration_minutes: 50,
+            service_variation_id: "U5TNWU6VYAJNRGIMBFGA2545",
+            service_variation_version: 1778829893873
+          },
+          scissors: {
+            label: "Scissors Cut",
+            price: 75,
+            duration_minutes: 50,
+            service_variation_id: "22YZ5VMOQO4K2IKYY6R2OIPM",
+            service_variation_version: 1778926320167
+          }
         }
       },
 
       Ryan: {
-        name: "Ryan",
-        order: 2,
-        days: ["mon", "tue", "thu", "fri", "sat", "sun"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/123121212_1764920283.JPG?width=400&optimize=medium",
-        defaultService: "haircut",
+        team_member_id: "TMm7W1ZmprhAbD-Q",
         services: {
-          haircut: { label: "Men’s Haircut", price: 45, duration_minutes: 45 },
-          scissors: { label: "Scissors Cut", price: 60, duration_minutes: 45 }
+          haircut: {
+            label: "Men’s Haircut",
+            price: 45,
+            duration_minutes: 45,
+            service_variation_id: "3O36RYDUKSXRIYJRSCVMUR7W",
+            service_variation_version: 1774408255432
+          },
+          scissors: {
+            label: "Scissors Cut",
+            price: 60,
+            duration_minutes: 45,
+            service_variation_id: "273LNJSEBG5NXUJZI5HYC7RI",
+            service_variation_version: 1774412546058
+          }
         }
       },
 
       Ken: {
-        name: "Ken",
-        order: 3,
-        days: ["tue", "wed", "fri", "sat", "sun"],
-        image: "https://appointments-production-f.squarecdn.com/files/8ab010be3ad4f51892e1c75509dc0572/original.jpeg",
-        defaultService: "haircut",
+        team_member_id: "TMbO57WbplZRl2vp",
         services: {
-          haircut: { label: "Men’s Haircut", price: 50, duration_minutes: 40 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 }
+          haircut: {
+            label: "Men’s Haircut",
+            price: 50,
+            duration_minutes: 40,
+            service_variation_id: "2GP3AHZEVUISBXNJJC7XFVE2",
+            service_variation_version: 1778926266305
+          },
+          scissors: {
+            label: "Scissors Cut",
+            price: 70,
+            duration_minutes: 40,
+            service_variation_id: "ADGMMV6KLH3TECLX6ZOB62T4",
+            service_variation_version: 1778926278241
+          }
         }
       },
 
       Fiona: {
-        name: "Fiona",
-        order: 4,
-        days: ["mon", "tue", "wed", "fri", "sat"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/fiona_1744180262.jpeg",
-        defaultService: "haircut",
+        team_member_id: "TMZ4Soxe_hDKg3Ht",
         services: {
-          haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 40 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 40 },
-          perm: { label: "Perm", price: "220+", duration_minutes: 120 },
-          color_gray: { label: "Cover Gray", price: 65, duration_minutes: 40 },
-          color_full: { label: "Full Color", price: 120, duration_minutes: 120 }
+          haircut: {
+            label: "Men’s Haircut",
+            price: 55,
+            duration_minutes: 40,
+            service_variation_id: "37ARLNEQ32HMPB2VSAWOHQ7A",
+            service_variation_version: 1774408226366
+          },
+          scissors: {
+            label: "Scissors Cut",
+            price: 70,
+            duration_minutes: 40,
+            service_variation_id: "NNVHTCNXKGR2WA2CKPOJRNIG",
+            service_variation_version: 1774407851988
+          },
+          perm: {
+            label: "Perm",
+            price: "220+",
+            duration_minutes: 120,
+            service_variation_id: "BFHUUTJC6KPXE3NSCHF5YIWS",
+            service_variation_version: 1779001952576
+          },
+          color_gray: {
+            label: "Cover Gray",
+            price: 65,
+            duration_minutes: 40,
+            service_variation_id: "5VLGRSZYIO5AL3SU6AGZU6KP",
+            service_variation_version: 1777094072086
+          },
+          color_full: {
+            label: "Full Color",
+            price: 120,
+            duration_minutes: 120,
+            service_variation_id: "FPADYBGJBAVOXMTJHXFQ43H4",
+            service_variation_version: 1769964790194
+          }
         }
       },
 
       Nami: {
-        name: "Nami",
-        order: 5,
-        days: ["tue", "wed", "thu", "sun"],
-        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/nami_1744180260.jpeg",
-        defaultService: "haircut",
+        team_member_id: "TMm4INT2vtpvuQRo",
         services: {
-          haircut: { label: "Men’s Haircut", price: 55, duration_minutes: 50 },
-          scissors: { label: "Scissors Cut", price: 70, duration_minutes: 50 }
+          haircut: {
+            label: "Men’s Haircut",
+            price: 55,
+            duration_minutes: 50,
+            service_variation_id: "FQODRAN4TNKURP3RNW7GO4FL",
+            service_variation_version: 1774408248385
+          },
+          scissors: {
+            label: "Scissors Cut",
+            price: 70,
+            duration_minutes: 50,
+            service_variation_id: "7RZHSI75HOC3CULO37IDRN3G",
+            service_variation_version: 1774412538238
+          }
         }
       },
 
       Jacob: {
-        name: "Jacob",
-        order: 999,
-        days: ["wed", "thu", "fri", "sat"],
-        image: "https://appointments-production-f.squarecdn.com/files/fa093c26c9f36366886b8ed1a776878a/original.jpeg",
-        defaultService: "haircut",
+        team_member_id: "TMGkdiUy-xaRP5_W",
         services: {
-          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 45 },
-          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 45 }
+          haircut: {
+            label: "Men’s Haircut",
+            price: 60,
+            duration_minutes: 45,
+            service_variation_id: "NSHYZU2NHY4VFXOBYESKGZGW",
+            service_variation_version: 1774408235308
+          },
+          scissors: {
+            label: "Scissors Cut",
+            price: 75,
+            duration_minutes: 45,
+            service_variation_id: "P6OZF4GTRF5JMBB6VQDU6ZLK",
+            service_variation_version: 1774407860059
+          }
         }
       }
     };
 
-    const staffStripEl = document.getElementById("staffStrip");
-    const servicePillsEl = document.getElementById("servicePills");
-    const dateInputEl = document.getElementById("dateInput");
-    const dateLabelEl = document.getElementById("dateLabel");
-    const prevDayBtn = document.getElementById("prevDay");
-    const nextDayBtn = document.getElementById("nextDay");
-    const messageEl = document.getElementById("message");
-    const emptyStateEl = document.getElementById("emptyState");
-    const emptyTitleEl = document.getElementById("emptyTitle");
-    const emptySubEl = document.getElementById("emptySub");
-    const nextAvailableBtn = document.getElementById("nextAvailableBtn");
-    const slotCardEl = document.getElementById("slotCard");
-    const slotCountEl = document.getElementById("slotCount");
-    const slotGroupsEl = document.getElementById("slotGroups");
-
-    const bookingModalEl = document.getElementById("bookingModal");
-    const bookingModalCardEl = document.getElementById("bookingModalCard");
-    const closeBookingModalBtn = document.getElementById("closeBookingModal");
-    const confirmBookingBtn = document.getElementById("confirmBookingBtn");
-
-    const originalBookingModalHTML = bookingModalCardEl.innerHTML;
-
-    let currentDate = new Date();
-    let selectedStaffKey = "";
-    let selectedServiceKey = "";
-    let selectedSlot = null;
-    let statusRequestId = 0;
-    let nextAvailableTargetDate = null;
-    let staffStatusCache = {};
-
-    function loadSavedCustomerInfo() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(CUSTOMER_STORAGE_KEY) || "{}");
-
-        const firstNameInput = document.getElementById("firstName");
-        const lastNameInput = document.getElementById("lastName");
-        const countryCodeInput = document.getElementById("countryCode");
-        const phoneInput = document.getElementById("customerPhone");
-        const emailInput = document.getElementById("customerEmail");
-
-        if (firstNameInput) firstNameInput.value = saved.firstName || "";
-        if (lastNameInput) lastNameInput.value = saved.lastName || "";
-        if (countryCodeInput) countryCodeInput.value = saved.countryCode || "+1";
-        if (phoneInput) phoneInput.value = saved.phone || "";
-        if (emailInput) emailInput.value = saved.email || "";
-      } catch (error) {}
-    }
-
-    function saveCustomerInfo() {
-      const firstNameInput = document.getElementById("firstName");
-      const lastNameInput = document.getElementById("lastName");
-      const countryCodeInput = document.getElementById("countryCode");
-      const phoneInput = document.getElementById("customerPhone");
-      const emailInput = document.getElementById("customerEmail");
-
-      const info = {
-        firstName: firstNameInput ? firstNameInput.value.trim() : "",
-        lastName: lastNameInput ? lastNameInput.value.trim() : "",
-        countryCode: countryCodeInput ? countryCodeInput.value : "+1",
-        phone: phoneInput ? phoneInput.value.trim() : "",
-        email: emailInput ? emailInput.value.trim() : ""
-      };
-
-      localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(info));
-    }
-
-    function toIsoDateLocal(date) {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const d = String(date.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
-
-    function fromIsoDateLocal(value) {
-      const [y, m, d] = value.split("-").map(Number);
-      return new Date(y, m - 1, d);
-    }
-
-    function formatDateLabel(date) {
-      const todayIso = toIsoDateLocal(new Date());
-      const dateIso = toIsoDateLocal(date);
-      const dow = daysDisplay[date.getDay()];
-      const md = `${date.getMonth() + 1}/${date.getDate()}`;
-
-      if (dateIso === todayIso) return `Today · ${dow} ${md}`;
-      return `${dow} ${md}`;
-    }
-
-    function formatShortDate(date) {
-      const dow = daysDisplay[date.getDay()];
-      return `${dow} ${date.getMonth() + 1}/${date.getDate()}`;
-    }
-
-    function formatFullDate(date) {
-      const dow = daysDisplay[date.getDay()];
-      return `${dow} ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
-    }
-
-    function updateDateUI() {
-      dateInputEl.value = toIsoDateLocal(currentDate);
-      dateLabelEl.textContent = formatDateLabel(currentDate);
-    }
-
-    function hasStarted(staffKey, date) {
-      const staff = STAFF_DATA[staffKey];
-      if (!staff.startDate) return true;
-      return toIsoDateLocal(date) >= staff.startDate;
-    }
-
-    function isWorking(staffKey, date) {
-      const staff = STAFF_DATA[staffKey];
-
-      if (!hasStarted(staffKey, date)) return false;
-
-      const dateIso = toIsoDateLocal(date);
-
-      if (staff.specialWorkDates && staff.specialWorkDates.includes(dateIso)) {
-        return true;
+    function makeId() {
+      if (typeof crypto !== "undefined" && crypto.randomUUID) {
+        return crypto.randomUUID();
       }
 
-      const dow = daysShort[date.getDay()];
-      return staff.days.includes(dow);
+      return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     }
 
-    function getStatusCacheKey(staffKey, serviceType, dateObj) {
-      return `${toIsoDateLocal(dateObj)}|${staffKey}|${serviceType}`;
+    function cleanEmail(email) {
+      return String(email || "").trim().toLowerCase();
     }
 
-    function getOrderedStaffKeys(date) {
-      const keys = Object.keys(STAFF_DATA);
-      const workingWithOpenings = [];
-      const workingFull = [];
-      const off = [];
+    function normalizePhone(phone) {
+      let value = String(phone || "").trim();
 
-      keys.forEach(key => {
-        const staff = STAFF_DATA[key];
-        const serviceType = staff.defaultService;
-        const cacheKey = getStatusCacheKey(key, serviceType, date);
-        const cached = staffStatusCache[cacheKey];
+      if (!value) return "";
 
-        if (isWorking(key, date)) {
-          if (cached && cached.isFull) {
-            workingFull.push(key);
-          } else {
-            workingWithOpenings.push(key);
+      let digits = value.replace(/\D/g, "");
+
+      if (!digits) return "";
+
+      // 修复 +1 被重复加的问题，例如 +112132735462
+      if (digits.length === 12 && digits.startsWith("11")) {
+        digits = digits.slice(1);
+      }
+
+      // 美国号码：2132735462 -> +12132735462
+      if (digits.length === 10) {
+        return `+1${digits}`;
+      }
+
+      // 美国号码：12132735462 -> +12132735462
+      if (digits.length === 11 && digits.startsWith("1")) {
+        return `+${digits}`;
+      }
+
+      // 国际号码：如果原本有 +，保留国际格式
+      if (value.startsWith("+")) {
+        return `+${digits}`;
+      }
+
+      // 其他国际号码兜底
+      return `+${digits}`;
+    }
+
+    function getSquareErrorMessage(data, fallback) {
+      const firstError = data?.errors?.[0];
+
+      if (!firstError) return fallback;
+
+      const detail = firstError.detail || firstError.code || fallback;
+
+      if (detail === "The string did not match the expected pattern.") {
+        return "Phone number or email format is not valid. Please check and try again.";
+      }
+
+      return detail;
+    }
+
+    const cleanedEmail = cleanEmail(customerEmail);
+    const normalizedPhone = normalizePhone(customerPhone);
+
+    if (!staffKey || !serviceType || !start_at) {
+      return res.status(400).json({
+        error: "Missing required booking information."
+      });
+    }
+
+    if (!customerName || !normalizedPhone || !cleanedEmail) {
+      return res.status(400).json({
+        error: "Name, phone, and email are required."
+      });
+    }
+
+    if (!cleanedEmail.includes("@") || !cleanedEmail.includes(".")) {
+      return res.status(400).json({
+        error: "Please enter a valid email address."
+      });
+    }
+
+    const staff = STAFF_API[staffKey];
+
+    if (!staff) {
+      return res.status(400).json({
+        error: "Invalid staffKey."
+      });
+    }
+
+    const service = staff.services[serviceType];
+
+    if (!service) {
+      return res.status(400).json({
+        error: "Invalid serviceType."
+      });
+    }
+
+    const squareHeaders = {
+      "Square-Version": "2026-01-22",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`,
+      "Content-Type": "application/json"
+    };
+
+    const nameParts = String(customerName).trim().split(/\s+/);
+    const givenName = nameParts[0] || customerName;
+    const familyName = nameParts.slice(1).join(" ");
+
+    async function checkExactAvailability() {
+      const startDate = new Date(start_at);
+
+      if (Number.isNaN(startDate.getTime())) {
+        return {
+          ok: false,
+          available: false,
+          data: {
+            errors: [
+              {
+                detail: "Invalid appointment time."
+              }
+            ]
           }
-        } else {
-          off.push(key);
-        }
-      });
-
-      workingWithOpenings.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
-      workingFull.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
-      off.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
-
-      return [...workingWithOpenings, ...workingFull, ...off];
-    }
-
-    function getProfileUrl(staffKey) {
-      return `https://bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
-    }
-
-    function formatPrice(price) {
-      return typeof price === "string" ? `$${price}` : `$${price}`;
-    }
-
-    function formatPasadenaTime(utcString) {
-      const date = new Date(utcString);
-
-      return date.toLocaleTimeString("en-US", {
-        timeZone: "America/Los_Angeles",
-        hour: "numeric",
-        minute: "2-digit"
-      });
-    }
-
-    function getPasadenaHour(utcString) {
-      const date = new Date(utcString);
-
-      const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Los_Angeles",
-        hour: "numeric",
-        hour12: false
-      }).formatToParts(date);
-
-      const hourPart = parts.find(part => part.type === "hour");
-      return Number(hourPart.value);
-    }
-
-    function getSlotGroupName(utcString) {
-      const hour = getPasadenaHour(utcString);
-      if (hour < 12) return "Morning";
-      if (hour < 17) return "Afternoon";
-      return "Evening";
-    }
-
-    function getCandidateWorkingDates(staffKey, fromDate, startTomorrow, limit = 8) {
-      const dates = [];
-
-      for (let i = startTomorrow ? 1 : 0; i <= 60; i++) {
-        const d = new Date(fromDate);
-        d.setDate(d.getDate() + i);
-
-        if (!hasStarted(staffKey, d)) continue;
-        if (!isWorking(staffKey, d)) continue;
-
-        dates.push(d);
-
-        if (dates.length >= limit) break;
+        };
       }
 
-      return dates;
+      const endDate = new Date(
+        startDate.getTime() + service.duration_minutes * 60 * 1000
+      );
+
+      const response = await fetch(
+        "https://connect.squareup.com/v2/bookings/availability/search",
+        {
+          method: "POST",
+          headers: squareHeaders,
+          body: JSON.stringify({
+            query: {
+              filter: {
+                start_at_range: {
+                  start_at: startDate.toISOString(),
+                  end_at: endDate.toISOString()
+                },
+                location_id: LOCATION_ID,
+                segment_filters: [
+                  {
+                    service_variation_id: service.service_variation_id,
+                    team_member_id_filter: {
+                      any: [staff.team_member_id]
+                    }
+                  }
+                ]
+              }
+            }
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return {
+          ok: false,
+          available: false,
+          data
+        };
+      }
+
+      const exactAvailable = (data.availabilities || []).some(availability => {
+        return availability.start_at === start_at;
+      });
+
+      return {
+        ok: true,
+        available: exactAvailable,
+        data
+      };
     }
 
-    async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
-      const response = await fetch("/api/search-availability", {
+    const availabilityCheck = await checkExactAvailability();
+
+    if (!availabilityCheck.ok) {
+      return res.status(409).json({
+        error: getSquareErrorMessage(
+          availabilityCheck.data,
+          "Could not verify availability. Please refresh and try again."
+        ),
+        square: availabilityCheck.data
+      });
+    }
+
+    if (!availabilityCheck.available) {
+      return res.status(409).json({
+        error: "Sorry, this time is no longer available. Please choose another time."
+      });
+    }
+
+    async function searchCustomerByEmail(email) {
+      const response = await fetch("https://connect.squareup.com/v2/customers/search", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: squareHeaders,
         body: JSON.stringify({
-          staffKey,
-          serviceType,
-          date: toIsoDateLocal(dateObj)
+          limit: 1,
+          query: {
+            filter: {
+              email_address: {
+                exact: email
+              }
+            }
+          }
         })
       });
 
       const data = await response.json();
 
-      if (!response.ok) return [];
+      if (!response.ok) {
+        return null;
+      }
 
-      return data.availabilities || [];
+      return data.customers?.[0] || null;
     }
 
-    async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
-      const candidateDates = getCandidateWorkingDates(staffKey, fromDate, startTomorrow, 8);
-
-      if (!candidateDates.length) return null;
-
-      const results = await Promise.all(
-        candidateDates.map(async dateObj => {
-          const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
-
-          return {
-            date: dateObj,
-            firstOpening: openings[0]?.start_at || null,
-            openings
-          };
+    async function searchCustomerByPhone(phone) {
+      const response = await fetch("https://connect.squareup.com/v2/customers/search", {
+        method: "POST",
+        headers: squareHeaders,
+        body: JSON.stringify({
+          limit: 1,
+          query: {
+            filter: {
+              phone_number: {
+                exact: phone
+              }
+            }
+          }
         })
-      );
-
-      return results.find(result => result.openings.length > 0) || null;
-    }
-
-    function showEmptyState(title, sub, nextResult) {
-      emptyTitleEl.textContent = title;
-      emptySubEl.textContent = sub || "";
-
-      if (nextResult && nextResult.date) {
-        nextAvailableTargetDate = nextResult.date;
-        nextAvailableBtn.style.display = "block";
-        nextAvailableBtn.textContent =
-          `Next available · ${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`;
-      } else {
-        nextAvailableTargetDate = null;
-        nextAvailableBtn.style.display = "none";
-      }
-
-      emptyStateEl.classList.add("is-visible");
-    }
-
-    async function computeStaffStatus(staffKey, dateObj) {
-      const staff = STAFF_DATA[staffKey];
-      const serviceType = staff.defaultService;
-      const cacheKey = getStatusCacheKey(staffKey, serviceType, dateObj);
-
-      if (staffStatusCache[cacheKey]) return staffStatusCache[cacheKey];
-
-      if (!hasStarted(staffKey, dateObj)) {
-        staffStatusCache[cacheKey] = {
-          text: "Starts 5/27",
-          isFull: false,
-          hasOpening: false
-        };
-        return staffStatusCache[cacheKey];
-      }
-
-      if (isWorking(staffKey, dateObj)) {
-        const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
-
-        if (todayOpenings.length) {
-          staffStatusCache[cacheKey] = {
-            text: `Today · ${formatPasadenaTime(todayOpenings[0].start_at)}`,
-            isFull: false,
-            hasOpening: true
-          };
-          return staffStatusCache[cacheKey];
-        }
-
-        staffStatusCache[cacheKey] = {
-          text: "Fully booked",
-          isFull: true,
-          hasOpening: false
-        };
-        return staffStatusCache[cacheKey];
-      }
-
-      const nextResult = await findNextAvailableDateFast(staffKey, serviceType, dateObj, true);
-
-      if (nextResult) {
-        staffStatusCache[cacheKey] = {
-          text: `${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`,
-          isFull: false,
-          hasOpening: true
-        };
-      } else {
-        staffStatusCache[cacheKey] = {
-          text: "No openings",
-          isFull: false,
-          hasOpening: false
-        };
-      }
-
-      return staffStatusCache[cacheKey];
-    }
-
-    async function loadStaffStatuses(requestId) {
-      const staffKeys = Object.keys(STAFF_DATA);
-
-      renderStaffStrip(false);
-
-      await Promise.all(
-        staffKeys.map(async staffKey => {
-          if (requestId !== statusRequestId) return;
-          await computeStaffStatus(staffKey, currentDate);
-        })
-      );
-
-      if (requestId !== statusRequestId) return;
-
-      renderStaffStrip(false);
-    }
-
-    function restoreBookingModalForm() {
-      bookingModalCardEl.innerHTML = originalBookingModalHTML;
-      rebindModalElements();
-    }
-
-    function rebindModalElements() {
-      const closeBtn = document.getElementById("closeBookingModal");
-      const confirmBtn = document.getElementById("confirmBookingBtn");
-
-      if (closeBtn) closeBtn.addEventListener("click", closeBookingModal);
-      if (confirmBtn) confirmBtn.addEventListener("click", confirmBooking);
-    }
-
-    function clearBookingModal() {
-      const bookingStatus = document.getElementById("bookingStatus");
-      const confirmBtn = document.getElementById("confirmBookingBtn");
-
-      if (bookingStatus) {
-        bookingStatus.textContent = "";
-        bookingStatus.className = "booking-status";
-      }
-
-      if (confirmBtn) {
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = "Confirm Booking";
-      }
-    }
-
-    function openBookingModal(slot) {
-      restoreBookingModalForm();
-
-      selectedSlot = slot;
-      clearBookingModal();
-      loadSavedCustomerInfo();
-
-      const staff = STAFF_DATA[selectedStaffKey];
-      const service = staff.services[selectedServiceKey];
-
-      document.getElementById("modalTime").textContent =
-        `${formatFullDate(currentDate)} · ${formatPasadenaTime(slot.start_at)} PT`;
-
-      document.getElementById("modalStylist").textContent = staff.name;
-      document.getElementById("modalService").textContent =
-        `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
-
-      bookingModalEl.classList.add("is-visible");
-
-      setTimeout(() => {
-        const firstNameInput = document.getElementById("firstName");
-        if (firstNameInput) firstNameInput.focus();
-      }, 80);
-    }
-
-    function closeBookingModal() {
-      bookingModalEl.classList.remove("is-visible");
-      clearBookingModal();
-    }
-
-    function clearResults() {
-      selectedSlot = null;
-      nextAvailableTargetDate = null;
-      messageEl.textContent = "";
-      slotGroupsEl.innerHTML = "";
-      slotCardEl.classList.remove("is-visible");
-      emptyStateEl.classList.remove("is-visible");
-      closeBookingModal();
-    }
-
-    function clearSelection() {
-      selectedSlot = null;
-
-      document.querySelectorAll(".time-btn").forEach(btn => {
-        btn.classList.remove("is-selected");
       });
 
-      clearBookingModal();
+      const data = await response.json();
+
+      if (!response.ok) {
+        return null;
+      }
+
+      return data.customers?.[0] || null;
     }
 
-    function renderStaffStrip(shouldLoadStatuses = false) {
-      staffStripEl.innerHTML = "";
+    let customer = await searchCustomerByEmail(cleanedEmail);
 
-      const orderedKeys = getOrderedStaffKeys(currentDate);
-
-      if (!selectedStaffKey || !orderedKeys.includes(selectedStaffKey)) {
-        selectedStaffKey = orderedKeys[0];
-      }
-
-      orderedKeys.forEach(staffKey => {
-        const staff = STAFF_DATA[staffKey];
-        const working = isWorking(staffKey, currentDate);
-        const cacheKey = getStatusCacheKey(staffKey, staff.defaultService, currentDate);
-        const cached = staffStatusCache[cacheKey];
-
-        const item = document.createElement("div");
-        item.className = "staff-item";
-        if (staffKey === selectedStaffKey) item.classList.add("is-active");
-
-        const card = document.createElement("div");
-        card.className = "staff-card";
-        card.dataset.staffKey = staffKey;
-        card.tabIndex = 0;
-
-        if (staffKey === selectedStaffKey) card.classList.add("is-active");
-        if (working) card.classList.add("is-working");
-        else card.classList.add("is-off");
-
-        if (cached && cached.isFull && working) {
-          card.classList.add("is-full");
-        }
-
-        const avatarHTML = staff.image
-          ? `<div class="avatar"><img src="${staff.image}" alt="${staff.name}"></div>`
-          : `<div class="avatar">${staff.name.slice(0, 1)}</div>`;
-
-        const statusText = cached ? cached.text : "Checking...";
-        const profileUrl = getProfileUrl(staffKey);
-
-        card.innerHTML = `
-          ${avatarHTML}
-          <div class="staff-name">${staff.name}</div>
-          <div class="staff-status">${statusText}</div>
-        `;
-
-        const profileLink = document.createElement("a");
-        profileLink.className = "profile-link-under-card";
-        profileLink.href = profileUrl;
-        profileLink.target = "_blank";
-        profileLink.rel = "noopener noreferrer";
-        profileLink.textContent = "View Profile";
-
-        card.addEventListener("click", () => {
-          selectedStaffKey = staffKey;
-          selectedServiceKey = STAFF_DATA[staffKey].defaultService;
-
-          renderStaffStrip(false);
-          renderServicePills();
-          clearResults();
-          searchAvailability();
-        });
-
-        card.addEventListener("keydown", event => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-
-          selectedStaffKey = staffKey;
-          selectedServiceKey = STAFF_DATA[staffKey].defaultService;
-
-          renderStaffStrip(false);
-          renderServicePills();
-          clearResults();
-          searchAvailability();
-        });
-
-        item.appendChild(card);
-        item.appendChild(profileLink);
-        staffStripEl.appendChild(item);
-      });
-
-      if (shouldLoadStatuses) {
-        statusRequestId++;
-        loadStaffStatuses(statusRequestId);
-      }
+    if (!customer) {
+      customer = await searchCustomerByPhone(normalizedPhone);
     }
 
-    function renderServicePills() {
-      servicePillsEl.innerHTML = "";
-
-      const staff = STAFF_DATA[selectedStaffKey];
-      const serviceKeys = Object.keys(staff.services);
-
-      if (!selectedServiceKey || !staff.services[selectedServiceKey]) {
-        selectedServiceKey = staff.defaultService || serviceKeys[0];
-      }
-
-      serviceKeys.forEach(serviceKey => {
-        const service = staff.services[serviceKey];
-
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "service-pill";
-
-        if (serviceKey === selectedServiceKey) {
-          btn.classList.add("is-active");
-        }
-
-        btn.innerHTML = `
-          <span class="service-name">${service.label}</span>
-          <span class="service-meta">${formatPrice(service.price)} · ${service.duration_minutes} min</span>
-        `;
-
-        btn.addEventListener("click", () => {
-          selectedServiceKey = serviceKey;
-          renderServicePills();
-          clearResults();
-          searchAvailability();
-        });
-
-        servicePillsEl.appendChild(btn);
-      });
-    }
-
-    function renderSlots(availabilities) {
-      slotGroupsEl.innerHTML = "";
-      clearSelection();
-
-      const groups = {
-        Morning: [],
-        Afternoon: [],
-        Evening: []
-      };
-
-      availabilities.forEach(slot => {
-        const groupName = getSlotGroupName(slot.start_at);
-        groups[groupName].push(slot);
-      });
-
-      Object.keys(groups).forEach(groupName => {
-        const slots = groups[groupName];
-
-        if (!slots.length) return;
-
-        const groupEl = document.createElement("div");
-        groupEl.className = "slot-group";
-
-        const titleEl = document.createElement("div");
-        titleEl.className = "slot-group-title";
-        titleEl.textContent = groupName;
-
-        const timesEl = document.createElement("div");
-        timesEl.className = "times";
-
-        slots.forEach(slot => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "time-btn";
-          btn.textContent = formatPasadenaTime(slot.start_at);
-
-          btn.addEventListener("click", () => {
-            clearSelection();
-            btn.classList.add("is-selected");
-            openBookingModal(slot);
-          });
-
-          timesEl.appendChild(btn);
-        });
-
-        groupEl.appendChild(titleEl);
-        groupEl.appendChild(timesEl);
-        slotGroupsEl.appendChild(groupEl);
-      });
-    }
-
-    async function searchAvailability() {
-      if (!selectedStaffKey || !selectedServiceKey) return;
-
-      const staff = STAFF_DATA[selectedStaffKey];
-
-      messageEl.textContent = "Checking available times...";
-      slotGroupsEl.innerHTML = "";
-      slotCardEl.classList.remove("is-visible");
-      emptyStateEl.classList.remove("is-visible");
-
-      try {
-        if (!hasStarted(selectedStaffKey, currentDate)) {
-          messageEl.textContent = "";
-
-          const nextResult = await findNextAvailableDateFast(
-            selectedStaffKey,
-            selectedServiceKey,
-            currentDate,
-            false
-          );
-
-          showEmptyState(
-            `${staff.name} starts on 5/27`,
-            "Please choose 5/27 or later.",
-            nextResult
-          );
-
-          return;
-        }
-
-        if (!isWorking(selectedStaffKey, currentDate)) {
-          messageEl.textContent = "Finding next available...";
-
-          const nextResult = await findNextAvailableDateFast(
-            selectedStaffKey,
-            selectedServiceKey,
-            currentDate,
-            true
-          );
-
-          messageEl.textContent = "";
-
-          showEmptyState(
-            "Not working today",
-            nextResult ? "Next available:" : "No available date found.",
-            nextResult
-          );
-
-          return;
-        }
-
-        const availabilities = await fetchAvailabilityFor(
-          selectedStaffKey,
-          selectedServiceKey,
-          currentDate
-        );
-
-        if (!availabilities.length) {
-          messageEl.textContent = "Finding next available...";
-
-          const nextResult = await findNextAvailableDateFast(
-            selectedStaffKey,
-            selectedServiceKey,
-            currentDate,
-            true
-          );
-
-          messageEl.textContent = "";
-
-          showEmptyState(
-            "Fully booked today",
-            nextResult ? "Next available:" : "No available date found.",
-            nextResult
-          );
-
-          return;
-        }
-
-        messageEl.textContent = "";
-        slotCountEl.textContent = `${availabilities.length} openings`;
-        slotCardEl.classList.add("is-visible");
-
-        renderSlots(availabilities);
-
-      } catch (error) {
-        messageEl.textContent = "Network error: " + error.message;
-      }
-    }
-
-    async function confirmBooking() {
-      if (!selectedSlot) {
-        document.getElementById("bookingStatus").textContent = "Please select a time first.";
-        document.getElementById("bookingStatus").className = "booking-status booking-error";
-        return;
-      }
-
-      const firstNameInput = document.getElementById("firstName");
-      const lastNameInput = document.getElementById("lastName");
-      const countryCodeInput = document.getElementById("countryCode");
-      const phoneInput = document.getElementById("customerPhone");
-      const emailInput = document.getElementById("customerEmail");
-      const noteInput = document.getElementById("customerNote");
-      const statusEl = document.getElementById("bookingStatus");
-      const confirmBtn = document.getElementById("confirmBookingBtn");
-
-      const firstName = firstNameInput.value.trim();
-      const lastName = lastNameInput.value.trim();
-      const countryCode = countryCodeInput.value;
-      const rawPhone = phoneInput.value.trim().replace(/\D/g, "");
-      const customerPhone = `${countryCode}${rawPhone}`;
-      const customerEmail = emailInput.value.trim();
-      const customerNote = noteInput.value.trim();
-
-      if (!firstName) {
-        statusEl.textContent = "Please enter your first name.";
-        statusEl.className = "booking-status booking-error";
-        return;
-      }
-
-      if (!lastName) {
-        statusEl.textContent = "Please enter your last name.";
-        statusEl.className = "booking-status booking-error";
-        return;
-      }
-
-      if (!rawPhone) {
-        statusEl.textContent = "Please enter your phone number.";
-        statusEl.className = "booking-status booking-error";
-        return;
-      }
-
-      if (!customerEmail) {
-        statusEl.textContent = "Please enter your email.";
-        statusEl.className = "booking-status booking-error";
-        return;
-      }
-
-      confirmBtn.disabled = true;
-      confirmBtn.textContent = "Booking...";
-      statusEl.textContent = "Creating your appointment...";
-      statusEl.className = "booking-status";
-
-      const successTime = document.getElementById("modalTime").textContent;
-      const successStylist = document.getElementById("modalStylist").textContent;
-      const successService = document.getElementById("modalService").textContent;
-      const successName = `${firstName} ${lastName}`;
-
-      try {
-        const response = await fetch("/api/create-booking", {
+    if (!customer) {
+      const createCustomerResponse = await fetch(
+        "https://connect.squareup.com/v2/customers",
+        {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: squareHeaders,
           body: JSON.stringify({
-            staffKey: selectedStaffKey,
-            serviceType: selectedServiceKey,
-            start_at: selectedSlot.start_at,
-            customerName: successName,
-            customerPhone,
-            customerEmail,
-            customerNote
+            idempotency_key: makeId(),
+            given_name: givenName,
+            family_name: familyName || undefined,
+            phone_number: normalizedPhone,
+            email_address: cleanedEmail
           })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-          throw new Error(data.error || "Booking failed.");
         }
+      );
 
-        saveCustomerInfo();
+      const customerData = await createCustomerResponse.json();
 
-        const serviceForCalendar = STAFF_DATA[selectedStaffKey].services[selectedServiceKey];
-        const startDateForCalendar = new Date(selectedSlot.start_at);
-        const endDateForCalendar = new Date(startDateForCalendar.getTime() + serviceForCalendar.duration_minutes * 60 * 1000);
-
-        function toGoogleCalendarDate(date) {
-          return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
-        }
-
-        const calendarUrl =
-          "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-          `&text=${encodeURIComponent(successService)}` +
-          `&dates=${toGoogleCalendarDate(startDateForCalendar)}/${toGoogleCalendarDate(endDateForCalendar)}` +
-          `&details=${encodeURIComponent("B SIDE U Pasadena appointment with " + successStylist)}` +
-          `&location=${encodeURIComponent("350 S Lake Ave Ste 115, Pasadena, CA 91101")}`;
-
-        bookingModalCardEl.innerHTML = `
-          <div class="success-page">
-            <div class="success-header">
-              <h2>Thanks, ${firstName}!</h2>
-              <p>Your appointment is coming up.</p>
-            </div>
-
-            <div class="success-appointment-card">
-              <div class="success-date">${successTime}</div>
-
-              <div class="success-service-row">
-                <div class="success-avatar">
-                  ${STAFF_DATA[selectedStaffKey].image
-                    ? `<img src="${STAFF_DATA[selectedStaffKey].image}" alt="${successStylist}">`
-                    : successStylist.slice(0, 1)
-                  }
-                </div>
-
-                <div>
-                  <div class="success-service-title">${successService}</div>
-                  <div class="success-with">with ${successStylist}</div>
-                </div>
-              </div>
-
-              <a class="calendar-btn" href="${calendarUrl}" target="_blank" rel="noopener noreferrer">
-                Add to calendar
-              </a>
-
-              <div class="success-actions">
-                <button type="button" onclick="window.location.reload()">Book again</button>
-                <a href="tel:2132735462">Call</a>
-              </div>
-            </div>
-
-            <div class="success-location-card">
-              <h3>Location</h3>
-
-              <div class="location-box">
-                <div>
-                  <div class="location-name">B SIDE U - Pasadena</div>
-                  <div class="location-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
-                </div>
-
-                <a
-                  class="direction-btn"
-                  href="https://www.google.com/maps/search/?api=1&query=350%20S%20Lake%20Ave%20Ste%20115%2C%20Pasadena%2C%20CA%2091101"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  ↗
-                </a>
-              </div>
-            </div>
-
-            <button id="doneAfterBooking" type="button" class="success-done-btn">
-              Done
-            </button>
-          </div>
-        `;
-
-        document.getElementById("doneAfterBooking").addEventListener("click", () => {
-          window.location.reload();
+      if (!createCustomerResponse.ok) {
+        return res.status(createCustomerResponse.status).json({
+          error: getSquareErrorMessage(customerData, "Failed to create customer."),
+          square: customerData
         });
-
-        staffStatusCache = {};
-        renderStaffStrip(true);
-        searchAvailability();
-
-      } catch (error) {
-        statusEl.textContent = error.message || "Booking failed. Please try again.";
-        statusEl.className = "booking-status booking-error";
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = "Confirm Booking";
-      }
-    }
-
-    closeBookingModalBtn.addEventListener("click", closeBookingModal);
-    confirmBookingBtn.addEventListener("click", confirmBooking);
-
-    bookingModalEl.addEventListener("click", event => {
-      if (event.target === bookingModalEl) closeBookingModal();
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && bookingModalEl.classList.contains("is-visible")) {
-        closeBookingModal();
-      }
-    });
-
-    function selectBestDefaultStaff() {
-      const orderedKeys = getOrderedStaffKeys(currentDate);
-      selectedStaffKey = orderedKeys[0];
-      selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
-    }
-
-    function refreshForDateChange() {
-      updateDateUI();
-
-      staffStatusCache = {};
-
-      const orderedKeys = getOrderedStaffKeys(currentDate);
-
-      if (!isWorking(selectedStaffKey, currentDate)) {
-        selectedStaffKey = orderedKeys[0];
-        selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
       }
 
-      renderStaffStrip(true);
-      renderServicePills();
-      clearResults();
-      searchAvailability();
+      customer = customerData.customer;
     }
 
-    prevDayBtn.addEventListener("click", () => {
-      currentDate.setDate(currentDate.getDate() - 1);
-      refreshForDateChange();
+    const customerId = customer?.id;
+
+    if (!customerId) {
+      return res.status(500).json({
+        error: "Could not find or create customer."
+      });
+    }
+
+    const cleanCustomerNote = String(customerNote || "").trim();
+
+    const createBookingBody = {
+      idempotency_key: makeId(),
+      booking: {
+        location_id: LOCATION_ID,
+        location_type: "BUSINESS_LOCATION",
+        customer_id: customerId,
+        start_at,
+        appointment_segments: [
+          {
+            team_member_id: staff.team_member_id,
+            duration_minutes: service.duration_minutes,
+            service_variation_id: service.service_variation_id,
+            service_variation_version: service.service_variation_version
+          }
+        ]
+      }
+    };
+
+    if (cleanCustomerNote) {
+      createBookingBody.booking.customer_note = cleanCustomerNote;
+    }
+
+    const createBookingResponse = await fetch(
+      "https://connect.squareup.com/v2/bookings",
+      {
+        method: "POST",
+        headers: squareHeaders,
+        body: JSON.stringify(createBookingBody)
+      }
+    );
+
+    const bookingData = await createBookingResponse.json();
+
+    if (!createBookingResponse.ok) {
+      return res.status(createBookingResponse.status).json({
+        error: getSquareErrorMessage(bookingData, "Failed to create booking."),
+        square: bookingData
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      customer,
+      booking: bookingData.booking
     });
 
-    nextDayBtn.addEventListener("click", () => {
-      currentDate.setDate(currentDate.getDate() + 1);
-      refreshForDateChange();
+  } catch (error) {
+    return res.status(500).json({
+      error: "Server error",
+      detail: error.message
     });
-
-    dateInputEl.addEventListener("change", () => {
-      if (!dateInputEl.value) return;
-      currentDate = fromIsoDateLocal(dateInputEl.value);
-      refreshForDateChange();
-    });
-
-    nextAvailableBtn.addEventListener("click", () => {
-      if (!nextAvailableTargetDate) return;
-
-      currentDate = new Date(nextAvailableTargetDate);
-      refreshForDateChange();
-    });
-
-    loadSavedCustomerInfo();
-
-    updateDateUI();
-    selectBestDefaultStaff();
-    renderStaffStrip(true);
-    renderServicePills();
-    searchAvailability();
-  </script>
-</body>
-</html>
+  }
+}
