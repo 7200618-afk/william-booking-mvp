@@ -163,6 +163,10 @@
       opacity: 0.66;
     }
 
+    .staff-card.is-full {
+      opacity: 0.78;
+    }
+
     .avatar {
       width: 48px;
       height: 48px;
@@ -209,12 +213,20 @@
       color: #16833d;
     }
 
+    .staff-card.is-full .staff-status {
+      color: #a05a00;
+    }
+
     .staff-card.is-active .staff-status {
       color: #ddd;
     }
 
     .staff-card.is-active.is-working .staff-status {
       color: #bff0cd;
+    }
+
+    .staff-card.is-active.is-full .staff-status {
+      color: #ffd39a;
     }
 
     .selected-staff-row {
@@ -634,6 +646,9 @@
     let statusRequestId = 0;
     let nextAvailableTargetDate = null;
 
+    // 缓存员工状态，防止每次点员工头像都重新查全部员工
+    let staffStatusCache = {};
+
     function toIsoDateLocal(date) {
       const y = date.getFullYear();
       const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -681,18 +696,38 @@
       return staff.days.includes(dow);
     }
 
+    function getStatusCacheKey(staffKey, serviceType, dateObj) {
+      return `${toIsoDateLocal(dateObj)}|${staffKey}|${serviceType}`;
+    }
+
     function getOrderedStaffKeys(date) {
       const keys = Object.keys(STAFF_DATA).filter(key => key !== "Jacob");
+      const workingWithOpenings = [];
+      const workingFull = [];
+      const off = [];
 
-      const working = keys
-        .filter(key => isWorking(key, date))
-        .sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+      keys.forEach(key => {
+        const staff = STAFF_DATA[key];
+        const serviceType = staff.defaultService;
+        const cacheKey = getStatusCacheKey(key, serviceType, date);
+        const cached = staffStatusCache[cacheKey];
 
-      const off = keys
-        .filter(key => !isWorking(key, date))
-        .sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+        if (isWorking(key, date)) {
+          if (cached && cached.isFull) {
+            workingFull.push(key);
+          } else {
+            workingWithOpenings.push(key);
+          }
+        } else {
+          off.push(key);
+        }
+      });
 
-      return [...working, ...off, "Jacob"];
+      workingWithOpenings.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+      workingFull.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+      off.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+
+      return [...workingWithOpenings, ...workingFull, ...off, "Jacob"];
     }
 
     function getProfileUrl(staffKey) {
@@ -733,8 +768,8 @@
       return "Evening";
     }
 
-    function getNextWorkingDate(staffKey, fromDate) {
-      for (let i = 0; i <= 45; i++) {
+    function getNextWorkingDate(staffKey, fromDate, startTomorrow = false) {
+      for (let i = startTomorrow ? 1 : 0; i <= 45; i++) {
         const d = new Date(fromDate);
         d.setDate(d.getDate() + i);
 
@@ -817,60 +852,76 @@
     }
 
     async function loadStaffStatuses(requestId) {
-      const cards = document.querySelectorAll(".staff-card");
+      const staffKeys = Object.keys(STAFF_DATA);
 
-      cards.forEach(card => {
-        const staffKey = card.dataset.staffKey;
-        const statusEl = card.querySelector(".staff-status");
+      // 先显示缓存或 Checking，不要每次点击员工都重新查
+      renderStaffStrip(false);
 
-        if (!statusEl) return;
-
-        if (!hasStarted(staffKey, currentDate)) {
-          statusEl.textContent = "Starts 5/27";
-          return;
-        }
-
-        const nextWorkingDate = getNextWorkingDate(staffKey, currentDate);
-
-        if (!nextWorkingDate) {
-          statusEl.textContent = "No schedule";
-          return;
-        }
-
-        statusEl.textContent = "Checking...";
-      });
-
-      for (const card of cards) {
+      for (const staffKey of staffKeys) {
         if (requestId !== statusRequestId) return;
 
-        const staffKey = card.dataset.staffKey;
-        const statusEl = card.querySelector(".staff-status");
+        const staff = STAFF_DATA[staffKey];
+        const serviceType = staff.defaultService;
+        const cacheKey = getStatusCacheKey(staffKey, serviceType, currentDate);
 
-        if (!statusEl) continue;
-        if (!hasStarted(staffKey, currentDate)) continue;
+        if (staffStatusCache[cacheKey]) continue;
 
-        const nextWorkingDate = getNextWorkingDate(staffKey, currentDate);
-        if (!nextWorkingDate) continue;
+        if (!hasStarted(staffKey, currentDate)) {
+          staffStatusCache[cacheKey] = {
+            text: "Starts 5/27",
+            isFull: false,
+            hasOpening: false
+          };
+          continue;
+        }
+
+        const nextWorkingDate = getNextWorkingDate(staffKey, currentDate, false);
+
+        if (!nextWorkingDate) {
+          staffStatusCache[cacheKey] = {
+            text: "No schedule",
+            isFull: true,
+            hasOpening: false
+          };
+          continue;
+        }
 
         try {
           const firstOpening = await fetchFirstOpening(staffKey, nextWorkingDate);
 
-          if (requestId !== statusRequestId) return;
-
           if (firstOpening) {
-            statusEl.textContent = `${formatShortDate(nextWorkingDate)} · ${formatPasadenaTime(firstOpening)}`;
+            staffStatusCache[cacheKey] = {
+              text: `${formatShortDate(nextWorkingDate)} · ${formatPasadenaTime(firstOpening)}`,
+              isFull: false,
+              hasOpening: true
+            };
           } else {
-            if (isWorking(staffKey, currentDate)) {
-              statusEl.textContent = "Fully booked";
-            } else {
-              statusEl.textContent = `${formatShortDate(nextWorkingDate)} · Full`;
-            }
+            staffStatusCache[cacheKey] = {
+              text: isWorking(staffKey, currentDate)
+                ? "Fully booked"
+                : `${formatShortDate(nextWorkingDate)} · Full`,
+              isFull: isWorking(staffKey, currentDate),
+              hasOpening: false
+            };
           }
         } catch (error) {
-          if (requestId !== statusRequestId) return;
-          statusEl.textContent = `${formatShortDate(nextWorkingDate)}`;
+          staffStatusCache[cacheKey] = {
+            text: `${formatShortDate(nextWorkingDate)}`,
+            isFull: false,
+            hasOpening: false
+          };
         }
+
+        if (requestId !== statusRequestId) return;
+
+        // 每查完一个员工就刷新一次，但不重新发请求
+        renderStaffStrip(false);
       }
+
+      if (requestId !== statusRequestId) return;
+
+      // 查完以后重新排序：工作有空位在前，工作满员放后面
+      renderStaffStrip(false);
     }
 
     function updateSelectedStaffRow() {
@@ -901,7 +952,7 @@
       });
     }
 
-    function renderStaffStrip() {
+    function renderStaffStrip(shouldLoadStatuses = false) {
       staffStripEl.innerHTML = "";
 
       const orderedKeys = getOrderedStaffKeys(currentDate);
@@ -913,6 +964,8 @@
       orderedKeys.forEach(staffKey => {
         const staff = STAFF_DATA[staffKey];
         const working = isWorking(staffKey, currentDate);
+        const cacheKey = getStatusCacheKey(staffKey, staff.defaultService, currentDate);
+        const cached = staffStatusCache[cacheKey];
 
         const btn = document.createElement("button");
         btn.type = "button";
@@ -923,27 +976,31 @@
         if (working) btn.classList.add("is-working");
         else btn.classList.add("is-off");
 
+        if (cached && cached.isFull && working) {
+          btn.classList.add("is-full");
+        }
+
         const avatarHTML = staff.image
           ? `<div class="avatar"><img src="${staff.image}" alt="${staff.name}"></div>`
           : `<div class="avatar">${staff.name.slice(0, 1)}</div>`;
 
+        const statusText = cached ? cached.text : "Checking...";
+
         btn.innerHTML = `
           ${avatarHTML}
           <div class="staff-name">${staff.name}</div>
-          <div class="staff-status">Loading...</div>
+          <div class="staff-status">${statusText}</div>
         `;
 
         btn.addEventListener("click", () => {
           selectedStaffKey = staffKey;
           selectedServiceKey = STAFF_DATA[staffKey].defaultService;
 
-          renderStaffStrip();
+          // 点击员工：只切换选中，不重新查全部员工状态
+          renderStaffStrip(false);
           renderServicePills();
           updateSelectedStaffRow();
           clearResults();
-
-          statusRequestId++;
-          loadStaffStatuses(statusRequestId);
 
           searchAvailability();
         });
@@ -953,8 +1010,10 @@
 
       updateSelectedStaffRow();
 
-      statusRequestId++;
-      loadStaffStatuses(statusRequestId);
+      if (shouldLoadStatuses) {
+        statusRequestId++;
+        loadStaffStatuses(statusRequestId);
+      }
     }
 
     function renderServicePills() {
@@ -1152,6 +1211,9 @@
     function refreshForDateChange() {
       updateDateUI();
 
+      // 只有日期改变时才清空员工状态缓存，重新查全部员工
+      staffStatusCache = {};
+
       const orderedKeys = getOrderedStaffKeys(currentDate);
 
       if (!isWorking(selectedStaffKey, currentDate)) {
@@ -1159,7 +1221,7 @@
         selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
       }
 
-      renderStaffStrip();
+      renderStaffStrip(true);
       renderServicePills();
       updateSelectedStaffRow();
       clearResults();
@@ -1203,7 +1265,7 @@
 
     updateDateUI();
     selectBestDefaultStaff();
-    renderStaffStrip();
+    renderStaffStrip(true);
     renderServicePills();
     updateSelectedStaffRow();
     searchAvailability();
