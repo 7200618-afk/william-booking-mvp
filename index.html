@@ -960,6 +960,15 @@
     let nextAvailableTargetDate = null;
     let staffStatusCache = {};
 
+    function escapeHTML(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function loadSavedCustomerInfo() {
       try {
         const saved = JSON.parse(localStorage.getItem(CUSTOMER_STORAGE_KEY) || "{}");
@@ -1411,19 +1420,6 @@
           searchAvailability();
         });
 
-        card.addEventListener("keydown", event => {
-          if (event.key !== "Enter" && event.key !== " ") return;
-          event.preventDefault();
-
-          selectedStaffKey = staffKey;
-          selectedServiceKey = STAFF_DATA[staffKey].defaultService;
-
-          renderStaffStrip(false);
-          renderServicePills();
-          clearResults();
-          searchAvailability();
-        });
-
         item.appendChild(card);
         item.appendChild(profileLink);
         staffStripEl.appendChild(item);
@@ -1631,10 +1627,25 @@
       const firstName = firstNameInput.value.trim();
       const lastName = lastNameInput.value.trim();
       const countryCode = countryCodeInput.value;
-      const rawPhone = phoneInput.value.trim().replace(/\D/g, "");
-      const customerPhone = `${countryCode}${rawPhone}`;
+      let rawPhone = phoneInput.value.trim().replace(/\D/g, "");
       const customerEmail = emailInput.value.trim();
       const customerNote = noteInput.value.trim();
+
+      const countryDigits = countryCode.replace(/\D/g, "");
+
+      if (countryCode === "+1" && rawPhone.length === 11 && rawPhone.startsWith("1")) {
+        rawPhone = rawPhone.slice(1);
+      }
+
+      if (
+        countryCode !== "+1" &&
+        rawPhone.startsWith(countryDigits) &&
+        rawPhone.length > countryDigits.length + 6
+      ) {
+        rawPhone = rawPhone.slice(countryDigits.length);
+      }
+
+      const customerPhone = `${countryCode}${rawPhone}`;
 
       if (!firstName) {
         statusEl.textContent = "Please enter your first name.";
@@ -1654,6 +1665,12 @@
         return;
       }
 
+      if (countryCode === "+1" && rawPhone.length !== 10) {
+        statusEl.textContent = "Please enter a valid 10-digit U.S. phone number.";
+        statusEl.className = "booking-status booking-error";
+        return;
+      }
+
       if (!customerEmail) {
         statusEl.textContent = "Please enter your email.";
         statusEl.className = "booking-status booking-error";
@@ -1669,6 +1686,11 @@
       const successStylist = document.getElementById("modalStylist").textContent;
       const successService = document.getElementById("modalService").textContent;
       const successName = `${firstName} ${lastName}`;
+
+      const safeFirstName = escapeHTML(firstName);
+      const safeSuccessTime = escapeHTML(successTime);
+      const safeSuccessStylist = escapeHTML(successStylist);
+      const safeSuccessService = escapeHTML(successService);
 
       try {
         const response = await fetch("/api/create-booking", {
@@ -1711,24 +1733,24 @@
         bookingModalCardEl.innerHTML = `
           <div class="success-page">
             <div class="success-header">
-              <h2>Thanks, ${firstName}!</h2>
+              <h2>Thanks, ${safeFirstName}!</h2>
               <p>Your appointment is coming up.</p>
             </div>
 
             <div class="success-appointment-card">
-              <div class="success-date">${successTime}</div>
+              <div class="success-date">${safeSuccessTime}</div>
 
               <div class="success-service-row">
                 <div class="success-avatar">
                   ${STAFF_DATA[selectedStaffKey].image
-                    ? `<img src="${STAFF_DATA[selectedStaffKey].image}" alt="${successStylist}">`
-                    : successStylist.slice(0, 1)
+                    ? `<img src="${STAFF_DATA[selectedStaffKey].image}" alt="${safeSuccessStylist}">`
+                    : safeSuccessStylist.slice(0, 1)
                   }
                 </div>
 
                 <div>
-                  <div class="success-service-title">${successService}</div>
-                  <div class="success-with">with ${successStylist}</div>
+                  <div class="success-service-title">${safeSuccessService}</div>
+                  <div class="success-with">with ${safeSuccessStylist}</div>
                 </div>
               </div>
 
@@ -1738,7 +1760,7 @@
 
               <div class="success-actions">
                 <button type="button" onclick="window.location.reload()">Book again</button>
-                <a href="tel:2132735462">Call</a>
+                <button type="button" onclick="window.location.reload()">Reschedule</button>
               </div>
             </div>
 
@@ -1781,6 +1803,10 @@
         statusEl.className = "booking-status booking-error";
         confirmBtn.disabled = false;
         confirmBtn.textContent = "Confirm Booking";
+
+        staffStatusCache = {};
+        renderStaffStrip(true);
+        searchAvailability();
       }
     }
 
