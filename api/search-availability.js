@@ -177,16 +177,12 @@ export default async function handler(req, res) {
       });
     }
 
-    // Pasadena summer time version:
-    // 10:00 AM Pasadena = 17:00 UTC
-    // 7:00 PM Pasadena = next day 02:00 UTC
-    // Later we can improve this for winter daylight saving changes.
-    const startAt = `${date}T17:00:00Z`;
+    const startAt = `${date}T14:00:00Z`;
 
     const nextDay = new Date(`${date}T00:00:00Z`);
     nextDay.setUTCDate(nextDay.getUTCDate() + 1);
     const nextDayString = nextDay.toISOString().slice(0, 10);
-    const endAt = `${nextDayString}T02:00:00Z`;
+    const endAt = `${nextDayString}T05:00:00Z`;
 
     const squareResponse = await fetch(
       "https://connect.squareup.com/v2/bookings/availability/search",
