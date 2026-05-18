@@ -6,9 +6,7 @@
   <title>B SIDE U Pasadena Booking</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,13 +31,7 @@
       box-shadow: 0 5px 18px rgba(0,0,0,0.035);
     }
 
-    .booking-layout {
-      display: block;
-    }
-
-    .top-card {
-      padding: 10px;
-    }
+    .top-card { padding: 10px; }
 
     .date-bar {
       display: grid;
@@ -112,9 +104,7 @@
       align-items: flex-start;
     }
 
-    .staff-strip::-webkit-scrollbar {
-      height: 3px;
-    }
+    .staff-strip::-webkit-scrollbar { height: 3px; }
 
     .staff-strip::-webkit-scrollbar-thumb {
       background: #ddd;
@@ -140,9 +130,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .staff-card:active {
-      transform: scale(0.98);
-    }
+    .staff-card:active { transform: scale(0.98); }
 
     .staff-card.is-active {
       background: #000;
@@ -150,13 +138,8 @@
       border-color: #000;
     }
 
-    .staff-card.is-off {
-      opacity: 0.66;
-    }
-
-    .staff-card.is-full {
-      opacity: 0.78;
-    }
+    .staff-card.is-off { opacity: 0.66; }
+    .staff-card.is-full { opacity: 0.78; }
 
     .avatar {
       width: 48px;
@@ -200,25 +183,11 @@
       min-height: 24px;
     }
 
-    .staff-card.is-working .staff-status {
-      color: #1a73e8;
-    }
-
-    .staff-card.is-full .staff-status {
-      color: #a05a00;
-    }
-
-    .staff-card.is-active .staff-status {
-      color: #ddd;
-    }
-
-    .staff-card.is-active.is-working .staff-status {
-      color: #9ec5ff;
-    }
-
-    .staff-card.is-active.is-full .staff-status {
-      color: #ffd39a;
-    }
+    .staff-card.is-working .staff-status { color: #1a73e8; }
+    .staff-card.is-full .staff-status { color: #a05a00; }
+    .staff-card.is-active .staff-status { color: #ddd; }
+    .staff-card.is-active.is-working .staff-status { color: #9ec5ff; }
+    .staff-card.is-active.is-full .staff-status { color: #ffd39a; }
 
     .profile-link-under-card {
       display: none;
@@ -282,9 +251,7 @@
       text-overflow: ellipsis;
     }
 
-    .service-pill.is-active .service-meta {
-      color: #ddd;
-    }
+    .service-pill.is-active .service-meta { color: #ddd; }
 
     .message {
       min-height: 0;
@@ -304,9 +271,7 @@
       background: #fafafa;
     }
 
-    .empty-state.is-visible {
-      display: block;
-    }
+    .empty-state.is-visible { display: block; }
 
     .empty-title {
       font-size: 14px;
@@ -340,9 +305,7 @@
       min-height: 220px;
     }
 
-    .slot-card.is-visible {
-      display: block;
-    }
+    .slot-card.is-visible { display: block; }
 
     .slot-topline {
       display: flex;
@@ -365,9 +328,7 @@
       white-space: nowrap;
     }
 
-    .slot-group {
-      margin-top: 14px;
-    }
+    .slot-group { margin-top: 14px; }
 
     .slot-group-title {
       display: flex;
@@ -423,9 +384,7 @@
       padding: 12px;
     }
 
-    .booking-modal.is-visible {
-      display: flex;
-    }
+    .booking-modal.is-visible { display: flex; }
 
     .booking-modal-card {
       width: 100%;
@@ -438,15 +397,8 @@
     }
 
     @keyframes modalUp {
-      from {
-        transform: translateY(18px);
-        opacity: 0.75;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      from { transform: translateY(18px); opacity: 0.75; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .modal-top {
@@ -492,9 +444,7 @@
       border-bottom: 1px solid #eee;
     }
 
-    .summary-row:last-child {
-      border-bottom: 0;
-    }
+    .summary-row:last-child { border-bottom: 0; }
 
     .summary-label {
       color: #666;
@@ -522,6 +472,28 @@
       gap: 8px;
     }
 
+    .phone-row {
+      display: grid;
+      grid-template-columns: 105px 1fr;
+      gap: 8px;
+    }
+
+    .country-select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 0 8px;
+      font-size: 14px;
+      font-weight: 800;
+      outline: none;
+      background: #fff;
+    }
+
+    .country-select:focus {
+      border-color: #000;
+    }
+
     .booking-input {
       width: 100%;
       height: 42px;
@@ -534,9 +506,7 @@
       background: #fff;
     }
 
-    .booking-input:focus {
-      border-color: #000;
-    }
+    .booking-input:focus { border-color: #000; }
 
     .booking-textarea {
       width: 100%;
@@ -552,11 +522,10 @@
       font-family: Arial, sans-serif;
     }
 
-    .booking-textarea:focus {
-      border-color: #000;
-    }
+    .booking-textarea:focus { border-color: #000; }
 
-    .confirm-btn {
+    .confirm-btn,
+    .success-done-btn {
       width: 100%;
       height: 48px;
       border: 0;
@@ -581,31 +550,82 @@
       line-height: 1.3;
     }
 
-    .booking-success {
-      color: #16833d;
+    .booking-success { color: #16833d; }
+    .booking-error { color: #b00020; }
+
+    .success-wrap {
+      text-align: center;
+      padding: 12px 4px 6px;
     }
 
-    .booking-error {
-      color: #b00020;
+    .success-check {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #16833d;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 900;
+      margin: 0 auto 12px;
+    }
+
+    .success-title {
+      font-size: 22px;
+      margin: 0 0 6px;
+      font-weight: 900;
+    }
+
+    .success-sub {
+      font-size: 13px;
+      color: #666;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .success-summary {
+      text-align: left;
+      border: 1px solid #eee;
+      border-radius: 14px;
+      background: #fafafa;
+      padding: 10px;
+      margin-bottom: 14px;
+    }
+
+    .success-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 7px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .success-row:last-child { border-bottom: 0; }
+
+    .success-row strong {
+      font-size: 12px;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .success-row span {
+      font-size: 13px;
+      font-weight: 900;
+      text-align: right;
+      word-break: break-word;
     }
 
     @media (min-width: 761px) {
-      .page {
-        padding-top: 24px;
-      }
+      .page { padding-top: 24px; }
 
       .top-card,
-      .slot-card {
-        border-radius: 18px;
-      }
+      .slot-card { border-radius: 18px; }
 
-      .top-card {
-        padding: 14px;
-      }
+      .top-card { padding: 14px; }
 
-      .staff-item {
-        flex-basis: 94px;
-      }
+      .staff-item { flex-basis: 94px; }
 
       .staff-card {
         width: 94px;
@@ -617,17 +637,10 @@
         font-size: 15px;
       }
 
-      .service-name {
-        font-size: 14px;
-      }
+      .service-name { font-size: 14px; }
+      .service-meta { font-size: 11px; }
 
-      .service-meta {
-        font-size: 11px;
-      }
-
-      .booking-modal {
-        align-items: center;
-      }
+      .booking-modal { align-items: center; }
     }
   </style>
 </head>
@@ -676,7 +689,7 @@
   </div>
 
   <div id="bookingModal" class="booking-modal">
-    <div class="booking-modal-card">
+    <div id="bookingModalCard" class="booking-modal-card">
       <div class="modal-top">
         <h2 class="modal-title">Confirm Booking</h2>
         <button id="closeBookingModal" class="modal-close" type="button">×</button>
@@ -703,7 +716,25 @@
           <input id="lastName" class="booking-input" type="text" placeholder="Last name" autocomplete="family-name" />
         </div>
 
-        <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone number" autocomplete="tel" />
+        <div class="phone-row">
+          <select id="countryCode" class="country-select">
+            <option value="+1" selected>🇺🇸 +1</option>
+            <option value="+86">🇨🇳 +86</option>
+            <option value="+81">🇯🇵 +81</option>
+            <option value="+82">🇰🇷 +82</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+61">🇦🇺 +61</option>
+            <option value="+65">🇸🇬 +65</option>
+            <option value="+886">🇹🇼 +886</option>
+            <option value="+852">🇭🇰 +852</option>
+            <option value="+853">🇲🇴 +853</option>
+          </select>
+
+          <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone number" autocomplete="tel" />
+        </div>
+
         <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
         <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
 
@@ -816,18 +847,11 @@
     const slotGroupsEl = document.getElementById("slotGroups");
 
     const bookingModalEl = document.getElementById("bookingModal");
+    const bookingModalCardEl = document.getElementById("bookingModalCard");
     const closeBookingModalBtn = document.getElementById("closeBookingModal");
-    const modalTimeEl = document.getElementById("modalTime");
-    const modalStylistEl = document.getElementById("modalStylist");
-    const modalServiceEl = document.getElementById("modalService");
-
-    const firstNameEl = document.getElementById("firstName");
-    const lastNameEl = document.getElementById("lastName");
-    const customerPhoneEl = document.getElementById("customerPhone");
-    const customerEmailEl = document.getElementById("customerEmail");
-    const customerNoteEl = document.getElementById("customerNote");
     const confirmBookingBtn = document.getElementById("confirmBookingBtn");
-    const bookingStatusEl = document.getElementById("bookingStatus");
+
+    const originalBookingModalHTML = bookingModalCardEl.innerHTML;
 
     let currentDate = new Date();
     let selectedStaffKey = "";
@@ -841,19 +865,33 @@
       try {
         const saved = JSON.parse(localStorage.getItem(CUSTOMER_STORAGE_KEY) || "{}");
 
-        firstNameEl.value = saved.firstName || "";
-        lastNameEl.value = saved.lastName || "";
-        customerPhoneEl.value = saved.phone || "";
-        customerEmailEl.value = saved.email || "";
+        const firstNameInput = document.getElementById("firstName");
+        const lastNameInput = document.getElementById("lastName");
+        const countryCodeInput = document.getElementById("countryCode");
+        const phoneInput = document.getElementById("customerPhone");
+        const emailInput = document.getElementById("customerEmail");
+
+        if (firstNameInput) firstNameInput.value = saved.firstName || "";
+        if (lastNameInput) lastNameInput.value = saved.lastName || "";
+        if (countryCodeInput) countryCodeInput.value = saved.countryCode || "+1";
+        if (phoneInput) phoneInput.value = saved.phone || "";
+        if (emailInput) emailInput.value = saved.email || "";
       } catch (error) {}
     }
 
     function saveCustomerInfo() {
+      const firstNameInput = document.getElementById("firstName");
+      const lastNameInput = document.getElementById("lastName");
+      const countryCodeInput = document.getElementById("countryCode");
+      const phoneInput = document.getElementById("customerPhone");
+      const emailInput = document.getElementById("customerEmail");
+
       const info = {
-        firstName: firstNameEl.value.trim(),
-        lastName: lastNameEl.value.trim(),
-        phone: customerPhoneEl.value.trim(),
-        email: customerEmailEl.value.trim()
+        firstName: firstNameInput ? firstNameInput.value.trim() : "",
+        lastName: lastNameInput ? lastNameInput.value.trim() : "",
+        countryCode: countryCodeInput ? countryCodeInput.value : "+1",
+        phone: phoneInput ? phoneInput.value.trim() : "",
+        email: emailInput ? emailInput.value.trim() : ""
       };
 
       localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(info));
@@ -1010,9 +1048,7 @@
     async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
       const response = await fetch("/api/search-availability", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           staffKey,
           serviceType,
@@ -1022,9 +1058,7 @@
 
       const data = await response.json();
 
-      if (!response.ok) {
-        return [];
-      }
+      if (!response.ok) return [];
 
       return data.availabilities || [];
     }
@@ -1055,7 +1089,6 @@
 
       if (nextResult && nextResult.date) {
         nextAvailableTargetDate = nextResult.date;
-
         nextAvailableBtn.style.display = "block";
         nextAvailableBtn.textContent =
           `Next available · ${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`;
@@ -1139,14 +1172,37 @@
       renderStaffStrip(false);
     }
 
+    function restoreBookingModalForm() {
+      bookingModalCardEl.innerHTML = originalBookingModalHTML;
+      rebindModalElements();
+    }
+
+    function rebindModalElements() {
+      const closeBtn = document.getElementById("closeBookingModal");
+      const confirmBtn = document.getElementById("confirmBookingBtn");
+
+      if (closeBtn) closeBtn.addEventListener("click", closeBookingModal);
+      if (confirmBtn) confirmBtn.addEventListener("click", confirmBooking);
+    }
+
     function clearBookingModal() {
-      bookingStatusEl.textContent = "";
-      bookingStatusEl.className = "booking-status";
-      confirmBookingBtn.disabled = false;
-      confirmBookingBtn.textContent = "Confirm Booking";
+      const bookingStatus = document.getElementById("bookingStatus");
+      const confirmBtn = document.getElementById("confirmBookingBtn");
+
+      if (bookingStatus) {
+        bookingStatus.textContent = "";
+        bookingStatus.className = "booking-status";
+      }
+
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirm Booking";
+      }
     }
 
     function openBookingModal(slot) {
+      restoreBookingModalForm();
+
       selectedSlot = slot;
       clearBookingModal();
       loadSavedCustomerInfo();
@@ -1154,12 +1210,19 @@
       const staff = STAFF_DATA[selectedStaffKey];
       const service = staff.services[selectedServiceKey];
 
-      modalTimeEl.textContent = `${formatFullDate(currentDate)} · ${formatPasadenaTime(slot.start_at)} PT`;
-      modalStylistEl.textContent = staff.name;
-      modalServiceEl.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
+      document.getElementById("modalTime").textContent =
+        `${formatFullDate(currentDate)} · ${formatPasadenaTime(slot.start_at)} PT`;
+
+      document.getElementById("modalStylist").textContent = staff.name;
+      document.getElementById("modalService").textContent =
+        `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
 
       bookingModalEl.classList.add("is-visible");
-      setTimeout(() => firstNameEl.focus(), 80);
+
+      setTimeout(() => {
+        const firstNameInput = document.getElementById("firstName");
+        if (firstNameInput) firstNameInput.focus();
+      }, 80);
     }
 
     function closeBookingModal() {
@@ -1246,7 +1309,6 @@
           renderStaffStrip(false);
           renderServicePills();
           clearResults();
-
           searchAvailability();
         });
 
@@ -1260,7 +1322,6 @@
           renderStaffStrip(false);
           renderServicePills();
           clearResults();
-
           searchAvailability();
         });
 
@@ -1452,59 +1513,74 @@
       }
     }
 
-    confirmBookingBtn.addEventListener("click", async () => {
+    async function confirmBooking() {
       if (!selectedSlot) {
-        bookingStatusEl.textContent = "Please select a time first.";
-        bookingStatusEl.className = "booking-status booking-error";
+        document.getElementById("bookingStatus").textContent = "Please select a time first.";
+        document.getElementById("bookingStatus").className = "booking-status booking-error";
         return;
       }
 
-      const firstName = firstNameEl.value.trim();
-      const lastName = lastNameEl.value.trim();
-      const customerPhone = customerPhoneEl.value.trim();
-      const customerEmail = customerEmailEl.value.trim();
-      const customerNote = customerNoteEl.value.trim();
+      const firstNameInput = document.getElementById("firstName");
+      const lastNameInput = document.getElementById("lastName");
+      const countryCodeInput = document.getElementById("countryCode");
+      const phoneInput = document.getElementById("customerPhone");
+      const emailInput = document.getElementById("customerEmail");
+      const noteInput = document.getElementById("customerNote");
+      const statusEl = document.getElementById("bookingStatus");
+      const confirmBtn = document.getElementById("confirmBookingBtn");
+
+      const firstName = firstNameInput.value.trim();
+      const lastName = lastNameInput.value.trim();
+      const countryCode = countryCodeInput.value;
+      const rawPhone = phoneInput.value.trim().replace(/\D/g, "");
+      const customerPhone = `${countryCode}${rawPhone}`;
+      const customerEmail = emailInput.value.trim();
+      const customerNote = noteInput.value.trim();
 
       if (!firstName) {
-        bookingStatusEl.textContent = "Please enter your first name.";
-        bookingStatusEl.className = "booking-status booking-error";
+        statusEl.textContent = "Please enter your first name.";
+        statusEl.className = "booking-status booking-error";
         return;
       }
 
       if (!lastName) {
-        bookingStatusEl.textContent = "Please enter your last name.";
-        bookingStatusEl.className = "booking-status booking-error";
+        statusEl.textContent = "Please enter your last name.";
+        statusEl.className = "booking-status booking-error";
         return;
       }
 
-      if (!customerPhone) {
-        bookingStatusEl.textContent = "Please enter your phone number.";
-        bookingStatusEl.className = "booking-status booking-error";
+      if (!rawPhone) {
+        statusEl.textContent = "Please enter your phone number.";
+        statusEl.className = "booking-status booking-error";
         return;
       }
 
       if (!customerEmail) {
-        bookingStatusEl.textContent = "Please enter your email.";
-        bookingStatusEl.className = "booking-status booking-error";
+        statusEl.textContent = "Please enter your email.";
+        statusEl.className = "booking-status booking-error";
         return;
       }
 
-      confirmBookingBtn.disabled = true;
-      confirmBookingBtn.textContent = "Booking...";
-      bookingStatusEl.textContent = "Creating your appointment...";
-      bookingStatusEl.className = "booking-status";
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Booking...";
+      statusEl.textContent = "Creating your appointment...";
+      statusEl.className = "booking-status";
+
+      const successTime = document.getElementById("modalTime").textContent;
+      const successStylist = document.getElementById("modalStylist").textContent;
+      const successService = document.getElementById("modalService").textContent;
+      const successName = `${firstName} ${lastName}`;
+      const displayPhone = `${countryCode} ${phoneInput.value.trim()}`;
 
       try {
         const response = await fetch("/api/create-booking", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             staffKey: selectedStaffKey,
             serviceType: selectedServiceKey,
             start_at: selectedSlot.start_at,
-            customerName: `${firstName} ${lastName}`,
+            customerName: successName,
             customerPhone,
             customerEmail,
             customerNote
@@ -1519,30 +1595,75 @@
 
         saveCustomerInfo();
 
-        bookingStatusEl.textContent = "Booked successfully. Thank you!";
-        bookingStatusEl.className = "booking-status booking-success";
-        confirmBookingBtn.textContent = "Booked";
+        bookingModalCardEl.innerHTML = `
+          <div class="success-wrap">
+            <div class="success-check">✓</div>
 
-        customerNoteEl.value = "";
+            <h2 class="success-title">Appointment Booked</h2>
+
+            <div class="success-sub">
+              Your appointment has been confirmed.
+            </div>
+
+            <div class="success-summary">
+              <div class="success-row">
+                <strong>Time</strong>
+                <span>${successTime}</span>
+              </div>
+
+              <div class="success-row">
+                <strong>Stylist</strong>
+                <span>${successStylist}</span>
+              </div>
+
+              <div class="success-row">
+                <strong>Service</strong>
+                <span>${successService}</span>
+              </div>
+
+              <div class="success-row">
+                <strong>Name</strong>
+                <span>${successName}</span>
+              </div>
+
+              <div class="success-row">
+                <strong>Phone</strong>
+                <span>${displayPhone}</span>
+              </div>
+
+              <div class="success-row">
+                <strong>Email</strong>
+                <span>${customerEmail}</span>
+              </div>
+            </div>
+
+            <button id="doneAfterBooking" type="button" class="success-done-btn">
+              Done
+            </button>
+          </div>
+        `;
+
+        document.getElementById("doneAfterBooking").addEventListener("click", () => {
+          window.location.reload();
+        });
 
         staffStatusCache = {};
         renderStaffStrip(true);
         searchAvailability();
 
       } catch (error) {
-        bookingStatusEl.textContent = error.message || "Booking failed. Please try again.";
-        bookingStatusEl.className = "booking-status booking-error";
-        confirmBookingBtn.disabled = false;
-        confirmBookingBtn.textContent = "Confirm Booking";
+        statusEl.textContent = error.message || "Booking failed. Please try again.";
+        statusEl.className = "booking-status booking-error";
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Confirm Booking";
       }
-    });
+    }
 
     closeBookingModalBtn.addEventListener("click", closeBookingModal);
+    confirmBookingBtn.addEventListener("click", confirmBooking);
 
     bookingModalEl.addEventListener("click", event => {
-      if (event.target === bookingModalEl) {
-        closeBookingModal();
-      }
+      if (event.target === bookingModalEl) closeBookingModal();
     });
 
     document.addEventListener("keydown", event => {
