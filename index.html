@@ -382,6 +382,7 @@
       justify-content: center;
       background: rgba(0,0,0,0.42);
       padding: 12px;
+      overflow-y: auto;
     }
 
     .booking-modal.is-visible { display: flex; }
@@ -394,6 +395,8 @@
       padding: 14px;
       box-shadow: 0 16px 60px rgba(0,0,0,0.25);
       animation: modalUp 0.18s ease-out;
+      max-height: calc(100vh - 24px);
+      overflow-y: auto;
     }
 
     @keyframes modalUp {
@@ -490,9 +493,7 @@
       background: #fff;
     }
 
-    .country-select:focus {
-      border-color: #000;
-    }
+    .country-select:focus { border-color: #000; }
 
     .booking-input {
       width: 100%;
@@ -524,6 +525,14 @@
 
     .booking-textarea:focus { border-color: #000; }
 
+    .sms-consent-text {
+      color: #777;
+      font-size: 10.5px;
+      line-height: 1.35;
+      font-weight: 600;
+      margin: 0 1px 2px;
+    }
+
     .confirm-btn,
     .success-done-btn {
       width: 100%;
@@ -553,68 +562,154 @@
     .booking-success { color: #16833d; }
     .booking-error { color: #b00020; }
 
-    .success-wrap {
-      text-align: center;
-      padding: 12px 4px 6px;
-    }
+    .success-page { padding: 4px; }
 
-    .success-check {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: #16833d;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: 900;
-      margin: 0 auto 12px;
-    }
+    .success-header { margin-bottom: 14px; }
 
-    .success-title {
-      font-size: 22px;
+    .success-header h2 {
+      font-size: 26px;
+      line-height: 1.1;
       margin: 0 0 6px;
       font-weight: 900;
     }
 
-    .success-sub {
-      font-size: 13px;
+    .success-header p {
+      margin: 0;
       color: #666;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .success-appointment-card,
+    .success-location-card {
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      background: #fff;
+      padding: 14px;
       margin-bottom: 14px;
     }
 
-    .success-summary {
-      text-align: left;
-      border: 1px solid #eee;
-      border-radius: 14px;
-      background: #fafafa;
-      padding: 10px;
-      margin-bottom: 14px;
+    .success-date {
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 18px;
     }
 
-    .success-row {
+    .success-service-row {
       display: flex;
-      justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      padding: 7px 0;
+      padding-bottom: 16px;
       border-bottom: 1px solid #eee;
+      margin-bottom: 14px;
     }
 
-    .success-row:last-child { border-bottom: 0; }
+    .success-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #eee;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      flex: 0 0 48px;
+    }
 
-    .success-row strong {
-      font-size: 12px;
+    .success-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .success-service-title {
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    .success-with {
+      margin-top: 3px;
       color: #666;
-      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 700;
     }
 
-    .success-row span {
+    .calendar-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      border-radius: 12px;
+      background: #000;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      text-decoration: none;
+      margin-bottom: 12px;
+    }
+
+    .success-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .success-actions button,
+    .success-actions a {
+      height: 44px;
+      border: 0;
+      border-radius: 11px;
+      background: #f1f1f1;
+      color: #111;
       font-size: 13px;
       font-weight: 900;
-      text-align: right;
-      word-break: break-word;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .success-location-card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .location-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .location-name {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .location-address {
+      font-size: 13px;
+      color: #666;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .direction-btn {
+      flex: 0 0 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #f1f1f1;
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 23px;
+      font-weight: 900;
+      text-decoration: none;
     }
 
     @media (min-width: 761px) {
@@ -737,6 +832,10 @@
 
         <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
         <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
+
+        <div class="sms-consent-text">
+          By providing your phone number, you agree to receive appointment-related and occasional informational messages from B SIDE U, including automated messages. Reply STOP to opt out, HELP for help. Message and data rates may apply.
+        </div>
 
         <button id="confirmBookingBtn" class="confirm-btn" type="button">
           Confirm Booking
@@ -1570,7 +1669,6 @@
       const successStylist = document.getElementById("modalStylist").textContent;
       const successService = document.getElementById("modalService").textContent;
       const successName = `${firstName} ${lastName}`;
-      const displayPhone = `${countryCode} ${phoneInput.value.trim()}`;
 
       try {
         const response = await fetch("/api/create-booking", {
@@ -1595,45 +1693,72 @@
 
         saveCustomerInfo();
 
+        const serviceForCalendar = STAFF_DATA[selectedStaffKey].services[selectedServiceKey];
+        const startDateForCalendar = new Date(selectedSlot.start_at);
+        const endDateForCalendar = new Date(startDateForCalendar.getTime() + serviceForCalendar.duration_minutes * 60 * 1000);
+
+        function toGoogleCalendarDate(date) {
+          return date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+        }
+
+        const calendarUrl =
+          "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+          `&text=${encodeURIComponent(successService)}` +
+          `&dates=${toGoogleCalendarDate(startDateForCalendar)}/${toGoogleCalendarDate(endDateForCalendar)}` +
+          `&details=${encodeURIComponent("B SIDE U Pasadena appointment with " + successStylist)}` +
+          `&location=${encodeURIComponent("350 S Lake Ave Ste 115, Pasadena, CA 91101")}`;
+
         bookingModalCardEl.innerHTML = `
-          <div class="success-wrap">
-            <div class="success-check">✓</div>
-
-            <h2 class="success-title">Appointment Booked</h2>
-
-            <div class="success-sub">
-              Your appointment has been confirmed.
+          <div class="success-page">
+            <div class="success-header">
+              <h2>Thanks, ${firstName}!</h2>
+              <p>Your appointment is coming up.</p>
             </div>
 
-            <div class="success-summary">
-              <div class="success-row">
-                <strong>Time</strong>
-                <span>${successTime}</span>
+            <div class="success-appointment-card">
+              <div class="success-date">${successTime}</div>
+
+              <div class="success-service-row">
+                <div class="success-avatar">
+                  ${STAFF_DATA[selectedStaffKey].image
+                    ? `<img src="${STAFF_DATA[selectedStaffKey].image}" alt="${successStylist}">`
+                    : successStylist.slice(0, 1)
+                  }
+                </div>
+
+                <div>
+                  <div class="success-service-title">${successService}</div>
+                  <div class="success-with">with ${successStylist}</div>
+                </div>
               </div>
 
-              <div class="success-row">
-                <strong>Stylist</strong>
-                <span>${successStylist}</span>
-              </div>
+              <a class="calendar-btn" href="${calendarUrl}" target="_blank" rel="noopener noreferrer">
+                Add to calendar
+              </a>
 
-              <div class="success-row">
-                <strong>Service</strong>
-                <span>${successService}</span>
+              <div class="success-actions">
+                <button type="button" onclick="window.location.reload()">Book again</button>
+                <a href="tel:2132735462">Call</a>
               </div>
+            </div>
 
-              <div class="success-row">
-                <strong>Name</strong>
-                <span>${successName}</span>
-              </div>
+            <div class="success-location-card">
+              <h3>Location</h3>
 
-              <div class="success-row">
-                <strong>Phone</strong>
-                <span>${displayPhone}</span>
-              </div>
+              <div class="location-box">
+                <div>
+                  <div class="location-name">B SIDE U - Pasadena</div>
+                  <div class="location-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
+                </div>
 
-              <div class="success-row">
-                <strong>Email</strong>
-                <span>${customerEmail}</span>
+                <a
+                  class="direction-btn"
+                  href="https://www.google.com/maps/search/?api=1&query=350%20S%20Lake%20Ave%20Ste%20115%2C%20Pasadena%2C%20CA%2091101"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  ↗
+                </a>
               </div>
             </div>
 
