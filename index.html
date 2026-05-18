@@ -201,7 +201,7 @@
     }
 
     .staff-card.is-working .staff-status {
-      color: #16833d;
+      color: #1a73e8;
     }
 
     .staff-card.is-full .staff-status {
@@ -213,7 +213,7 @@
     }
 
     .staff-card.is-active.is-working .staff-status {
-      color: #bff0cd;
+      color: #9ec5ff;
     }
 
     .staff-card.is-active.is-full .staff-status {
@@ -460,11 +460,47 @@
       cursor: pointer;
     }
 
-    .note {
-      margin-top: 8px;
-      color: #777;
+    .continue-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .booking-form {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .booking-input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 0 11px;
+      font-size: 14px;
+      font-weight: 700;
+      outline: none;
+      background: #fff;
+    }
+
+    .booking-input:focus {
+      border-color: #000;
+    }
+
+    .booking-status {
+      min-height: 18px;
+      color: #666;
       font-size: 12px;
+      font-weight: 800;
       line-height: 1.3;
+    }
+
+    .booking-success {
+      color: #16833d;
+    }
+
+    .booking-error {
+      color: #b00020;
     }
 
     @media (min-width: 761px) {
@@ -550,8 +586,18 @@
           <div class="selected-label">Selected appointment</div>
           <div id="selectedTime" class="selected-time"></div>
           <div id="selectedDetail" class="selected-detail"></div>
-          <button id="continueBtn" class="continue-btn">Continue</button>
-          <div class="note">Next step: customer name, phone, and email.</div>
+
+          <div class="booking-form">
+            <input id="customerName" class="booking-input" type="text" placeholder="Name" autocomplete="name" />
+            <input id="customerPhone" class="booking-input" type="tel" placeholder="Phone" autocomplete="tel" />
+            <input id="customerEmail" class="booking-input" type="email" placeholder="Email optional" autocomplete="email" />
+
+            <button id="confirmBookingBtn" class="continue-btn" type="button">
+              Confirm Booking
+            </button>
+
+            <div id="bookingStatus" class="booking-status"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -563,18 +609,18 @@
 
     const STAFF_DATA = {
       William: {
-  name: "William",
-  order: 1,
-  startDate: "2026-05-27",
-  specialWorkDates: ["2026-05-27"],
-  days: ["mon", "thu", "fri", "sat", "sun"],
-  image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2177_1779099876.jpeg?width=400&optimize=medium",
-  defaultService: "haircut",
-  services: {
-    haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 50 },
-    scissors: { label: "Scissors Cut", price: 75, duration_minutes: 50 }
-  }
-},
+        name: "William",
+        order: 1,
+        startDate: "2026-05-27",
+        specialWorkDates: ["2026-05-27"],
+        days: ["mon", "thu", "fri", "sat", "sun"],
+        image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2177_1779099876.jpeg?width=400&optimize=medium",
+        defaultService: "haircut",
+        services: {
+          haircut: { label: "Men’s Haircut", price: 60, duration_minutes: 50 },
+          scissors: { label: "Scissors Cut", price: 75, duration_minutes: 50 }
+        }
+      },
 
       Ryan: {
         name: "Ryan",
@@ -657,7 +703,12 @@
     const selectedPanelEl = document.getElementById("selectedPanel");
     const selectedTimeEl = document.getElementById("selectedTime");
     const selectedDetailEl = document.getElementById("selectedDetail");
-    const continueBtn = document.getElementById("continueBtn");
+
+    const customerNameEl = document.getElementById("customerName");
+    const customerPhoneEl = document.getElementById("customerPhone");
+    const customerEmailEl = document.getElementById("customerEmail");
+    const confirmBookingBtn = document.getElementById("confirmBookingBtn");
+    const bookingStatusEl = document.getElementById("bookingStatus");
 
     let currentDate = new Date();
     let selectedStaffKey = "";
@@ -950,6 +1001,16 @@
       slotCardEl.classList.remove("is-visible");
       selectedPanelEl.classList.remove("is-visible");
       emptyStateEl.classList.remove("is-visible");
+
+      if (bookingStatusEl) {
+        bookingStatusEl.textContent = "";
+        bookingStatusEl.className = "booking-status";
+      }
+
+      if (confirmBookingBtn) {
+        confirmBookingBtn.disabled = false;
+        confirmBookingBtn.textContent = "Confirm Booking";
+      }
     }
 
     function clearSelection() {
@@ -961,6 +1022,16 @@
       document.querySelectorAll(".time-btn").forEach(btn => {
         btn.classList.remove("is-selected");
       });
+
+      if (bookingStatusEl) {
+        bookingStatusEl.textContent = "";
+        bookingStatusEl.className = "booking-status";
+      }
+
+      if (confirmBookingBtn) {
+        confirmBookingBtn.disabled = false;
+        confirmBookingBtn.textContent = "Confirm Booking";
+      }
     }
 
     function renderStaffStrip(shouldLoadStatuses = false) {
@@ -1240,6 +1311,76 @@
       }
     }
 
+    confirmBookingBtn.addEventListener("click", async () => {
+      if (!selectedSlot) {
+        bookingStatusEl.textContent = "Please select a time first.";
+        bookingStatusEl.className = "booking-status booking-error";
+        return;
+      }
+
+      const customerName = customerNameEl.value.trim();
+      const customerPhone = customerPhoneEl.value.trim();
+      const customerEmail = customerEmailEl.value.trim();
+
+      if (!customerName) {
+        bookingStatusEl.textContent = "Please enter your name.";
+        bookingStatusEl.className = "booking-status booking-error";
+        return;
+      }
+
+      if (!customerPhone) {
+        bookingStatusEl.textContent = "Please enter your phone number.";
+        bookingStatusEl.className = "booking-status booking-error";
+        return;
+      }
+
+      confirmBookingBtn.disabled = true;
+      confirmBookingBtn.textContent = "Booking...";
+      bookingStatusEl.textContent = "Creating your appointment...";
+      bookingStatusEl.className = "booking-status";
+
+      try {
+        const response = await fetch("/api/create-booking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            staffKey: selectedStaffKey,
+            serviceType: selectedServiceKey,
+            start_at: selectedSlot.start_at,
+            customerName,
+            customerPhone,
+            customerEmail
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || "Booking failed.");
+        }
+
+        bookingStatusEl.textContent = "Booked successfully. Thank you!";
+        bookingStatusEl.className = "booking-status booking-success";
+        confirmBookingBtn.textContent = "Booked";
+
+        customerNameEl.value = "";
+        customerPhoneEl.value = "";
+        customerEmailEl.value = "";
+
+        staffStatusCache = {};
+        renderStaffStrip(true);
+        searchAvailability();
+
+      } catch (error) {
+        bookingStatusEl.textContent = error.message || "Booking failed. Please try again.";
+        bookingStatusEl.className = "booking-status booking-error";
+        confirmBookingBtn.disabled = false;
+        confirmBookingBtn.textContent = "Confirm Booking";
+      }
+    });
+
     function selectBestDefaultStaff() {
       const orderedKeys = getOrderedStaffKeys(currentDate);
       selectedStaffKey = orderedKeys[0];
@@ -1285,18 +1426,6 @@
 
       currentDate = new Date(nextAvailableTargetDate);
       refreshForDateChange();
-    });
-
-    continueBtn.addEventListener("click", () => {
-      if (!selectedSlot) {
-        alert("Please select a time first.");
-        return;
-      }
-
-      alert(
-        "Next step: customer form.\\n\\nSelected time: " +
-        formatPasadenaTime(selectedSlot.start_at)
-      );
     });
 
     updateDateUI();
