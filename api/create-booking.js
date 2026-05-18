@@ -12,7 +12,8 @@ export default async function handler(req, res) {
       start_at,
       customerName,
       customerPhone,
-      customerEmail
+      customerEmail,
+      customerNote
     } = req.body || {};
 
     const LOCATION_ID = "L3QJNBCTPSYW7";
@@ -166,9 +167,9 @@ export default async function handler(req, res) {
       });
     }
 
-    if (!customerName || !customerPhone) {
+    if (!customerName || !customerPhone || !customerEmail) {
       return res.status(400).json({
-        error: "Customer name and phone are required."
+        error: "Name, phone, and email are required."
       });
     }
 
@@ -212,7 +213,7 @@ export default async function handler(req, res) {
         given_name: givenName,
         family_name: familyName || undefined,
         phone_number: customerPhone,
-        email_address: customerEmail || undefined
+        email_address: customerEmail
       })
     });
 
@@ -233,6 +234,10 @@ export default async function handler(req, res) {
         square: customerData
       });
     }
+
+    const noteText = customerNote
+      ? `Booked online. Service: ${staffKey} - ${service.label}\nNote: ${customerNote}`
+      : `Booked online. Service: ${staffKey} - ${service.label}`;
 
     const createBookingResponse = await fetch("https://connect.squareup.com/v2/bookings", {
       method: "POST",
@@ -256,7 +261,7 @@ export default async function handler(req, res) {
               service_variation_version: service.service_variation_version
             }
           ],
-          customer_note: `Booked online. Service: ${staffKey} - ${service.label}`
+          customer_note: noteText
         }
       })
     });
