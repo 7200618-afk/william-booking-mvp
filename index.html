@@ -1110,7 +1110,7 @@
       const staff = STAFF_DATA[selectedStaffKey];
       const service = staff.services[selectedServiceKey];
 
-      modalTimeEl.textContent = `${formatFullDate(currentDate)} · ${formatPasadenaTime(slot.start_at)} · Pasadena Time`;
+      modalTimeEl.textContent = `${formatFullDate(currentDate)} · ${formatPasadenaTime(slot.start_at)} PT`;
       modalStylistEl.textContent = staff.name;
       modalServiceEl.textContent = `${service.label} · ${formatPrice(service.price)} · ${service.duration_minutes} min`;
 
