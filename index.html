@@ -26,8 +26,7 @@
     }
 
     .top-card,
-    .slot-card,
-    .policy-card {
+    .slot-card {
       border: 1px solid #e8e8e8;
       border-radius: 15px;
       background: #fff;
@@ -107,9 +106,10 @@
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 1px 1px 6px;
+      padding: 1px 1px 4px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
+      align-items: flex-start;
     }
 
     .staff-strip::-webkit-scrollbar {
@@ -121,16 +121,21 @@
       border-radius: 999px;
     }
 
-    .staff-card {
+    .staff-item {
       flex: 0 0 84px;
-      min-height: 144px;
+      scroll-snap-align: start;
+      text-align: center;
+    }
+
+    .staff-card {
+      width: 84px;
+      min-height: 126px;
       border: 1px solid #e6e6e6;
       border-radius: 14px;
       background: #fff;
       padding: 8px 5px;
       text-align: center;
       cursor: pointer;
-      scroll-snap-align: start;
       transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
       -webkit-tap-highlight-color: transparent;
     }
@@ -186,20 +191,6 @@
       line-height: 1.1;
     }
 
-    .profile-link-in-card {
-      display: none;
-      margin-top: 4px;
-      color: inherit;
-      font-size: 10px;
-      font-weight: 900;
-      text-decoration: underline;
-      line-height: 1.1;
-    }
-
-    .staff-card.is-active .profile-link-in-card {
-      display: block;
-    }
-
     .staff-status {
       margin-top: 5px;
       font-size: 10px;
@@ -227,6 +218,20 @@
 
     .staff-card.is-active.is-full .staff-status {
       color: #ffd39a;
+    }
+
+    .profile-link-under-card {
+      display: none;
+      margin-top: 4px;
+      color: #111;
+      font-size: 10px;
+      font-weight: 900;
+      text-decoration: underline;
+      line-height: 1.1;
+    }
+
+    .staff-item.is-active .profile-link-under-card {
+      display: block;
     }
 
     .service-pills {
@@ -462,73 +467,13 @@
       line-height: 1.3;
     }
 
-    .policy-card {
-      margin-top: 12px;
-      padding: 14px;
-    }
-
-    .policy-title {
-      font-size: 18px;
-      font-weight: 900;
-      margin: 0 0 4px;
-    }
-
-    .policy-sub {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 12px;
-    }
-
-    .policy-list {
-      display: grid;
-      gap: 7px;
-      margin: 0 0 12px;
-      padding: 0;
-      list-style: none;
-    }
-
-    .policy-list li {
-      border: 1px solid #eee;
-      border-radius: 11px;
-      padding: 9px 10px;
-      font-size: 13px;
-      font-weight: 800;
-      background: #fafafa;
-    }
-
-    .policy-extra-title {
-      font-size: 13px;
-      font-weight: 900;
-      margin: 12px 0 6px;
-    }
-
-    .policy-extra {
-      margin: 0;
-      padding-left: 18px;
-      color: #555;
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .policy-extra li {
-      margin-bottom: 5px;
-    }
-
-    .policy-agree {
-      margin-top: 12px;
-      font-size: 12px;
-      font-weight: 900;
-      color: #111;
-    }
-
     @media (min-width: 761px) {
       .page {
         padding-top: 24px;
       }
 
       .top-card,
-      .slot-card,
-      .policy-card {
+      .slot-card {
         border-radius: 18px;
       }
 
@@ -536,9 +481,13 @@
         padding: 14px;
       }
 
-      .staff-card {
+      .staff-item {
         flex-basis: 94px;
-        min-height: 146px;
+      }
+
+      .staff-card {
+        width: 94px;
+        min-height: 128px;
       }
 
       .time-btn {
@@ -605,28 +554,6 @@
           <div class="note">Next step: customer name, phone, and email.</div>
         </div>
       </div>
-    </div>
-
-    <div class="policy-card">
-      <h2 class="policy-title">Appointment Policy</h2>
-      <div class="policy-sub">Quick summary of our appointment rules.</div>
-
-      <ul class="policy-list">
-        <li>Free changes ≥ 3 hours</li>
-        <li>Late changes &lt; 3 hours = 25%</li>
-        <li>Late arrival &gt; 10 min = may reschedule</li>
-        <li>No-show = 50%</li>
-      </ul>
-
-      <div class="policy-extra-title">Extra notes:</div>
-      <ul class="policy-extra">
-        <li>If you are not happy with your haircut, please contact us within 1 day for a complimentary fix.</li>
-        <li>Requests made after 1 day are not eligible for refund or a free fix.</li>
-        <li>We may waive the fee one time for your first late cancellation or no-show as a courtesy.</li>
-        <li>We understand emergencies happen. Please let us know as soon as you can so we can help.</li>
-      </ul>
-
-      <div class="policy-agree">By booking, you agree to this policy.</div>
     </div>
   </div>
 
@@ -1044,6 +971,10 @@
         const cacheKey = getStatusCacheKey(staffKey, staff.defaultService, currentDate);
         const cached = staffStatusCache[cacheKey];
 
+        const item = document.createElement("div");
+        item.className = "staff-item";
+        if (staffKey === selectedStaffKey) item.classList.add("is-active");
+
         const card = document.createElement("div");
         card.className = "staff-card";
         card.dataset.staffKey = staffKey;
@@ -1067,13 +998,17 @@
         card.innerHTML = `
           ${avatarHTML}
           <div class="staff-name">${staff.name}</div>
-          <a class="profile-link-in-card" href="${profileUrl}" target="_blank" rel="noopener noreferrer">View Profile</a>
           <div class="staff-status">${statusText}</div>
         `;
 
-        card.addEventListener("click", event => {
-          if (event.target.closest("a")) return;
+        const profileLink = document.createElement("a");
+        profileLink.className = "profile-link-under-card";
+        profileLink.href = profileUrl;
+        profileLink.target = "_blank";
+        profileLink.rel = "noopener noreferrer";
+        profileLink.textContent = "View Profile";
 
+        card.addEventListener("click", () => {
           selectedStaffKey = staffKey;
           selectedServiceKey = STAFF_DATA[staffKey].defaultService;
 
@@ -1098,7 +1033,9 @@
           searchAvailability();
         });
 
-        staffStripEl.appendChild(card);
+        item.appendChild(card);
+        item.appendChild(profileLink);
+        staffStripEl.appendChild(item);
       });
 
       if (shouldLoadStatuses) {
