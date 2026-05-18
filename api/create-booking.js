@@ -182,22 +182,18 @@ export default async function handler(req, res) {
 
       if (!digits) return "";
 
-      // 修复 +1 被重复加的问题，例如 +112132735462
       if (digits.length === 12 && digits.startsWith("11")) {
         digits = digits.slice(1);
       }
 
-      // 美国号码：2132735462 -> +12132735462
       if (digits.length === 10) {
         return `+1${digits}`;
       }
 
-      // 美国号码：12132735462 -> +12132735462
       if (digits.length === 11 && digits.startsWith("1")) {
         return `+${digits}`;
       }
 
-      // 国际号码：如果原本有 +，保留国际格式
       if (value.startsWith("+")) {
         return `+${digits}`;
       }
@@ -287,7 +283,6 @@ export default async function handler(req, res) {
         };
       }
 
-      // Square 要求 Search Availability 的时间范围最少 1 小时
       const minimumSearchMinutes = 60;
       const searchMinutes = Math.max(
         Number(service.duration_minutes || 0),
@@ -335,8 +330,10 @@ export default async function handler(req, res) {
         };
       }
 
+      const selectedTimeMs = new Date(start_at).getTime();
+
       const exactAvailable = (data.availabilities || []).some(availability => {
-        return availability.start_at === start_at;
+        return new Date(availability.start_at).getTime() === selectedTimeMs;
       });
 
       return {
@@ -382,9 +379,7 @@ export default async function handler(req, res) {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        return null;
-      }
+      if (!response.ok) return null;
 
       return data.customers?.[0] || null;
     }
@@ -407,9 +402,7 @@ export default async function handler(req, res) {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        return null;
-      }
+      if (!response.ok) return null;
 
       return data.customers?.[0] || null;
     }
