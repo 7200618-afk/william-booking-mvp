@@ -265,6 +265,7 @@
     }
 
     .service-pill {
+      position: relative;
       width: 100%;
       border: 1px solid #ddd;
       border-radius: 12px;
@@ -276,6 +277,11 @@
       -webkit-tap-highlight-color: transparent;
       min-height: 44px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.025);
+      transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+    }
+
+    .service-pill:active {
+      transform: scale(0.98);
     }
 
     .service-pill.is-active {
@@ -283,6 +289,17 @@
       color: #111;
       border: 2px solid #111;
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    .service-pill.is-active::after {
+      content: "";
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #111;
     }
 
     .service-name {
@@ -293,6 +310,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-right: 10px;
     }
 
     .service-meta {
@@ -305,6 +323,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-right: 10px;
     }
 
     .service-pill.is-active .service-meta { color: #555; }
