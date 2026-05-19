@@ -240,7 +240,7 @@
       min-height: 13px;
     }
 
-    .staff-card.is-full .staff-status { color: #a05a00; }
+    .staff-card.is-full .staff-status { color: #d93025; }
     .staff-card.is-off .staff-status { color: #555; }
 
     .profile-link-under-card {
@@ -886,7 +886,7 @@
         </div>
 
         <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
-        <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
+        <textarea id="customerNote" class="booking-textarea" placeholder="Note / option" rows="3"></textarea>
 
         <div class="sms-consent-text">
           By providing your phone number, you agree to receive appointment-related and occasional informational messages from B SIDE U, including automated messages. Reply STOP to opt out, HELP for help. Message and data rates may apply.
@@ -1160,6 +1160,18 @@
       return "Evening";
     }
 
+    function scrollSelectedStaffIntoView() {
+      const selectedCard = staffStripEl.querySelector(".staff-item.is-active");
+
+      if (!selectedCard) return;
+
+      selectedCard.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest"
+      });
+    }
+
     async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
       const response = await fetch("/api/search-availability", {
         method: "POST",
@@ -1281,6 +1293,7 @@
       if (requestId !== statusRequestId) return;
 
       renderStaffStrip(false);
+      setTimeout(scrollSelectedStaffIntoView, 80);
     }
 
     function restoreBookingModalForm() {
@@ -1432,6 +1445,8 @@
           renderServicePills();
           clearResults();
           searchAvailability();
+
+          setTimeout(scrollSelectedStaffIntoView, 80);
         });
 
         item.appendChild(card);
@@ -1443,6 +1458,8 @@
         statusRequestId++;
         loadStaffStatuses(statusRequestId);
       }
+
+      setTimeout(scrollSelectedStaffIntoView, 80);
     }
 
     function renderServicePills() {
@@ -1876,6 +1893,8 @@
       renderServicePills();
       clearResults();
       searchAvailability();
+
+      setTimeout(scrollSelectedStaffIntoView, 120);
     }
 
     prevDayBtn.addEventListener("click", () => {
