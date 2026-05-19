@@ -940,6 +940,7 @@
     let selectedServiceKey = "";
     let selectedSlot = null;
     let statusRequestId = 0;
+    let availabilityRequestId = 0;
     let nextAvailableTargetDate = null;
     let staffStatusCache = {};
 
@@ -1425,6 +1426,8 @@
         profileLink.textContent = "View Profile";
 
         card.addEventListener("click", () => {
+          availabilityRequestId++;
+
           selectedStaffKey = staffKey;
           selectedServiceKey = STAFF_DATA[staffKey].defaultService;
 
@@ -1472,6 +1475,8 @@
         `;
 
         btn.addEventListener("click", () => {
+          availabilityRequestId++;
+
           selectedServiceKey = serviceKey;
           renderServicePills();
           clearResults();
@@ -1544,7 +1549,10 @@
     async function searchAvailability() {
       if (!selectedStaffKey || !selectedServiceKey) return;
 
-      const staff = STAFF_DATA[selectedStaffKey];
+      const requestId = ++availabilityRequestId;
+      const staffKeyAtRequest = selectedStaffKey;
+      const serviceKeyAtRequest = selectedServiceKey;
+      const dateAtRequest = new Date(currentDate);
 
       messageEl.textContent = "Checking available times...";
       slotGroupsEl.innerHTML = "";
@@ -1553,13 +1561,23 @@
 
       try {
         const availabilities = await fetchAvailabilityFor(
-          selectedStaffKey,
-          selectedServiceKey,
-          currentDate
+          staffKeyAtRequest,
+          serviceKeyAtRequest,
+          dateAtRequest
         );
+
+        if (
+          requestId !== availabilityRequestId ||
+          staffKeyAtRequest !== selectedStaffKey ||
+          serviceKeyAtRequest !== selectedServiceKey ||
+          toIsoDateLocal(dateAtRequest) !== toIsoDateLocal(currentDate)
+        ) {
+          return;
+        }
 
         if (availabilities.length) {
           messageEl.textContent = "";
+          slotGroupsEl.innerHTML = "";
           slotCardEl.classList.add("is-visible");
           renderSlots(availabilities);
           return;
@@ -1568,15 +1586,24 @@
         messageEl.textContent = "Finding next available...";
 
         const nextResult = await findNextAvailableDateFast(
-          selectedStaffKey,
-          selectedServiceKey,
-          currentDate,
+          staffKeyAtRequest,
+          serviceKeyAtRequest,
+          dateAtRequest,
           true
         );
 
+        if (
+          requestId !== availabilityRequestId ||
+          staffKeyAtRequest !== selectedStaffKey ||
+          serviceKeyAtRequest !== selectedServiceKey ||
+          toIsoDateLocal(dateAtRequest) !== toIsoDateLocal(currentDate)
+        ) {
+          return;
+        }
+
         messageEl.textContent = "";
 
-        const title = isWorking(selectedStaffKey, currentDate)
+        const title = isWorking(staffKeyAtRequest, dateAtRequest)
           ? "Fully booked today"
           : "No availability today";
 
@@ -1587,6 +1614,7 @@
         );
 
       } catch (error) {
+        if (requestId !== availabilityRequestId) return;
         messageEl.textContent = "Network error: " + error.message;
       }
     }
@@ -1820,6 +1848,8 @@
     }
 
     function refreshForDateChange() {
+      availabilityRequestId++;
+
       updateDateUI();
 
       staffStatusCache = {};
