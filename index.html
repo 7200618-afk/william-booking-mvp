@@ -754,9 +754,7 @@
 
     @media (min-width: 761px) {
       .page { padding-top: 24px; }
-
       .pasadena-title { font-size: 28px; }
-
       .staff-item { flex-basis: 112px; }
 
       .staff-card {
@@ -776,7 +774,6 @@
 
       .service-name { font-size: 14px; }
       .service-meta { font-size: 11px; }
-
       .booking-modal { align-items: center; }
     }
   </style>
@@ -1369,7 +1366,7 @@
 
       const orderedKeys = getOrderedStaffKeys(currentDate);
 
-      if (!selectedStaffKey || !orderedKeys.includes(selectedStaffKey)) {
+      if (!selectedStaffKey || !STAFF_DATA[selectedStaffKey]) {
         selectedStaffKey = orderedKeys[0];
       }
 
@@ -1849,14 +1846,28 @@
 
     function refreshForDateChange() {
       availabilityRequestId++;
+      statusRequestId++;
 
       updateDateUI();
 
       staffStatusCache = {};
 
-      const orderedKeys = getOrderedStaffKeys(currentDate);
+      const currentSelectedStaff = selectedStaffKey;
+      const currentSelectedService = selectedServiceKey;
 
-      if (!orderedKeys.includes(selectedStaffKey)) {
+      if (currentSelectedStaff && STAFF_DATA[currentSelectedStaff]) {
+        selectedStaffKey = currentSelectedStaff;
+
+        if (
+          currentSelectedService &&
+          STAFF_DATA[currentSelectedStaff].services[currentSelectedService]
+        ) {
+          selectedServiceKey = currentSelectedService;
+        } else {
+          selectedServiceKey = STAFF_DATA[currentSelectedStaff].defaultService;
+        }
+      } else {
+        const orderedKeys = getOrderedStaffKeys(currentDate);
         selectedStaffKey = orderedKeys[0];
         selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
       }
