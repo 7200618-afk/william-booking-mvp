@@ -184,14 +184,25 @@
     }
 
     .staff-card:active {
-      transform: scale(0.98) translateY(-1px);
+      transform: scale(0.97);
     }
 
     .staff-card.is-active {
       border: 2px solid #000;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
-      background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
-      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .staff-card.is-active::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #000;
     }
 
     .staff-card.is-off,
@@ -720,7 +731,7 @@
 
     .success-actions {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
     }
 
@@ -731,15 +742,13 @@
       border-radius: 11px;
       background: #f1f1f1;
       color: #111;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 950;
       text-decoration: none;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      text-align: center;
-      padding: 0 4px;
     }
 
     .success-location-card h3 {
@@ -934,7 +943,7 @@
         </div>
 
         <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
-        <textarea id="customerNote" class="booking-textarea" placeholder="Note (optional)" rows="3"></textarea>
+        <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
 
         <div class="sms-consent-text">
           By providing your phone number, you agree to receive appointment-related and occasional informational messages from B SIDE U, including automated messages. Reply STOP to opt out, HELP for help. Message and data rates may apply.
@@ -1173,7 +1182,7 @@
     }
 
     function getProfileUrl(staffKey) {
-      return `https://www.bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
+      return `https://bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
     }
 
     function formatPrice(price) {
@@ -1817,10 +1826,6 @@
                 <a href="sms:${BUSINESS.tel}?&body=Hi%20B%20SIDE%20U%2C%20I%20would%20like%20to%20cancel%20my%20appointment.">
                   Cancel
                 </a>
-
-                <button type="button" onclick="window.location.reload()">
-                  Book another
-                </button>
 
                 <a href="sms:${BUSINESS.tel}?&body=Hi%20B%20SIDE%20U%2C%20I%20would%20like%20to%20reschedule%20my%20appointment.">
                   Reschedule
