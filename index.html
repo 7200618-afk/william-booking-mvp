@@ -65,20 +65,13 @@
       text-decoration: underline;
     }
 
-    .top-card,
-    .date-card,
-    .slot-card {
-      border: 1px solid #e8e8e8;
-      border-radius: 15px;
-      background: #fff;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.035);
+    .booking-layout {
+      width: 100%;
     }
 
-    .top-card { padding: 10px; }
-
-    .date-card {
-      margin-top: 10px;
-      padding: 9px;
+    .date-area {
+      padding: 0 0 10px;
+      margin-bottom: 4px;
     }
 
     .date-bar {
@@ -172,11 +165,11 @@
     .staff-card {
       position: relative;
       width: 102px;
-      min-height: 142px;
+      min-height: 126px;
       border: 1px solid #e4e4e4;
       border-radius: 16px;
       background: #fff;
-      padding: 10px 6px 9px;
+      padding: 9px 6px 5px;
       text-align: center;
       cursor: pointer;
       transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
@@ -214,7 +207,7 @@
       width: 58px;
       height: 58px;
       border-radius: 50%;
-      margin: 0 auto 7px;
+      margin: 0 auto 6px;
       background: #eee;
       overflow: hidden;
       display: flex;
@@ -243,12 +236,12 @@
     }
 
     .staff-status {
-      margin-top: 6px;
+      margin-top: 4px;
       font-size: 10.5px;
       font-weight: 950;
       color: #1a73e8;
-      line-height: 1.15;
-      min-height: 25px;
+      line-height: 1.1;
+      min-height: 13px;
     }
 
     .staff-card.is-full .staff-status {
@@ -335,10 +328,8 @@
     .empty-state {
       display: none;
       margin-top: 8px;
-      border: 1px solid #e8e8e8;
-      border-radius: 13px;
-      padding: 10px;
-      background: #fafafa;
+      padding: 0;
+      background: transparent;
     }
 
     .empty-state.is-visible { display: block; }
@@ -383,14 +374,14 @@
       color: #111;
     }
 
-    .slot-card {
-      display: none;
+    .slot-area {
       margin-top: 10px;
-      padding: 10px;
+      padding: 0;
       min-height: 220px;
+      display: none;
     }
 
-    .slot-card.is-visible { display: block; }
+    .slot-area.is-visible { display: block; }
 
     .slot-topline {
       display: flex;
@@ -798,19 +789,11 @@
         font-size: 28px;
       }
 
-      .top-card,
-      .date-card,
-      .slot-card {
-        border-radius: 18px;
-      }
-
-      .top-card { padding: 14px; }
-
       .staff-item { flex-basis: 112px; }
 
       .staff-card {
         width: 112px;
-        min-height: 150px;
+        min-height: 132px;
       }
 
       .avatar {
@@ -844,7 +827,20 @@
     </div>
 
     <div class="booking-layout">
-      <div class="top-card">
+      <div class="date-area">
+        <div class="date-bar">
+          <button id="prevDay" class="date-nav" type="button">‹</button>
+
+          <div class="date-center">
+            <div id="dateLabel" class="date-label">Today</div>
+            <input id="dateInput" type="date" />
+          </div>
+
+          <button id="nextDay" class="date-nav" type="button">›</button>
+        </div>
+      </div>
+
+      <div>
         <div class="section-label">Stylists</div>
         <div id="staffStrip" class="staff-strip"></div>
 
@@ -871,20 +867,7 @@
         </div>
       </div>
 
-      <div class="date-card">
-        <div class="date-bar">
-          <button id="prevDay" class="date-nav" type="button">‹</button>
-
-          <div class="date-center">
-            <div id="dateLabel" class="date-label">Today</div>
-            <input id="dateInput" type="date" />
-          </div>
-
-          <button id="nextDay" class="date-nav" type="button">›</button>
-        </div>
-      </div>
-
-      <div id="slotCard" class="slot-card">
+      <div id="slotCard" class="slot-area">
         <div class="slot-topline">
           <h2 class="slot-title">Available Times</h2>
           <div id="slotCount" class="slot-count"></div>
@@ -1015,15 +998,13 @@
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         minute: "numeric",
-        hour12: false,
-        weekday: "short"
+        hour12: false
       }).formatToParts(new Date());
 
       const hour = Number(parts.find(part => part.type === "hour")?.value || 0);
       const minute = Number(parts.find(part => part.type === "minute")?.value || 0);
-      const weekday = parts.find(part => part.type === "weekday")?.value || "";
 
-      return { hour, minute, weekday };
+      return { hour, minute };
     }
 
     function updateOpenStatus() {
