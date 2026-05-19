@@ -23,12 +23,39 @@
       padding-bottom: 30px;
     }
 
+    .pasadena-header,
     .top-card,
     .slot-card {
       border: 1px solid #e8e8e8;
       border-radius: 15px;
       background: #fff;
       box-shadow: 0 5px 18px rgba(0,0,0,0.035);
+    }
+
+    .pasadena-header {
+      padding: 11px 12px;
+      margin-bottom: 10px;
+    }
+
+    .pasadena-title {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 4px;
+    }
+
+    .pasadena-status {
+      font-size: 13px;
+      font-weight: 900;
+      color: #1a73e8;
+      margin-bottom: 4px;
+    }
+
+    .pasadena-address {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #666;
+      line-height: 1.3;
     }
 
     .top-card { padding: 10px; }
@@ -364,21 +391,21 @@
 
     .times {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
     }
 
     .time-btn {
-      min-height: 43px;
+      min-height: 39px;
       border: 1px solid #111;
-      border-radius: 10px;
+      border-radius: 9px;
       background: #fff;
       color: #111;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      padding: 0 4px;
+      padding: 0 2px;
     }
 
     .time-btn.is-selected {
@@ -663,7 +690,6 @@
       gap: 8px;
     }
 
-    .success-actions button,
     .success-actions a {
       height: 44px;
       border: 0;
@@ -677,6 +703,15 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+    }
+
+    .success-note {
+      margin-top: 10px;
+      color: #666;
+      font-size: 11px;
+      line-height: 1.35;
+      font-weight: 700;
+      text-align: center;
     }
 
     .success-location-card h3 {
@@ -721,20 +756,28 @@
 
     @media (min-width: 761px) {
       .page { padding-top: 24px; }
+
+      .pasadena-header,
       .top-card,
       .slot-card { border-radius: 18px; }
+
       .top-card { padding: 14px; }
+
       .staff-item { flex-basis: 94px; }
+
       .staff-card {
         width: 94px;
         min-height: 128px;
       }
+
       .time-btn {
-        min-height: 48px;
-        font-size: 15px;
+        min-height: 44px;
+        font-size: 14px;
       }
+
       .service-name { font-size: 14px; }
       .service-meta { font-size: 11px; }
+
       .booking-modal { align-items: center; }
     }
   </style>
@@ -742,6 +785,12 @@
 
 <body>
   <div class="page">
+    <div class="pasadena-header">
+      <div class="pasadena-title">B SIDE U - Pasadena</div>
+      <div id="openStatus" class="pasadena-status">Opening today 10:00 AM</div>
+      <div class="pasadena-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
+    </div>
+
     <div class="booking-layout">
       <div class="top-card">
         <div class="date-bar">
@@ -860,6 +909,7 @@
     const daysDisplay = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     const CUSTOMER_STORAGE_KEY = "bsideu_pasadena_customer_info";
 
+    const openStatusEl = document.getElementById("openStatus");
     const staffStripEl = document.getElementById("staffStrip");
     const servicePillsEl = document.getElementById("servicePills");
     const dateInputEl = document.getElementById("dateInput");
@@ -896,6 +946,44 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
+
+    function updateOpenStatus() {
+      if (!openStatusEl) return;
+
+      const now = new Date();
+
+      const laParts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Los_Angeles",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: false
+      }).formatToParts(now);
+
+      const hour = Number(laParts.find(part => part.type === "hour")?.value || 0);
+      const minute = Number(laParts.find(part => part.type === "minute")?.value || 0);
+      const totalMinutes = hour * 60 + minute;
+
+      const openMinutes = 10 * 60;
+      const lastDisplayMinutes = 18 * 60 + 30;
+      const closeMinutes = 19 * 60;
+
+      if (totalMinutes < openMinutes) {
+        openStatusEl.textContent = "Opening today 10:00 AM";
+        return;
+      }
+
+      if (totalMinutes >= lastDisplayMinutes) {
+        openStatusEl.textContent = "Opening tomorrow 10:00 AM";
+        return;
+      }
+
+      if (totalMinutes < closeMinutes) {
+        openStatusEl.textContent = "Open today until 7:00 PM";
+        return;
+      }
+
+      openStatusEl.textContent = "Opening tomorrow 10:00 AM";
     }
 
     function loadSavedCustomerInfo() {
@@ -966,6 +1054,11 @@
       return `${dow} ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
     }
 
+    function updateDateUI() {
+      dateInputEl.value = toIsoDateLocal(currentDate);
+      dateLabelEl.textContent = formatDateLabel(currentDate);
+    }
+
     function hasStarted(staffKey, date) {
       const staff = STAFF_DATA[staffKey];
       if (!staff.startDate) return true;
@@ -982,11 +1075,6 @@
 
       const dow = daysShort[date.getDay()];
       return staff.days.includes(dow);
-    }
-
-    function updateDateUI() {
-      dateInputEl.value = toIsoDateLocal(currentDate);
-      dateLabelEl.textContent = formatDateLabel(currentDate);
     }
 
     function getStatusCacheKey(staffKey, serviceType, dateObj) {
@@ -1649,6 +1737,12 @@
           `&details=${encodeURIComponent("B SIDE U Pasadena appointment with " + successStylist)}` +
           `&location=${encodeURIComponent(BUSINESS.address)}`;
 
+        const cancelSms =
+          `sms:${BUSINESS.tel}?&body=${encodeURIComponent("Hi B SIDE U, I would like to cancel my appointment.")}`;
+
+        const rescheduleSms =
+          `sms:${BUSINESS.tel}?&body=${encodeURIComponent("Hi B SIDE U, I would like to reschedule my appointment.")}`;
+
         bookingModalCardEl.innerHTML = `
           <div class="success-page">
             <div class="success-header">
@@ -1678,8 +1772,12 @@
               </a>
 
               <div class="success-actions">
-                <button type="button" onclick="window.location.reload()">Book again</button>
-                <button type="button" onclick="window.location.reload()">Reschedule</button>
+                <a href="${cancelSms}">Cancel</a>
+                <a href="${rescheduleSms}">Reschedule</a>
+              </div>
+
+              <div class="success-note">
+                Need to cancel or reschedule? Please text us as soon as possible.
               </div>
             </div>
 
@@ -1789,6 +1887,7 @@
 
     loadSavedCustomerInfo();
 
+    updateOpenStatus();
     updateDateUI();
     selectBestDefaultStaff();
     renderStaffStrip(true);
