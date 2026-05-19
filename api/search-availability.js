@@ -24,15 +24,21 @@ export default async function handler(req, res) {
       "Content-Type": "application/json"
     };
 
-    // Pasadena / Los Angeles local business day: 10:00 AM - 7:00 PM
-    // PDT in May is UTC-7, so 10:00 = 17:00Z, 19:00 = 02:00Z next day.
-    // This matches your current Pasadena use case.
-    const startAt = `${date}T17:00:00Z`;
+    /*
+      修复 Jacob 9:00 / 9:45 不显示：
+      之前从 10:00 AM Pasadena time 开始查，所以 9:00 / 9:45 会被漏掉。
+      现在从 9:00 AM Pasadena time 开始查。
+      May / summer Pasadena = PDT = UTC-7
+      9:00 AM PDT = 16:00Z
+    */
+    const startAt = `${date}T16:00:00Z`;
 
     const nextDay = new Date(`${date}T00:00:00Z`);
     nextDay.setUTCDate(nextDay.getUTCDate() + 1);
     const nextDateIso = nextDay.toISOString().slice(0, 10);
-    const endAt = `${nextDateIso}T02:00:00Z`;
+
+    // 查到晚上 8:00 PM Pasadena time，避免漏掉晚一点的空位
+    const endAt = `${nextDateIso}T03:00:00Z`;
 
     const response = await fetch(
       "https://connect.squareup.com/v2/bookings/availability/search",
@@ -74,6 +80,7 @@ export default async function handler(req, res) {
       availabilities: data.availabilities || [],
       errors: data.errors || []
     });
+
   } catch (error) {
     return res.status(500).json({
       error: "Server error",
