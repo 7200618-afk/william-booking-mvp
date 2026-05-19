@@ -1136,6 +1136,23 @@
       return "Evening";
     }
 
+    function getCandidateWorkingDates(staffKey, fromDate, startTomorrow, limit = 8) {
+      const dates = [];
+
+      for (let i = startTomorrow ? 1 : 0; i <= 60; i++) {
+        const d = new Date(fromDate);
+        d.setDate(d.getDate() + i);
+
+        if (!hasStarted(staffKey, d)) continue;
+        if (!isWorking(staffKey, d)) continue;
+
+        dates.push(d);
+        if (dates.length >= limit) break;
+      }
+
+      return dates;
+    }
+
     async function fetchAvailabilityFor(staffKey, serviceType, dateObj, options = {}) {
       const allowNull = options.allowNull === true;
 
@@ -1158,14 +1175,53 @@
           }
         } catch (error) {}
 
-        await new Promise(resolve => setTimeout(resolve, 120));
+        await new Promise(resolve => setTimeout(resolve, 180));
       }
 
       return allowNull ? null : [];
     }
 
-    function getWorkingDaysText(staff) {
-      return `Works ${staff.days.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(" ")}`;
+    async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
+      const candidateDates = getCandidateWorkingDates(staffKey, fromDate, startTomorrow, 8);
+      if (!candidateDates.length) return null;
+
+      const results = await Promise.all(
+        candidateDates.map(async dateObj => {
+          const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
+
+          return {
+            date: dateObj,
+            firstOpening: openings[0]?.start_at || null,
+            openings
+          };
+        })
+      );
+
+      return results.find(result => result.openings.length > 0) || null;
+    }
+
+    function showEmptyState(title, sub, nextResult) {
+      emptyTitleEl.textContent = title;
+      emptySubEl.textContent = sub || "";
+
+      if (nextResult && nextResult.date) {
+        nextAvailableTargetDate = nextResult.date;
+        nextAvailableBtn.style.display = "flex";
+        nextAvailableBtn.textContent =
+          `Next available · ${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`;
+      } else {
+        nextAvailableTargetDate = null;
+        nextAvailableBtn.style.display = "none";
+      }
+
+      if (BUSINESS.waitlistUrl) {
+        waitlistBtn.style.display = "flex";
+        waitlistBtn.href = BUSINESS.waitlistUrl;
+      } else {
+        waitlistBtn.style.display = "none";
+      }
+
+      emptyStateEl.classList.add("is-visible");
     }
 
     async function computeStaffStatus(staffKey, dateObj) {
@@ -1184,42 +1240,52 @@
         return staffStatusCache[cacheKey];
       }
 
-      if (!isWorking(staffKey, dateObj)) {
+      if (isWorking(staffKey, dateObj)) {
+        const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj, {
+          allowNull: true
+        });
+
+        if (todayOpenings === null) {
+          staffStatusCache[cacheKey] = {
+            text: "Tap to view",
+            isFull: false,
+            hasOpening: false
+          };
+          return staffStatusCache[cacheKey];
+        }
+
+        if (todayOpenings.length) {
+          staffStatusCache[cacheKey] = {
+            text: `Today · ${formatPasadenaTime(todayOpenings[0].start_at)}`,
+            isFull: false,
+            hasOpening: true
+          };
+          return staffStatusCache[cacheKey];
+        }
+
         staffStatusCache[cacheKey] = {
-          text: getWorkingDaysText(staff),
-          isFull: false,
+          text: "Fully booked",
+          isFull: true,
           hasOpening: false
         };
         return staffStatusCache[cacheKey];
       }
 
-      const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj, {
-        allowNull: true
-      });
+      const nextResult = await findNextAvailableDateFast(staffKey, serviceType, dateObj, true);
 
-      if (todayOpenings === null) {
+      if (nextResult) {
         staffStatusCache[cacheKey] = {
-          text: "Tap to view",
-          isFull: false,
-          hasOpening: false
-        };
-        return staffStatusCache[cacheKey];
-      }
-
-      if (todayOpenings.length) {
-        staffStatusCache[cacheKey] = {
-          text: `Today · ${formatPasadenaTime(todayOpenings[0].start_at)}`,
+          text: `${formatShortDate(nextResult.date)} · ${formatPasadenaTime(nextResult.firstOpening)}`,
           isFull: false,
           hasOpening: true
         };
-        return staffStatusCache[cacheKey];
+      } else {
+        staffStatusCache[cacheKey] = {
+          text: "No openings",
+          isFull: false,
+          hasOpening: false
+        };
       }
-
-      staffStatusCache[cacheKey] = {
-        text: "Fully booked",
-        isFull: true,
-        hasOpening: false
-      };
 
       return staffStatusCache[cacheKey];
     }
@@ -1229,54 +1295,18 @@
 
       renderStaffStrip(false);
 
-      const selectedFirst = selectedStaffKey
-        ? [selectedStaffKey, ...staffKeys.filter(key => key !== selectedStaffKey)]
-        : staffKeys;
-
-      const workingKeys = selectedFirst.filter(key => isWorking(key, currentDate));
-      const offKeys = selectedFirst.filter(key => !isWorking(key, currentDate));
-
-      for (const staffKey of offKeys) {
+      for (const staffKey of staffKeys) {
         if (requestId !== statusRequestId) return;
 
-        const staff = STAFF_DATA[staffKey];
-        const cacheKey = getStatusCacheKey(staffKey, staff.defaultService, currentDate);
+        await computeStaffStatus(staffKey, currentDate);
+        renderStaffStrip(false);
 
-        if (!staffStatusCache[cacheKey]) {
-          if (!hasStarted(staffKey, currentDate)) {
-            staffStatusCache[cacheKey] = {
-              text: "Starts 5/27",
-              isFull: false,
-              hasOpening: false
-            };
-          } else {
-            staffStatusCache[cacheKey] = {
-              text: getWorkingDaysText(staff),
-              isFull: false,
-              hasOpening: false
-            };
-          }
-        }
+        await new Promise(resolve => setTimeout(resolve, 120));
       }
+
+      if (requestId !== statusRequestId) return;
 
       renderStaffStrip(false);
-
-      const batchSize = 3;
-
-      for (let i = 0; i < workingKeys.length; i += batchSize) {
-        if (requestId !== statusRequestId) return;
-
-        const batch = workingKeys.slice(i, i + batchSize);
-
-        await Promise.all(
-          batch.map(async staffKey => {
-            if (requestId !== statusRequestId) return;
-            await computeStaffStatus(staffKey, currentDate);
-          })
-        );
-
-        renderStaffStrip(false);
-      }
     }
 
     function restoreBookingModalForm() {
@@ -1391,10 +1421,7 @@
           ? `<div class="avatar"><img src="${staff.image}" alt="${escapeHTML(staff.name)}"></div>`
           : `<div class="avatar">${escapeHTML(staff.name.slice(0, 1))}</div>`;
 
-        const statusText = cached
-          ? cached.text
-          : (working ? "Checking..." : getWorkingDaysText(staff));
-
+        const statusText = cached ? cached.text : "Checking...";
         const profileUrl = getProfileUrl(staffKey);
 
         card.innerHTML = `
@@ -1530,22 +1557,38 @@
         if (!hasStarted(selectedStaffKey, currentDate)) {
           messageEl.textContent = "";
 
+          const nextResult = await findNextAvailableDateFast(
+            selectedStaffKey,
+            selectedServiceKey,
+            currentDate,
+            false
+          );
+
           showEmptyState(
             `${staff.name} starts on 5/27`,
             "Please choose 5/27 or later.",
-            null
+            nextResult
           );
 
           return;
         }
 
         if (!isWorking(selectedStaffKey, currentDate)) {
+          messageEl.textContent = "Finding next available...";
+
+          const nextResult = await findNextAvailableDateFast(
+            selectedStaffKey,
+            selectedServiceKey,
+            currentDate,
+            true
+          );
+
           messageEl.textContent = "";
 
           showEmptyState(
             "Not working today",
-            getWorkingDaysText(staff),
-            null
+            nextResult ? "Next available:" : "No available date found.",
+            nextResult
           );
 
           return;
@@ -1558,12 +1601,21 @@
         );
 
         if (!availabilities.length) {
+          messageEl.textContent = "Finding next available...";
+
+          const nextResult = await findNextAvailableDateFast(
+            selectedStaffKey,
+            selectedServiceKey,
+            currentDate,
+            true
+          );
+
           messageEl.textContent = "";
 
           showEmptyState(
             "Fully booked today",
-            "Please choose another date or join the waitlist.",
-            null
+            nextResult ? "Next available:" : "No available date found.",
+            nextResult
           );
 
           return;
@@ -1807,8 +1859,7 @@
 
     function selectBestDefaultStaff() {
       const orderedKeys = getOrderedStaffKeys(currentDate);
-      const firstWorking = orderedKeys.find(key => isWorking(key, currentDate));
-      selectedStaffKey = firstWorking || orderedKeys[0];
+      selectedStaffKey = orderedKeys[0];
       selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
     }
 
@@ -1820,19 +1871,14 @@
       const orderedKeys = getOrderedStaffKeys(currentDate);
 
       if (!isWorking(selectedStaffKey, currentDate)) {
-        const firstWorking = orderedKeys.find(key => isWorking(key, currentDate));
-        selectedStaffKey = firstWorking || orderedKeys[0];
+        selectedStaffKey = orderedKeys[0];
         selectedServiceKey = STAFF_DATA[selectedStaffKey].defaultService;
       }
 
-      renderStaffStrip(false);
+      renderStaffStrip(true);
       renderServicePills();
       clearResults();
-
       searchAvailability();
-
-      statusRequestId++;
-      loadStaffStatuses(statusRequestId);
     }
 
     prevDayBtn.addEventListener("click", () => {
@@ -1862,12 +1908,9 @@
     updateOpenStatus();
     updateDateUI();
     selectBestDefaultStaff();
-    renderStaffStrip(false);
+    renderStaffStrip(true);
     renderServicePills();
     searchAvailability();
-
-    statusRequestId++;
-    loadStaffStatuses(statusRequestId);
   </script>
 </body>
 </html>
