@@ -65,9 +65,7 @@
       text-decoration: underline;
     }
 
-    .booking-layout {
-      width: 100%;
-    }
+    .booking-layout { width: 100%; }
 
     .date-area {
       padding: 0 0 10px;
@@ -176,9 +174,7 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    .staff-card:active {
-      transform: scale(0.97);
-    }
+    .staff-card:active { transform: scale(0.97); }
 
     .staff-card.is-active {
       border: 2px solid #000;
@@ -244,13 +240,8 @@
       min-height: 13px;
     }
 
-    .staff-card.is-full .staff-status {
-      color: #a05a00;
-    }
-
-    .staff-card.is-off .staff-status {
-      color: #555;
-    }
+    .staff-card.is-full .staff-status { color: #a05a00; }
+    .staff-card.is-off .staff-status { color: #555; }
 
     .profile-link-under-card {
       display: none;
@@ -386,23 +377,23 @@
     .slot-group { margin-top: 12px; }
 
     .slot-group-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: #666;
-  font-weight: 950;
-  letter-spacing: 0.45px;
-  text-transform: uppercase;
-  margin: 12px 0 7px;
-}
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #666;
+      font-weight: 950;
+      letter-spacing: 0.45px;
+      text-transform: uppercase;
+      margin: 12px 0 7px;
+    }
 
-.slot-group-title::after {
-  content: "";
-  height: 1px;
-  background: #eee;
-  flex: 1;
-}
+    .slot-group-title::after {
+      content: "";
+      height: 1px;
+      background: #eee;
+      flex: 1;
+    }
 
     .times {
       display: grid;
@@ -764,9 +755,7 @@
     @media (min-width: 761px) {
       .page { padding-top: 24px; }
 
-      .pasadena-title {
-        font-size: 28px;
-      }
+      .pasadena-title { font-size: 28px; }
 
       .staff-item { flex-basis: 112px; }
 
@@ -983,7 +972,6 @@
     function updateOpenStatus() {
       const { hour, minute } = getNowPartsInLA();
       const minutes = hour * 60 + minute;
-
       const openMinutes = 10 * 60;
       const showTomorrowMinutes = 18 * 60 + 30;
 
@@ -1072,11 +1060,14 @@
 
     function isWorking(staffKey, date) {
       const staff = STAFF_DATA[staffKey];
+
       if (!hasStarted(staffKey, date)) return false;
 
       const dateIso = toIsoDateLocal(date);
 
-      if (staff.specialWorkDates && staff.specialWorkDates.includes(dateIso)) return true;
+      if (staff.specialWorkDates && staff.specialWorkDates.includes(dateIso)) {
+        return true;
+      }
 
       const dow = daysShort[date.getDay()];
       return staff.days.includes(dow);
@@ -1117,7 +1108,9 @@
         const cacheKey = getStatusCacheKey(key, serviceType, date);
         const cached = staffStatusCache[cacheKey];
 
-        if (isWorking(key, date)) {
+        if (cached && cached.hasOpening) {
+          workingOpen.push(key);
+        } else if (isWorking(key, date)) {
           if (cached && cached.isFull) {
             workingFull.push(key);
           } else {
@@ -1169,23 +1162,6 @@
       return "Evening";
     }
 
-    function getCandidateWorkingDates(staffKey, fromDate, startTomorrow, limit = 8) {
-      const dates = [];
-
-      for (let i = startTomorrow ? 1 : 0; i <= 60; i++) {
-        const d = new Date(fromDate);
-        d.setDate(d.getDate() + i);
-
-        if (!hasStarted(staffKey, d)) continue;
-        if (!isWorking(staffKey, d)) continue;
-
-        dates.push(d);
-        if (dates.length >= limit) break;
-      }
-
-      return dates;
-    }
-
     async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
       const response = await fetch("/api/search-availability", {
         method: "POST",
@@ -1198,17 +1174,23 @@
       });
 
       const data = await response.json();
+
       if (!response.ok) return [];
 
       return data.availabilities || [];
     }
 
     async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
-      const candidateDates = getCandidateWorkingDates(staffKey, fromDate, startTomorrow, 8);
-      if (!candidateDates.length) return null;
+      const dates = [];
+
+      for (let i = startTomorrow ? 1 : 0; i <= 21; i++) {
+        const d = new Date(fromDate);
+        d.setDate(d.getDate() + i);
+        dates.push(d);
+      }
 
       const results = await Promise.all(
-        candidateDates.map(async dateObj => {
+        dates.map(async dateObj => {
           const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
 
           return {
@@ -1253,18 +1235,6 @@
 
       if (staffStatusCache[cacheKey]) return staffStatusCache[cacheKey];
 
-      if (!isWorking(staffKey, dateObj)) {
-        const nextWorkDate = getNextWorkingDate(staffKey, dateObj);
-
-        staffStatusCache[cacheKey] = {
-          text: nextWorkDate ? formatShortDate(nextWorkDate) : "No schedule",
-          isFull: false,
-          hasOpening: false
-        };
-
-        return staffStatusCache[cacheKey];
-      }
-
       const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
 
       if (todayOpenings.length) {
@@ -1273,12 +1243,25 @@
           isFull: false,
           hasOpening: true
         };
+
         return staffStatusCache[cacheKey];
       }
 
+      if (isWorking(staffKey, dateObj)) {
+        staffStatusCache[cacheKey] = {
+          text: "Fully booked",
+          isFull: true,
+          hasOpening: false
+        };
+
+        return staffStatusCache[cacheKey];
+      }
+
+      const nextWorkDate = getNextWorkingDate(staffKey, dateObj);
+
       staffStatusCache[cacheKey] = {
-        text: "Fully booked",
-        isFull: true,
+        text: nextWorkDate ? formatShortDate(nextWorkDate) : "No schedule",
+        isFull: false,
         hasOpening: false
       };
 
@@ -1397,18 +1380,29 @@
 
         const item = document.createElement("div");
         item.className = "staff-item";
-        if (staffKey === selectedStaffKey) item.classList.add("is-active");
+
+        if (staffKey === selectedStaffKey) {
+          item.classList.add("is-active");
+        }
 
         const card = document.createElement("div");
         card.className = "staff-card";
         card.dataset.staffKey = staffKey;
         card.tabIndex = 0;
 
-        if (staffKey === selectedStaffKey) card.classList.add("is-active");
-        if (working) card.classList.add("is-working");
-        else card.classList.add("is-off");
+        if (staffKey === selectedStaffKey) {
+          card.classList.add("is-active");
+        }
 
-        if (cached && cached.isFull && working) card.classList.add("is-full");
+        if (working || (cached && cached.hasOpening)) {
+          card.classList.add("is-working");
+        } else {
+          card.classList.add("is-off");
+        }
+
+        if (cached && cached.isFull) {
+          card.classList.add("is-full");
+        }
 
         const avatarHTML = staff.image
           ? `<div class="avatar"><img src="${staff.image}" alt="${escapeHTML(staff.name)}"></div>`
@@ -1468,7 +1462,9 @@
         btn.type = "button";
         btn.className = "service-pill";
 
-        if (serviceKey === selectedServiceKey) btn.classList.add("is-active");
+        if (serviceKey === selectedServiceKey) {
+          btn.classList.add("is-active");
+        }
 
         btn.innerHTML = `
           <span class="service-name">${escapeHTML(service.label)}</span>
@@ -1501,8 +1497,11 @@
         groups[groupName].push(slot);
       });
 
+      let openingCountShown = false;
+
       Object.keys(groups).forEach(groupName => {
         const slots = groups[groupName];
+
         if (!slots.length) return;
 
         const groupEl = document.createElement("div");
@@ -1511,8 +1510,9 @@
         const titleEl = document.createElement("div");
         titleEl.className = "slot-group-title";
 
-        if (groupName === "Morning") {
+        if (!openingCountShown) {
           titleEl.textContent = `${groupName} · ${availabilities.length} openings`;
+          openingCountShown = true;
         } else {
           titleEl.textContent = groupName;
         }
@@ -1552,77 +1552,40 @@
       emptyStateEl.classList.remove("is-visible");
 
       try {
-        if (!hasStarted(selectedStaffKey, currentDate)) {
-          messageEl.textContent = "";
-
-          const nextResult = await findNextAvailableDateFast(
-            selectedStaffKey,
-            selectedServiceKey,
-            currentDate,
-            false
-          );
-
-          showEmptyState(
-            `${staff.name} starts on ${formatShortDate(getNextWorkingDate(selectedStaffKey, currentDate) || currentDate)}`,
-            "Please choose the next available working date.",
-            nextResult
-          );
-
-          return;
-        }
-
-        if (!isWorking(selectedStaffKey, currentDate)) {
-          messageEl.textContent = "Finding next available...";
-
-          const nextResult = await findNextAvailableDateFast(
-            selectedStaffKey,
-            selectedServiceKey,
-            currentDate,
-            true
-          );
-
-          messageEl.textContent = "";
-
-          showEmptyState(
-            "Not working today",
-            nextResult ? "Next available:" : "No available date found.",
-            nextResult
-          );
-
-          return;
-        }
-
         const availabilities = await fetchAvailabilityFor(
           selectedStaffKey,
           selectedServiceKey,
           currentDate
         );
 
-        if (!availabilities.length) {
-          messageEl.textContent = "Finding next available...";
-
-          const nextResult = await findNextAvailableDateFast(
-            selectedStaffKey,
-            selectedServiceKey,
-            currentDate,
-            true
-          );
-
+        if (availabilities.length) {
           messageEl.textContent = "";
-
-          showEmptyState(
-            "Fully booked today",
-            nextResult ? "Next available:" : "No available date found.",
-            nextResult
-          );
-
+          slotCardEl.classList.add("is-visible");
+          renderSlots(availabilities);
           return;
         }
 
-        messageEl.textContent = "";
-        slotCardEl.classList.add("is-visible");
+        messageEl.textContent = "Finding next available...";
 
-        renderSlots(availabilities);
+        const nextResult = await findNextAvailableDateFast(
+          selectedStaffKey,
+          selectedServiceKey,
+          currentDate,
+          true
+        );
+
+        messageEl.textContent = "";
+
+        const title = isWorking(selectedStaffKey, currentDate)
+          ? "Fully booked today"
+          : "No availability today";
+
+        showEmptyState(
+          title,
+          nextResult ? "Next available:" : "No available date found.",
+          nextResult
+        );
+
       } catch (error) {
         messageEl.textContent = "Network error: " + error.message;
       }
@@ -1824,6 +1787,7 @@
         staffStatusCache = {};
         renderStaffStrip(true);
         searchAvailability();
+
       } catch (error) {
         statusEl.textContent = error.message || "Booking failed. Please try again.";
         statusEl.className = "booking-status booking-error";
