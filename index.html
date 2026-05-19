@@ -79,47 +79,39 @@
       align-items: center;
     }
 
-.date-area {
-  padding: 2px 0 14px;
-  margin-bottom: 6px;
-}
+    .date-nav {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 12px;
+      background: #111;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-.date-bar {
-  display: grid;
-  grid-template-columns: 46px 1fr 46px;
-  gap: 9px;
-  align-items: center;
-}
+    .date-center {
+      position: relative;
+      text-align: center;
+      min-width: 0;
+    }
 
-.date-nav {
-  width: 46px;
-  height: 46px;
-  border: 0;
-  border-radius: 14px;
-  background: #111;
-  color: #fff;
-  font-size: 22px;
-  font-weight: 900;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 5px 14px rgba(0,0,0,0.10);
-}
-
-.date-label {
-  font-size: 16px;
-  font-weight: 950;
-  line-height: 46px;
-  border-radius: 14px;
-  background: #f7f7f7;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.025);
-}
+    .date-label {
+      font-size: 15px;
+      font-weight: 950;
+      line-height: 40px;
+      border-radius: 12px;
+      background: #f7f7f7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 8px;
+    }
 
     #dateInput {
       position: absolute;
@@ -192,18 +184,15 @@
     }
 
     .staff-card.is-active::after {
-  content: "";
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #16a34a;
-  box-shadow:
-    0 0 0 3px rgba(22, 163, 74, 0.14),
-    0 0 10px rgba(22, 163, 74, 0.75);
-}
+      content: "";
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #111;
+    }
 
     .staff-card.is-off,
     .staff-card.is-full {
@@ -276,7 +265,6 @@
     }
 
     .service-pill {
-      position: relative;
       width: 100%;
       border: 1px solid #ddd;
       border-radius: 12px;
@@ -288,11 +276,6 @@
       -webkit-tap-highlight-color: transparent;
       min-height: 44px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.025);
-      transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
-    }
-
-    .service-pill:active {
-      transform: scale(0.98);
     }
 
     .service-pill.is-active {
@@ -302,20 +285,6 @@
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
 
-    .service-pill.is-active::after {
-  content: "";
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #16a34a;
-  box-shadow:
-    0 0 0 3px rgba(22, 163, 74, 0.14),
-    0 0 10px rgba(22, 163, 74, 0.75);
-}
-
     .service-name {
       display: block;
       font-size: 13px;
@@ -324,7 +293,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 10px;
     }
 
     .service-meta {
@@ -337,7 +305,6 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 10px;
     }
 
     .service-pill.is-active .service-meta { color: #555; }
@@ -820,7 +787,7 @@
 <body>
   <div class="page">
     <div class="pasadena-header">
-      <h1 class="pasadena-title">Pasadena</h1>
+      <h1 class="pasadena-title">B SIDE U Pasadena</h1>
       <div id="openStatus" class="pasadena-open">Opening today 10:00 AM</div>
       <div id="businessAddress" class="pasadena-address"></div>
       <div class="pasadena-links">
