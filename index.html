@@ -199,31 +199,6 @@
       opacity: 1;
     }
 
-    .profile-info-btn {
-      position: absolute;
-      top: 7px;
-      right: 7px;
-      width: 22px;
-      height: 22px;
-      border: 1px solid #111;
-      border-radius: 50%;
-      background: #fff;
-      color: #111;
-      font-size: 13px;
-      font-weight: 950;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 3;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .profile-info-btn:active {
-      transform: scale(0.94);
-    }
-
     .avatar {
       width: 58px;
       height: 58px;
@@ -271,6 +246,20 @@
 
     .staff-card.is-off .staff-status {
       color: #555;
+    }
+
+    .profile-link-under-card {
+      display: none;
+      margin-top: 5px;
+      color: #111;
+      font-size: 10.5px;
+      font-weight: 950;
+      text-decoration: underline;
+      line-height: 1.1;
+    }
+
+    .staff-item.is-active .profile-link-under-card {
+      display: block;
     }
 
     .service-pills {
@@ -458,34 +447,19 @@
       color: #fff;
     }
 
-    .booking-modal,
-    .profile-wall-modal {
+    .booking-modal {
       position: fixed;
       inset: 0;
       z-index: 9999;
       display: none;
+      align-items: flex-end;
+      justify-content: center;
       background: rgba(0,0,0,0.42);
       padding: 12px;
       overflow-y: auto;
     }
 
-    .booking-modal {
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .profile-wall-modal {
-      z-index: 10000;
-      background: rgba(0,0,0,0.48);
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-    }
-
-    .booking-modal.is-visible,
-    .profile-wall-modal.is-visible {
-      display: flex;
-    }
+    .booking-modal.is-visible { display: flex; }
 
     .booking-modal-card {
       width: 100%;
@@ -808,69 +782,6 @@
       text-decoration: none;
     }
 
-    .profile-wall-card {
-      width: 100%;
-      max-width: 900px;
-      height: min(86vh, 820px);
-      background: #fff;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 18px 70px rgba(0,0,0,0.28);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .profile-wall-top {
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 0 12px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .profile-wall-title {
-      font-size: 15px;
-      font-weight: 950;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .profile-wall-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 0 0 auto;
-    }
-
-    .profile-wall-open {
-      font-size: 12px;
-      font-weight: 900;
-      color: #111;
-      text-decoration: underline;
-    }
-
-    .profile-wall-close {
-      width: 32px;
-      height: 32px;
-      border: 0;
-      border-radius: 50%;
-      background: #f2f2f2;
-      color: #111;
-      font-size: 22px;
-      font-weight: 950;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .profile-wall-frame {
-      width: 100%;
-      flex: 1;
-      border: 0;
-    }
-
     @media (min-width: 761px) {
       .page { padding-top: 24px; }
 
@@ -1038,24 +949,6 @@
     </div>
   </div>
 
-  <div id="profileWallModal" class="profile-wall-modal">
-    <div class="profile-wall-card">
-      <div class="profile-wall-top">
-        <div id="profileWallTitle" class="profile-wall-title">Profile</div>
-
-        <div class="profile-wall-actions">
-          <a id="profileWallOpen" class="profile-wall-open" target="_blank" rel="noopener noreferrer">
-            Open full page
-          </a>
-
-          <button id="profileWallClose" class="profile-wall-close" type="button">×</button>
-        </div>
-      </div>
-
-      <iframe id="profileWallFrame" class="profile-wall-frame" loading="lazy"></iframe>
-    </div>
-  </div>
-
   <script type="module">
     import { STAFF_DATA, BUSINESS } from "./staff-config.js";
 
@@ -1085,11 +978,6 @@
     const openStatusEl = document.getElementById("openStatus");
     const businessAddressEl = document.getElementById("businessAddress");
     const directionTopLinkEl = document.getElementById("directionTopLink");
-    const profileWallModalEl = document.getElementById("profileWallModal");
-    const profileWallFrameEl = document.getElementById("profileWallFrame");
-    const profileWallTitleEl = document.getElementById("profileWallTitle");
-    const profileWallOpenEl = document.getElementById("profileWallOpen");
-    const profileWallCloseEl = document.getElementById("profileWallClose");
 
     const originalBookingModalHTML = bookingModalCardEl.innerHTML;
 
@@ -1118,13 +1006,15 @@
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         minute: "numeric",
-        hour12: false
+        hour12: false,
+        weekday: "short"
       }).formatToParts(new Date());
 
       const hour = Number(parts.find(part => part.type === "hour")?.value || 0);
       const minute = Number(parts.find(part => part.type === "minute")?.value || 0);
+      const weekday = parts.find(part => part.type === "weekday")?.value || "";
 
-      return { hour, minute };
+      return { hour, minute, weekday };
     }
 
     function updateOpenStatus() {
@@ -1284,21 +1174,6 @@
 
     function getProfileUrl(staffKey) {
       return `https://www.bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
-    }
-
-    function openProfileWall(staffKey) {
-      const staff = STAFF_DATA[staffKey];
-      const profileUrl = getProfileUrl(staffKey);
-
-      profileWallTitleEl.textContent = `${staff.name} Portfolio`;
-      profileWallFrameEl.src = profileUrl;
-      profileWallOpenEl.href = profileUrl;
-      profileWallModalEl.classList.add("is-visible");
-    }
-
-    function closeProfileWall() {
-      profileWallModalEl.classList.remove("is-visible");
-      profileWallFrameEl.src = "";
     }
 
     function formatPrice(price) {
@@ -1577,20 +1452,20 @@
           : `<div class="avatar">${escapeHTML(staff.name.slice(0, 1))}</div>`;
 
         const statusText = cached ? cached.text : "Checking...";
+        const profileUrl = getProfileUrl(staffKey);
 
         card.innerHTML = `
-          <button class="profile-info-btn" type="button" aria-label="View ${escapeHTML(staff.name)} portfolio">!</button>
           ${avatarHTML}
           <div class="staff-name">${escapeHTML(staff.name)}</div>
           <div class="staff-status">${escapeHTML(statusText)}</div>
         `;
 
-        const infoBtn = card.querySelector(".profile-info-btn");
-
-        infoBtn.addEventListener("click", event => {
-          event.stopPropagation();
-          openProfileWall(staffKey);
-        });
+        const profileLink = document.createElement("a");
+        profileLink.className = "profile-link-under-card";
+        profileLink.href = profileUrl;
+        profileLink.target = "_blank";
+        profileLink.rel = "noopener noreferrer";
+        profileLink.textContent = "View Profile";
 
         card.addEventListener("click", () => {
           selectedStaffKey = staffKey;
@@ -1603,6 +1478,7 @@
         });
 
         item.appendChild(card);
+        item.appendChild(profileLink);
         staffStripEl.appendChild(item);
       });
 
@@ -2000,12 +1876,6 @@
     closeBookingModalBtn.addEventListener("click", closeBookingModal);
     confirmBookingBtn.addEventListener("click", confirmBooking);
 
-    profileWallCloseEl.addEventListener("click", closeProfileWall);
-
-    profileWallModalEl.addEventListener("click", event => {
-      if (event.target === profileWallModalEl) closeProfileWall();
-    });
-
     bookingModalEl.addEventListener("click", event => {
       if (event.target === bookingModalEl) closeBookingModal();
     });
@@ -2013,10 +1883,6 @@
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && bookingModalEl.classList.contains("is-visible")) {
         closeBookingModal();
-      }
-
-      if (event.key === "Escape" && profileWallModalEl.classList.contains("is-visible")) {
-        closeProfileWall();
       }
     });
 
