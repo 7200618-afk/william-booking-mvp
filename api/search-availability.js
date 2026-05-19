@@ -9,14 +9,22 @@ export default async function handler(req, res) {
     const { staffKey, serviceType, date } = req.body || {};
 
     if (!staffKey || !serviceType || !date) {
-      return res.status(400).json({ error: "Missing staffKey, serviceType, or date." });
+      return res.status(400).json({
+        error: "Missing staffKey, serviceType, or date."
+      });
     }
 
     const staff = STAFF_DATA[staffKey];
-    if (!staff) return res.status(400).json({ error: "Invalid staffKey." });
+
+    if (!staff) {
+      return res.status(400).json({ error: "Invalid staffKey." });
+    }
 
     const service = staff.services?.[serviceType];
-    if (!service) return res.status(400).json({ error: "Invalid serviceType." });
+
+    if (!service) {
+      return res.status(400).json({ error: "Invalid serviceType." });
+    }
 
     const squareHeaders = {
       "Square-Version": "2026-01-22",
@@ -24,21 +32,38 @@ export default async function handler(req, res) {
       "Content-Type": "application/json"
     };
 
+    function addDaysToIsoDate(isoDate, days) {
+      const d = new Date(`${isoDate}T00:00:00Z`);
+      d.setUTCDate(d.getUTCDate() + days);
+      return d.toISOString().slice(0, 10);
+    }
+
+    function getLosAngelesDateFromUtc(utcString) {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Los_Angeles",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date(utcString));
+
+      const year = parts.find(part => part.type === "year")?.value;
+      const month = parts.find(part => part.type === "month")?.value;
+      const day = parts.find(part => part.type === "day")?.value;
+
+      return `${year}-${month}-${day}`;
+    }
+
     /*
-      修复 Jacob 9:00 / 9:45 不显示：
-      之前从 10:00 AM Pasadena time 开始查，所以 9:00 / 9:45 会被漏掉。
-      现在从 9:00 AM Pasadena time 开始查。
-      May / summer Pasadena = PDT = UTC-7
-      9:00 AM PDT = 16:00Z
+      重要：
+      不再手动写死 10:00 = 17:00Z / 7:00 = 02:00Z。
+      这里查一个更宽的 UTC 范围，然后只保留洛杉矶本地日期等于用户选择日期的空位。
+      这样 Square 里关 6/3、6/4、6/5，我们页面会自动跟 Square 走。
     */
-    const startAt = `${date}T16:00:00Z`;
+    const previousDate = addDaysToIsoDate(date, -1);
+    const nextDate = addDaysToIsoDate(date, 1);
 
-    const nextDay = new Date(`${date}T00:00:00Z`);
-    nextDay.setUTCDate(nextDay.getUTCDate() + 1);
-    const nextDateIso = nextDay.toISOString().slice(0, 10);
-
-    // 查到晚上 8:00 PM Pasadena time，避免漏掉晚一点的空位
-    const endAt = `${nextDateIso}T03:00:00Z`;
+    const startAt = `${previousDate}T20:00:00Z`;
+    const endAt = `${nextDate}T12:00:00Z`;
 
     const response = await fetch(
       "https://connect.squareup.com/v2/bookings/availability/search",
@@ -76,8 +101,12 @@ export default async function handler(req, res) {
       });
     }
 
+    const filtered = (data.availabilities || []).filter(availability => {
+      return getLosAngelesDateFromUtc(availability.start_at) === date;
+    });
+
     return res.status(200).json({
-      availabilities: data.availabilities || [],
+      availabilities: filtered,
       errors: data.errors || []
     });
 
