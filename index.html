@@ -1102,8 +1102,13 @@
 
       keys.forEach(key => {
         const staff = STAFF_DATA[key];
-        const serviceType = staff.defaultService;
-        const cacheKey = getStatusCacheKey(key, serviceType, date);
+
+        const statusServiceKey =
+          key === selectedStaffKey && selectedServiceKey
+            ? selectedServiceKey
+            : staff.defaultService;
+
+        const cacheKey = getStatusCacheKey(key, statusServiceKey, date);
         const cached = staffStatusCache[cacheKey];
 
         if (cached && cached.hasOpening) {
@@ -1240,7 +1245,12 @@
 
     async function computeStaffStatus(staffKey, dateObj) {
       const staff = STAFF_DATA[staffKey];
-      const serviceType = staff.defaultService;
+
+      const serviceType =
+        staffKey === selectedStaffKey && selectedServiceKey
+          ? selectedServiceKey
+          : staff.defaultService;
+
       const cacheKey = getStatusCacheKey(staffKey, serviceType, dateObj);
 
       if (staffStatusCache[cacheKey]) return staffStatusCache[cacheKey];
@@ -1286,6 +1296,9 @@
       await Promise.all(
         staffKeys.map(async staffKey => {
           if (requestId !== statusRequestId) return;
+
+          if (staffKey === selectedStaffKey) return;
+
           await computeStaffStatus(staffKey, currentDate);
         })
       );
@@ -1386,7 +1399,13 @@
       orderedKeys.forEach(staffKey => {
         const staff = STAFF_DATA[staffKey];
         const working = isWorking(staffKey, currentDate);
-        const cacheKey = getStatusCacheKey(staffKey, staff.defaultService, currentDate);
+
+        const statusServiceKey =
+          staffKey === selectedStaffKey && selectedServiceKey
+            ? selectedServiceKey
+            : staff.defaultService;
+
+        const cacheKey = getStatusCacheKey(staffKey, statusServiceKey, currentDate);
         const cached = staffStatusCache[cacheKey];
 
         const item = document.createElement("div");
@@ -1590,9 +1609,23 @@
         }
 
         if (availabilities.length) {
+          const selectedCacheKey = getStatusCacheKey(
+            staffKeyAtRequest,
+            serviceKeyAtRequest,
+            dateAtRequest
+          );
+
+          staffStatusCache[selectedCacheKey] = {
+            text: formatPasadenaTime(availabilities[0].start_at),
+            isFull: false,
+            hasOpening: true
+          };
+
           messageEl.textContent = "";
           slotGroupsEl.innerHTML = "";
           slotCardEl.classList.add("is-visible");
+
+          renderStaffStrip(false);
           renderSlots(availabilities);
           return;
         }
@@ -1616,6 +1649,20 @@
         }
 
         messageEl.textContent = "";
+
+        const selectedCacheKey = getStatusCacheKey(
+          staffKeyAtRequest,
+          serviceKeyAtRequest,
+          dateAtRequest
+        );
+
+        staffStatusCache[selectedCacheKey] = {
+          text: "Fully booked",
+          isFull: true,
+          hasOpening: false
+        };
+
+        renderStaffStrip(false);
 
         const title = isWorking(staffKeyAtRequest, dateAtRequest)
           ? "Fully booked today"
