@@ -383,28 +383,7 @@
 
     .slot-area.is-visible { display: block; }
 
-    .slot-topline {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .slot-title {
-      font-size: 18px;
-      font-weight: 950;
-      margin: 0;
-    }
-
-    .slot-count {
-      font-size: 12px;
-      font-weight: 950;
-      color: #666;
-      white-space: nowrap;
-    }
-
-    .slot-group { margin-top: 14px; }
+    .slot-group { margin-top: 12px; }
 
     .slot-group-title {
       display: flex;
@@ -868,11 +847,6 @@
       </div>
 
       <div id="slotCard" class="slot-area">
-        <div class="slot-topline">
-          <h2 class="slot-title">Available Times</h2>
-          <div id="slotCount" class="slot-count"></div>
-        </div>
-
         <div id="slotGroups"></div>
       </div>
     </div>
@@ -961,7 +935,6 @@
     const nextAvailableBtn = document.getElementById("nextAvailableBtn");
     const waitlistBtn = document.getElementById("waitlistBtn");
     const slotCardEl = document.getElementById("slotCard");
-    const slotCountEl = document.getElementById("slotCount");
     const slotGroupsEl = document.getElementById("slotGroups");
     const bookingModalEl = document.getElementById("bookingModal");
     const bookingModalCardEl = document.getElementById("bookingModalCard");
@@ -1537,7 +1510,12 @@
 
         const titleEl = document.createElement("div");
         titleEl.className = "slot-group-title";
-        titleEl.textContent = groupName;
+
+        if (groupName === "Morning") {
+          titleEl.textContent = `${groupName} · ${availabilities.length} openings`;
+        } else {
+          titleEl.textContent = groupName;
+        }
 
         const timesEl = document.createElement("div");
         timesEl.className = "times";
@@ -1642,7 +1620,6 @@
         }
 
         messageEl.textContent = "";
-        slotCountEl.textContent = `${availabilities.length} openings`;
         slotCardEl.classList.add("is-visible");
 
         renderSlots(availabilities);
