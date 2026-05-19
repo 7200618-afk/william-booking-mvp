@@ -26,15 +26,15 @@
     .pasadena-header,
     .top-card,
     .slot-card {
-      border: 1px solid #e8e8e8;
-      border-radius: 15px;
+      border: 0;
+      border-radius: 0;
       background: #fff;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.035);
+      box-shadow: none;
     }
 
     .pasadena-header {
-      padding: 11px 12px;
-      margin-bottom: 10px;
+      padding: 4px 0 10px;
+      margin-bottom: 8px;
     }
 
     .pasadena-title {
@@ -58,7 +58,7 @@
       line-height: 1.3;
     }
 
-    .top-card { padding: 10px; }
+    .top-card { padding: 0; }
 
     .date-bar {
       display: grid;
@@ -341,8 +341,8 @@
     .slot-card {
       display: none;
       margin-top: 10px;
-      padding: 10px;
-      min-height: 220px;
+      padding: 4px 0 10px;
+      min-height: 0;
     }
 
     .slot-card.is-visible { display: block; }
@@ -391,21 +391,21 @@
 
     .times {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
     }
 
     .time-btn {
-      min-height: 39px;
+      min-height: 43px;
       border: 1px solid #111;
-      border-radius: 9px;
+      border-radius: 10px;
       background: #fff;
       color: #111;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 900;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      padding: 0 2px;
+      padding: 0 4px;
     }
 
     .time-btn.is-selected {
@@ -757,12 +757,6 @@
     @media (min-width: 761px) {
       .page { padding-top: 24px; }
 
-      .pasadena-header,
-      .top-card,
-      .slot-card { border-radius: 18px; }
-
-      .top-card { padding: 14px; }
-
       .staff-item { flex-basis: 94px; }
 
       .staff-card {
@@ -771,8 +765,8 @@
       }
 
       .time-btn {
-        min-height: 44px;
-        font-size: 14px;
+        min-height: 48px;
+        font-size: 15px;
       }
 
       .service-name { font-size: 14px; }
@@ -1159,21 +1153,32 @@
       return dates;
     }
 
-    async function fetchAvailabilityFor(staffKey, serviceType, dateObj) {
-      const response = await fetch("/api/search-availability", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          staffKey,
-          serviceType,
-          date: toIsoDateLocal(dateObj)
-        })
-      });
+    async function fetchAvailabilityFor(staffKey, serviceType, dateObj, options = {}) {
+      const allowNull = options.allowNull === true;
 
-      const data = await response.json();
-      if (!response.ok) return [];
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const response = await fetch("/api/search-availability", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              staffKey,
+              serviceType,
+              date: toIsoDateLocal(dateObj)
+            })
+          });
 
-      return data.availabilities || [];
+          const data = await response.json();
+
+          if (response.ok) {
+            return data.availabilities || [];
+          }
+        } catch (error) {}
+
+        await new Promise(resolve => setTimeout(resolve, 180));
+      }
+
+      return allowNull ? null : [];
     }
 
     async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
@@ -1236,7 +1241,18 @@
       }
 
       if (isWorking(staffKey, dateObj)) {
-        const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
+        const todayOpenings = await fetchAvailabilityFor(staffKey, serviceType, dateObj, {
+          allowNull: true
+        });
+
+        if (todayOpenings === null) {
+          staffStatusCache[cacheKey] = {
+            text: "Tap to view",
+            isFull: false,
+            hasOpening: false
+          };
+          return staffStatusCache[cacheKey];
+        }
 
         if (todayOpenings.length) {
           staffStatusCache[cacheKey] = {
@@ -1279,12 +1295,14 @@
 
       renderStaffStrip(false);
 
-      await Promise.all(
-        staffKeys.map(async staffKey => {
-          if (requestId !== statusRequestId) return;
-          await computeStaffStatus(staffKey, currentDate);
-        })
-      );
+      for (const staffKey of staffKeys) {
+        if (requestId !== statusRequestId) return;
+
+        await computeStaffStatus(staffKey, currentDate);
+        renderStaffStrip(false);
+
+        await new Promise(resolve => setTimeout(resolve, 120));
+      }
 
       if (requestId !== statusRequestId) return;
 
