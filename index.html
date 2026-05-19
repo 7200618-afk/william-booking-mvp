@@ -184,30 +184,44 @@
     }
 
     .staff-card:active {
-      transform: scale(0.97);
+      transform: scale(0.98) translateY(-1px);
     }
 
     .staff-card.is-active {
       border: 2px solid #000;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.12);
-      background: #fff;
-      transform: translateY(-1px);
-    }
-
-    .staff-card.is-active::after {
-      content: "";
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #000;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+      background: linear-gradient(180deg, #fff 0%, #fafafa 100%);
+      transform: translateY(-2px);
     }
 
     .staff-card.is-off,
     .staff-card.is-full {
       opacity: 1;
+    }
+
+    .profile-info-btn {
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 22px;
+      height: 22px;
+      border: 1px solid #111;
+      border-radius: 50%;
+      background: #fff;
+      color: #111;
+      font-size: 13px;
+      font-weight: 950;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .profile-info-btn:active {
+      transform: scale(0.94);
     }
 
     .avatar {
@@ -257,20 +271,6 @@
 
     .staff-card.is-off .staff-status {
       color: #555;
-    }
-
-    .profile-link-under-card {
-      display: none;
-      margin-top: 5px;
-      color: #111;
-      font-size: 10.5px;
-      font-weight: 950;
-      text-decoration: underline;
-      line-height: 1.1;
-    }
-
-    .staff-item.is-active .profile-link-under-card {
-      display: block;
     }
 
     .service-pills {
@@ -458,19 +458,34 @@
       color: #fff;
     }
 
-    .booking-modal {
+    .booking-modal,
+    .profile-wall-modal {
       position: fixed;
       inset: 0;
       z-index: 9999;
       display: none;
-      align-items: flex-end;
-      justify-content: center;
       background: rgba(0,0,0,0.42);
       padding: 12px;
       overflow-y: auto;
     }
 
-    .booking-modal.is-visible { display: flex; }
+    .booking-modal {
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .profile-wall-modal {
+      z-index: 10000;
+      background: rgba(0,0,0,0.48);
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    .booking-modal.is-visible,
+    .profile-wall-modal.is-visible {
+      display: flex;
+    }
 
     .booking-modal-card {
       width: 100%;
@@ -731,7 +746,7 @@
 
     .success-actions {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
     }
 
@@ -742,13 +757,15 @@
       border-radius: 11px;
       background: #f1f1f1;
       color: #111;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 950;
       text-decoration: none;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      text-align: center;
+      padding: 0 4px;
     }
 
     .success-location-card h3 {
@@ -789,6 +806,69 @@
       font-size: 23px;
       font-weight: 950;
       text-decoration: none;
+    }
+
+    .profile-wall-card {
+      width: 100%;
+      max-width: 900px;
+      height: min(86vh, 820px);
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 70px rgba(0,0,0,0.28);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-wall-top {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .profile-wall-title {
+      font-size: 15px;
+      font-weight: 950;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .profile-wall-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    .profile-wall-open {
+      font-size: 12px;
+      font-weight: 900;
+      color: #111;
+      text-decoration: underline;
+    }
+
+    .profile-wall-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: #f2f2f2;
+      color: #111;
+      font-size: 22px;
+      font-weight: 950;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .profile-wall-frame {
+      width: 100%;
+      flex: 1;
+      border: 0;
     }
 
     @media (min-width: 761px) {
@@ -943,7 +1023,7 @@
         </div>
 
         <input id="customerEmail" class="booking-input" type="email" placeholder="Email" autocomplete="email" />
-        <textarea id="customerNote" class="booking-textarea" placeholder="Note / request" rows="3"></textarea>
+        <textarea id="customerNote" class="booking-textarea" placeholder="Note (optional)" rows="3"></textarea>
 
         <div class="sms-consent-text">
           By providing your phone number, you agree to receive appointment-related and occasional informational messages from B SIDE U, including automated messages. Reply STOP to opt out, HELP for help. Message and data rates may apply.
@@ -955,6 +1035,24 @@
 
         <div id="bookingStatus" class="booking-status"></div>
       </div>
+    </div>
+  </div>
+
+  <div id="profileWallModal" class="profile-wall-modal">
+    <div class="profile-wall-card">
+      <div class="profile-wall-top">
+        <div id="profileWallTitle" class="profile-wall-title">Profile</div>
+
+        <div class="profile-wall-actions">
+          <a id="profileWallOpen" class="profile-wall-open" target="_blank" rel="noopener noreferrer">
+            Open full page
+          </a>
+
+          <button id="profileWallClose" class="profile-wall-close" type="button">×</button>
+        </div>
+      </div>
+
+      <iframe id="profileWallFrame" class="profile-wall-frame" loading="lazy"></iframe>
     </div>
   </div>
 
@@ -987,6 +1085,11 @@
     const openStatusEl = document.getElementById("openStatus");
     const businessAddressEl = document.getElementById("businessAddress");
     const directionTopLinkEl = document.getElementById("directionTopLink");
+    const profileWallModalEl = document.getElementById("profileWallModal");
+    const profileWallFrameEl = document.getElementById("profileWallFrame");
+    const profileWallTitleEl = document.getElementById("profileWallTitle");
+    const profileWallOpenEl = document.getElementById("profileWallOpen");
+    const profileWallCloseEl = document.getElementById("profileWallClose");
 
     const originalBookingModalHTML = bookingModalCardEl.innerHTML;
 
@@ -1015,15 +1118,13 @@
         timeZone: "America/Los_Angeles",
         hour: "numeric",
         minute: "numeric",
-        hour12: false,
-        weekday: "short"
+        hour12: false
       }).formatToParts(new Date());
 
       const hour = Number(parts.find(part => part.type === "hour")?.value || 0);
       const minute = Number(parts.find(part => part.type === "minute")?.value || 0);
-      const weekday = parts.find(part => part.type === "weekday")?.value || "";
 
-      return { hour, minute, weekday };
+      return { hour, minute };
     }
 
     function updateOpenStatus() {
@@ -1153,22 +1254,51 @@
 
     function getOrderedStaffKeys(date) {
       const keys = Object.keys(STAFF_DATA);
-      const working = [];
+      const workingOpen = [];
+      const workingFull = [];
       const notWorking = [];
 
       keys.forEach(key => {
-        if (isWorking(key, date)) working.push(key);
-        else notWorking.push(key);
+        const staff = STAFF_DATA[key];
+        const serviceType = staff.defaultService;
+        const cacheKey = getStatusCacheKey(key, serviceType, date);
+        const cached = staffStatusCache[cacheKey];
+
+        if (isWorking(key, date)) {
+          if (cached && cached.isFull) {
+            workingFull.push(key);
+          } else {
+            workingOpen.push(key);
+          }
+        } else {
+          notWorking.push(key);
+        }
       });
 
-      working.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+      workingOpen.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
+      workingFull.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
       notWorking.sort((a, b) => STAFF_DATA[a].order - STAFF_DATA[b].order);
 
-      return [...working, ...notWorking];
+      return [...workingOpen, ...workingFull, ...notWorking];
     }
 
     function getProfileUrl(staffKey) {
-      return `https://bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
+      return `https://www.bsideuhair.com/${encodeURIComponent(staffKey.toLowerCase())}`;
+    }
+
+    function openProfileWall(staffKey) {
+      const staff = STAFF_DATA[staffKey];
+      const profileUrl = getProfileUrl(staffKey);
+
+      profileWallTitleEl.textContent = `${staff.name} Portfolio`;
+      profileWallFrameEl.src = profileUrl;
+      profileWallOpenEl.href = profileUrl;
+      profileWallModalEl.classList.add("is-visible");
+    }
+
+    function closeProfileWall() {
+      profileWallModalEl.classList.remove("is-visible");
+      profileWallFrameEl.src = "";
     }
 
     function formatPrice(price) {
@@ -1301,7 +1431,7 @@
 
       if (todayOpenings.length) {
         staffStatusCache[cacheKey] = {
-          text: `Today · ${formatPasadenaTime(todayOpenings[0].start_at)}`,
+          text: formatPasadenaTime(todayOpenings[0].start_at),
           isFull: false,
           hasOpening: true
         };
@@ -1447,20 +1577,20 @@
           : `<div class="avatar">${escapeHTML(staff.name.slice(0, 1))}</div>`;
 
         const statusText = cached ? cached.text : "Checking...";
-        const profileUrl = getProfileUrl(staffKey);
 
         card.innerHTML = `
+          <button class="profile-info-btn" type="button" aria-label="View ${escapeHTML(staff.name)} portfolio">!</button>
           ${avatarHTML}
           <div class="staff-name">${escapeHTML(staff.name)}</div>
           <div class="staff-status">${escapeHTML(statusText)}</div>
         `;
 
-        const profileLink = document.createElement("a");
-        profileLink.className = "profile-link-under-card";
-        profileLink.href = profileUrl;
-        profileLink.target = "_blank";
-        profileLink.rel = "noopener noreferrer";
-        profileLink.textContent = "View Profile";
+        const infoBtn = card.querySelector(".profile-info-btn");
+
+        infoBtn.addEventListener("click", event => {
+          event.stopPropagation();
+          openProfileWall(staffKey);
+        });
 
         card.addEventListener("click", () => {
           selectedStaffKey = staffKey;
@@ -1473,7 +1603,6 @@
         });
 
         item.appendChild(card);
-        item.appendChild(profileLink);
         staffStripEl.appendChild(item);
       });
 
@@ -1813,6 +1942,10 @@
                   Cancel
                 </a>
 
+                <button type="button" onclick="window.location.reload()">
+                  Book another
+                </button>
+
                 <a href="sms:${BUSINESS.tel}?&body=Hi%20B%20SIDE%20U%2C%20I%20would%20like%20to%20reschedule%20my%20appointment.">
                   Reschedule
                 </a>
@@ -1867,6 +2000,12 @@
     closeBookingModalBtn.addEventListener("click", closeBookingModal);
     confirmBookingBtn.addEventListener("click", confirmBooking);
 
+    profileWallCloseEl.addEventListener("click", closeProfileWall);
+
+    profileWallModalEl.addEventListener("click", event => {
+      if (event.target === profileWallModalEl) closeProfileWall();
+    });
+
     bookingModalEl.addEventListener("click", event => {
       if (event.target === bookingModalEl) closeBookingModal();
     });
@@ -1874,6 +2013,10 @@
     document.addEventListener("keydown", event => {
       if (event.key === "Escape" && bookingModalEl.classList.contains("is-visible")) {
         closeBookingModal();
+      }
+
+      if (event.key === "Escape" && profileWallModalEl.classList.contains("is-visible")) {
+        closeProfileWall();
       }
     });
 
