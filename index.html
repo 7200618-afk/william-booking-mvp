@@ -145,7 +145,6 @@
   background: #f7f7f7 !important;
   box-shadow: none !important;
 }
-
 `;
 
         const customJs = `
@@ -190,10 +189,8 @@
       let text = el.textContent || "";
 
       text = text
-        .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
-        .replace(/\\s*·\\s*\\d+\\s*opening/gi, "")
-        .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
-        .replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi, "")
+        .replace(/\\\\s*·\\\\s*\\\\d+\\\\s*openings?/gi, "")
+        .replace(/\\\\s*\\\\(\\\\s*\\\\d+\\\\s*openings?\\\\s*\\\\)/gi, "")
         .trim();
 
       if (el.textContent !== text) {
@@ -229,6 +226,99 @@
 
   startOpeningCountCleaner();
 
+  /* Change "No availability today" to "No availability with Staff Name" */
+  function cleanStaffName(name) {
+    return (name || "")
+      .replace(/View Profile/gi, "")
+      .replace(/Book Now/gi, "")
+      .replace(/Haircut/gi, "")
+      .replace(/Scissor Cut/gi, "")
+      .replace(/Perm/gi, "")
+      .replace(/Color/gi, "")
+      .replace(/Bleach/gi, "")
+      .replace(/\\\\s+/g, " ")
+      .trim();
+  }
+
+  function getActiveStaffName() {
+    const activeStaff =
+      document.querySelector(".staff-item.is-active .staff-name") ||
+      document.querySelector(".staff-item.is-active [class*='name']") ||
+      document.querySelector(".staff-card.is-active .staff-name") ||
+      document.querySelector(".staff-card.is-active [class*='name']") ||
+      document.querySelector(".stylist-card.is-active .staff-name") ||
+      document.querySelector(".stylist-card.is-active [class*='name']");
+
+    if (activeStaff) {
+      return cleanStaffName(activeStaff.textContent);
+    }
+
+    const activeCard =
+      document.querySelector(".staff-item.is-active") ||
+      document.querySelector(".staff-card.is-active") ||
+      document.querySelector(".stylist-card.is-active") ||
+      document.querySelector("[aria-selected='true']");
+
+    if (activeCard) {
+      const possibleName =
+        activeCard.querySelector(".staff-name") ||
+        activeCard.querySelector(".stylist-name") ||
+        activeCard.querySelector("[class*='name']");
+
+      if (possibleName) {
+        return cleanStaffName(possibleName.textContent);
+      }
+
+      return cleanStaffName(activeCard.textContent);
+    }
+
+    return "";
+  }
+
+  function updateNoAvailabilityText() {
+    const staffName = getActiveStaffName();
+
+    if (!staffName) return;
+
+    document.querySelectorAll("h1, h2, h3, div, p, span").forEach(function (el) {
+      const text = (el.textContent || "").trim();
+
+      if (text === "No availability today") {
+        el.textContent = "No availability with " + staffName;
+      }
+
+      if (/^No availability with /i.test(text) && text !== "No availability with " + staffName) {
+        el.textContent = "No availability with " + staffName;
+      }
+    });
+  }
+
+  function startNoAvailabilityTextUpdater() {
+    updateNoAvailabilityText();
+
+    setTimeout(updateNoAvailabilityText, 100);
+    setTimeout(updateNoAvailabilityText, 300);
+    setTimeout(updateNoAvailabilityText, 700);
+    setTimeout(updateNoAvailabilityText, 1200);
+
+    const observer = new MutationObserver(function () {
+      updateNoAvailabilityText();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    document.addEventListener("click", function () {
+      setTimeout(updateNoAvailabilityText, 80);
+      setTimeout(updateNoAvailabilityText, 300);
+      setTimeout(updateNoAvailabilityText, 700);
+    }, true);
+  }
+
+  startNoAvailabilityTextUpdater();
 })();
 <\\/script>
 `;
