@@ -1706,6 +1706,23 @@
         margin-top: 0;
       }
 
+
+
+      .desktop-photo-wall-section .bsu-team-head,
+      .desktop-photo-wall-section .bsu-divider,
+      .desktop-photo-wall-section .gallery-head,
+      .desktop-photo-wall-section .staff-group-head {
+        display: none !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-wall {
+        padding: 12px;
+      }
+
+      .desktop-photo-wall-section .staff-carousel {
+        margin: 0;
+      }
+
       .desktop-results-area .slot-area {
         margin-top: 0;
       }
@@ -2581,22 +2598,7 @@
 
           </style>
 <div class="bsu-team-wall">
-  <div class="bsu-team-head">
-    <h2 class="bsu-team-title">Our Work</h2>
-    <p class="bsu-team-subtitle">
-      Recent work from the B SIDE U team. Select a stylist to view that stylist’s work.
-    </p>
-  </div>
-
-  <div class="bsu-divider"></div>
-
-  <div class="gallery-head">
-    <div class="gallery-title-wrap">
-      <div class="gallery-title">Featured Work</div>
-      <p class="gallery-meta" id="galleryMeta">Loading work...</p>
-    </div>
-  </div>
-
+  <p class="gallery-meta" id="galleryMeta" style="display:none">Loading work...</p>
   <div id="bsu-gallery"></div>
 </div>
 
@@ -2869,6 +2871,9 @@
   }
 
   window.bsuSetGalleryStaff = setGalleryStaff;
+  if (window.bsuInitialGalleryStaff) {
+    setGalleryStaff(window.bsuInitialGalleryStaff);
+  }
 
   function buildModalSet(item){
     ACTIVE_MODAL_SET = FILTERED_ITEMS.filter(v => v.staff === item.staff);
@@ -3289,25 +3294,9 @@
       return;
     }
 
-    const titleHTML = activeGalleryStaff
-      ? `<a class="staff-profile-link" href="${escapeHtml(getStaffProfileUrl(activeGalleryStaff))}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(activeGalleryStaff)} profile page">${escapeHtml(activeGalleryStaff)}</a>`
-      : `All Staff Mix`;
-
-    const locationText = activeGalleryStaff
-      ? (items[0]?.location || "Pasadena")
-      : "Mixed portfolio";
-
     galleryRoot.innerHTML = `
       <div class="staff-groups">
         <section class="staff-group">
-          <div class="staff-group-head">
-            <div class="staff-group-head-left">
-              <h3 class="staff-group-title">${titleHTML}</h3>
-            </div>
-            <div class="staff-group-head-right">
-              <div class="staff-group-meta">${escapeHtml(locationText)}</div>
-            </div>
-          </div>
           <div class="staff-carousel">
             <div class="staff-carousel-track">
               ${items.map(it => buildTile(it, "staff")).join("")}
@@ -4833,6 +4822,12 @@
     loadSavedCustomerInfo();
     updateDateUI();
     selectBestDefaultStaff();
+    if (STAFF_DATA[selectedStaffKey]) {
+      window.bsuInitialGalleryStaff = STAFF_DATA[selectedStaffKey].name;
+      if (window.bsuSetGalleryStaff) {
+        window.bsuSetGalleryStaff(STAFF_DATA[selectedStaffKey].name);
+      }
+    }
     renderStaffStrip(true);
     renderServicePills();
     setupDateStickyFallback();
