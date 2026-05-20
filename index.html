@@ -45,8 +45,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Header Override V2
-   Smaller scale + true separated header rows.
+   B SIDE U Pasadena Layout Balance V3
+   Smaller header + less dominant photo wall + tighter controls.
    ========================================================= */
 
 .profile-link-under-card,
@@ -54,7 +54,7 @@
   display: none !important;
 }
 
-/* Slightly smaller whole desktop composition */
+/* Desktop composition */
 @media (min-width: 1024px) {
   .page {
     max-width: 1120px !important;
@@ -64,37 +64,127 @@
   .booking-layout {
     grid-template-columns: minmax(350px, 400px) minmax(0, 1fr) !important;
     gap: 14px 16px !important;
+    align-items: start !important;
   }
 
   .booking-layout > div:nth-child(2) {
-    padding: 15px !important;
-    border-radius: 26px !important;
+    padding: 14px !important;
+    border-radius: 24px !important;
+  }
+
+  .staff-strip {
+    gap: 9px !important;
   }
 
   .staff-card {
-    min-height: 128px !important;
-    border-radius: 20px !important;
-    padding: 9px 7px 8px !important;
+    min-height: 126px !important;
+    border-radius: 19px !important;
+    padding: 8px 7px 7px !important;
+    box-shadow: 0 6px 16px rgba(20,20,20,0.04) !important;
   }
 
   .avatar {
-    width: 56px !important;
-    height: 56px !important;
+    width: 54px !important;
+    height: 54px !important;
+    margin-bottom: 6px !important;
   }
 
   .staff-name,
   .service-name {
-    font-size: 12.8px !important;
+    font-size: 12.6px !important;
   }
 
   .staff-status,
   .service-meta {
-    font-size: 9.8px !important;
+    font-size: 9.6px !important;
+  }
+
+  /* Make service buttons feel closer to staff-card scale */
+  .service-pills {
+    gap: 8px !important;
+  }
+
+  .service-pill {
+    min-height: 48px !important;
+    border-radius: 16px !important;
+    padding: 8px 9px !important;
+    box-shadow: none !important;
+  }
+
+  .service-meta {
+    margin-top: 4px !important;
+  }
+
+  /* Available time area should not visually outweigh staff cards */
+  .desktop-results-area .slot-area,
+  .slot-area {
+    padding: 13px 14px !important;
+    border-radius: 24px !important;
+    min-height: 0 !important;
+    box-shadow: 0 8px 22px rgba(20,20,20,0.045) !important;
+  }
+
+  .times {
+    gap: 8px !important;
   }
 
   .time-btn {
-    min-height: 50px !important;
-    font-size: 14px !important;
+    min-height: 44px !important;
+    border-radius: 14px !important;
+    font-size: 13.5px !important;
+    box-shadow: none !important;
+  }
+
+  .slot-group-title {
+    margin: 8px 0 7px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.15em !important;
+  }
+
+  /* Photo wall: align to left staff-card block bottom and reduce dominance */
+  .desktop-results-area {
+    gap: 10px !important;
+  }
+
+  .desktop-photo-wall-section {
+    align-self: start !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-wall {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel {
+    height: 244px !important;
+    max-height: 244px !important;
+    border-radius: 22px !important;
+    background: #f6f6f6 !important;
+    box-shadow: inset 0 0 0 1px rgba(20,20,20,0.055) !important;
+    overflow: hidden !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track {
+    height: 100% !important;
+    align-items: stretch !important;
+    gap: 3px !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    flex: 0 0 calc((100% - 9px) / 4) !important;
+    opacity: 0.92 !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item img,
+  .desktop-photo-wall-section img {
+    height: 100% !important;
+    object-fit: cover !important;
   }
 }
 
@@ -109,34 +199,34 @@
     "actions" !important;
   align-items: start !important;
   justify-items: start !important;
-  row-gap: 9px !important;
-  padding: 24px 30px 26px !important;
+  row-gap: 8px !important;
+  padding: 23px 30px 25px !important;
   margin-bottom: 16px !important;
   border-radius: 28px !important;
   border: 1px solid rgba(17, 17, 17, 0.08) !important;
   background:
-    radial-gradient(circle at 100% 100%, #f4f4f4 0 78px, transparent 80px),
+    radial-gradient(circle at 100% 100%, #f4f4f4 0 76px, transparent 78px),
     linear-gradient(135deg, #ffffff 0%, #ffffff 62%, #fbfbfb 100%) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.038) !important;
   overflow: hidden !important;
 }
 
 .pasadena-header::after {
   right: -58px !important;
   bottom: -74px !important;
-  width: 150px !important;
-  height: 150px !important;
+  width: 148px !important;
+  height: 148px !important;
   background: rgba(20, 20, 20, 0.04) !important;
 }
 
 .pasadena-title {
   grid-area: title !important;
-  margin: 0 0 2px !important;
+  margin: 0 0 1px !important;
   padding: 0 !important;
   max-width: none !important;
-  font-size: clamp(34px, 3.1vw, 44px) !important;
-  line-height: 0.96 !important;
-  letter-spacing: -0.055em !important;
+  font-size: clamp(32px, 2.9vw, 40px) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.05em !important;
   font-weight: 950 !important;
   color: #111 !important;
 }
@@ -146,7 +236,7 @@
   display: inline-flex !important;
   width: fit-content !important;
   max-width: 100% !important;
-  min-height: 29px !important;
+  min-height: 28px !important;
   padding: 0 12px !important;
   margin: 0 !important;
   gap: 8px !important;
@@ -154,7 +244,7 @@
   border-radius: 999px !important;
   background: #111 !important;
   color: #fff !important;
-  font-size: 12.8px !important;
+  font-size: 12.5px !important;
   line-height: 1 !important;
   font-weight: 900 !important;
   letter-spacing: -0.015em !important;
@@ -180,7 +270,7 @@
   max-width: 760px !important;
   margin: 0 !important;
   color: #666 !important;
-  font-size: 13.5px !important;
+  font-size: 13px !important;
   line-height: 1.35 !important;
   font-weight: 800 !important;
   letter-spacing: -0.02em !important;
@@ -192,21 +282,21 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 9px !important;
+  gap: 8px !important;
   flex-wrap: wrap !important;
   width: auto !important;
-  margin: 2px 0 0 !important;
+  margin: 1px 0 0 !important;
 }
 
 .pasadena-links a {
-  min-height: 35px !important;
-  padding: 0 15px !important;
+  min-height: 34px !important;
+  padding: 0 14px !important;
   border-radius: 999px !important;
   border: 1px solid rgba(17, 17, 17, 0.13) !important;
   background: #fff !important;
   color: #111 !important;
   text-decoration: none !important;
-  font-size: 12.5px !important;
+  font-size: 12.2px !important;
   line-height: 1 !important;
   font-weight: 900 !important;
   letter-spacing: -0.015em !important;
@@ -241,16 +331,16 @@
 
 @media (max-width: 900px) {
   .pasadena-header {
-    padding: 24px 24px 26px !important;
+    padding: 23px 24px 25px !important;
     border-radius: 26px !important;
   }
 
   .pasadena-title {
-    font-size: clamp(32px, 7vw, 44px) !important;
+    font-size: clamp(31px, 7vw, 42px) !important;
   }
 
   .pasadena-address {
-    font-size: 13.5px !important;
+    font-size: 13px !important;
   }
 }
 
@@ -266,12 +356,12 @@
   }
 
   .pasadena-title {
-    font-size: clamp(30px, 11vw, 42px) !important;
-    line-height: 0.96 !important;
+    font-size: clamp(29px, 10.5vw, 40px) !important;
+    line-height: 0.98 !important;
   }
 
   .pasadena-open {
-    min-height: 29px !important;
+    min-height: 28px !important;
     padding: 0 11px !important;
     font-size: 12px !important;
   }
