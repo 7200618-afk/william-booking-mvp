@@ -37,13 +37,69 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V12
-   Desktop only: time card moves up, photo wall moves bottom full width.
+   B SIDE U Pasadena Layout Balance V13
+   Desktop top nav + booking controls first + full-width bottom photo wall.
    ========================================================= */
 
 .profile-link-under-card,
 .staff-item.is-active .profile-link-under-card {
   display: none !important;
+}
+
+.bsu-site-nav {
+  width: 100% !important;
+  height: 86px !important;
+  padding: 0 42px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: #fff !important;
+  color: #111 !important;
+}
+.bsu-site-logo {
+  color: #111 !important;
+  text-decoration: none !important;
+  font-size: 26px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: .02em !important;
+  white-space: nowrap !important;
+}
+.bsu-site-links {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 42px !important;
+  margin-left: auto !important;
+}
+.bsu-site-link {
+  color: rgba(17,17,17,.68) !important;
+  text-decoration: none !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  font-weight: 450 !important;
+  letter-spacing: -.02em !important;
+  white-space: nowrap !important;
+}
+.bsu-site-link:hover { color: #111 !important; }
+.bsu-site-book {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 48px !important;
+  padding: 0 24px !important;
+  background: #000 !important;
+  color: #fff !important;
+  text-decoration: none !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  font-weight: 600 !important;
+  letter-spacing: -.02em !important;
+  white-space: nowrap !important;
+}
+@media (max-width: 1023px) {
+  .bsu-site-nav { display: none !important; }
 }
 
 .pasadena-header {
@@ -157,7 +213,6 @@
     padding: 20px 22px 48px !important;
   }
 
-  /* Desktop only: create a real 2-column booking row and move photo wall to bottom full width. */
   .booking-layout {
     display: grid !important;
     grid-template-columns: minmax(350px, 400px) minmax(0, 1fr) !important;
@@ -169,9 +224,7 @@
     align-items: start !important;
   }
 
-  .date-area {
-    grid-area: date !important;
-  }
+  .date-area { grid-area: date !important; }
 
   .booking-layout > div:nth-child(2) {
     grid-area: left !important;
@@ -179,12 +232,11 @@
     border-radius: 24px !important;
   }
 
-  .desktop-results-area {
-    display: contents !important;
-  }
+  .desktop-results-area { display: contents !important; }
 
   .desktop-results-area .slot-area,
-  .slot-area {
+  .slot-area,
+  .desktop-results-area .empty-state {
     grid-area: slots !important;
     align-self: start !important;
     margin-top: 0 !important;
@@ -209,7 +261,6 @@
   .staff-name, .service-name { font-size: 12.6px !important; }
   .staff-status, .service-meta { font-size: 9.6px !important; }
 
-  /* Keep spacing but hide the visual divider line. */
   .section-divider {
     height: 1px !important;
     margin: 15px 0 14px !important;
@@ -241,7 +292,6 @@
     box-shadow: none !important;
   }
 
-  /* Bottom full-width photo wall, desktop only. */
   .desktop-photo-wall-section {
     grid-area: photo !important;
     display: block !important;
@@ -357,6 +407,27 @@
         const customJs = `
 <script>
 (function () {
+  function addDesktopSiteNav() {
+    if (document.querySelector(".bsu-site-nav")) return;
+    var page = document.querySelector(".page");
+    if (!page || !page.parentNode) return;
+
+    var nav = document.createElement("nav");
+    nav.className = "bsu-site-nav";
+    nav.innerHTML = '' +
+      '<a class="bsu-site-logo" href="https://www.bsideuhair.com/">B SIDE U</a>' +
+      '<div class="bsu-site-links">' +
+        '<a class="bsu-site-link" href="https://www.bsideuhair.com/photo">Photo</a>' +
+        '<a class="bsu-site-link" href="https://www.bsideuhair.com/team">Team</a>' +
+        '<a class="bsu-site-link" href="https://www.bsideuhair.com/location">Location</a>' +
+        '<a class="bsu-site-link" href="https://www.bsideuhair.com/services">Services</a>' +
+        '<a class="bsu-site-link" href="https://www.bsideuhair.com/shop">Shop</a>' +
+        '<a class="bsu-site-book" href="https://pasadena.bsideuhair.com/">Book Now</a>' +
+      '</div>';
+
+    page.parentNode.insertBefore(nav, page);
+  }
+
   function removeOpeningCounts() {
     document.querySelectorAll(".slot-group-title").forEach(function (el) {
       var text = el.textContent || "";
@@ -369,7 +440,10 @@
       if (text !== newText) el.textContent = newText;
     });
   }
-  function runFixes() { removeOpeningCounts(); }
+  function runFixes() {
+    addDesktopSiteNav();
+    removeOpeningCounts();
+  }
   runFixes();
   setTimeout(runFixes, 100);
   setTimeout(runFixes, 300);
