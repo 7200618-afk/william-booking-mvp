@@ -37,8 +37,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V10
-   Restore staff divider, lower photo divider to align.
+   B SIDE U Pasadena Layout Balance V11
+   Divider lines match background color.
    ========================================================= */
 
 .profile-link-under-card,
@@ -180,11 +180,11 @@
   .staff-name, .service-name { font-size: 12.6px !important; }
   .staff-status, .service-meta { font-size: 9.6px !important; }
 
-  /* Restore original staff divider position under employee cards */
+  /* Keep divider space, but make the visible line match the page background */
   .section-divider {
     height: 1px !important;
     margin: 15px 0 14px !important;
-    background: rgba(20,20,20,.10) !important;
+    background: #fff !important;
   }
   .service-pills { gap: 8px !important; }
   .service-pill {
@@ -217,7 +217,7 @@
     right: 0 !important;
     bottom: -79px !important;
     height: 1px !important;
-    background: rgba(20,20,20,.10) !important;
+    background: #fff !important;
     display: block !important;
   }
   .desktop-photo-wall-section .bsu-team-wall,
