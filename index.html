@@ -1721,6 +1721,151 @@
       }
     }
 
+
+
+    /* =========================================
+       Desktop gallery placement fix
+       Keep the photo wall in the RIGHT results column,
+       directly above available times / empty state.
+       Also remove desktop sticky behavior that caused a
+       blank left area while scrolling.
+       ========================================= */
+    @media (min-width: 1024px) {
+      .booking-layout {
+        display: grid !important;
+        grid-template-columns: minmax(390px, 450px) minmax(0, 1fr) !important;
+        grid-template-rows: auto auto !important;
+        align-items: start !important;
+        gap: 20px !important;
+      }
+
+      .date-area {
+        grid-column: 1 / -1 !important;
+        grid-row: 1 !important;
+        position: relative !important;
+        top: auto !important;
+        z-index: 1 !important;
+      }
+
+      .date-area.is-fixed-fallback {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: auto !important;
+      }
+
+      .date-sticky-spacer,
+      .date-sticky-spacer.is-active {
+        display: none !important;
+        height: 0 !important;
+      }
+
+      .booking-layout > div:nth-child(2) {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+        position: static !important;
+        top: auto !important;
+        align-self: start !important;
+      }
+
+      .desktop-results-area {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        display: grid !important;
+        gap: 16px !important;
+        align-content: start !important;
+        align-self: start !important;
+      }
+
+      .desktop-photo-wall-section {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-wall {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 16px !important;
+        border: 1px solid rgba(20,20,20,0.10) !important;
+        border-radius: 28px !important;
+        background: #ffffff !important;
+        box-shadow: var(--shadow-sm) !important;
+        overflow: hidden !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-head {
+        padding-bottom: 10px !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-title {
+        font-size: 22px !important;
+        line-height: 1.05 !important;
+        letter-spacing: -0.03em !important;
+        margin: 0 0 6px !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-subtitle {
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+        margin: 0 !important;
+      }
+
+      .desktop-photo-wall-section .gallery-head {
+        margin: 10px 0 10px !important;
+      }
+
+      .desktop-photo-wall-section .gallery-title {
+        font-size: 18px !important;
+        line-height: 1.1 !important;
+        letter-spacing: -0.02em !important;
+      }
+
+      .desktop-photo-wall-section .gallery-meta {
+        font-size: 12px !important;
+      }
+
+      .desktop-photo-wall-section .staff-groups {
+        gap: 0 !important;
+        overflow: hidden !important;
+      }
+
+      .desktop-photo-wall-section .staff-group-head {
+        margin: 0 0 8px !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel {
+        border-radius: 22px !important;
+        overflow: hidden !important;
+        background: #f4f4f4 !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-track {
+        align-items: stretch !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item {
+        flex: 0 0 calc((100% - (var(--gap) * 3)) / 4) !important;
+        aspect-ratio: 4 / 5 !important;
+      }
+
+      .desktop-results-area .empty-state,
+      .desktop-results-area .slot-area {
+        margin-top: 0 !important;
+        width: 100% !important;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .booking-layout {
+        grid-template-columns: minmax(410px, 470px) minmax(0, 1fr) !important;
+        gap: 24px !important;
+      }
+    }
   </style>
 </head>
 
