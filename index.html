@@ -2205,6 +2205,68 @@
       }
     }
 
+
+    /* =========================================
+       Desktop composition refinement v3
+       Match service/time heights and center the gallery balance.
+       ========================================= */
+    @media (min-width: 1024px) {
+      .service-pill,
+      .time-btn {
+        height: 52px !important;
+        min-height: 52px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-radius: 17px !important;
+      }
+
+      .service-name,
+      .service-meta {
+        width: 100% !important;
+        text-align: center !important;
+      }
+
+      .service-meta {
+        margin-top: 5px !important;
+      }
+
+      .desktop-photo-wall-section {
+        align-self: start !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-wall {
+        padding: 14px !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel {
+        height: clamp(252px, 22vw, 292px) !important;
+        display: block !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-track {
+        height: 100% !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item {
+        height: 100% !important;
+        aspect-ratio: auto !important;
+      }
+
+      .desktop-results-area {
+        gap: 14px !important;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .desktop-photo-wall-section .staff-carousel {
+        height: clamp(264px, 21vw, 304px) !important;
+      }
+    }
+
   </style>
 </head>
 
