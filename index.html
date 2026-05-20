@@ -91,15 +91,6 @@
   flex-wrap: wrap !important;
 }
 
-/* Prevent original address / links from jumping next to open hour */
-.pasadena-header > .pasadena-address:not(.pasadena-address-row .pasadena-address) {
-  display: block !important;
-}
-
-.pasadena-header > .pasadena-links:not(.pasadena-address-row .pasadena-links) {
-  display: flex !important;
-}
-
 /* Desktop */
 @media (min-width: 1024px) {
   .pasadena-open {
@@ -158,11 +149,6 @@
     width: 100% !important;
     margin: 10px 0 0 !important;
   }
-}
-
-/* Remove Morning · 8 openings visually if JS misses it briefly */
-.slot-group-title {
-  white-space: nowrap;
 }
 
 /* Remove outer frame around calendar/date area */
@@ -311,24 +297,50 @@
     subtree: true
   });
 
-  /* Remove Morning · 8 openings count */
+  /* Remove Morning · 2 openings / Afternoon · 1 opening */
   function removeOpeningCounts() {
     document.querySelectorAll(".slot-group-title").forEach(function (el) {
-      el.textContent = el.textContent
+      let text = el.textContent || "";
+
+      text = text
         .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
+        .replace(/\\s*·\\s*\\d+\\s*opening/gi, "")
         .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
+        .replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi, "")
         .trim();
+
+      if (el.textContent !== text) {
+        el.textContent = text;
+      }
     });
   }
 
-  removeOpeningCounts();
+  function startOpeningCountCleaner() {
+    removeOpeningCounts();
 
-  const openingObserver = new MutationObserver(removeOpeningCounts);
-  openingObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-    characterData: true
-  });
+    setTimeout(removeOpeningCounts, 100);
+    setTimeout(removeOpeningCounts, 300);
+    setTimeout(removeOpeningCounts, 700);
+    setTimeout(removeOpeningCounts, 1200);
+
+    const observer = new MutationObserver(function () {
+      removeOpeningCounts();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    document.addEventListener("click", function () {
+      setTimeout(removeOpeningCounts, 50);
+      setTimeout(removeOpeningCounts, 250);
+      setTimeout(removeOpeningCounts, 600);
+    }, true);
+  }
+
+  startOpeningCountCleaner();
 
   /* Gallery modal */
   function createGalleryModal() {
