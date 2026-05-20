@@ -32,8 +32,8 @@
   <script>
     (async function () {
       /*
-        This loads the previous working full booking page with gallery,
-        then applies the requested fixes safely.
+        Loads the last full working booking page with gallery,
+        then applies the requested visual fixes.
       */
       const sourceUrl =
         "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
@@ -52,37 +52,43 @@
    B SIDE U Custom Fixes
    =============================== */
 
-/* 1. Remove View Profile under staff avatars */
+/* Remove View Profile under staff avatars */
 .profile-link-under-card,
 .staff-item.is-active .profile-link-under-card {
   display: none !important;
 }
 
-/* 2. Address / links should be on a separate row under open hour */
+/* Address + links: same row, but below Open Hour */
 .pasadena-open {
   display: inline-flex !important;
   width: auto !important;
   margin-bottom: 10px !important;
 }
 
+/* Force a new row after Open Hour */
 .pasadena-address {
-  display: block !important;
-  width: 100% !important;
+  display: inline !important;
   max-width: none !important;
-  margin-top: 0 !important;
-  margin-bottom: 8px !important;
+  margin: 0 !important;
   line-height: 1.45 !important;
 }
 
-.pasadena-links {
-  display: flex !important;
-  width: 100% !important;
-  margin-top: 0 !important;
-  gap: 8px !important;
-  flex-wrap: wrap !important;
+.pasadena-address::before {
+  content: "";
+  display: block;
+  height: 0;
 }
 
-/* Desktop header layout */
+.pasadena-links {
+  display: inline-flex !important;
+  width: auto !important;
+  margin: 0 0 0 12px !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  vertical-align: middle !important;
+}
+
+/* Desktop */
 @media (min-width: 1024px) {
   .pasadena-open {
     display: inline-flex !important;
@@ -91,22 +97,49 @@
   }
 
   .pasadena-address {
-    display: block !important;
-    width: 100% !important;
+    display: inline !important;
+    width: auto !important;
     max-width: none !important;
-    margin-top: 0 !important;
-    margin-bottom: 8px !important;
+    margin: 0 !important;
+  }
+
+  .pasadena-address::before {
+    content: "";
+    display: block;
+    height: 0;
   }
 
   .pasadena-links {
-    display: flex !important;
-    width: 100% !important;
-    margin-top: 0 !important;
+    display: inline-flex !important;
+    width: auto !important;
+    margin: 0 0 0 12px !important;
     gap: 8px !important;
+    flex-wrap: wrap !important;
+    vertical-align: middle !important;
   }
 }
 
-/* 3. Remove outer frame around calendar/date area */
+/* Mobile: keep address and links clean */
+@media (max-width: 600px) {
+  .pasadena-address {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 0 8px !important;
+  }
+
+  .pasadena-address::before {
+    display: none !important;
+  }
+
+  .pasadena-links {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    width: 100% !important;
+    margin: 10px 0 0 !important;
+  }
+}
+
+/* Remove outer frame around calendar/date area */
 .date-area {
   border: 0 !important;
   box-shadow: none !important;
@@ -120,11 +153,7 @@
   background: transparent !important;
 }
 
-/* Keep the date center/button itself clean */
-.date-label {
-  background: #fff !important;
-}
-
+/* Date arrow buttons: lighter design */
 .date-nav {
   background: #fff !important;
   color: #111 !important;
@@ -137,7 +166,7 @@
   box-shadow: none !important;
 }
 
-/* 4. Gallery click modal */
+/* Gallery click modal */
 .bsu-gallery-modal {
   position: fixed;
   inset: 0;
@@ -222,6 +251,25 @@
         const customJs = `
 <script>
 (function () {
+  /* Remove "Morning · 8 openings" count text */
+  function removeOpeningCounts() {
+    document.querySelectorAll(".slot-group-title").forEach(function (el) {
+      el.textContent = el.textContent
+        .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
+        .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
+        .trim();
+    });
+  }
+
+  removeOpeningCounts();
+
+  const openingObserver = new MutationObserver(removeOpeningCounts);
+  openingObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+
   function createGalleryModal() {
     let modal = document.getElementById("bsuGalleryModal");
 
