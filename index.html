@@ -1609,6 +1609,20 @@
       display: none;
     }
 
+
+    .desktop-photo-wall-section .bsu-filter-group,
+    .desktop-photo-wall-section .view-toggle {
+      display: none !important;
+    }
+
+    .desktop-photo-wall-section .gallery-head {
+      margin-top: 0;
+    }
+
+    .desktop-photo-wall-section .staff-groups {
+      gap: 18px;
+    }
+
     @media (min-width: 1024px) {
       .desktop-results-area {
         display: grid;
@@ -2397,42 +2411,16 @@
   <div class="bsu-team-head">
     <h2 class="bsu-team-title">Our Work</h2>
     <p class="bsu-team-subtitle">
-      Men’s haircuts, fades, tapers, classic cuts, scissors cuts, perms, and color by the B SIDE U team.
+      Portfolio by the B SIDE U team. Select a stylist to view that stylist’s work.
     </p>
   </div>
 
   <div class="bsu-divider"></div>
 
-  <div class="bsu-filter-group">
-    <div class="bsu-filter-label">Filter by service</div>
-    <div class="bsu-filter-row" id="serviceFilters"></div>
-    <div class="bsu-filter-select-wrap">
-      <select class="bsu-filter-select" id="serviceFiltersMobile" aria-label="Filter by service"></select>
-    </div>
-  </div>
-
   <div class="gallery-head">
     <div class="gallery-title-wrap">
-      <div class="gallery-title">B SIDE U Team Gallery</div>
+      <div class="gallery-title">Team Work Carousel</div>
       <p class="gallery-meta" id="galleryMeta">Loading work...</p>
-    </div>
-
-    <div class="view-toggle">
-      <button class="view-icon-btn" type="button" data-view="staff" aria-label="Staff carousel view">
-        <svg viewBox="0 0 24 24" fill="none">
-          <rect x="4" y="7" width="7" height="10" rx="1.6" class="stroke" stroke-width="1.8"></rect>
-          <rect x="13" y="7" width="7" height="10" rx="1.6" class="stroke" stroke-width="1.8"></rect>
-          <path d="M6.6 11.2h1.8M15.6 11.2h1.8" class="stroke" stroke-width="1.8" stroke-linecap="round"></path>
-        </svg>
-      </button>
-      <button class="view-icon-btn" type="button" data-view="grid" aria-label="Grid view">
-        <svg viewBox="0 0 24 24" fill="none">
-          <rect x="5" y="6" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
-          <rect x="13" y="6" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
-          <rect x="5" y="14" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
-          <rect x="13" y="14" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
-        </svg>
-      </button>
     </div>
   </div>
 
@@ -2511,7 +2499,8 @@
   let modalOpen = false;
   let lastOriginRect = null;
   let activeService = "all";
-  let currentView = "grid";
+  let activeGalleryStaff = "";
+  let currentView = "staff";
   let staffCarouselTimers = [];
   let framePreviewObserver = null;
   let framePreviewTimer = null;
@@ -2695,32 +2684,18 @@
   }
 
   function buildServiceFilters(){
-    serviceFilters.innerHTML = SERVICE_OPTIONS.map(opt => `
-      <button
-        type="button"
-        class="bsu-chip ${opt.key===activeService ? "is-active" : ""}"
-        data-service="${escapeHtml(opt.key)}"
-      >${escapeHtml(opt.label)}</button>
-    `).join("");
-
-    serviceFiltersMobile.innerHTML = SERVICE_OPTIONS.map(opt => `
-      <option value="${escapeHtml(opt.key)}" ${opt.key===activeService ? "selected" : ""}>${escapeHtml(opt.label)}</option>
-    `).join("");
-
-    [...serviceFilters.querySelectorAll(".bsu-chip")].forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        activeService = btn.dataset.service || "all";
-        buildServiceFilters();
-        applyFilters();
-      });
-    });
-
-    serviceFiltersMobile.onchange = ()=>{
-      activeService = serviceFiltersMobile.value || "all";
-      buildServiceFilters();
-      applyFilters();
-    };
+    return;
   }
+
+  function setGalleryStaff(staffName){
+    activeGalleryStaff = String(staffName || "").trim();
+    activeService = "all";
+    closeModal();
+    clearStaffCarousels();
+    applyFilters();
+  }
+
+  window.bsuSetGalleryStaff = setGalleryStaff;
 
   function buildModalSet(item){
     ACTIVE_MODAL_SET = FILTERED_ITEMS.filter(v => v.staff === item.staff);
@@ -2906,15 +2881,9 @@
   }
 
   function setView(view){
-    currentView = view;
-    document.querySelectorAll(".view-icon-btn").forEach(b=>{
-      b.classList.toggle("is-active", b.dataset.view === view);
-    });
+    currentView = "staff";
     closeModal();
     clearStaffCarousels();
-    try{
-      localStorage.setItem(STORAGE_KEY, view);
-    }catch(e){}
     renderGallery();
   }
 
@@ -2923,9 +2892,8 @@
       galleryMeta.textContent = "No work available yet.";
       return;
     }
-    const svc = SERVICE_OPTIONS.find(v => v.key === activeService);
-    const label = svc && activeService !== "all" ? svc.label : "All Services";
-    galleryMeta.textContent = `${FILTERED_ITEMS.length} item${FILTERED_ITEMS.length === 1 ? "" : "s"} · ${label}`;
+    const who = activeGalleryStaff ? activeGalleryStaff : "All Staff";
+    galleryMeta.textContent = `${who} · ${FILTERED_ITEMS.length} item${FILTERED_ITEMS.length === 1 ? "" : "s"}`;
   }
 
   function buildTile(item, viewType = "staff"){
@@ -3268,8 +3236,8 @@
   function renderGallery(){
     clearStaffCarousels();
     clearFramePreviewAnimation();
-    if(currentView === "grid") renderGridView();
-    else renderStaffView();
+    currentView = "staff";
+    renderStaffView();
     bindGalleryClicks();
     setupFramePreviewAnimation();
     updateMeta();
@@ -3277,7 +3245,7 @@
 
   function applyFilters(){
     FILTERED_ITEMS = ALL_ITEMS.filter(it => {
-      return activeService === "all" ? true : it.serviceKey === activeService;
+      return activeGalleryStaff ? it.staff === activeGalleryStaff : true;
     });
     renderGallery();
   }
@@ -3345,14 +3313,7 @@
 
   stage.addEventListener("touchend", swipeEnd);
 
-  try{
-    currentView = localStorage.getItem(STORAGE_KEY) || "grid";
-  }catch(e){
-    currentView = "staff";
-  }
-  document.querySelectorAll(".view-icon-btn").forEach(b=>{
-    b.classList.toggle("is-active", b.dataset.view === currentView);
-  });
+  currentView = "staff";
 
   try{
     const results = await Promise.all(
@@ -4172,6 +4133,10 @@
 
             selectedStaffKey = staffKey;
             selectedServiceKey = STAFF_DATA[staffKey].defaultService;
+
+            if (window.bsuSetGalleryStaff) {
+              window.bsuSetGalleryStaff(STAFF_DATA[staffKey].name);
+            }
 
             renderStaffStrip(false);
             renderServicePills();
