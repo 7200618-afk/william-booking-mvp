@@ -91,38 +91,6 @@
   flex-wrap: wrap !important;
 }
 
-/* Desktop */
-@media (min-width: 1024px) {
-  .pasadena-open {
-    display: flex !important;
-    width: max-content !important;
-    max-width: 100% !important;
-    margin-bottom: 12px !important;
-  }
-
-  .pasadena-address-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 14px !important;
-    flex-wrap: wrap !important;
-    width: 100% !important;
-  }
-
-  .pasadena-address-row .pasadena-address {
-    display: inline-flex !important;
-    width: auto !important;
-    max-width: none !important;
-    margin: 0 !important;
-  }
-
-  .pasadena-address-row .pasadena-links {
-    display: inline-flex !important;
-    width: auto !important;
-    margin: 0 !important;
-    gap: 8px !important;
-  }
-}
-
 /* Mobile */
 @media (max-width: 600px) {
   .pasadena-open {
@@ -178,86 +146,6 @@
   box-shadow: none !important;
 }
 
-/* Gallery click modal */
-.bsu-gallery-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 999999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.bsu-gallery-modal.is-open {
-  display: flex;
-}
-
-.bsu-gallery-modal-inner {
-  position: relative;
-  width: min(92vw, 980px);
-  height: min(88vh, 860px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#bsuGalleryModalStage {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bsu-gallery-modal img,
-.bsu-gallery-modal video {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 18px;
-  background: #000;
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.32);
-}
-
-.bsu-gallery-modal-close {
-  position: absolute;
-  top: -14px;
-  right: -14px;
-  width: 42px;
-  height: 42px;
-  border: 0;
-  border-radius: 999px;
-  background: #fff;
-  color: #111;
-  font-size: 24px;
-  font-weight: 900;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-  z-index: 2;
-}
-
-@media (max-width: 640px) {
-  .bsu-gallery-modal {
-    padding: 14px;
-  }
-
-  .bsu-gallery-modal-inner {
-    width: 96vw;
-    height: 84vh;
-  }
-
-  .bsu-gallery-modal-close {
-    top: 0;
-    right: 0;
-  }
-}
 `;
 
         const customJs = `
@@ -265,12 +153,11 @@
 (function () {
   /* Put address + links into a real separate row under Open Hour */
   function fixHeaderRows() {
-    const header = document.querySelector(".pasadena-header");
     const open = document.querySelector(".pasadena-open");
     const address = document.querySelector(".pasadena-address");
     const links = document.querySelector(".pasadena-links");
 
-    if (!header || !open || !address || !links) return;
+    if (!open || !address || !links) return;
 
     let row = document.querySelector(".pasadena-address-row");
 
@@ -342,108 +229,6 @@
 
   startOpeningCountCleaner();
 
-  /* Gallery modal */
-  function createGalleryModal() {
-    let modal = document.getElementById("bsuGalleryModal");
-
-    if (modal) return modal;
-
-    modal = document.createElement("div");
-    modal.id = "bsuGalleryModal";
-    modal.className = "bsu-gallery-modal";
-    modal.innerHTML = \`
-      <div class="bsu-gallery-modal-inner">
-        <button class="bsu-gallery-modal-close" type="button" aria-label="Close">×</button>
-        <div id="bsuGalleryModalStage"></div>
-      </div>
-    \`;
-
-    document.body.appendChild(modal);
-
-    modal.addEventListener("click", function (event) {
-      if (
-        event.target === modal ||
-        event.target.classList.contains("bsu-gallery-modal-close")
-      ) {
-        closeGalleryModal();
-      }
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") {
-        closeGalleryModal();
-      }
-    });
-
-    return modal;
-  }
-
-  function closeGalleryModal() {
-    const modal = document.getElementById("bsuGalleryModal");
-    const stage = document.getElementById("bsuGalleryModalStage");
-
-    if (stage) {
-      stage.innerHTML = "";
-    }
-
-    if (modal) {
-      modal.classList.remove("is-open");
-    }
-  }
-
-  function openGalleryModal(media) {
-    const modal = createGalleryModal();
-    const stage = document.getElementById("bsuGalleryModalStage");
-
-    if (!media || !stage) return;
-
-    const src =
-      media.currentSrc ||
-      media.src ||
-      media.getAttribute("data-src") ||
-      media.getAttribute("poster") ||
-      "";
-
-    if (!src) return;
-
-    const tagName = media.tagName.toLowerCase();
-
-    const isVideo =
-      tagName === "video" ||
-      /\\.(mp4|mov|webm)(\\?|$)/i.test(src);
-
-    stage.innerHTML = isVideo
-      ? \`<video src="\${src}" controls autoplay playsinline></video>\`
-      : \`<img src="\${src}" alt="B SIDE U work">\`;
-
-    modal.classList.add("is-open");
-  }
-
-  document.addEventListener(
-    "click",
-    function (event) {
-      const gallery = document.getElementById("bsu-gallery");
-      if (!gallery) return;
-
-      const item = event.target.closest(
-        ".staff-carousel-item, .grid-item, .g-media, #bsu-gallery img, #bsu-gallery video"
-      );
-
-      if (!item || !gallery.contains(item)) return;
-
-      const media = item.matches("img, video")
-        ? item
-        : item.querySelector("img, video");
-
-      if (!media) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      openGalleryModal(media);
-    },
-    true
-  );
 })();
 <\\/script>
 `;
