@@ -45,7 +45,7 @@
 
         const customCss = `
 /* ===============================
-   B SIDE U Custom Fixes
+   B SIDE U Custom Header Redesign
    =============================== */
 
 /* Remove View Profile under staff avatars */
@@ -54,104 +54,130 @@
   display: none !important;
 }
 
-/* Force Pasadena header meta into two real rows */
-.pasadena-header-stack {
+/* New Pasadena hero header */
+.bsu-custom-hero {
+  width: 100% !important;
+  max-width: 100% !important;
+  border: 1px solid rgba(20, 20, 20, 0.08) !important;
+  border-radius: 32px !important;
+  background: #fff !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.04) !important;
+  padding: 34px 42px 34px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.bsu-custom-hero::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -38px !important;
+  bottom: -54px !important;
+  width: 190px !important;
+  height: 190px !important;
+  border-radius: 999px !important;
+  background: #f6f6f6 !important;
+  z-index: 0 !important;
+}
+
+.bsu-custom-hero-inner {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+}
+
+.bsu-custom-title {
+  margin: 0 0 18px !important;
+  font-size: clamp(42px, 5vw, 78px) !important;
+  line-height: 0.92 !important;
+  letter-spacing: -0.075em !important;
+  font-weight: 950 !important;
+  color: #111 !important;
+}
+
+.bsu-custom-meta {
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
-  justify-content: flex-start !important;
-  width: 100% !important;
-  max-width: 100% !important;
   gap: 12px !important;
-  margin-top: 10px !important;
+  width: 100% !important;
 }
 
-.pasadena-open-row {
-  display: flex !important;
-  width: 100% !important;
-  max-width: 100% !important;
+.bsu-open-pill {
+  display: inline-flex !important;
   align-items: center !important;
-  justify-content: flex-start !important;
+  gap: 9px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  padding: 10px 16px !important;
+  border-radius: 999px !important;
+  background: #111 !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+  white-space: nowrap !important;
 }
 
-.pasadena-address-row {
+.bsu-open-dot {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 999px !important;
+  background: #55c878 !important;
+  box-shadow: 0 0 0 5px rgba(85, 200, 120, 0.18) !important;
+  flex: 0 0 auto !important;
+}
+
+.bsu-location-row {
   display: flex !important;
-  width: 100% !important;
-  max-width: 100% !important;
   align-items: center !important;
   justify-content: flex-start !important;
   gap: 14px !important;
   flex-wrap: wrap !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.pasadena-open {
-  display: inline-flex !important;
-  width: fit-content !important;
-  max-width: 100% !important;
-  margin: 0 !important;
-  flex: 0 0 auto !important;
-}
-
-.pasadena-address {
-  display: inline-flex !important;
-  width: auto !important;
-  max-width: none !important;
-  margin: 0 !important;
-  line-height: 1.45 !important;
-  flex: 0 1 auto !important;
-}
-
-.pasadena-links {
-  display: inline-flex !important;
-  width: auto !important;
-  margin: 0 !important;
-  gap: 8px !important;
-  flex-wrap: wrap !important;
-  flex: 0 0 auto !important;
-}
-
-/* Override original horizontal meta layout */
-.pasadena-meta,
-.pasadena-info,
-.pasadena-location,
-.location-row,
-.header-meta,
-.hero-meta {
-  display: block !important;
   width: 100% !important;
-  max-width: 100% !important;
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-  .pasadena-header-stack {
-    gap: 10px !important;
-    margin-top: 8px !important;
-  }
+.bsu-address {
+  font-size: 19px !important;
+  line-height: 1.35 !important;
+  font-weight: 850 !important;
+  color: #696969 !important;
+  letter-spacing: -0.035em !important;
+}
 
-  .pasadena-open-row {
-    display: block !important;
-  }
+.bsu-action-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
 
-  .pasadena-address-row {
-    display: block !important;
-    width: 100% !important;
-  }
+.bsu-hero-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 42px !important;
+  padding: 0 19px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(20, 20, 20, 0.12) !important;
+  background: #fff !important;
+  color: #111 !important;
+  text-decoration: none !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.025em !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) !important;
+  white-space: nowrap !important;
+}
 
-  .pasadena-address {
-    display: block !important;
-    width: 100% !important;
-    margin: 0 0 8px !important;
-  }
+.bsu-hero-btn:hover {
+  background: #f7f7f7 !important;
+}
 
-  .pasadena-links {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    width: 100% !important;
-    gap: 8px !important;
-  }
+/* Hide duplicated original header content inside the replaced hero */
+.bsu-original-hidden {
+  display: none !important;
 }
 
 /* Remove outer frame around calendar/date area */
@@ -180,60 +206,127 @@
   background: #f7f7f7 !important;
   box-shadow: none !important;
 }
+
+/* Mobile header */
+@media (max-width: 700px) {
+  .bsu-custom-hero {
+    border-radius: 24px !important;
+    padding: 26px 22px 28px !important;
+  }
+
+  .bsu-custom-title {
+    font-size: clamp(38px, 13vw, 58px) !important;
+    line-height: 0.92 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .bsu-open-pill {
+    font-size: 15px !important;
+    padding: 9px 14px !important;
+  }
+
+  .bsu-location-row {
+    display: block !important;
+  }
+
+  .bsu-address {
+    display: block !important;
+    font-size: 16px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .bsu-action-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .bsu-hero-btn {
+    width: 100% !important;
+    min-height: 42px !important;
+    font-size: 14px !important;
+    padding: 0 10px !important;
+  }
+}
 `;
 
         const customJs = `
 <script>
 (function () {
-  function fixPasadenaHeaderRows() {
+  function findHeaderCard() {
     const open = document.querySelector(".pasadena-open");
-    const address = document.querySelector(".pasadena-address");
-    const links = document.querySelector(".pasadena-links");
+    if (!open) return null;
 
-    if (!open || !address || !links) return;
+    let node = open.parentElement;
 
-    const originalParent = open.parentElement;
-    if (!originalParent) return;
+    while (node && node !== document.body) {
+      const text = node.textContent || "";
+      const hasTitle = text.includes("B SIDE U") || text.includes("BSIDEU");
+      const hasAddress = text.includes("350 S Lake");
 
-    let stack = document.querySelector(".pasadena-header-stack");
-    let openRow = document.querySelector(".pasadena-open-row");
-    let addressRow = document.querySelector(".pasadena-address-row");
+      if (hasTitle && hasAddress) {
+        return node;
+      }
 
-    if (!stack) {
-      stack = document.createElement("div");
-      stack.className = "pasadena-header-stack";
-      originalParent.insertBefore(stack, open);
+      node = node.parentElement;
     }
 
-    if (!openRow) {
-      openRow = document.createElement("div");
-      openRow.className = "pasadena-open-row";
-      stack.appendChild(openRow);
-    }
-
-    if (!addressRow) {
-      addressRow = document.createElement("div");
-      addressRow.className = "pasadena-address-row";
-      stack.appendChild(addressRow);
-    }
-
-    if (!openRow.contains(open)) {
-      openRow.appendChild(open);
-    }
-
-    if (!addressRow.contains(address)) {
-      addressRow.appendChild(address);
-    }
-
-    if (!addressRow.contains(links)) {
-      addressRow.appendChild(links);
-    }
+    return null;
   }
 
-  fixPasadenaHeaderRows();
+  function getLinkByText(textPart) {
+    const links = Array.from(document.querySelectorAll("a"));
+    return links.find(function (a) {
+      return (a.textContent || "").toLowerCase().includes(textPart.toLowerCase());
+    });
+  }
+
+  function redesignPasadenaHeader() {
+    const headerCard = findHeaderCard();
+    if (!headerCard) return;
+
+    if (headerCard.querySelector(".bsu-custom-hero")) return;
+
+    const parkingLink = getLinkByText("Parking");
+    const switchLink = getLinkByText("San Gabriel");
+
+    const parkingHref = parkingLink ? parkingLink.getAttribute("href") : "#";
+    const switchHref = switchLink ? switchLink.getAttribute("href") : "#";
+
+    const customHero = document.createElement("div");
+    customHero.className = "bsu-custom-hero";
+
+    customHero.innerHTML = \`
+      <div class="bsu-custom-hero-inner">
+        <h1 class="bsu-custom-title">B SIDE U - Pasadena</h1>
+
+        <div class="bsu-custom-meta">
+          <div class="bsu-open-pill">
+            <span class="bsu-open-dot"></span>
+            <span>Open today until 7:00 PM</span>
+          </div>
+
+          <div class="bsu-location-row">
+            <div class="bsu-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
+
+            <div class="bsu-action-row">
+              <a class="bsu-hero-btn" href="\${parkingHref}">Parking / Direction</a>
+              <a class="bsu-hero-btn" href="\${switchHref}">Switch to San Gabriel</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    \`;
+
+    headerCard.innerHTML = "";
+    headerCard.appendChild(customHero);
+  }
+
+  redesignPasadenaHeader();
 
   const headerObserver = new MutationObserver(function () {
-    fixPasadenaHeaderRows();
+    redesignPasadenaHeader();
   });
 
   headerObserver.observe(document.body, {
@@ -241,14 +334,14 @@
     subtree: true
   });
 
-  window.addEventListener("load", fixPasadenaHeaderRows);
-  window.addEventListener("resize", fixPasadenaHeaderRows);
+  window.addEventListener("load", redesignPasadenaHeader);
+  window.addEventListener("resize", redesignPasadenaHeader);
 
-  setTimeout(fixPasadenaHeaderRows, 100);
-  setTimeout(fixPasadenaHeaderRows, 300);
-  setTimeout(fixPasadenaHeaderRows, 700);
-  setTimeout(fixPasadenaHeaderRows, 1200);
-  setTimeout(fixPasadenaHeaderRows, 2000);
+  setTimeout(redesignPasadenaHeader, 100);
+  setTimeout(redesignPasadenaHeader, 300);
+  setTimeout(redesignPasadenaHeader, 700);
+  setTimeout(redesignPasadenaHeader, 1200);
+  setTimeout(redesignPasadenaHeader, 2000);
 
   /* Remove Morning · 2 openings / Afternoon · 1 opening */
   function removeOpeningCounts() {
@@ -258,6 +351,7 @@
       text = text
         .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
         .replace(/\\s*·\\s*\\d+\\s*opening/gi, "")
+        .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
         .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
         .replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi, "")
         .trim();
@@ -294,7 +388,6 @@
   }
 
   startOpeningCountCleaner();
-
 })();
 <\\/script>
 `;
