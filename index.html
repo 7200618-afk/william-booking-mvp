@@ -1636,11 +1636,39 @@
 
       .desktop-photo-wall-section .bsu-team-wall {
         border: 1px solid rgba(20,20,20,0.10);
-        border-radius: 32px;
+        border-radius: 28px;
         background: #ffffff;
-        box-shadow: var(--shadow-md);
-        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        padding: 16px;
         overflow: hidden;
+      }
+
+      .desktop-photo-wall-section .bsu-divider {
+        margin-bottom: 12px;
+      }
+
+      .desktop-photo-wall-section .staff-groups {
+        gap: 0;
+      }
+
+      .desktop-photo-wall-section .staff-group-head {
+        margin-bottom: 10px;
+      }
+
+      .desktop-photo-wall-section .staff-group-title {
+        font-size: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      .desktop-photo-wall-section .staff-carousel {
+        border-radius: 22px;
+        overflow: hidden;
+        background: #f4f4f4;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item {
+        flex-basis: calc((100% - (var(--gap) * 2))/3);
+        aspect-ratio: 4/5;
       }
 
       .desktop-photo-wall-section .bsu-team-head {
@@ -2411,7 +2439,7 @@
   <div class="bsu-team-head">
     <h2 class="bsu-team-title">Our Work</h2>
     <p class="bsu-team-subtitle">
-      Portfolio by the B SIDE U team. Select a stylist to view that stylist’s work.
+      Recent work from the B SIDE U team. Select a stylist to view that stylist’s work.
     </p>
   </div>
 
@@ -2419,7 +2447,7 @@
 
   <div class="gallery-head">
     <div class="gallery-title-wrap">
-      <div class="gallery-title">Team Work Carousel</div>
+      <div class="gallery-title">Featured Work</div>
       <p class="gallery-meta" id="galleryMeta">Loading work...</p>
     </div>
   </div>
@@ -2892,7 +2920,7 @@
       galleryMeta.textContent = "No work available yet.";
       return;
     }
-    const who = activeGalleryStaff ? activeGalleryStaff : "All Staff";
+    const who = activeGalleryStaff ? activeGalleryStaff : "All staff mixed carousel";
     galleryMeta.textContent = `${who} · ${FILTERED_ITEMS.length} item${FILTERED_ITEMS.length === 1 ? "" : "s"}`;
   }
 
@@ -3107,23 +3135,32 @@
   }
 
   function renderStaffView(){
-    const groups = STAFF_ORDER.map(name => {
-      if(name === "Tiffany") return "";
-      const items = FILTERED_ITEMS.filter(v => v.staff === name);
-      if(!items.length) return "";
-      const location = items[0]?.location || "";
-      return `
+    const items = activeGalleryStaff
+      ? FILTERED_ITEMS.filter(v => v.staff === activeGalleryStaff)
+      : sortItemsByUidOrder(FILTERED_ITEMS, buildGridOrder(FILTERED_ITEMS));
+
+    if(!items.length){
+      galleryRoot.innerHTML = `<div class="gallery-empty">No images/videos available yet.</div>`;
+      return;
+    }
+
+    const titleHTML = activeGalleryStaff
+      ? `<a class="staff-profile-link" href="${escapeHtml(getStaffProfileUrl(activeGalleryStaff))}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(activeGalleryStaff)} profile page">${escapeHtml(activeGalleryStaff)}</a>`
+      : `All Staff Mix`;
+
+    const locationText = activeGalleryStaff
+      ? (items[0]?.location || "Pasadena")
+      : "Mixed portfolio";
+
+    galleryRoot.innerHTML = `
+      <div class="staff-groups">
         <section class="staff-group">
           <div class="staff-group-head">
             <div class="staff-group-head-left">
-              <h3 class="staff-group-title">
-                <a class="staff-profile-link" href="${escapeHtml(getStaffProfileUrl(name))}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(name)} profile page">
-                  ${escapeHtml(name)}
-                </a>
-              </h3>
+              <h3 class="staff-group-title">${titleHTML}</h3>
             </div>
             <div class="staff-group-head-right">
-              <div class="staff-group-meta">${escapeHtml(location)}</div>
+              <div class="staff-group-meta">${escapeHtml(locationText)}</div>
             </div>
           </div>
           <div class="staff-carousel">
@@ -3132,12 +3169,8 @@
             </div>
           </div>
         </section>
-      `;
-    }).filter(Boolean).join("");
-
-    galleryRoot.innerHTML = groups
-      ? `<div class="staff-groups">${groups}</div>`
-      : `<div class="gallery-empty">No images/videos available for this filter yet.</div>`;
+      </div>
+    `;
 
     setupStaffCarouselAutoplay();
     setupStaffCarouselDrag();
