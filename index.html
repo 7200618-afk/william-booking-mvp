@@ -37,8 +37,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V14
-   Staff cards larger + time buttons lower height.
+   B SIDE U Pasadena Layout Balance V15
+   Date bar sits above available times column on desktop.
    ========================================================= */
 
 .profile-link-under-card,
@@ -217,14 +217,20 @@
     display: grid !important;
     grid-template-columns: minmax(390px, 430px) minmax(0, 1fr) !important;
     grid-template-areas:
-      "date date"
+      "left date"
       "left slots"
       "photo photo" !important;
-    gap: 14px 16px !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 10px 16px !important;
     align-items: start !important;
   }
 
-  .date-area { grid-area: date !important; }
+  .date-area {
+    grid-area: date !important;
+    align-self: start !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
 
   .booking-layout > div:nth-child(2) {
     grid-area: left !important;
