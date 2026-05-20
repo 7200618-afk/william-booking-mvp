@@ -1600,6 +1600,85 @@
         transition-duration: 0.01ms !important;
       }
     }
+  
+    .desktop-results-area {
+      display: block;
+    }
+
+    .desktop-photo-wall-section {
+      display: none;
+    }
+
+    @media (min-width: 1024px) {
+      .desktop-results-area {
+        display: grid;
+        gap: 16px;
+        align-content: start;
+      }
+
+      .desktop-photo-wall-section {
+        display: block;
+      }
+
+      .desktop-photo-wall-section .bsu-team-wall {
+        border: 1px solid rgba(20,20,20,0.10);
+        border-radius: 32px;
+        background: #ffffff;
+        box-shadow: var(--shadow-md);
+        padding: 18px;
+        overflow: hidden;
+      }
+
+      .desktop-photo-wall-section .bsu-team-head {
+        padding: 0 0 10px;
+      }
+
+      .desktop-photo-wall-section .bsu-team-title {
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+
+      .desktop-photo-wall-section .bsu-team-subtitle {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .desktop-photo-wall-section .gallery-title {
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+
+      .desktop-photo-wall-section .gallery-meta {
+        font-size: 12px;
+      }
+
+      .desktop-photo-wall-section .view-grid-wrap .grid-track {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item {
+        flex-basis: calc((100% - (var(--gap) * 3))/4);
+      }
+
+      .desktop-results-area .empty-state {
+        margin-top: 0;
+      }
+
+      .desktop-results-area .slot-area {
+        margin-top: 0;
+      }
+    }
+
+    @media (max-width: 1023px) {
+      .desktop-photo-wall-section {
+        display: none !important;
+      }
+
+      .desktop-results-area {
+        display: block;
+      }
+    }
+
   </style>
 </head>
 
@@ -1640,6 +1719,1710 @@
 
         <div id="message" class="message"></div>
 
+      </div>
+
+      <div class="desktop-results-area">
+        <div id="desktopPhotoWall" class="desktop-photo-wall-section">
+          <style>
+
+.desktop-photo-wall-section{
+  --ink:#111;
+  --muted:#6b7280;
+  --line:rgba(17,17,17,.12);
+  --soft:rgba(17,17,17,.08);
+  --bg:#fff;
+  --chip:#fff;
+  --chip-active:#111;
+  --chip-active-ink:#fff;
+  --gap:2px;
+}
+.bsu-team-wall{
+  width:100%;
+  max-width:100%;
+  margin:0;
+  padding:0 1px 14px;
+  box-sizing:border-box;
+  overflow-x:hidden;
+  background:#fff;
+}
+.bsu-team-head{
+  padding:0 0 12px;
+}
+.bsu-team-title{
+  margin:0 0 6px;
+  font-size:30px;
+  line-height:1.05;
+  font-weight:800;
+  letter-spacing:.4px;
+  color:#222;
+}
+.bsu-team-subtitle{
+  margin:0;
+  font-size:15px;
+  line-height:1.5;
+  color:#666;
+}
+.bsu-divider{
+  height:1px;
+  background:var(--soft);
+  margin:0 0 14px;
+}
+.bsu-filter-group{
+  margin:0 0 12px;
+}
+.bsu-filter-label{
+  font-size:12px;
+  font-weight:800;
+  line-height:1.2;
+  letter-spacing:.18px;
+  color:#666;
+  margin:0 0 8px;
+  text-transform:uppercase;
+}
+.bsu-filter-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.bsu-filter-select-wrap{
+  display:none;
+}
+.bsu-filter-select{
+  width:100%;
+  height:42px;
+  border:1px solid rgba(17,17,17,.14);
+  background:#fff;
+  color:#111;
+  font-size:13px;
+  font-weight:700;
+  padding:0 12px;
+  border-radius:0;
+  font-family:'square market',sans-serif !important;
+}
+.bsu-chip{
+  border:1px solid rgba(17,17,17,.14);
+  background:var(--chip);
+  color:#111;
+  border-radius:0;
+  padding:9px 14px;
+  font-size:13px;
+  line-height:1;
+  font-weight:800;
+  cursor:pointer;
+  transition:.16s;
+}
+.bsu-chip:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+}
+.bsu-chip.is-active{
+  background:var(--chip-active);
+  color:var(--chip-active-ink);
+  border-color:#111;
+}
+
+.gallery-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:14px 0 12px;
+}
+.gallery-title-wrap{
+  min-width:0;
+  flex:1;
+}
+.gallery-title{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:.35px;
+  margin:0 0 4px;
+}
+.gallery-meta{
+  font-size:13px;
+  color:#666;
+  line-height:1.35;
+  margin:0;
+}
+.view-toggle{
+  display:flex;
+  gap:8px;
+}
+.view-icon-btn{
+  width:38px;
+  height:34px;
+  border-radius:0;
+  border:1px solid rgba(17,17,17,.18);
+  background:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  transition:.14s;
+}
+.view-icon-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(0,0,0,.05);
+}
+.view-icon-btn svg{
+  width:18px;
+  height:18px;
+  display:block;
+}
+.view-icon-btn .stroke{
+  stroke:#111;
+}
+.view-icon-btn.is-active{
+  background:#111;
+  border-color:#111;
+}
+.view-icon-btn.is-active .stroke{
+  stroke:#fff;
+}
+
+#bsu-gallery{
+  width:100%;
+  overflow:hidden;
+  position:relative;
+}
+.gallery-empty{
+  font-size:14px;
+  color:#666;
+  padding:10px 0;
+}
+
+/* grouped carousel view */
+.staff-groups{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+.staff-group{
+  width:100%;
+}
+.staff-group-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 8px;
+}
+.staff-group-head-left{
+  min-width:0;
+}
+.staff-group-head-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:0 0 auto;
+}
+.staff-group-title{
+  margin:0;
+  font-size:18px;
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:.2px;
+  color:#111;
+}
+.staff-group-meta{
+  font-size:12px;
+  color:#777;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.staff-book-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:32px;
+  padding:0 14px;
+  border-radius:999px;
+  border:1px solid rgba(17,17,17,.18);
+  background:#fff;
+  color:#111;
+  text-decoration:none;
+  font-size:12px;
+  line-height:1;
+  font-weight:800;
+  white-space:nowrap;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.staff-book-btn:hover{
+  background:#111;
+  border-color:#111;
+  color:#fff;
+  transform:translateY(-1px);
+}
+.staff-carousel{
+  position:relative;
+  overflow:hidden;
+  cursor:grab;
+  touch-action:pan-y;
+  user-select:none;
+}
+.staff-carousel.is-dragging{
+  cursor:grabbing;
+}
+.staff-carousel-track{
+  display:flex;
+  gap:var(--gap);
+  will-change:transform;
+  transition:transform .65s ease;
+}
+.staff-carousel-track.no-anim{
+  transition:none !important;
+}
+.staff-carousel-item{
+  flex:0 0 calc((100% - (var(--gap) * 3))/4);
+  aspect-ratio:3/4;
+  position:relative;
+  overflow:hidden;
+  background:#f3f3f3;
+  cursor:pointer;
+}
+
+/* grid view */
+.view-grid-wrap{
+  width:100%;
+}
+.view-grid-wrap .grid-track{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:var(--gap);
+}
+.grid-item{
+  aspect-ratio:3/4;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  background:#f3f3f3;
+}
+.grid-caption{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:2;
+  padding:7px 9px;
+  font-size:10px;
+  line-height:1.2;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(to top,rgba(0,0,0,.68),rgba(0,0,0,.18),transparent);
+  pointer-events:none;
+  letter-spacing:.08px;
+}
+
+.g-media{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  background:#000;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-drag:none;
+  transition:filter .22s ease, transform .22s ease;
+}
+.staff-carousel-item:hover .g-media,
+.grid-item:hover .g-media{
+  filter:brightness(.78);
+  transform:scale(1.01);
+}
+.is-video::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.14),rgba(0,0,0,.04));
+  pointer-events:none;
+}
+.gallery-play-badge{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:56px;
+  height:56px;
+  border-radius:999px;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  transition:.18s;
+}
+.gallery-play-badge:before{
+  content:"";
+  margin-left:3px;
+  width:0;
+  height:0;
+  border-top:10px solid transparent;
+  border-bottom:10px solid transparent;
+  border-left:16px solid #111;
+}
+.staff-carousel-item:hover .gallery-play-badge,
+.grid-item:hover .gallery-play-badge{
+  transform:translate(-50%,-50%) scale(1.04);
+  box-shadow:0 12px 24px rgba(0,0,0,.2);
+}
+
+/* modal */
+.fi-modal-root{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  pointer-events:none;
+}
+.fi-modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.58);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:.18s;
+}
+.fi-modal-backdrop.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+.fi-modal-box{
+  position:fixed;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  z-index:10000;
+}
+.fi-modal-box.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+.fi-modal-panel{
+  position:relative;
+  border-radius:18px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 28px 70px rgba(0,0,0,.24);
+  width:100%;
+  height:100%;
+}
+.fi-modal-close,
+.fi-modal-side{
+  position:absolute;
+  border:0;
+  border-radius:999px;
+  background:rgba(255,255,255,.94);
+  color:#111;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  z-index:4;
+}
+.fi-modal-close{
+  top:14px;
+  right:14px;
+  width:42px;
+  height:42px;
+  font-size:22px;
+}
+.fi-modal-stage{
+  position:relative;
+  width:100%;
+  height:100%;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.fi-modal-media{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#000;
+  display:block;
+}
+.fi-modal-media.is-hidden{
+  display:none !important;
+}
+.fi-modal-side{
+  top:50%;
+  transform:translateY(-50%);
+  width:36px;
+  height:36px;
+  font-size:20px;
+}
+.fi-modal-prev{left:8px}
+.fi-modal-next{right:8px}
+.fi-modal-caption{
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  z-index:4;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+}
+.fi-modal-caption-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex:0 1 auto;
+  width:auto;
+  min-width:0;
+  max-width:min(92%,560px);
+  padding:10px 12px;
+  border-radius:999px;
+  background:rgba(0,0,0,.58);
+  color:#fff;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+.fi-modal-caption-main{
+  font-size:13px;
+  line-height:1.2;
+  font-weight:900;
+}
+.fi-modal-caption-sub{
+  font-size:12px;
+  line-height:1.2;
+  opacity:.94;
+}
+
+.fi-modal-book-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  margin-left:auto;
+  flex:0 0 auto;
+}
+.fi-modal-book-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  padding:0 14px;
+  border-radius:999px;
+  background:#fff;
+  color:#111;
+  text-decoration:none;
+  font-size:12px;
+  line-height:1;
+  font-weight:900;
+  white-space:nowrap;
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+.fi-modal-book-btn:hover{
+  transform:translateY(-1px);
+}
+
+@media (max-width:860px){
+  .staff-carousel-item{
+    flex:0 0 calc((100% - (var(--gap) * 1))/2);
+  }
+  .view-grid-wrap .grid-track{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+}
+@media (max-width:640px){
+  .staff-carousel-item{
+    flex:0 0 calc((100% - (var(--gap) * 2))/3);
+  }
+  .view-grid-wrap .grid-track{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .bsu-filter-row{
+    display:none;
+  }
+  .bsu-filter-select-wrap{
+    display:block;
+  }
+  .bsu-team-title{
+    font-size:24px;
+  }
+  .bsu-team-subtitle{
+    font-size:14px;
+    line-height:1.42;
+  }
+  .gallery-head{
+    align-items:flex-start;
+  }
+  .gallery-title{
+    font-size:20px;
+  }
+  .staff-group-head{
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:nowrap;
+    gap:8px;
+  }
+  .staff-group-head-left{
+    min-width:0;
+    flex:0 1 auto;
+  }
+  .staff-group-head-right{
+    width:auto;
+    justify-content:flex-end;
+    flex:0 0 auto;
+  }
+  .staff-group-meta{
+    white-space:nowrap;
+  }
+  .staff-group-title{
+    font-size:16px;
+  }
+  .fi-modal-caption{
+    left:10px;
+    right:10px;
+    bottom:10px;
+    align-items:flex-end;
+    justify-content:flex-start;
+    gap:6px;
+  }
+  .fi-modal-caption-pill{
+    max-width:calc(100% - 92px);
+  }
+  .fi-modal-book-wrap{
+    margin-left:0;
+    flex:0 0 auto;
+  }
+}
+@media (max-width:640px){
+  .staff-profile-link{
+    gap:4px;
+  }
+  .staff-profile-link::after{
+    width:11px;
+    height:11px;
+    flex-basis:11px;
+    background-size:11px 11px;
+    transform:translateY(-1px);
+  }
+  .fi-modal-caption-pill{
+    padding:7px 9px;
+    gap:6px;
+    border-radius:999px;
+    max-width:calc(100% - 88px);
+  }
+  .fi-modal-caption-main{
+    font-size:11px;
+  }
+  .fi-modal-caption-sub{
+    font-size:10px;
+  }
+  .fi-modal-book-btn{
+    min-height:28px;
+    padding:0 10px;
+    font-size:10px;
+  }
+}
+
+@media (max-width:500px){
+  .bsu-team-wall{
+    padding:0 1px 10px;
+  }
+  .bsu-team-title{
+    font-size:20px;
+    margin-bottom:4px;
+  }
+  .bsu-team-subtitle{
+    font-size:14px;
+    line-height:1.35;
+  }
+  .bsu-chip{
+    padding:8px 12px;
+    font-size:12px;
+  }
+  .fi-modal-side{
+    width:40px;
+    height:40px;
+    font-size:22px;
+  }
+  .fi-modal-close{
+    width:38px;
+    height:38px;
+    font-size:20px;
+    top:10px;
+    right:10px;
+  }
+  .gallery-play-badge{
+    width:50px;
+    height:50px;
+  }
+  .gallery-play-badge:before{
+    border-top:9px solid transparent;
+    border-bottom:9px solid transparent;
+    border-left:14px solid #111;
+  }
+}
+
+.staff-profile-link{
+  color:inherit;
+  text-decoration:underline;
+  text-underline-offset:4px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:flex-end;
+  gap:5px;
+  line-height:1;
+}
+.staff-profile-link::after{
+  content:"";
+  width:12px;
+  height:12px;
+  flex:0 0 12px;
+  display:inline-block;
+  opacity:.82;
+  transform:translateY(-1px);
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:12px 12px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 12.5L12.5 3.5M7.8 3.5H12.5V8.2' stroke='%23111' stroke-width='1.8' stroke-linecap='square' stroke-linejoin='miter'/%3E%3C/svg%3E");
+}
+.staff-profile-link:hover{
+  opacity:.85;
+}
+
+          </style>
+<div class="bsu-team-wall">
+  <div class="bsu-team-head">
+    <h2 class="bsu-team-title">Our Work</h2>
+    <p class="bsu-team-subtitle">
+      Men’s haircuts, fades, tapers, classic cuts, scissors cuts, perms, and color by the B SIDE U team.
+    </p>
+  </div>
+
+  <div class="bsu-divider"></div>
+
+  <div class="bsu-filter-group">
+    <div class="bsu-filter-label">Filter by service</div>
+    <div class="bsu-filter-row" id="serviceFilters"></div>
+    <div class="bsu-filter-select-wrap">
+      <select class="bsu-filter-select" id="serviceFiltersMobile" aria-label="Filter by service"></select>
+    </div>
+  </div>
+
+  <div class="gallery-head">
+    <div class="gallery-title-wrap">
+      <div class="gallery-title">B SIDE U Team Gallery</div>
+      <p class="gallery-meta" id="galleryMeta">Loading work...</p>
+    </div>
+
+    <div class="view-toggle">
+      <button class="view-icon-btn" type="button" data-view="staff" aria-label="Staff carousel view">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="7" width="7" height="10" rx="1.6" class="stroke" stroke-width="1.8"></rect>
+          <rect x="13" y="7" width="7" height="10" rx="1.6" class="stroke" stroke-width="1.8"></rect>
+          <path d="M6.6 11.2h1.8M15.6 11.2h1.8" class="stroke" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+      </button>
+      <button class="view-icon-btn" type="button" data-view="grid" aria-label="Grid view">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="5" y="6" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
+          <rect x="13" y="6" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
+          <rect x="5" y="14" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
+          <rect x="13" y="14" width="6" height="6" rx="1.2" class="stroke" stroke-width="1.8"></rect>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="bsu-gallery"></div>
+</div>
+
+<script>
+(async()=>{
+  const CLOUD_NAME = "dqfgyorp9";
+  const STORAGE_KEY = "bsu_team_gallery_view_v6";
+  const GRID_ORDER_KEY = "bsu_team_grid_order_after_20260323_v1";
+  const GRID_CUTOFF_TS = new Date("2026-03-23T00:00:00-07:00").getTime();
+  const PINNED_COUNT = 9;
+  const STAFF_AUTOPLAY_MS = 2600;
+  const STAFF_SLIDE_SPEED = 24; // px per second for smooth staff carousel slide
+
+  const STAFF_SOURCES = [
+    { name:"Carl",    tag:"Carl",    location:"San Gabriel",    slug:"carl" },
+    { name:"Sarah",   tag:"Sarah",   location:"San Gabriel", slug:"sarah" },
+    { name:"Ryan",    tag:"Ryan",    location:"Pasadena",    slug:"ryan" },
+    { name:"Ken",     tag:"Ken",     location:"Pasadena",    slug:"ken" },
+    { name:"Joanna",  tag:"joanna",  location:"San Gabriel", slug:"joanna" },
+    { name:"Tiffany", tag:"Tiffany", location:"San Gabriel", slug:"tiffany" },
+    { name:"JJ",      tag:"jj",      location:"San Gabriel", slug:"jj" },
+    { name:"Nami",    tag:"Nami",    location:"Pasadena",    slug:"nami" },
+    { name:"Fiona",   tag:"Fiona",   location:"Pasadena",    slug:"fiona" },
+    { name:"Jacob",   tag:"jacob",   location:"Pasadena",    slug:"jacob" }
+  ];
+
+  const STAFF_ORDER = ["Carl","Sarah","Ryan","Ken","Joanna","Tiffany","JJ","Nami","Fiona","Jacob"];
+
+  const SERVICE_OPTIONS = [
+    { key:"all", label:"All" },
+    { key:"fade-taper", label:"Fade / Taper" },
+    { key:"classic", label:"Classic #3 #2 #1" },
+    { key:"scissors", label:"Scissors Cut" },
+    { key:"perm", label:"Perm" },
+    { key:"color", label:"Color" }
+  ];
+
+  const STAFF_BOOKING_LINKS = {
+    Ryan: {
+      haircut:  "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/Q4SPQLAI34ARXQHL6Y5BEACP",
+      scissors: "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/6MSKB7KM2BIJYF3ORJ6NTOHJ"
+    },
+    Ken: {
+      haircut:  "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/DBWKJLFKWOR2KXD6XMWHPRGA",
+      scissors: "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/EAPYMSXRTY6WPHGIZYCYMDKZ"
+    },
+    Nami: {
+      haircut:  "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/SDNP3FAWHMJTEDDBRQ5J4CI7",
+      scissors: "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/M2Y74YCWXPHY5NNFCMAHVXUB"
+    },
+    Fiona: {
+      haircut:  "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/QNIMRKM7N5PLT6ORMT74QRPN",
+      scissors: "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/FK5VV5EJN4XKOFLREOUKMHO6",
+      perm:     "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/W6XJ42DGWEPSRCAPXSR2T4GS",
+      color:    "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/SQNVWMDAJCXR5IN5GPODD4Z4"
+    },
+    Jacob: {
+      haircut:  "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/UO53NB5XFTCI4PDWOTZOV542",
+      scissors: "https://book.squareup.com/appointments/yf77xpa7nsi6y2/location/L3QJNBCTPSYW7/services/QPU7DCD2FGRO4VWUN7D6YC6D"
+    }
+  };
+
+  const byId = id => document.getElementById(id);
+  const serviceFilters = byId("serviceFilters");
+  const serviceFiltersMobile = byId("serviceFiltersMobile");
+  const galleryRoot = byId("bsu-gallery");
+  const galleryMeta = byId("galleryMeta");
+
+  let ALL_ITEMS = [];
+  let FILTERED_ITEMS = [];
+  let ACTIVE_MODAL_SET = [];
+  let current = 0;
+  let modalOpen = false;
+  let lastOriginRect = null;
+  let activeService = "all";
+  let currentView = "grid";
+  let staffCarouselTimers = [];
+  let framePreviewObserver = null;
+  let framePreviewTimer = null;
+  const FRAME_PREVIEW_SECONDS = [0, .35, .7, 1.05, 1.4, 1.75, 2.1, 2.45, 2.8];
+
+  const safeJson = async url => {
+    try{
+      const r = await fetch(url);
+      return r.ok ? await r.json() : null;
+    }catch(e){
+      return null;
+    }
+  };
+
+  const shuffle = arr => {
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  };
+
+  const escapeHtml = s => String(s || "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    "\"":"&quot;",
+    "'":"&#39;"
+  }[m]));
+
+  function buildVideoFrameUrls(publicId){
+    return FRAME_PREVIEW_SECONDS.map(sec =>
+      `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/so_${sec},c_fill,g_auto,w_480,h_640,f_jpg,q_auto/${publicId}.jpg`
+    );
+  }
+
+  function getStaffProfileUrl(staffName){
+    const match = ALL_ITEMS.find(v => v.staff === staffName);
+    const sourceMatch = STAFF_SOURCES.find(v => v.name === staffName);
+    const slug = match?.slug || sourceMatch?.slug || staffName.toLowerCase();
+    return `https://bsideuhair.com/${encodeURIComponent(slug)}`;
+  }
+
+  function getStaffBookingUrl(staffName){
+    const links = STAFF_BOOKING_LINKS[staffName];
+    if(!links) return getStaffProfileUrl(staffName);
+    return links.haircut || links.scissors || links.perm || links.color || Object.values(links)[0] || getStaffProfileUrl(staffName);
+  }
+
+  function getCreatedAtValue(resource){
+    const raw =
+      resource.created_at ||
+      resource.createdAt ||
+      resource.uploaded_at ||
+      resource.uploadedAt ||
+      resource.created ||
+      "";
+
+    const t = raw ? new Date(raw).getTime() : 0;
+    return Number.isFinite(t) ? t : 0;
+  }
+
+  function readJsonStorage(key, fallback){
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function writeJsonStorage(key, value){
+    try{
+      localStorage.setItem(key, JSON.stringify(value));
+    }catch(e){}
+  }
+
+  function buildGridOrder(items){
+    const allUids = items.map(it => it.uid);
+    const previousOrder = readJsonStorage(GRID_ORDER_KEY, []);
+    const previousFiltered = previousOrder.filter(uid => allUids.includes(uid));
+
+    const pinnedCandidates = items
+      .filter(it => (it.createdAtTs || 0) >= GRID_CUTOFF_TS)
+      .sort((a,b) => (b.createdAtTs || 0) - (a.createdAtTs || 0))
+      .slice(0, PINNED_COUNT)
+      .map(it => it.uid);
+
+    const pinnedSet = new Set(pinnedCandidates);
+
+    let randomTail = previousFiltered.filter(uid => !pinnedSet.has(uid));
+    const missingTail = allUids.filter(uid => !pinnedSet.has(uid) && !randomTail.includes(uid));
+
+    if(!previousFiltered.length){
+      randomTail = shuffle(missingTail);
+    }else if(missingTail.length){
+      randomTail = [...randomTail, ...shuffle(missingTail)];
+    }
+
+    const finalOrder = [...pinnedCandidates, ...randomTail];
+    writeJsonStorage(GRID_ORDER_KEY, finalOrder);
+    return finalOrder;
+  }
+
+  function sortItemsByUidOrder(items, uidOrder){
+    const orderMap = new Map(uidOrder.map((uid, idx) => [uid, idx]));
+    return [...items].sort((a,b)=>{
+      const ai = orderMap.has(a.uid) ? orderMap.get(a.uid) : Number.MAX_SAFE_INTEGER;
+      const bi = orderMap.has(b.uid) ? orderMap.get(b.uid) : Number.MAX_SAFE_INTEGER;
+      return ai - bi;
+    });
+  }
+
+  function normalizeText(s){
+    return String(s || "")
+      .toLowerCase()
+      .replace(/[_-]+/g," ")
+      .replace(/\s+/g," ")
+      .trim();
+  }
+
+  function detectService(publicId){
+    const t = normalizeText(publicId);
+
+    if(
+      t.includes("fade taper") ||
+      t.includes("fade/taper") ||
+      t.includes("fade") ||
+      t.includes("taper") ||
+      t.includes("skin fade") ||
+      t.includes("low fade") ||
+      t.includes("mid fade") ||
+      t.includes("high fade")
+    ){
+      return { key:"fade-taper", label:"Fade / Taper" };
+    }
+
+    if(
+      t.includes("classic") ||
+      t.includes("business cut") ||
+      t.includes("side part") ||
+      t.includes("ivy league")
+    ){
+      return { key:"classic", label:"Classic Cut" };
+    }
+
+    if(
+      t.includes("scissors cut") ||
+      t.includes("scissor cut") ||
+      t.includes("scissors") ||
+      t.includes("shear cut") ||
+      t.includes("shears")
+    ){
+      return { key:"scissors", label:"Scissors Cut" };
+    }
+
+    if(
+      t.includes("perm") ||
+      t.includes("wave") ||
+      t.includes("korean perm") ||
+      t.includes("texture perm") ||
+      t.includes("down perm")
+    ){
+      return { key:"perm", label:"Perm" };
+    }
+
+    if(
+      t.includes("color") ||
+      t.includes("bleach") ||
+      t.includes("dye") ||
+      t.includes("tone") ||
+      t.includes("ash") ||
+      t.includes("brown") ||
+      t.includes("silver")
+    ){
+      return { key:"color", label:"Color" };
+    }
+
+    return { key:"classic", label:"Classic Cut" };
+  }
+
+  function buildServiceFilters(){
+    serviceFilters.innerHTML = SERVICE_OPTIONS.map(opt => `
+      <button
+        type="button"
+        class="bsu-chip ${opt.key===activeService ? "is-active" : ""}"
+        data-service="${escapeHtml(opt.key)}"
+      >${escapeHtml(opt.label)}</button>
+    `).join("");
+
+    serviceFiltersMobile.innerHTML = SERVICE_OPTIONS.map(opt => `
+      <option value="${escapeHtml(opt.key)}" ${opt.key===activeService ? "selected" : ""}>${escapeHtml(opt.label)}</option>
+    `).join("");
+
+    [...serviceFilters.querySelectorAll(".bsu-chip")].forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        activeService = btn.dataset.service || "all";
+        buildServiceFilters();
+        applyFilters();
+      });
+    });
+
+    serviceFiltersMobile.onchange = ()=>{
+      activeService = serviceFiltersMobile.value || "all";
+      buildServiceFilters();
+      applyFilters();
+    };
+  }
+
+  function buildModalSet(item){
+    ACTIVE_MODAL_SET = FILTERED_ITEMS.filter(v => v.staff === item.staff);
+    current = ACTIVE_MODAL_SET.findIndex(v => v.uid === item.uid);
+    if(current < 0){
+      ACTIVE_MODAL_SET = [item];
+      current = 0;
+    }
+  }
+
+  const modal = document.createElement("div");
+  modal.className = "fi-modal-root";
+  modal.innerHTML = `
+    <div class="fi-modal-backdrop"></div>
+    <div class="fi-modal-box" aria-hidden="true">
+      <div class="fi-modal-panel">
+        <button class="fi-modal-close" type="button" aria-label="Close">×</button>
+        <div class="fi-modal-stage">
+          <button class="fi-modal-side fi-modal-prev" type="button" aria-label="Previous">‹</button>
+          <img class="fi-modal-media" alt="B SIDE U gallery image">
+          <video class="fi-modal-media is-hidden" playsinline webkit-playsinline controls controlsList="nodownload noplaybackrate" preload="metadata"></video>
+          <button class="fi-modal-side fi-modal-next" type="button" aria-label="Next">›</button>
+          <div class="fi-modal-caption">
+            <div class="fi-modal-caption-pill">
+              <div>
+                <div class="fi-modal-caption-main" id="fiModalCaptionMain"></div>
+                <div class="fi-modal-caption-sub" id="fiModalCaptionSub"></div>
+              </div>
+            </div>
+            <div class="fi-modal-book-wrap" id="fiModalBookWrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const mb = modal.querySelector(".fi-modal-backdrop");
+  const box = modal.querySelector(".fi-modal-box");
+  const mimg = modal.querySelector("img");
+  const mvid = modal.querySelector("video");
+  const prev = modal.querySelector(".fi-modal-prev");
+  const next = modal.querySelector(".fi-modal-next");
+  const close = modal.querySelector(".fi-modal-close");
+  const stage = modal.querySelector(".fi-modal-stage");
+  const modalCaptionMain = modal.querySelector("#fiModalCaptionMain");
+  const modalCaptionSub = modal.querySelector("#fiModalCaptionSub");
+  const modalBookWrap = modal.querySelector("#fiModalBookWrap");
+
+  mvid.addEventListener("contextmenu", e => e.preventDefault());
+
+  function stopModalVideo(){
+    try{ mvid.pause(); }catch(e){}
+    mvid.removeAttribute("src");
+    try{ mvid.load(); }catch(e){}
+  }
+
+  function setRect(rect){
+    box.style.left = rect.left + "px";
+    box.style.top = rect.top + "px";
+    box.style.width = rect.width + "px";
+    box.style.height = rect.height + "px";
+  }
+
+  function readStrictOriginRect(triggerEl){
+    const r = triggerEl.getBoundingClientRect();
+    return {
+      left:r.left,
+      top:r.top,
+      width:r.width,
+      height:r.height
+    };
+  }
+
+  function getExpandedRectFromOrigin(originRect){
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const width = Math.min(vw - 28, 560);
+    const height = Math.min(vh - 28, width * (4/3));
+    const left = (vw - width) / 2;
+    const originCenterY = originRect.top + originRect.height / 2;
+    let top = originCenterY - height / 2;
+    if(top < 14) top = 14;
+    if(top + height > vh - 14) top = vh - 14 - height;
+    return { left, top, width, height };
+  }
+
+  function showModal(i){
+    const it = ACTIVE_MODAL_SET[i];
+    if(!it) return;
+    current = i;
+
+    modalCaptionMain.textContent = `${it.staff} · ${it.serviceLabel}`;
+    modalCaptionSub.textContent = it.location || "";
+
+    if(currentView === "grid"){
+      const bookingUrl = getStaffBookingUrl(it.staff);
+      modalBookWrap.innerHTML = bookingUrl ? `
+        <a class="fi-modal-book-btn" href="${escapeHtml(bookingUrl)}" target="_blank" rel="noopener noreferrer">Book Now</a>
+      ` : "";
+    }else{
+      modalBookWrap.innerHTML = "";
+    }
+
+    if(it.type === "image"){
+      stopModalVideo();
+      mvid.classList.add("is-hidden");
+      mimg.classList.remove("is-hidden");
+      mimg.src = it.large;
+    }else{
+      mimg.classList.add("is-hidden");
+      mvid.classList.remove("is-hidden");
+      mvid.src = it.large;
+      try{
+        mvid.load();
+        mvid.currentTime = 0;
+        mvid.play().catch(()=>{});
+      }catch(e){}
+    }
+  }
+
+  function openModal(item, triggerEl){
+    if(!triggerEl || !item) return;
+
+    buildModalSet(item);
+    modalOpen = true;
+    showModal(current);
+
+    const startRect = readStrictOriginRect(triggerEl);
+    const endRect = getExpandedRectFromOrigin(startRect);
+    lastOriginRect = startRect;
+
+    box.style.transition = "none";
+    setRect(startRect);
+    box.classList.add("show");
+    mb.classList.add("show");
+    box.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        box.style.transition = "opacity .24s ease, left .24s ease, top .24s ease, width .24s ease, height .24s ease";
+        setRect(endRect);
+      });
+    });
+  }
+
+  function closeModal(){
+    if(!modalOpen) return;
+    modalOpen = false;
+
+    if(lastOriginRect){
+      box.style.transition = "opacity .2s ease, left .2s ease, top .2s ease, width .2s ease, height .2s ease";
+      setRect(lastOriginRect);
+    }
+
+    box.classList.remove("show");
+    mb.classList.remove("show");
+
+    setTimeout(()=>{
+      box.setAttribute("aria-hidden","true");
+      stopModalVideo();
+      document.body.style.overflow = "";
+      ACTIVE_MODAL_SET = [];
+      modalBookWrap.innerHTML = "";
+    }, 210);
+  }
+
+  function stepModal(dir){
+    if(!ACTIVE_MODAL_SET.length) return;
+    current = dir === -1
+      ? (current - 1 + ACTIVE_MODAL_SET.length) % ACTIVE_MODAL_SET.length
+      : (current + 1) % ACTIVE_MODAL_SET.length;
+    showModal(current);
+  }
+
+  function clearStaffCarousels(){
+    staffCarouselTimers.forEach(timer=>{
+      if(timer && timer.type === "raf") cancelAnimationFrame(timer.id);
+      else clearInterval(timer);
+    });
+    staffCarouselTimers = [];
+  }
+
+  function setView(view){
+    currentView = view;
+    document.querySelectorAll(".view-icon-btn").forEach(b=>{
+      b.classList.toggle("is-active", b.dataset.view === view);
+    });
+    closeModal();
+    clearStaffCarousels();
+    try{
+      localStorage.setItem(STORAGE_KEY, view);
+    }catch(e){}
+    renderGallery();
+  }
+
+  function updateMeta(){
+    if(!ALL_ITEMS.length){
+      galleryMeta.textContent = "No work available yet.";
+      return;
+    }
+    const svc = SERVICE_OPTIONS.find(v => v.key === activeService);
+    const label = svc && activeService !== "all" ? svc.label : "All Services";
+    galleryMeta.textContent = `${FILTERED_ITEMS.length} item${FILTERED_ITEMS.length === 1 ? "" : "s"} · ${label}`;
+  }
+
+  function buildTile(item, viewType = "staff"){
+    const profileUrl = getStaffProfileUrl(item.staff);
+    const caption = `${item.staff}`;
+
+    if(item.type === "video"){
+      const frames = item.frames && item.frames.length ? item.frames : [item.poster];
+      return `
+        <div
+          class="tile js-open ${viewType === "grid" ? "grid-item" : "staff-carousel-item"} is-video"
+          data-uid="${escapeHtml(item.uid)}"
+          data-profile-url="${escapeHtml(profileUrl)}"
+        >
+          <img
+            class="g-media bsu-video-frame"
+            src="${escapeHtml(item.poster)}"
+            data-frames="${escapeHtml(frames.join("|"))}"
+            data-fallback="${escapeHtml(item.poster)}"
+            loading="lazy"
+            alt="${escapeHtml(item.staff)} portfolio video preview"
+          >
+          ${viewType === "grid" ? `<div class="grid-caption">${escapeHtml(caption)}</div>` : ``}
+        </div>
+      `;
+    }
+
+    return `
+      <div
+        class="tile js-open ${viewType === "grid" ? "grid-item" : "staff-carousel-item"}"
+        data-uid="${escapeHtml(item.uid)}"
+        data-profile-url="${escapeHtml(profileUrl)}"
+      >
+        <img
+          class="g-media"
+          src="${escapeHtml(item.thumb)}"
+          loading="lazy"
+          alt="${escapeHtml(item.staff)} ${escapeHtml(item.serviceLabel)} image"
+        >
+        ${viewType === "grid" ? `<div class="grid-caption">${escapeHtml(caption)}</div>` : ``}
+      </div>
+    `;
+  }
+
+  function gridItemsPerRow(){
+    if(window.innerWidth <= 640) return 3;
+    if(window.innerWidth <= 860) return 4;
+    return 5;
+  }
+
+  function staffItemsPerPage(){
+    if(window.innerWidth <= 640) return 3;
+    if(window.innerWidth <= 860) return 2;
+    return 4;
+  }
+
+  function setupStaffCarouselAutoplay(){
+    clearStaffCarousels();
+
+    if(currentView !== "staff") return;
+
+    const carousels = [...galleryRoot.querySelectorAll(".staff-carousel")];
+
+    carousels.forEach(carousel=>{
+      const track = carousel.querySelector(".staff-carousel-track");
+      if(!track) return;
+
+      track.querySelectorAll(".is-clone").forEach(el=>el.remove());
+
+      const items = [...track.querySelectorAll(".staff-carousel-item")];
+      if(!items.length) return;
+
+      const countPerPage = staffItemsPerPage();
+      if(items.length <= countPerPage) return;
+
+      const clones = items.map(el=>{
+        const clone = el.cloneNode(true);
+        clone.classList.add("is-clone");
+        clone.setAttribute("aria-hidden", "true");
+        return clone;
+      });
+      clones.forEach(clone=>track.appendChild(clone));
+
+      track.classList.add("no-anim");
+
+      let x = 0;
+      let lastTs = null;
+      let originalWidth = Math.max(0, track.scrollWidth / 2);
+      let hoverPaused = false;
+      let isDown = false;
+      let startClientX = 0;
+      let startX = 0;
+      let moved = false;
+
+      const normalizeX = value => {
+        if(!originalWidth) return 0;
+        return ((value % originalWidth) + originalWidth) % originalWidth;
+      };
+
+      const applyX = () => {
+        track.style.transform = `translateX(${-x}px)`;
+      };
+
+      const markDraggingForClick = didMove => {
+        carousel.querySelectorAll(".staff-carousel-item").forEach(it=>{
+          it.dataset.dragging = didMove ? "1" : "0";
+        });
+      };
+
+      const recalc = () => {
+        originalWidth = Math.max(0, track.scrollWidth / 2);
+        x = normalizeX(x);
+        applyX();
+      };
+
+      const animate = ts => {
+        if(lastTs === null) lastTs = ts;
+        const dt = Math.min(64, ts - lastTs);
+        lastTs = ts;
+
+        if(!hoverPaused && !isDown && originalWidth > carousel.clientWidth){
+          x = normalizeX(x + (STAFF_SLIDE_SPEED * dt) / 1000);
+          applyX();
+        }
+
+        const id = requestAnimationFrame(animate);
+        const timer = staffCarouselTimers.find(v => v && v.carousel === carousel);
+        if(timer) timer.id = id;
+      };
+
+      const startDrag = (clientX, pointerId) => {
+        isDown = true;
+        moved = false;
+        startClientX = clientX;
+        startX = x;
+        lastTs = null;
+        markDraggingForClick(false);
+        carousel.classList.add("is-dragging");
+        if(pointerId !== undefined && carousel.setPointerCapture){
+          try{ carousel.setPointerCapture(pointerId); }catch(e){}
+        }
+      };
+
+      const moveDrag = (clientX, eventObj) => {
+        if(!isDown) return;
+        const dx = clientX - startClientX;
+        if(Math.abs(dx) > 5) moved = true;
+        x = normalizeX(startX - dx);
+        applyX();
+        if(moved && eventObj && eventObj.cancelable){
+          eventObj.preventDefault();
+        }
+      };
+
+      const endDrag = pointerId => {
+        if(!isDown) return;
+        isDown = false;
+        carousel.classList.remove("is-dragging");
+        markDraggingForClick(moved);
+        lastTs = null;
+        if(pointerId !== undefined && carousel.releasePointerCapture){
+          try{ carousel.releasePointerCapture(pointerId); }catch(e){}
+        }
+        setTimeout(()=>markDraggingForClick(false), 80);
+      };
+
+      recalc();
+      const firstId = requestAnimationFrame(animate);
+      staffCarouselTimers.push({ type:"raf", id:firstId, carousel });
+
+      carousel.addEventListener("mouseenter", ()=>{ hoverPaused = true; });
+      carousel.addEventListener("mouseleave", ()=>{
+        hoverPaused = false;
+        if(isDown) endDrag();
+        lastTs = null;
+      });
+
+      if(window.PointerEvent){
+        carousel.addEventListener("pointerdown", e=>{
+          if(e.button !== undefined && e.button !== 0) return;
+          startDrag(e.clientX, e.pointerId);
+        });
+        carousel.addEventListener("pointermove", e=>moveDrag(e.clientX, e));
+        carousel.addEventListener("pointerup", e=>endDrag(e.pointerId));
+        carousel.addEventListener("pointercancel", e=>endDrag(e.pointerId));
+      }else{
+        carousel.addEventListener("mousedown", e=>{
+          if(e.button !== 0) return;
+          startDrag(e.clientX);
+        });
+        window.addEventListener("mousemove", e=>moveDrag(e.clientX, e));
+        window.addEventListener("mouseup", ()=>endDrag());
+
+        carousel.addEventListener("touchstart", e=>{
+          if(e.touches[0]) startDrag(e.touches[0].clientX);
+        }, { passive:true });
+        carousel.addEventListener("touchmove", e=>{
+          if(e.touches[0]) moveDrag(e.touches[0].clientX, e);
+        }, { passive:false });
+        carousel.addEventListener("touchend", ()=>endDrag(), { passive:true });
+        carousel.addEventListener("touchcancel", ()=>endDrag(), { passive:true });
+      }
+
+      window.addEventListener("resize", recalc, { passive:true });
+    });
+  }
+
+  function setupStaffCarouselDrag(){
+    // Drag is built into setupStaffCarouselAutoplay so it can share the same transform value.
+    return;
+  }
+
+  function renderStaffView(){
+    const groups = STAFF_ORDER.map(name => {
+      if(name === "Tiffany") return "";
+      const items = FILTERED_ITEMS.filter(v => v.staff === name);
+      if(!items.length) return "";
+      const location = items[0]?.location || "";
+      return `
+        <section class="staff-group">
+          <div class="staff-group-head">
+            <div class="staff-group-head-left">
+              <h3 class="staff-group-title">
+                <a class="staff-profile-link" href="${escapeHtml(getStaffProfileUrl(name))}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escapeHtml(name)} profile page">
+                  ${escapeHtml(name)}
+                </a>
+              </h3>
+            </div>
+            <div class="staff-group-head-right">
+              <div class="staff-group-meta">${escapeHtml(location)}</div>
+            </div>
+          </div>
+          <div class="staff-carousel">
+            <div class="staff-carousel-track">
+              ${items.map(it => buildTile(it, "staff")).join("")}
+            </div>
+          </div>
+        </section>
+      `;
+    }).filter(Boolean).join("");
+
+    galleryRoot.innerHTML = groups
+      ? `<div class="staff-groups">${groups}</div>`
+      : `<div class="gallery-empty">No images/videos available for this filter yet.</div>`;
+
+    setupStaffCarouselAutoplay();
+    setupStaffCarouselDrag();
+  }
+
+  function renderGridView(){
+    const uidOrder = buildGridOrder(FILTERED_ITEMS);
+    const orderedItems = sortItemsByUidOrder(FILTERED_ITEMS, uidOrder);
+
+    galleryRoot.innerHTML = orderedItems.length
+      ? `
+        <div class="view-grid-wrap">
+          <div class="grid-track">
+            ${orderedItems.map(it => buildTile(it, "grid")).join("")}
+          </div>
+        </div>
+      `
+      : `<div class="gallery-empty">No images/videos available for this filter yet.</div>`;
+  }
+
+  function bindGalleryClicks(){
+    galleryRoot.querySelectorAll(".js-open").forEach(el=>{
+      el.addEventListener("click", e=>{
+        if(el.dataset.dragging === "1"){
+          e.preventDefault();
+          e.stopPropagation();
+          el.dataset.dragging = "0";
+          return;
+        }
+
+        const uid = el.getAttribute("data-uid");
+        const item = FILTERED_ITEMS.find(v => v.uid === uid);
+        if(item) openModal(item, el);
+      });
+    });
+  }
+
+
+  function clearFramePreviewAnimation(){
+    if(framePreviewObserver){
+      try{ framePreviewObserver.disconnect(); }catch(e){}
+      framePreviewObserver = null;
+    }
+    if(framePreviewTimer){
+      clearInterval(framePreviewTimer);
+      framePreviewTimer = null;
+    }
+  }
+
+  function setupFramePreviewAnimation(){
+    clearFramePreviewAnimation();
+
+    const imgs = [...galleryRoot.querySelectorAll("img.bsu-video-frame")];
+    if(!imgs.length) return;
+
+    const visible = new Set();
+
+    const showNextFrame = img => {
+      const frames = String(img.dataset.frames || "").split("|").filter(Boolean);
+      if(!frames.length) return;
+      let i = Number(img.dataset.frameIndex || "0");
+      if(!Number.isFinite(i)) i = 0;
+      img.dataset.frameIndex = String((i + 1) % frames.length);
+      img.src = frames[i % frames.length];
+    };
+
+    imgs.forEach(img=>{
+      img.dataset.frameIndex = "0";
+      img.addEventListener("error", ()=>{
+        const fallback = img.dataset.fallback;
+        if(fallback && img.src !== fallback) img.src = fallback;
+      });
+    });
+
+    if("IntersectionObserver" in window){
+      framePreviewObserver = new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting) visible.add(entry.target);
+          else visible.delete(entry.target);
+        });
+      }, { root:null, rootMargin:"250px 0px", threshold:.05 });
+
+      imgs.forEach(img=>framePreviewObserver.observe(img));
+    }else{
+      imgs.forEach(img=>visible.add(img));
+    }
+
+    framePreviewTimer = setInterval(()=>{
+      if(document.visibilityState && document.visibilityState !== "visible") return;
+      visible.forEach(img=>showNextFrame(img));
+    }, 320);
+
+    setTimeout(()=>visible.forEach(img=>showNextFrame(img)), 120);
+  }
+
+  function renderGallery(){
+    clearStaffCarousels();
+    clearFramePreviewAnimation();
+    if(currentView === "grid") renderGridView();
+    else renderStaffView();
+    bindGalleryClicks();
+    setupFramePreviewAnimation();
+    updateMeta();
+  }
+
+  function applyFilters(){
+    FILTERED_ITEMS = ALL_ITEMS.filter(it => {
+      return activeService === "all" ? true : it.serviceKey === activeService;
+    });
+    renderGallery();
+  }
+
+  buildServiceFilters();
+
+  document.querySelectorAll(".view-icon-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>setView(btn.dataset.view));
+  });
+
+  window.addEventListener("resize", ()=>{
+    if(modalOpen && lastOriginRect){
+      setRect(getExpandedRectFromOrigin(lastOriginRect));
+    }
+    if(currentView === "staff"){
+      setupStaffCarouselAutoplay();
+    }else{
+      renderGallery();
+    }
+  });
+
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState !== "visible"){
+      clearStaffCarousels();
+    }else if(currentView === "staff"){
+      setupStaffCarouselAutoplay();
+    }
+  });
+
+  document.addEventListener("keydown", e=>{
+    if(!modalOpen) return;
+    if(e.key === "Escape") closeModal();
+    if(e.key === "ArrowLeft") stepModal(-1);
+    if(e.key === "ArrowRight") stepModal(1);
+  });
+
+  mb.addEventListener("click", closeModal);
+  close.addEventListener("click", closeModal);
+  prev.addEventListener("click", ()=>stepModal(-1));
+  next.addEventListener("click", ()=>stepModal(1));
+
+  let swipe = false, swipeX = 0, swipeDx = 0;
+  const swipeEnd = ()=>{
+    if(!swipe) return;
+    swipe = false;
+    const t = Math.max(50,Math.min(110,window.innerWidth * .12));
+    if(swipeDx > t) stepModal(-1);
+    else if(swipeDx < -t) stepModal(1);
+    swipeDx = 0;
+  };
+
+  stage.addEventListener("touchstart", e=>{
+    if(e.touches[0]){
+      swipe = true;
+      swipeX = e.touches[0].clientX;
+      swipeDx = 0;
+    }
+  },{passive:true});
+
+  stage.addEventListener("touchmove", e=>{
+    if(swipe && e.touches[0]){
+      swipeDx = e.touches[0].clientX - swipeX;
+    }
+  },{passive:true});
+
+  stage.addEventListener("touchend", swipeEnd);
+
+  try{
+    currentView = localStorage.getItem(STORAGE_KEY) || "grid";
+  }catch(e){
+    currentView = "staff";
+  }
+  document.querySelectorAll(".view-icon-btn").forEach(b=>{
+    b.classList.toggle("is-active", b.dataset.view === currentView);
+  });
+
+  try{
+    const results = await Promise.all(
+      STAFF_SOURCES.map(async staff=>{
+        const [imgData, vidData] = await Promise.all([
+          safeJson(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${encodeURIComponent(staff.tag)}.json?t=${Date.now()}`),
+          safeJson(`https://res.cloudinary.com/${CLOUD_NAME}/video/list/${encodeURIComponent(staff.tag)}.json?t=${Date.now()}`)
+        ]);
+
+        const imgs = (imgData?.resources || []).map(r=>{
+          const svc = detectService(r.public_id);
+          return {
+            uid:`img__${staff.name}__${r.public_id}`,
+            type:"image",
+            staff:staff.name,
+            slug:staff.slug,
+            location:staff.location,
+            serviceKey:svc.key,
+            serviceLabel:svc.label,
+            publicId:r.public_id,
+            createdAtTs:getCreatedAtValue(r),
+            thumb:`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_fill,g_auto,w_480,h_640,f_auto,q_auto/${r.public_id}`,
+            large:`https://res.cloudinary.com/${CLOUD_NAME}/image/upload/c_limit,w_1800,f_auto,q_auto/${r.public_id}`
+          };
+        });
+
+        const vids = (vidData?.resources || []).map(r=>{
+          const svc = detectService(r.public_id);
+          return {
+            uid:`vid__${staff.name}__${r.public_id}`,
+            type:"video",
+            staff:staff.name,
+            slug:staff.slug,
+            location:staff.location,
+            serviceKey:svc.key,
+            serviceLabel:svc.label,
+            publicId:r.public_id,
+            createdAtTs:getCreatedAtValue(r),
+            poster:`https://res.cloudinary.com/${CLOUD_NAME}/video/upload/so_0,c_fill,g_auto,w_480,h_640,f_jpg,q_auto/${r.public_id}.jpg`,
+            frames:buildVideoFrameUrls(r.public_id),
+            preview:`https://res.cloudinary.com/${CLOUD_NAME}/video/upload/so_0,eo_3,c_fill,g_auto,w_480,h_640,f_mp4,vc_h264,q_auto/${r.public_id}.mp4`,
+            large:`https://res.cloudinary.com/${CLOUD_NAME}/video/upload/c_limit,w_1600,f_mp4,vc_h264,q_auto/${r.public_id}.mp4`
+          };
+        });
+
+        return [...shuffle(imgs), ...shuffle(vids)];
+      })
+    );
+
+    ALL_ITEMS = results.flat().filter(item => {
+      if(item.staff !== "Tiffany") return true;
+      return item.serviceKey === "perm";
+    });
+
+    if(!ALL_ITEMS.length){
+      galleryRoot.innerHTML = `<div class="gallery-empty">No images/videos available yet.</div>`;
+      galleryMeta.textContent = "No work available yet.";
+      return;
+    }
+
+    applyFilters();
+  }catch(err){
+    galleryRoot.innerHTML = `<div class="gallery-empty">Unable to load gallery right now.</div>`;
+    galleryMeta.textContent = "Unable to load gallery right now.";
+  }
+})();
+</script>
+<!-- ===== /B SIDE U | All Staff Photo Wall ===== -->
+        </div>
+
         <div id="emptyState" class="empty-state">
           <div id="emptyTitle" class="empty-title"></div>
           <div id="emptySub" class="empty-sub"></div>
@@ -1654,10 +3437,11 @@
             </a>
           </div>
         </div>
-      </div>
 
-      <div id="slotCard" class="slot-area">
-        <div id="slotGroups"></div>
+
+        <div id="slotCard" class="slot-area">
+          <div id="slotGroups"></div>
+        </div>
       </div>
     </div>
   </div>
