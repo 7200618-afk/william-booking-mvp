@@ -37,8 +37,9 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V7
-   Balanced photo wall + more breathing space before time card.
+   B SIDE U Pasadena Layout Balance V8
+   Divider extends from staff wall to photo wall.
+   Time card sits under the divider.
    ========================================================= */
 
 .profile-link-under-card,
@@ -46,15 +47,10 @@
   display: none !important;
 }
 
-/* Header: compact, four separate rows */
 .pasadena-header {
   display: grid !important;
   grid-template-columns: 1fr !important;
-  grid-template-areas:
-    "title"
-    "status"
-    "address"
-    "actions" !important;
+  grid-template-areas: "title" "status" "address" "actions" !important;
   align-items: start !important;
   justify-items: start !important;
   row-gap: 8px !important;
@@ -142,7 +138,6 @@
   white-space: nowrap !important;
   box-shadow: none !important;
 }
-
 .date-area,
 .date-area.is-fixed-fallback {
   border: 0 !important;
@@ -162,18 +157,15 @@
     max-width: 1120px !important;
     padding: 20px 22px 48px !important;
   }
-
   .booking-layout {
     grid-template-columns: minmax(350px, 400px) minmax(0, 1fr) !important;
     gap: 14px 16px !important;
     align-items: start !important;
   }
-
   .booking-layout > div:nth-child(2) {
     padding: 14px !important;
     border-radius: 24px !important;
   }
-
   .staff-strip { gap: 9px !important; }
   .staff-card {
     min-height: 126px !important;
@@ -189,6 +181,11 @@
   .staff-name, .service-name { font-size: 12.6px !important; }
   .staff-status, .service-meta { font-size: 9.6px !important; }
 
+  .section-divider {
+    height: 1px !important;
+    margin: 15px 0 14px !important;
+    background: rgba(20,20,20,.10) !important;
+  }
   .service-pills { gap: 8px !important; }
   .service-pill {
     min-height: 48px !important;
@@ -198,21 +195,30 @@
   }
   .service-meta { margin-top: 4px !important; }
 
-  /* Right column alignment: photo wall is a medium height, with breathing space before time card. */
   .desktop-results-area {
     gap: 0 !important;
     align-content: start !important;
   }
-
   .desktop-photo-wall-section {
     display: block !important;
     height: 198px !important;
     max-height: 198px !important;
     min-height: 0 !important;
-    margin: 0 0 18px !important;
+    margin: 0 0 33px !important;
     padding: 0 !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     align-self: start !important;
+    position: relative !important;
+  }
+  .desktop-photo-wall-section::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: -16px !important;
+    height: 1px !important;
+    background: rgba(20,20,20,.10) !important;
+    display: block !important;
   }
   .desktop-photo-wall-section .bsu-team-wall,
   .desktop-photo-wall-section .staff-groups,
@@ -256,7 +262,6 @@
     object-fit: cover !important;
   }
 
-  /* Time card: separate it from photo wall with a clear but controlled gap. */
   .desktop-results-area .slot-area,
   .slot-area {
     margin-top: 0 !important;
@@ -290,7 +295,6 @@
   .pasadena-title { font-size: clamp(31px, 7vw, 42px) !important; }
   .pasadena-address { font-size: 13px !important; }
 }
-
 @media (max-width: 600px) {
   .page { padding: 10px 10px 26px !important; }
   .pasadena-header {
