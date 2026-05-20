@@ -54,86 +54,102 @@
   display: none !important;
 }
 
-/* Open hour must be its own line */
+/* Force Pasadena header meta into two real rows */
+.pasadena-header-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  gap: 12px !important;
+  margin-top: 10px !important;
+}
+
+.pasadena-open-row {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+.pasadena-address-row {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .pasadena-open {
   display: inline-flex !important;
   width: fit-content !important;
   max-width: 100% !important;
-  margin-bottom: 12px !important;
-  flex-shrink: 0 !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
 }
 
-/* Force everything after open hour to next row */
-.pasadena-address-row {
-  display: flex !important;
-  align-items: center !important;
-  gap: 14px !important;
-  flex-wrap: wrap !important;
-  margin-top: 0 !important;
-  position: relative !important;
-  z-index: 2 !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  clear: both !important;
-}
-
-/* Address */
-.pasadena-address-row .pasadena-address {
+.pasadena-address {
   display: inline-flex !important;
-  align-items: center !important;
   width: auto !important;
   max-width: none !important;
   margin: 0 !important;
   line-height: 1.45 !important;
-  white-space: normal !important;
+  flex: 0 1 auto !important;
 }
 
-/* Buttons */
-.pasadena-address-row .pasadena-links {
+.pasadena-links {
   display: inline-flex !important;
   width: auto !important;
   margin: 0 !important;
   gap: 8px !important;
   flex-wrap: wrap !important;
+  flex: 0 0 auto !important;
 }
 
-/* Make sure original parent can stack rows */
+/* Override original horizontal meta layout */
 .pasadena-meta,
 .pasadena-info,
 .pasadena-location,
 .location-row,
 .header-meta,
 .hero-meta {
-  flex-wrap: wrap !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* Mobile */
 @media (max-width: 600px) {
-  .pasadena-open {
-    display: inline-flex !important;
-    width: fit-content !important;
-    max-width: 100% !important;
-    margin-bottom: 10px !important;
+  .pasadena-header-stack {
+    gap: 10px !important;
+    margin-top: 8px !important;
+  }
+
+  .pasadena-open-row {
+    display: block !important;
   }
 
   .pasadena-address-row {
     display: block !important;
-    margin-top: 0 !important;
     width: 100% !important;
   }
 
-  .pasadena-address-row .pasadena-address {
+  .pasadena-address {
     display: block !important;
     width: 100% !important;
     margin: 0 0 8px !important;
-    line-height: 1.45 !important;
   }
 
-  .pasadena-address-row .pasadena-links {
+  .pasadena-links {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     width: 100% !important;
-    margin: 10px 0 0 !important;
     gap: 8px !important;
   }
 }
@@ -169,51 +185,70 @@
         const customJs = `
 <script>
 (function () {
-  /* Put address + links into a real separate row under Open Hour */
-  function fixHeaderRows() {
+  function fixPasadenaHeaderRows() {
     const open = document.querySelector(".pasadena-open");
     const address = document.querySelector(".pasadena-address");
     const links = document.querySelector(".pasadena-links");
 
     if (!open || !address || !links) return;
 
-    let row = document.querySelector(".pasadena-address-row");
+    const originalParent = open.parentElement;
+    if (!originalParent) return;
 
-    if (!row) {
-      row = document.createElement("div");
-      row.className = "pasadena-address-row";
+    let stack = document.querySelector(".pasadena-header-stack");
+    let openRow = document.querySelector(".pasadena-open-row");
+    let addressRow = document.querySelector(".pasadena-address-row");
 
-      if (open.nextSibling) {
-        open.parentNode.insertBefore(row, open.nextSibling);
-      } else {
-        open.parentNode.appendChild(row);
-      }
+    if (!stack) {
+      stack = document.createElement("div");
+      stack.className = "pasadena-header-stack";
+      originalParent.insertBefore(stack, open);
     }
 
-    if (!row.contains(address)) {
-      row.appendChild(address);
+    if (!openRow) {
+      openRow = document.createElement("div");
+      openRow.className = "pasadena-open-row";
+      stack.appendChild(openRow);
     }
 
-    if (!row.contains(links)) {
-      row.appendChild(links);
+    if (!addressRow) {
+      addressRow = document.createElement("div");
+      addressRow.className = "pasadena-address-row";
+      stack.appendChild(addressRow);
+    }
+
+    if (!openRow.contains(open)) {
+      openRow.appendChild(open);
+    }
+
+    if (!addressRow.contains(address)) {
+      addressRow.appendChild(address);
+    }
+
+    if (!addressRow.contains(links)) {
+      addressRow.appendChild(links);
     }
   }
 
-  fixHeaderRows();
+  fixPasadenaHeaderRows();
 
-  const headerObserver = new MutationObserver(fixHeaderRows);
+  const headerObserver = new MutationObserver(function () {
+    fixPasadenaHeaderRows();
+  });
+
   headerObserver.observe(document.body, {
     childList: true,
     subtree: true
   });
 
-  window.addEventListener("load", fixHeaderRows);
-  window.addEventListener("resize", fixHeaderRows);
+  window.addEventListener("load", fixPasadenaHeaderRows);
+  window.addEventListener("resize", fixPasadenaHeaderRows);
 
-  setTimeout(fixHeaderRows, 100);
-  setTimeout(fixHeaderRows, 300);
-  setTimeout(fixHeaderRows, 700);
-  setTimeout(fixHeaderRows, 1200);
+  setTimeout(fixPasadenaHeaderRows, 100);
+  setTimeout(fixPasadenaHeaderRows, 300);
+  setTimeout(fixPasadenaHeaderRows, 700);
+  setTimeout(fixPasadenaHeaderRows, 1200);
+  setTimeout(fixPasadenaHeaderRows, 2000);
 
   /* Remove Morning · 2 openings / Afternoon · 1 opening */
   function removeOpeningCounts() {
