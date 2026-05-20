@@ -37,8 +37,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V11
-   Divider lines match background color.
+   B SIDE U Pasadena Layout Balance V12
+   Desktop only: time card moves up, photo wall moves bottom full width.
    ========================================================= */
 
 .profile-link-under-card,
@@ -156,15 +156,44 @@
     max-width: 1120px !important;
     padding: 20px 22px 48px !important;
   }
+
+  /* Desktop only: create a real 2-column booking row and move photo wall to bottom full width. */
   .booking-layout {
+    display: grid !important;
     grid-template-columns: minmax(350px, 400px) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "date date"
+      "left slots"
+      "photo photo" !important;
     gap: 14px 16px !important;
     align-items: start !important;
   }
+
+  .date-area {
+    grid-area: date !important;
+  }
+
   .booking-layout > div:nth-child(2) {
+    grid-area: left !important;
     padding: 14px !important;
     border-radius: 24px !important;
   }
+
+  .desktop-results-area {
+    display: contents !important;
+  }
+
+  .desktop-results-area .slot-area,
+  .slot-area {
+    grid-area: slots !important;
+    align-self: start !important;
+    margin-top: 0 !important;
+    padding: 18px 18px 18px !important;
+    border-radius: 24px !important;
+    min-height: 0 !important;
+    box-shadow: 0 8px 22px rgba(20,20,20,.045) !important;
+  }
+
   .staff-strip { gap: 9px !important; }
   .staff-card {
     min-height: 126px !important;
@@ -180,12 +209,13 @@
   .staff-name, .service-name { font-size: 12.6px !important; }
   .staff-status, .service-meta { font-size: 9.6px !important; }
 
-  /* Keep divider space, but make the visible line match the page background */
+  /* Keep spacing but hide the visual divider line. */
   .section-divider {
     height: 1px !important;
     margin: 15px 0 14px !important;
     background: #fff !important;
   }
+
   .service-pills { gap: 8px !important; }
   .service-pill {
     min-height: 48px !important;
@@ -195,85 +225,10 @@
   }
   .service-meta { margin-top: 4px !important; }
 
-  .desktop-results-area {
-    gap: 0 !important;
-    align-content: start !important;
-  }
-  .desktop-photo-wall-section {
-    display: block !important;
-    height: 198px !important;
-    max-height: 198px !important;
-    min-height: 0 !important;
-    margin: 0 0 96px !important;
-    padding: 0 !important;
-    overflow: visible !important;
-    align-self: start !important;
-    position: relative !important;
-  }
-  .desktop-photo-wall-section::after {
-    content: "" !important;
-    position: absolute !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: -79px !important;
-    height: 1px !important;
-    background: #fff !important;
-    display: block !important;
-  }
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group,
-  .desktop-photo-wall-section .staff-carousel {
-    height: 198px !important;
-    max-height: 198px !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 19px !important;
-    background: #f6f6f6 !important;
-    box-shadow: inset 0 0 0 1px rgba(20,20,20,.045) !important;
-    overflow: hidden !important;
-  }
-  .desktop-photo-wall-section .bsu-team-head,
-  .desktop-photo-wall-section .bsu-divider,
-  .desktop-photo-wall-section .gallery-head,
-  .desktop-photo-wall-section .staff-group-head,
-  .desktop-photo-wall-section .bsu-filter-group,
-  .desktop-photo-wall-section .view-toggle {
-    display: none !important;
-  }
-  .desktop-photo-wall-section .staff-carousel-track {
-    height: 100% !important;
-    align-items: stretch !important;
-    gap: 3px !important;
-  }
-  .desktop-photo-wall-section .staff-carousel-item {
-    height: 100% !important;
-    max-height: 198px !important;
-    aspect-ratio: auto !important;
-    flex: 0 0 calc((100% - 9px) / 4) !important;
-    opacity: .9 !important;
-  }
-  .desktop-photo-wall-section .staff-carousel-item img,
-  .desktop-photo-wall-section img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-  }
-
-  .desktop-results-area .slot-area,
-  .slot-area {
-    margin-top: 0 !important;
-    padding: 0 14px 13px !important;
-    border-radius: 24px !important;
-    min-height: 0 !important;
-    box-shadow: 0 8px 22px rgba(20,20,20,.045) !important;
-  }
-  .slot-group { margin-top: 8px !important; }
+  .slot-group { margin-top: 10px !important; }
   .slot-group:first-child { margin-top: 0 !important; }
   .slot-group-title {
-    margin: 0 0 7px !important;
+    margin: 0 0 9px !important;
     font-size: 10px !important;
     letter-spacing: .15em !important;
     line-height: 1 !important;
@@ -284,6 +239,73 @@
     border-radius: 14px !important;
     font-size: 13.5px !important;
     box-shadow: none !important;
+  }
+
+  /* Bottom full-width photo wall, desktop only. */
+  .desktop-photo-wall-section {
+    grid-area: photo !important;
+    display: block !important;
+    width: 100% !important;
+    height: 205px !important;
+    max-height: 205px !important;
+    min-height: 0 !important;
+    margin: 8px 0 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    align-self: start !important;
+    position: relative !important;
+  }
+
+  .desktop-photo-wall-section::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-wall,
+  .desktop-photo-wall-section .staff-groups,
+  .desktop-photo-wall-section .staff-group,
+  .desktop-photo-wall-section .staff-carousel {
+    width: 100% !important;
+    height: 205px !important;
+    max-height: 205px !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: #f6f6f6 !important;
+    box-shadow: inset 0 0 0 1px rgba(20,20,20,.045) !important;
+    overflow: hidden !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-head,
+  .desktop-photo-wall-section .bsu-divider,
+  .desktop-photo-wall-section .gallery-head,
+  .desktop-photo-wall-section .staff-group-head,
+  .desktop-photo-wall-section .bsu-filter-group,
+  .desktop-photo-wall-section .view-toggle {
+    display: none !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track {
+    height: 100% !important;
+    align-items: stretch !important;
+    gap: 3px !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    height: 100% !important;
+    max-height: 205px !important;
+    aspect-ratio: auto !important;
+    flex: 0 0 calc((100% - 15px) / 6) !important;
+    opacity: .9 !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item img,
+  .desktop-photo-wall-section img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
   }
 }
 
