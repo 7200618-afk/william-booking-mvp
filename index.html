@@ -56,13 +56,14 @@
 
 /* Open hour must be its own line */
 .pasadena-open {
-  display: flex !important;
-  width: max-content !important;
+  display: inline-flex !important;
+  width: fit-content !important;
   max-width: 100% !important;
   margin-bottom: 12px !important;
+  flex-shrink: 0 !important;
 }
 
-/* Address + buttons row */
+/* Force everything after open hour to next row */
 .pasadena-address-row {
   display: flex !important;
   align-items: center !important;
@@ -72,8 +73,11 @@
   position: relative !important;
   z-index: 2 !important;
   width: 100% !important;
+  max-width: 100% !important;
+  clear: both !important;
 }
 
+/* Address */
 .pasadena-address-row .pasadena-address {
   display: inline-flex !important;
   align-items: center !important;
@@ -81,8 +85,10 @@
   max-width: none !important;
   margin: 0 !important;
   line-height: 1.45 !important;
+  white-space: normal !important;
 }
 
+/* Buttons */
 .pasadena-address-row .pasadena-links {
   display: inline-flex !important;
   width: auto !important;
@@ -91,11 +97,21 @@
   flex-wrap: wrap !important;
 }
 
+/* Make sure original parent can stack rows */
+.pasadena-meta,
+.pasadena-info,
+.pasadena-location,
+.location-row,
+.header-meta,
+.hero-meta {
+  flex-wrap: wrap !important;
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   .pasadena-open {
-    display: flex !important;
-    width: max-content !important;
+    display: inline-flex !important;
+    width: fit-content !important;
     max-width: 100% !important;
     margin-bottom: 10px !important;
   }
@@ -103,12 +119,14 @@
   .pasadena-address-row {
     display: block !important;
     margin-top: 0 !important;
+    width: 100% !important;
   }
 
   .pasadena-address-row .pasadena-address {
     display: block !important;
     width: 100% !important;
     margin: 0 0 8px !important;
+    line-height: 1.45 !important;
   }
 
   .pasadena-address-row .pasadena-links {
@@ -116,6 +134,7 @@
     grid-template-columns: 1fr 1fr !important;
     width: 100% !important;
     margin: 10px 0 0 !important;
+    gap: 8px !important;
   }
 }
 
@@ -145,7 +164,6 @@
   background: #f7f7f7 !important;
   box-shadow: none !important;
 }
-
 `;
 
         const customJs = `
@@ -170,8 +188,13 @@
       } else {
         open.parentNode.appendChild(row);
       }
+    }
 
+    if (!row.contains(address)) {
       row.appendChild(address);
+    }
+
+    if (!row.contains(links)) {
       row.appendChild(links);
     }
   }
@@ -183,6 +206,14 @@
     childList: true,
     subtree: true
   });
+
+  window.addEventListener("load", fixHeaderRows);
+  window.addEventListener("resize", fixHeaderRows);
+
+  setTimeout(fixHeaderRows, 100);
+  setTimeout(fixHeaderRows, 300);
+  setTimeout(fixHeaderRows, 700);
+  setTimeout(fixHeaderRows, 1200);
 
   /* Remove Morning · 2 openings / Afternoon · 1 opening */
   function removeOpeningCounts() {
@@ -233,8 +264,8 @@
 <\\/script>
 `;
 
-        html = html.replace("</style>", "\n" + customCss + "\n</style>");
-        html = html.replace("</body>", customJs + "\n</body>");
+        html = html.replace("</style>", "\\n" + customCss + "\\n</style>");
+        html = html.replace("</body>", customJs + "\\n</body>");
 
         document.open();
         document.write(html);
