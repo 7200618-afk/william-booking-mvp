@@ -18,10 +18,155 @@
         const response = await fetch(sourceUrl, { cache: "no-store" });
         if (!response.ok) throw new Error("Unable to load booking page.");
         let html = await response.text();
-        html = html.replace(
-          "</style>",
-          "\n.profile-link-under-card{display:none!important;}\n.staff-item.is-active .profile-link-under-card{display:none!important;}\n@media (min-width:1024px){.profile-link-under-card{display:none!important;}.staff-item.is-active .profile-link-under-card{display:none!important;}}\n</style>"
-        );
+
+        const customCss = `
+.profile-link-under-card,
+.staff-item.is-active .profile-link-under-card{
+  display:none!important;
+}
+.date-area{
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  padding:0!important;
+}
+.date-area.is-fixed-fallback{
+  background:transparent!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+@media (min-width:1024px){
+  .profile-link-under-card,
+  .staff-item.is-active .profile-link-under-card{
+    display:none!important;
+  }
+  .pasadena-open{
+    display:inline-flex!important;
+    width:auto!important;
+  }
+  .pasadena-address{
+    display:inline-block!important;
+    margin-top:12px!important;
+    margin-right:12px!important;
+    vertical-align:middle!important;
+  }
+  .pasadena-links{
+    display:inline-flex!important;
+    margin-top:12px!important;
+    vertical-align:middle!important;
+    gap:8px!important;
+  }
+}
+.bsu-click-modal{
+  position:fixed;
+  inset:0;
+  z-index:100000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.bsu-click-modal.is-open{display:flex;}
+.bsu-click-modal-inner{
+  position:relative;
+  width:min(92vw,980px);
+  height:min(88vh,860px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.bsu-click-modal img,
+.bsu-click-modal video{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  border-radius:18px;
+  background:#000;
+  box-shadow:0 28px 70px rgba(0,0,0,.32);
+}
+.bsu-click-modal-close{
+  position:absolute;
+  top:-14px;
+  right:-14px;
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:999px;
+  background:#fff;
+  color:#111;
+  font-size:24px;
+  font-weight:900;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+@media (max-width:640px){
+  .bsu-click-modal{padding:14px;}
+  .bsu-click-modal-inner{width:96vw;height:84vh;}
+  .bsu-click-modal-close{top:0;right:0;}
+}`;
+
+        const customJs = `
+<script>
+(function(){
+  function ensureModal(){
+    let modal = document.getElementById('bsuClickImageModal');
+    if(modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'bsuClickImageModal';
+    modal.className = 'bsu-click-modal';
+    modal.innerHTML = '<div class="bsu-click-modal-inner"><button class="bsu-click-modal-close" type="button" aria-label="Close">×</button><div id="bsuClickImageStage"></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function(e){
+      if(e.target === modal || e.target.classList.contains('bsu-click-modal-close')){
+        modal.classList.remove('is-open');
+        const stage = document.getElementById('bsuClickImageStage');
+        if(stage) stage.innerHTML = '';
+      }
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && modal.classList.contains('is-open')){
+        modal.classList.remove('is-open');
+        const stage = document.getElementById('bsuClickImageStage');
+        if(stage) stage.innerHTML = '';
+      }
+    });
+    return modal;
+  }
+
+  function openMediaFrom(el){
+    const media = el.matches('img,video') ? el : el.querySelector('img,video');
+    if(!media) return false;
+    const src = media.currentSrc || media.src || media.getAttribute('data-src');
+    if(!src) return false;
+    const modal = ensureModal();
+    const stage = document.getElementById('bsuClickImageStage');
+    const isVideo = media.tagName.toLowerCase() === 'video' || /\\.(mp4|mov|webm)(\\?|$)/i.test(src);
+    stage.innerHTML = isVideo
+      ? '<video src="' + src + '" controls autoplay playsinline></video>'
+      : '<img src="' + src + '" alt="B SIDE U work">';
+    modal.classList.add('is-open');
+    return true;
+  }
+
+  document.addEventListener('click', function(e){
+    const item = e.target.closest('.staff-carousel-item, .grid-item, .g-media, #bsu-gallery img, #bsu-gallery video');
+    if(!item) return;
+    if(!document.getElementById('bsu-gallery') || !document.getElementById('bsu-gallery').contains(item)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openMediaFrom(item);
+  }, true);
+})();
+<\/script>`;
+
+        html = html.replace("</style>", "\n" + customCss + "\n</style>");
+        html = html.replace("</body>", customJs + "\n</body>");
         document.open();
         document.write(html);
         document.close();
