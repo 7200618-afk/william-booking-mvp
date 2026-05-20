@@ -526,7 +526,9 @@
 
 /* Wider desktop */
 @media (min-width: 1280px) {
-  
+  .page {
+    max-width: 1240px !important;
+  }
 
   .booking-layout {
     grid-template-columns: minmax(395px, 430px) minmax(0, 1fr) !important;
@@ -549,34 +551,17 @@
 }
 
 /* =========================================
-   Final: full Square frame + smaller single-row photo wall
+   Photo wall carousel: show 3.5 images
+   Less crowded, single-row carousel
+   Keeps the page's original desktop size
    ========================================= */
 
 @media (min-width: 768px) {
-  .page {
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding-left: 18px !important;
-    padding-right: 18px !important;
-  }
-
-  .booking-layout {
-    width: 100% !important;
-    grid-template-columns: minmax(360px, 410px) minmax(0, 1fr) !important;
-    gap: 14px 16px !important;
-  }
-
-  .desktop-results-area {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
   .desktop-photo-wall-section {
     display: block !important;
+    margin: 24px 0 0 !important;
     width: 100% !important;
     min-width: 0 !important;
-    margin: 18px 0 0 !important;
   }
 
   .desktop-photo-wall-section .bsu-team-wall {
@@ -584,42 +569,57 @@
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
+    border-radius: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
     overflow: visible !important;
   }
 
+  .desktop-photo-wall-section .bsu-team-head,
+  .desktop-photo-wall-section .bsu-divider,
+  .desktop-photo-wall-section .gallery-head,
+  .desktop-photo-wall-section .staff-group-head,
+  .desktop-photo-wall-section .bsu-filter-group,
+  .desktop-photo-wall-section .view-toggle {
+    display: none !important;
+  }
+
   .desktop-photo-wall-section .staff-carousel {
-    width: 100% !important;
-    height: 190px !important;
-    min-height: 190px !important;
-    max-height: 190px !important;
-    border-radius: 22px !important;
-    overflow: hidden !important;
+    height: 260px !important;
+    min-height: 260px !important;
+    max-height: 260px !important;
+    border-radius: 24px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     background: #f5f5f5 !important;
     box-shadow: none !important;
     margin: 0 !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
   }
 
   .desktop-photo-wall-section .staff-carousel-track {
     display: flex !important;
     flex-wrap: nowrap !important;
-    width: 100% !important;
     height: 100% !important;
-    gap: 3px !important;
+    gap: 6px !important;
     align-items: stretch !important;
     transform: none !important;
+    width: max-content !important;
+    min-width: 100% !important;
   }
 
   .desktop-photo-wall-section .staff-carousel-item {
-    flex: 0 0 calc((100% - 15px) / 6) !important;
+    flex: 0 0 calc((100% - 18px) / 3.5) !important;
     width: auto !important;
     height: 100% !important;
-    min-height: 0 !important;
-    max-height: none !important;
+    min-height: 260px !important;
+    max-height: 260px !important;
     aspect-ratio: auto !important;
     border-radius: 0 !important;
     overflow: hidden !important;
+    scroll-snap-align: start !important;
   }
 
   .desktop-photo-wall-section .staff-carousel-item img,
@@ -627,45 +627,22 @@
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+    display: block !important;
   }
 }
 
 @media (min-width: 1200px) {
-  .page {
-    width: 100% !important;
-    max-width: none !important;
-    padding-left: 22px !important;
-    padding-right: 22px !important;
-  }
-
-  .booking-layout {
-    grid-template-columns: minmax(390px, 430px) minmax(0, 1fr) !important;
-    gap: 16px 20px !important;
-  }
-
   .desktop-photo-wall-section .staff-carousel {
-    height: 210px !important;
-    min-height: 210px !important;
-    max-height: 210px !important;
+    height: 275px !important;
+    min-height: 275px !important;
+    max-height: 275px !important;
   }
 
   .desktop-photo-wall-section .staff-carousel-item {
-    flex-basis: calc((100% - 18px) / 7) !important;
+    min-height: 275px !important;
+    max-height: 275px !important;
   }
 }
-
-@media (min-width: 1500px) {
-  .desktop-photo-wall-section .staff-carousel {
-    height: 220px !important;
-    min-height: 220px !important;
-    max-height: 220px !important;
-  }
-
-  .desktop-photo-wall-section .staff-carousel-item {
-    flex-basis: calc((100% - 21px) / 8) !important;
-  }
-}
-
 `;
 
         const customJs = `
