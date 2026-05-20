@@ -13,14 +13,14 @@
   <div class="bsu-loading">Loading B SIDE U booking...</div>
   <script>
     (async function(){
-      const sourceUrl = "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/29092fbe8f8ba71e6246ec04138b6c7f1c7a76a6/index.html";
+      const sourceUrl = "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
       try {
         const response = await fetch(sourceUrl, { cache: "no-store" });
         if (!response.ok) throw new Error("Unable to load booking page.");
         let html = await response.text();
         html = html.replace(
           "</style>",
-          "\n@media (min-width:1024px){.profile-link-under-card{display:none!important;}}\n</style>"
+          "\n.profile-link-under-card{display:none!important;}\n.staff-item.is-active .profile-link-under-card{display:none!important;}\n@media (min-width:1024px){.profile-link-under-card{display:none!important;}.staff-item.is-active .profile-link-under-card{display:none!important;}}\n</style>"
         );
         document.open();
         document.write(html);
