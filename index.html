@@ -549,6 +549,96 @@
     max-height: 282px !important;
   }
 }
+
+/* =========================================
+   Photo wall: 2-row desktop layout
+   Keep current desktop layout, only change gallery
+   ========================================= */
+@media (min-width: 768px) {
+  .desktop-photo-wall-section {
+    display: block !important;
+    margin-top: 24px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-wall {
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-rows: 135px !important;
+    gap: 4px !important;
+    height: auto !important;
+    max-height: 274px !important;
+    overflow: hidden !important;
+    transform: none !important;
+    align-items: stretch !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    width: auto !important;
+    height: 135px !important;
+    min-height: 135px !important;
+    max-height: 135px !important;
+    flex: none !important;
+    aspect-ratio: auto !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item img,
+  .desktop-photo-wall-section .staff-carousel-item video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .desktop-photo-wall-section .staff-carousel-track {
+    grid-auto-rows: 150px !important;
+    max-height: 304px !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    height: 150px !important;
+    min-height: 150px !important;
+    max-height: 150px !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .desktop-photo-wall-section .staff-carousel-track {
+    grid-auto-rows: 160px !important;
+    max-height: 324px !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    height: 160px !important;
+    min-height: 160px !important;
+    max-height: 160px !important;
+  }
+}
+
 `;
 
         const customJs = `
