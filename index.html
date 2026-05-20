@@ -1883,7 +1883,139 @@
         gap: 24px !important;
       }
     }
-  </style>
+  
+
+    /* =========================================
+       Gallery composition refinement
+       Cleaner editorial carousel for desktop booking page
+       ========================================= */
+    @media (min-width: 1024px) {
+      .desktop-photo-wall-section {
+        align-self: start !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-wall {
+        padding: 14px !important;
+        border-radius: 26px !important;
+        border-color: rgba(20,20,20,0.09) !important;
+        box-shadow: 0 8px 26px rgba(20,20,20,0.045) !important;
+      }
+
+      .desktop-photo-wall-section #bsu-gallery {
+        overflow: hidden !important;
+      }
+
+      .desktop-photo-wall-section .staff-groups,
+      .desktop-photo-wall-section .staff-group {
+        width: 100% !important;
+        overflow: hidden !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel {
+        position: relative !important;
+        height: clamp(235px, 21vw, 310px) !important;
+        min-height: 235px !important;
+        max-height: 310px !important;
+        border-radius: 24px !important;
+        background: #f6f6f6 !important;
+        overflow: hidden !important;
+        cursor: grab !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel::before,
+      .desktop-photo-wall-section .staff-carousel::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 54px;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .desktop-photo-wall-section .staff-carousel::before {
+        left: 0;
+        background: linear-gradient(90deg, rgba(255,255,255,0.88), rgba(255,255,255,0));
+      }
+
+      .desktop-photo-wall-section .staff-carousel::after {
+        right: 0;
+        background: linear-gradient(270deg, rgba(255,255,255,0.88), rgba(255,255,255,0));
+      }
+
+      .desktop-photo-wall-section .staff-carousel-track {
+        height: 100% !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        padding: 0 !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item {
+        flex: 0 0 clamp(132px, 18%, 178px) !important;
+        height: 100% !important;
+        aspect-ratio: auto !important;
+        border-radius: 20px !important;
+        overflow: hidden !important;
+        background: #efefef !important;
+        box-shadow: none !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item:nth-child(6n + 1),
+      .desktop-photo-wall-section .staff-carousel-item:nth-child(6n + 7) {
+        flex-basis: clamp(180px, 27%, 260px) !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item:nth-child(6n + 4) {
+        flex-basis: clamp(150px, 21%, 210px) !important;
+      }
+
+      .desktop-photo-wall-section .g-media {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        object-position: center 34% !important;
+        filter: saturate(0.98) contrast(1.02) !important;
+        transform: scale(1.01) !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.14), rgba(0,0,0,0.02) 46%, rgba(255,255,255,0.02));
+        pointer-events: none;
+        opacity: 0.82;
+        transition: opacity .18s var(--ease);
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item:hover .g-media {
+        filter: saturate(1.02) contrast(1.04) brightness(0.96) !important;
+        transform: scale(1.045) !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item:hover::after {
+        opacity: 0.98;
+      }
+
+      .desktop-photo-wall-section .gallery-play-badge {
+        width: 44px !important;
+        height: 44px !important;
+        box-shadow: 0 10px 22px rgba(0,0,0,.16) !important;
+      }
+
+      .desktop-photo-wall-section .gallery-play-badge:before {
+        border-top-width: 8px !important;
+        border-bottom-width: 8px !important;
+        border-left-width: 13px !important;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .desktop-photo-wall-section .staff-carousel {
+        height: clamp(250px, 19vw, 320px) !important;
+      }
+    }
+</style>
 </head>
 
 <body>
@@ -2610,7 +2742,7 @@
   const GRID_CUTOFF_TS = new Date("2026-03-23T00:00:00-07:00").getTime();
   const PINNED_COUNT = 9;
   const STAFF_AUTOPLAY_MS = 2600;
-  const STAFF_SLIDE_SPEED = 24; // px per second for smooth staff carousel slide
+  const STAFF_SLIDE_SPEED = 18; // px per second for smoother editorial carousel slide
 
   const STAFF_SOURCES = [
     { name:"Carl",    tag:"Carl",    location:"San Gabriel",    slug:"carl" },
