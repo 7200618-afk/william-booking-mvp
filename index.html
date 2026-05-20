@@ -549,6 +549,209 @@
     max-height: 282px !important;
   }
 }
+
+/* =========================================
+   Spacious iframe layout fix
+   768px - 1199px: wide single-column layout
+   1200px+: real desktop two-column layout
+   ========================================= */
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .page {
+    max-width: 980px !important;
+    padding: 28px 28px 60px !important;
+  }
+
+  .pasadena-header {
+    padding: 30px 32px 28px !important;
+    border-radius: 30px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .pasadena-title {
+    font-size: clamp(40px, 5.4vw, 56px) !important;
+    margin-bottom: 14px !important;
+  }
+
+  .pasadena-open {
+    margin-bottom: 12px !important;
+  }
+
+  .pasadena-address-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .pasadena-address-row .pasadena-address {
+    display: inline-flex !important;
+    width: auto !important;
+    line-height: 1.4 !important;
+  }
+
+  .pasadena-address-row .pasadena-links {
+    display: inline-flex !important;
+    width: auto !important;
+    gap: 10px !important;
+  }
+
+  .booking-layout {
+    display: block !important;
+  }
+
+  .date-area {
+    margin-bottom: 24px !important;
+    padding: 8px !important;
+    border-radius: 24px !important;
+  }
+
+  .date-bar {
+    grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+    gap: 12px !important;
+  }
+
+  .date-nav,
+  .date-label {
+    height: 56px !important;
+    border-radius: 18px !important;
+  }
+
+  .date-nav {
+    width: 56px !important;
+  }
+
+  .date-label {
+    line-height: 54px !important;
+    font-size: 17px !important;
+  }
+
+  .booking-layout > div:nth-child(2) {
+    position: static !important;
+    width: 100% !important;
+    padding: 22px !important;
+    border-radius: 32px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .staff-strip {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .staff-card {
+    min-height: 160px !important;
+    border-radius: 26px !important;
+    padding: 16px 12px 12px !important;
+  }
+
+  .avatar {
+    width: 76px !important;
+    height: 76px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .staff-name {
+    font-size: 15px !important;
+  }
+
+  .staff-status {
+    min-height: 24px !important;
+    font-size: 11px !important;
+    margin-top: 8px !important;
+  }
+
+  .service-pills {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+  }
+
+  .service-pill {
+    height: 62px !important;
+    min-height: 62px !important;
+    border-radius: 20px !important;
+  }
+
+  .desktop-results-area {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .desktop-photo-wall-section {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 0 24px !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-wall {
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel {
+    height: 360px !important;
+    min-height: 360px !important;
+    max-height: 360px !important;
+    border-radius: 30px !important;
+    overflow: hidden !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track {
+    height: 100% !important;
+    gap: 4px !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    flex: 0 0 calc((100% - 8px) / 3) !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+  }
+
+  .desktop-results-area .empty-state {
+    padding: 28px !important;
+    border-radius: 32px !important;
+  }
+
+  .empty-title {
+    font-size: 28px !important;
+  }
+
+  .empty-sub {
+    font-size: 16px !important;
+  }
+
+  .next-available-btn,
+  .waitlist-btn {
+    min-height: 60px !important;
+    border-radius: 20px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* True desktop: only 1200px+ uses side-by-side layout */
+@media (min-width: 1200px) {
+  .booking-layout {
+    display: grid !important;
+    grid-template-columns: minmax(380px, 425px) minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+  }
+
+  .desktop-results-area {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+  }
+
+  .desktop-photo-wall-section {
+    margin: 24px 0 0 !important;
+  }
+}
+
 `;
 
         const customJs = `
