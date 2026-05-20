@@ -2267,6 +2267,144 @@
       }
     }
 
+
+    /* =========================================
+       Desktop refinement v4
+       - slimmer gallery height
+       - remove photo wall outer frame
+       - remove time slot outer frame
+       - place header links on address line
+       - soften date arrows
+       ========================================= */
+    @media (min-width: 1024px) {
+      .pasadena-header {
+        display: block !important;
+        padding: 24px 28px 22px !important;
+        border-radius: 28px !important;
+      }
+
+      .pasadena-title {
+        display: block !important;
+        margin: 0 0 10px !important;
+        grid-area: auto !important;
+      }
+
+      .pasadena-open {
+        display: inline-flex !important;
+        margin: 0 0 10px !important;
+        grid-area: auto !important;
+      }
+
+      .pasadena-address {
+        display: inline !important;
+        grid-area: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        vertical-align: middle !important;
+      }
+
+      .pasadena-links {
+        display: inline-flex !important;
+        grid-area: auto !important;
+        width: auto !important;
+        margin: 0 0 0 12px !important;
+        gap: 8px !important;
+        vertical-align: middle !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+      }
+
+      .pasadena-links a {
+        width: auto !important;
+        min-height: 28px !important;
+        padding: 0 10px !important;
+        border-radius: 999px !important;
+        border-color: rgba(20,20,20,0.12) !important;
+        background: #f7f7f7 !important;
+        font-size: 11.5px !important;
+        font-weight: 900 !important;
+        box-shadow: none !important;
+      }
+
+      .pasadena-links a:hover {
+        background: #efefef !important;
+        transform: none !important;
+      }
+
+      .date-area {
+        box-shadow: none !important;
+        border-color: rgba(20,20,20,0.08) !important;
+        background: #ffffff !important;
+      }
+
+      .date-nav {
+        background: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid rgba(20,20,20,0.12) !important;
+        box-shadow: none !important;
+        font-size: 22px !important;
+      }
+
+      .date-nav:hover {
+        background: #f5f5f5 !important;
+        border-color: rgba(20,20,20,0.22) !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .date-nav:active {
+        background: #eeeeee !important;
+        transform: scale(0.98) !important;
+      }
+
+      .date-label {
+        background: #ffffff !important;
+        box-shadow: none !important;
+      }
+
+      .desktop-photo-wall-section .bsu-team-wall {
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel {
+        height: clamp(188px, 16.5vw, 232px) !important;
+        border-radius: 24px !important;
+        box-shadow: none !important;
+        background: #f5f5f5 !important;
+      }
+
+      .desktop-photo-wall-section .staff-carousel-item {
+        border-radius: 0 !important;
+      }
+
+      .desktop-results-area .slot-area {
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+
+      .slot-group-title {
+        margin-top: 0 !important;
+      }
+
+      .desktop-results-area .empty-state {
+        box-shadow: none !important;
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .desktop-photo-wall-section .staff-carousel {
+        height: clamp(196px, 15.5vw, 238px) !important;
+      }
+    }
+
   </style>
 </head>
 
