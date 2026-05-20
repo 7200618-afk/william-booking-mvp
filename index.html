@@ -37,8 +37,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V6
-   Balanced photo wall + Services / Afternoon alignment.
+   B SIDE U Pasadena Layout Balance V7
+   Balanced photo wall + more breathing space before time card.
    ========================================================= */
 
 .profile-link-under-card,
@@ -198,7 +198,7 @@
   }
   .service-meta { margin-top: 4px !important; }
 
-  /* Right column alignment: photo wall height is between the previous 168 and 218. */
+  /* Right column alignment: photo wall is a medium height, with breathing space before time card. */
   .desktop-results-area {
     gap: 0 !important;
     align-content: start !important;
@@ -209,7 +209,7 @@
     height: 198px !important;
     max-height: 198px !important;
     min-height: 0 !important;
-    margin: 0 !important;
+    margin: 0 0 18px !important;
     padding: 0 !important;
     overflow: hidden !important;
     align-self: start !important;
@@ -256,10 +256,10 @@
     object-fit: cover !important;
   }
 
-  /* Afternoon block: no top padding, but keep a small controlled gap under photo wall. */
+  /* Time card: separate it from photo wall with a clear but controlled gap. */
   .desktop-results-area .slot-area,
   .slot-area {
-    margin-top: 10px !important;
+    margin-top: 0 !important;
     padding: 0 14px 13px !important;
     border-radius: 24px !important;
     min-height: 0 !important;
