@@ -31,10 +31,6 @@
 
   <script>
     (async function () {
-      /*
-        This loads the previous working full booking page with gallery,
-        then applies the requested fixes safely.
-      */
       const sourceUrl =
         "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
 
@@ -52,37 +48,52 @@
    B SIDE U Custom Fixes
    =============================== */
 
-/* 1. Remove View Profile under staff avatars */
+/* Remove View Profile under staff avatars */
 .profile-link-under-card,
 .staff-item.is-active .profile-link-under-card {
   display: none !important;
 }
 
-/* 2. Address / links should be on a separate row under open hour */
+/* Remove opening text under staff avatars: 8 openings / 3 openings */
+.staff-status {
+  display: none !important;
+}
+
+/* Address + links row under Open Hour */
 .pasadena-open {
   display: inline-flex !important;
   width: auto !important;
   margin-bottom: 10px !important;
 }
 
+/* Make address and links sit on one row */
 .pasadena-address {
-  display: block !important;
-  width: 100% !important;
+  display: inline-flex !important;
+  width: auto !important;
   max-width: none !important;
   margin-top: 0 !important;
-  margin-bottom: 8px !important;
-  line-height: 1.45 !important;
+  margin-right: 12px !important;
+  margin-bottom: 0 !important;
+  line-height: 38px !important;
+  vertical-align: middle !important;
 }
 
 .pasadena-links {
-  display: flex !important;
-  width: 100% !important;
+  display: inline-flex !important;
+  width: auto !important;
   margin-top: 0 !important;
   gap: 8px !important;
   flex-wrap: wrap !important;
+  vertical-align: middle !important;
 }
 
-/* Desktop header layout */
+/* Force address/link row to start below Open Hour */
+.pasadena-address::before {
+  content: "";
+  display: block;
+}
+
+/* Better way: use header layout on desktop */
 @media (min-width: 1024px) {
   .pasadena-open {
     display: inline-flex !important;
@@ -91,22 +102,42 @@
   }
 
   .pasadena-address {
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: none !important;
+    margin-top: 2px !important;
+    margin-right: 12px !important;
+    line-height: 38px !important;
+  }
+
+  .pasadena-links {
+    display: inline-flex !important;
+    width: auto !important;
+    margin-top: 2px !important;
+    gap: 8px !important;
+  }
+
+  .pasadena-header .pasadena-address {
+    clear: both !important;
+  }
+}
+
+/* Mobile/tablet: keep cleaner stacked layout */
+@media (max-width: 1023px) {
+  .pasadena-address {
     display: block !important;
     width: 100% !important;
-    max-width: none !important;
-    margin-top: 0 !important;
+    line-height: 1.45 !important;
     margin-bottom: 8px !important;
   }
 
   .pasadena-links {
     display: flex !important;
     width: 100% !important;
-    margin-top: 0 !important;
-    gap: 8px !important;
   }
 }
 
-/* 3. Remove outer frame around calendar/date area */
+/* Remove outer frame around calendar/date area */
 .date-area {
   border: 0 !important;
   box-shadow: none !important;
@@ -120,7 +151,6 @@
   background: transparent !important;
 }
 
-/* Keep the date center/button itself clean */
 .date-label {
   background: #fff !important;
 }
@@ -137,7 +167,7 @@
   box-shadow: none !important;
 }
 
-/* 4. Gallery click modal */
+/* Smaller Gallery click modal */
 .bsu-gallery-modal {
   position: fixed;
   inset: 0;
@@ -146,9 +176,9 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.68);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
 .bsu-gallery-modal.is-open {
@@ -157,8 +187,8 @@
 
 .bsu-gallery-modal-inner {
   position: relative;
-  width: min(92vw, 980px);
-  height: min(88vh, 860px);
+  width: min(72vw, 680px);
+  height: min(76vh, 620px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,28 +207,28 @@
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 18px;
+  border-radius: 16px;
   background: #000;
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.32);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.30);
 }
 
 .bsu-gallery-modal-close {
   position: absolute;
-  top: -14px;
-  right: -14px;
-  width: 42px;
-  height: 42px;
+  top: -12px;
+  right: -12px;
+  width: 38px;
+  height: 38px;
   border: 0;
   border-radius: 999px;
   background: #fff;
   color: #111;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.20);
   z-index: 2;
 }
 
@@ -208,13 +238,13 @@
   }
 
   .bsu-gallery-modal-inner {
-    width: 96vw;
-    height: 84vh;
+    width: 88vw;
+    height: 72vh;
   }
 
   .bsu-gallery-modal-close {
-    top: 0;
-    right: 0;
+    top: -8px;
+    right: -8px;
   }
 }
 `;
@@ -222,6 +252,48 @@
         const customJs = `
 <script>
 (function () {
+  function removeOpeningsText() {
+    document.querySelectorAll(".staff-status").forEach(function (el) {
+      const text = (el.textContent || "").toLowerCase();
+
+      if (
+        text.includes("opening") ||
+        text.includes("openings") ||
+        /^\\s*\\d+\\s*$/.test(text)
+      ) {
+        el.textContent = "";
+        el.style.display = "none";
+      }
+    });
+  }
+
+  function fixHeaderAddressRow() {
+    const header = document.querySelector(".pasadena-header");
+    const open = document.querySelector(".pasadena-open");
+    const address = document.querySelector(".pasadena-address");
+    const links = document.querySelector(".pasadena-links");
+
+    if (!header || !open || !address || !links) return;
+
+    let row = document.querySelector(".pasadena-address-row");
+
+    if (!row) {
+      row = document.createElement("div");
+      row.className = "pasadena-address-row";
+      row.style.display = "flex";
+      row.style.alignItems = "center";
+      row.style.flexWrap = "wrap";
+      row.style.gap = "8px 10px";
+      row.style.marginTop = "10px";
+      row.style.position = "relative";
+      row.style.zIndex = "1";
+
+      open.insertAdjacentElement("afterend", row);
+      row.appendChild(address);
+      row.appendChild(links);
+    }
+  }
+
   function createGalleryModal() {
     let modal = document.getElementById("bsuGalleryModal");
 
@@ -323,6 +395,21 @@
     },
     true
   );
+
+  window.addEventListener("load", function () {
+    removeOpeningsText();
+    fixHeaderAddressRow();
+
+    const observer = new MutationObserver(function () {
+      removeOpeningsText();
+      fixHeaderAddressRow();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  });
 })();
 <\\/script>
 `;
