@@ -91,8 +91,8 @@
   flex-wrap: wrap !important;
 }
 
-/* Mobile */
-@media (max-width: 600px) {
+/* Mobile only */
+@media (max-width: 767px) {
   .pasadena-open {
     display: flex !important;
     width: max-content !important;
@@ -145,6 +145,410 @@
   background: #f7f7f7 !important;
   box-shadow: none !important;
 }
+
+/* =========================================
+   FORCE DESKTOP BREAKPOINT EARLIER
+   Old desktop: 1024px+
+   New desktop: 768px+
+   ========================================= */
+@media (min-width: 768px) {
+  body {
+    background: #ffffff !important;
+    overflow-x: hidden !important;
+  }
+
+  .page {
+    width: 100% !important;
+    max-width: 1188px !important;
+    margin: 0 auto !important;
+    padding: 24px 24px 56px !important;
+  }
+
+  .pasadena-header {
+    display: block !important;
+    padding: 24px 28px 22px !important;
+    margin-bottom: 16px !important;
+    border-radius: 28px !important;
+    box-shadow: 0 12px 34px rgba(20,20,20,0.055) !important;
+  }
+
+  .pasadena-title {
+    display: block !important;
+    font-size: clamp(34px, 3.4vw, 46px) !important;
+    line-height: .96 !important;
+    margin: 0 0 10px !important;
+    letter-spacing: -0.052em !important;
+    max-width: 780px !important;
+  }
+
+  .pasadena-open {
+    display: inline-flex !important;
+    width: auto !important;
+    min-height: 31px !important;
+    margin: 0 0 12px !important;
+    padding: 0 13px !important;
+    vertical-align: top !important;
+    box-shadow: none !important;
+  }
+
+  .pasadena-address {
+    display: inline-block !important;
+    max-width: none !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+    line-height: 32px !important;
+    font-size: 13.5px !important;
+  }
+
+  .pasadena-links {
+    display: inline-flex !important;
+    width: auto !important;
+    margin: 0 0 0 12px !important;
+    gap: 8px !important;
+    vertical-align: middle !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  .pasadena-links a {
+    width: auto !important;
+    min-height: 30px !important;
+    padding: 0 11px !important;
+    border-radius: 999px !important;
+    background: #f7f7f7 !important;
+    border: 1px solid rgba(20,20,20,0.12) !important;
+    font-size: 11.5px !important;
+    font-weight: 900 !important;
+    box-shadow: none !important;
+  }
+
+  .booking-layout {
+    display: grid !important;
+    grid-template-columns: minmax(380px, 425px) minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    gap: 16px 18px !important;
+    align-items: start !important;
+  }
+
+  .date-area {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    position: relative !important;
+    top: auto !important;
+    z-index: 1 !important;
+    padding: 7px !important;
+    border-radius: 22px !important;
+    border: 1px solid rgba(20,20,20,0.08) !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .date-area.is-fixed-fallback {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+  }
+
+  .date-sticky-spacer,
+  .date-sticky-spacer.is-active {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  .date-bar {
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) 48px !important;
+    gap: 8px !important;
+  }
+
+  .date-nav,
+  .date-label {
+    height: 48px !important;
+    border-radius: 16px !important;
+  }
+
+  .date-nav {
+    width: 48px !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid rgba(20,20,20,0.12) !important;
+    box-shadow: none !important;
+    font-size: 22px !important;
+  }
+
+  .date-label {
+    line-height: 46px !important;
+    font-size: 15px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .booking-layout > div:nth-child(2) {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    position: static !important;
+    top: auto !important;
+    align-self: start !important;
+    padding: 18px !important;
+    border-radius: 30px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(20,20,20,0.09) !important;
+    box-shadow: 0 14px 40px rgba(20,20,20,0.06) !important;
+  }
+
+  .desktop-results-area {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    align-content: start !important;
+    align-self: start !important;
+  }
+
+  .desktop-photo-wall-section {
+    display: block !important;
+    margin: 24px 0 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-wall {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .desktop-photo-wall-section .bsu-team-head,
+  .desktop-photo-wall-section .bsu-divider,
+  .desktop-photo-wall-section .gallery-head,
+  .desktop-photo-wall-section .staff-group-head,
+  .desktop-photo-wall-section .bsu-filter-group,
+  .desktop-photo-wall-section .view-toggle {
+    display: none !important;
+  }
+
+  .desktop-photo-wall-section .staff-groups {
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel {
+    height: 282px !important;
+    min-height: 282px !important;
+    max-height: 282px !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    background: #f5f5f5 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track {
+    height: 100% !important;
+    gap: 3px !important;
+    align-items: stretch !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item {
+    flex: 0 0 calc((100% - 9px) / 4) !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
+    border-radius: 0 !important;
+  }
+
+  .section-label {
+    margin: 0 2px 10px !important;
+    font-size: 10.5px !important;
+    letter-spacing: .17em !important;
+  }
+
+  .section-divider {
+    margin: 15px 0 14px !important;
+  }
+
+  .staff-strip {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    overflow: visible !important;
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+
+  .staff-item,
+  .staff-card {
+    width: 100% !important;
+  }
+
+  .staff-item {
+    flex-basis: auto !important;
+  }
+
+  .staff-card {
+    min-height: 136px !important;
+    border-radius: 22px !important;
+    padding: 11px 8px 9px !important;
+    box-shadow: 0 8px 20px rgba(20,20,20,0.045) !important;
+  }
+
+  .staff-card.is-active,
+  .staff-card.is-active:hover {
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .avatar {
+    width: 62px !important;
+    height: 62px !important;
+    margin-bottom: 7px !important;
+  }
+
+  .staff-name {
+    font-size: 13.5px !important;
+  }
+
+  .staff-status {
+    margin-top: 6px !important;
+    min-height: 21px !important;
+    font-size: 10px !important;
+  }
+
+  .service-pills {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .service-pill,
+  .time-btn {
+    height: 52px !important;
+    min-height: 52px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    border-radius: 17px !important;
+  }
+
+  .service-name,
+  .service-meta {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .service-name {
+    font-size: 13.5px !important;
+  }
+
+  .service-meta {
+    margin-top: 5px !important;
+    font-size: 10.5px !important;
+  }
+
+  .desktop-results-area .slot-area {
+    display: none;
+    margin-top: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 100% !important;
+  }
+
+  .desktop-results-area .slot-area.is-visible {
+    display: block !important;
+  }
+
+  .slot-group-title {
+    margin: 0 0 11px !important;
+    font-size: 10.5px !important;
+  }
+
+  .times {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 9px !important;
+  }
+
+  .time-btn {
+    font-size: 15px !important;
+    box-shadow: none !important;
+  }
+
+  .desktop-results-area .empty-state {
+    margin-top: 0 !important;
+    padding: 18px !important;
+    border-radius: 30px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(20,20,20,0.10) !important;
+    border-style: solid !important;
+    box-shadow: none !important;
+    width: 100% !important;
+  }
+
+  .empty-title {
+    font-size: 21px !important;
+  }
+
+  .empty-actions {
+    gap: 10px !important;
+  }
+
+  .next-available-btn,
+  .waitlist-btn {
+    min-height: 48px !important;
+    border-radius: 16px !important;
+  }
+
+  .booking-modal {
+    align-items: center !important;
+    padding: 24px !important;
+  }
+
+  .booking-modal-card {
+    max-width: 520px !important;
+    padding: 20px !important;
+  }
+}
+
+/* Wider desktop */
+@media (min-width: 1280px) {
+  .page {
+    max-width: 1240px !important;
+  }
+
+  .booking-layout {
+    grid-template-columns: minmax(395px, 430px) minmax(0, 1fr) !important;
+    gap: 18px 20px !important;
+  }
+
+  .times {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
+
+  .desktop-photo-wall-section {
+    margin-top: 24px !important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel {
+    height: 282px !important;
+    min-height: 282px !important;
+    max-height: 282px !important;
+  }
+}
 `;
 
         const customJs = `
@@ -189,8 +593,8 @@
       let text = el.textContent || "";
 
       text = text
-        .replace(/\\\\s*·\\\\s*\\\\d+\\\\s*openings?/gi, "")
-        .replace(/\\\\s*\\\\(\\\\s*\\\\d+\\\\s*openings?\\\\s*\\\\)/gi, "")
+        .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
+        .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
         .trim();
 
       if (el.textContent !== text) {
@@ -225,106 +629,12 @@
   }
 
   startOpeningCountCleaner();
-
-  /* Change "No availability today" to "No availability with Staff Name" */
-  function cleanStaffName(name) {
-    return (name || "")
-      .replace(/View Profile/gi, "")
-      .replace(/Book Now/gi, "")
-      .replace(/Haircut/gi, "")
-      .replace(/Scissor Cut/gi, "")
-      .replace(/Perm/gi, "")
-      .replace(/Color/gi, "")
-      .replace(/Bleach/gi, "")
-      .replace(/\\\\s+/g, " ")
-      .trim();
-  }
-
-  function getActiveStaffName() {
-    const activeStaff =
-      document.querySelector(".staff-item.is-active .staff-name") ||
-      document.querySelector(".staff-item.is-active [class*='name']") ||
-      document.querySelector(".staff-card.is-active .staff-name") ||
-      document.querySelector(".staff-card.is-active [class*='name']") ||
-      document.querySelector(".stylist-card.is-active .staff-name") ||
-      document.querySelector(".stylist-card.is-active [class*='name']");
-
-    if (activeStaff) {
-      return cleanStaffName(activeStaff.textContent);
-    }
-
-    const activeCard =
-      document.querySelector(".staff-item.is-active") ||
-      document.querySelector(".staff-card.is-active") ||
-      document.querySelector(".stylist-card.is-active") ||
-      document.querySelector("[aria-selected='true']");
-
-    if (activeCard) {
-      const possibleName =
-        activeCard.querySelector(".staff-name") ||
-        activeCard.querySelector(".stylist-name") ||
-        activeCard.querySelector("[class*='name']");
-
-      if (possibleName) {
-        return cleanStaffName(possibleName.textContent);
-      }
-
-      return cleanStaffName(activeCard.textContent);
-    }
-
-    return "";
-  }
-
-  function updateNoAvailabilityText() {
-    const staffName = getActiveStaffName();
-
-    if (!staffName) return;
-
-    document.querySelectorAll("h1, h2, h3, div, p, span").forEach(function (el) {
-      const text = (el.textContent || "").trim();
-
-      if (text === "No availability today") {
-        el.textContent = "No availability with " + staffName;
-      }
-
-      if (/^No availability with /i.test(text) && text !== "No availability with " + staffName) {
-        el.textContent = "No availability with " + staffName;
-      }
-    });
-  }
-
-  function startNoAvailabilityTextUpdater() {
-    updateNoAvailabilityText();
-
-    setTimeout(updateNoAvailabilityText, 100);
-    setTimeout(updateNoAvailabilityText, 300);
-    setTimeout(updateNoAvailabilityText, 700);
-    setTimeout(updateNoAvailabilityText, 1200);
-
-    const observer = new MutationObserver(function () {
-      updateNoAvailabilityText();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      characterData: true
-    });
-
-    document.addEventListener("click", function () {
-      setTimeout(updateNoAvailabilityText, 80);
-      setTimeout(updateNoAvailabilityText, 300);
-      setTimeout(updateNoAvailabilityText, 700);
-    }, true);
-  }
-
-  startNoAvailabilityTextUpdater();
 })();
 <\\/script>
 `;
 
-        html = html.replace("</style>", "\n" + customCss + "\n</style>");
-        html = html.replace("</body>", customJs + "\n</body>");
+        html = html.replace("</style>", "\\n" + customCss + "\\n</style>");
+        html = html.replace("</body>", customJs + "\\n</body>");
 
         document.open();
         document.write(html);
