@@ -58,34 +58,40 @@
   display: none !important;
 }
 
-/* Address + links: same row, but below Open Hour */
+/* Open hour stays on its own row */
 .pasadena-open {
   display: inline-flex !important;
   width: auto !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 0 !important;
 }
 
-/* Force a new row after Open Hour */
-.pasadena-address {
-  display: inline !important;
+/* Address row created by JS */
+.pasadena-address-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  margin-top: 12px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+}
+
+.pasadena-address-row .pasadena-address {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
   max-width: none !important;
   margin: 0 !important;
   line-height: 1.45 !important;
 }
 
-.pasadena-address::before {
-  content: "";
-  display: block;
-  height: 0;
-}
-
-.pasadena-links {
+.pasadena-address-row .pasadena-links {
   display: inline-flex !important;
   width: auto !important;
-  margin: 0 0 0 12px !important;
+  margin: 0 !important;
   gap: 8px !important;
   flex-wrap: wrap !important;
-  vertical-align: middle !important;
 }
 
 /* Desktop */
@@ -93,45 +99,47 @@
   .pasadena-open {
     display: inline-flex !important;
     width: auto !important;
-    margin-bottom: 12px !important;
+    margin-bottom: 0 !important;
   }
 
-  .pasadena-address {
-    display: inline !important;
+  .pasadena-address-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    flex-wrap: wrap !important;
+    margin-top: 12px !important;
+    width: 100% !important;
+  }
+
+  .pasadena-address-row .pasadena-address {
+    display: inline-flex !important;
     width: auto !important;
     max-width: none !important;
     margin: 0 !important;
   }
 
-  .pasadena-address::before {
-    content: "";
-    display: block;
-    height: 0;
-  }
-
-  .pasadena-links {
+  .pasadena-address-row .pasadena-links {
     display: inline-flex !important;
     width: auto !important;
-    margin: 0 0 0 12px !important;
+    margin: 0 !important;
     gap: 8px !important;
-    flex-wrap: wrap !important;
-    vertical-align: middle !important;
   }
 }
 
-/* Mobile: keep address and links clean */
+/* Mobile */
 @media (max-width: 600px) {
-  .pasadena-address {
+  .pasadena-address-row {
+    display: block !important;
+    margin-top: 10px !important;
+  }
+
+  .pasadena-address-row .pasadena-address {
     display: block !important;
     width: 100% !important;
     margin: 0 0 8px !important;
   }
 
-  .pasadena-address::before {
-    display: none !important;
-  }
-
-  .pasadena-links {
+  .pasadena-address-row .pasadena-links {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     width: 100% !important;
@@ -251,7 +259,36 @@
         const customJs = `
 <script>
 (function () {
-  /* Remove "Morning · 8 openings" count text */
+  /* Put address + links into a real separate row under Open Hour */
+  function fixHeaderRows() {
+    const header = document.querySelector(".pasadena-header");
+    const open = document.querySelector(".pasadena-open");
+    const address = document.querySelector(".pasadena-address");
+    const links = document.querySelector(".pasadena-links");
+
+    if (!header || !open || !address || !links) return;
+
+    let row = document.querySelector(".pasadena-address-row");
+
+    if (!row) {
+      row = document.createElement("div");
+      row.className = "pasadena-address-row";
+
+      address.parentNode.insertBefore(row, address);
+      row.appendChild(address);
+      row.appendChild(links);
+    }
+  }
+
+  fixHeaderRows();
+
+  const headerObserver = new MutationObserver(fixHeaderRows);
+  headerObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
+  /* Remove Morning · 8 openings count */
   function removeOpeningCounts() {
     document.querySelectorAll(".slot-group-title").forEach(function (el) {
       el.textContent = el.textContent
@@ -270,6 +307,7 @@
     characterData: true
   });
 
+  /* Gallery modal */
   function createGalleryModal() {
     let modal = document.getElementById("bsuGalleryModal");
 
