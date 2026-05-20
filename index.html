@@ -45,142 +45,131 @@
 
         const customCss = `
 /* ===============================
-   B SIDE U Custom Header Redesign
+   B SIDE U Pasadena Header V2
+   Full rebuild, not old-class based
    =============================== */
 
-/* Remove View Profile under staff avatars */
 .profile-link-under-card,
 .staff-item.is-active .profile-link-under-card {
   display: none !important;
 }
 
-/* New Pasadena hero header */
-.bsu-custom-hero {
+/* New header shell */
+.bsu-redesigned-header {
   width: 100% !important;
-  max-width: 100% !important;
-  border: 1px solid rgba(20, 20, 20, 0.08) !important;
-  border-radius: 32px !important;
-  background: #fff !important;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.04) !important;
-  padding: 34px 42px 34px !important;
   box-sizing: border-box !important;
-  position: relative !important;
+  padding: 34px 42px !important;
+  border-radius: 32px !important;
+  border: 1px solid rgba(18, 18, 18, 0.08) !important;
+  background:
+    radial-gradient(circle at 100% 100%, #f5f5f5 0 96px, transparent 98px),
+    linear-gradient(135deg, #ffffff 0%, #ffffff 52%, #fafafa 100%) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.045) !important;
   overflow: hidden !important;
+  position: relative !important;
 }
 
-.bsu-custom-hero::after {
-  content: "" !important;
-  position: absolute !important;
-  right: -38px !important;
-  bottom: -54px !important;
-  width: 190px !important;
-  height: 190px !important;
-  border-radius: 999px !important;
-  background: #f6f6f6 !important;
-  z-index: 0 !important;
-}
-
-.bsu-custom-hero-inner {
+.bsu-redesigned-header-inner {
+  width: 100% !important;
   position: relative !important;
   z-index: 2 !important;
-  width: 100% !important;
 }
 
-.bsu-custom-title {
-  margin: 0 0 18px !important;
-  font-size: clamp(42px, 5vw, 78px) !important;
-  line-height: 0.92 !important;
-  letter-spacing: -0.075em !important;
-  font-weight: 950 !important;
+.bsu-redesigned-title {
+  margin: 0 !important;
   color: #111 !important;
+  font-size: clamp(46px, 5.4vw, 82px) !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.085em !important;
+  font-weight: 950 !important;
 }
 
-.bsu-custom-meta {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 12px !important;
+/* Main redesigned layout */
+.bsu-redesigned-meta {
+  margin-top: 20px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  grid-template-areas:
+    "status status"
+    "address actions" !important;
+  column-gap: 22px !important;
+  row-gap: 14px !important;
+  align-items: center !important;
   width: 100% !important;
 }
 
-.bsu-open-pill {
+.bsu-redesigned-status {
+  grid-area: status !important;
   display: inline-flex !important;
   align-items: center !important;
-  gap: 9px !important;
+  justify-content: flex-start !important;
   width: fit-content !important;
   max-width: 100% !important;
-  padding: 10px 16px !important;
+  padding: 10px 17px !important;
   border-radius: 999px !important;
   background: #111 !important;
   color: #fff !important;
   font-size: 18px !important;
   line-height: 1 !important;
   font-weight: 900 !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.03em !important;
   white-space: nowrap !important;
 }
 
-.bsu-open-dot {
+.bsu-redesigned-status::before {
+  content: "" !important;
   width: 12px !important;
   height: 12px !important;
   border-radius: 999px !important;
-  background: #55c878 !important;
-  box-shadow: 0 0 0 5px rgba(85, 200, 120, 0.18) !important;
+  background: #59cf7c !important;
+  box-shadow: 0 0 0 5px rgba(89, 207, 124, 0.18) !important;
+  margin-right: 10px !important;
   flex: 0 0 auto !important;
 }
 
-.bsu-location-row {
+.bsu-redesigned-address {
+  grid-area: address !important;
+  color: #666 !important;
+  font-size: 20px !important;
+  line-height: 1.35 !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.04em !important;
+  white-space: normal !important;
+}
+
+.bsu-redesigned-actions {
+  grid-area: actions !important;
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
-  gap: 14px !important;
-  flex-wrap: wrap !important;
-  width: 100% !important;
-}
-
-.bsu-address {
-  font-size: 19px !important;
-  line-height: 1.35 !important;
-  font-weight: 850 !important;
-  color: #696969 !important;
-  letter-spacing: -0.035em !important;
-}
-
-.bsu-action-row {
-  display: inline-flex !important;
-  align-items: center !important;
   gap: 10px !important;
   flex-wrap: wrap !important;
 }
 
-.bsu-hero-btn {
+.bsu-redesigned-button {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 42px !important;
-  padding: 0 19px !important;
+  min-height: 43px !important;
+  padding: 0 21px !important;
   border-radius: 999px !important;
-  border: 1px solid rgba(20, 20, 20, 0.12) !important;
+  border: 1px solid rgba(18, 18, 18, 0.13) !important;
   background: #fff !important;
   color: #111 !important;
   text-decoration: none !important;
   font-size: 16px !important;
+  line-height: 1 !important;
   font-weight: 900 !important;
-  letter-spacing: -0.025em !important;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) !important;
+  letter-spacing: -0.03em !important;
   white-space: nowrap !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) !important;
 }
 
-.bsu-hero-btn:hover {
+.bsu-redesigned-button:hover {
   background: #f7f7f7 !important;
 }
 
-/* Hide duplicated original header content inside the replaced hero */
-.bsu-original-hidden {
-  display: none !important;
-}
-
-/* Remove outer frame around calendar/date area */
+/* Date area cleanup */
 .date-area {
   border: 0 !important;
   box-shadow: none !important;
@@ -194,7 +183,6 @@
   background: transparent !important;
 }
 
-/* Date arrow buttons: lighter design */
 .date-nav {
   background: #fff !important;
   color: #111 !important;
@@ -207,46 +195,66 @@
   box-shadow: none !important;
 }
 
-/* Mobile header */
-@media (max-width: 700px) {
-  .bsu-custom-hero {
+/* Tablet */
+@media (max-width: 900px) {
+  .bsu-redesigned-header {
+    padding: 30px 30px !important;
+    border-radius: 28px !important;
+  }
+
+  .bsu-redesigned-meta {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "status"
+      "address"
+      "actions" !important;
+    row-gap: 12px !important;
+  }
+
+  .bsu-redesigned-address {
+    font-size: 18px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .bsu-redesigned-header {
+    padding: 24px 20px 26px !important;
     border-radius: 24px !important;
-    padding: 26px 22px 28px !important;
   }
 
-  .bsu-custom-title {
-    font-size: clamp(38px, 13vw, 58px) !important;
+  .bsu-redesigned-title {
+    font-size: clamp(38px, 14vw, 58px) !important;
     line-height: 0.92 !important;
-    margin-bottom: 16px !important;
   }
 
-  .bsu-open-pill {
+  .bsu-redesigned-meta {
+    margin-top: 18px !important;
+    row-gap: 11px !important;
+  }
+
+  .bsu-redesigned-status {
     font-size: 15px !important;
     padding: 9px 14px !important;
   }
 
-  .bsu-location-row {
-    display: block !important;
-  }
-
-  .bsu-address {
-    display: block !important;
+  .bsu-redesigned-address {
     font-size: 16px !important;
-    margin-bottom: 12px !important;
+    line-height: 1.4 !important;
   }
 
-  .bsu-action-row {
+  .bsu-redesigned-actions {
+    width: 100% !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 8px !important;
-    width: 100% !important;
   }
 
-  .bsu-hero-btn {
+  .bsu-redesigned-button {
     width: 100% !important;
     min-height: 42px !important;
-    font-size: 14px !important;
     padding: 0 10px !important;
+    font-size: 14px !important;
   }
 }
 `;
@@ -254,79 +262,103 @@
         const customJs = `
 <script>
 (function () {
-  function findHeaderCard() {
-    const open = document.querySelector(".pasadena-open");
-    if (!open) return null;
+  const HEADER_HTML = \`
+    <div class="bsu-redesigned-header">
+      <div class="bsu-redesigned-header-inner">
+        <h1 class="bsu-redesigned-title">B SIDE U - Pasadena</h1>
 
-    let node = open.parentElement;
+        <div class="bsu-redesigned-meta">
+          <div class="bsu-redesigned-status">Open today until 7:00 PM</div>
+
+          <div class="bsu-redesigned-address">
+            350 S Lake Ave Ste 115, Pasadena, CA 91101
+          </div>
+
+          <div class="bsu-redesigned-actions">
+            <a class="bsu-redesigned-button" href="https://www.google.com/maps/search/?api=1&query=350%20S%20Lake%20Ave%20Ste%20115%2C%20Pasadena%2C%20CA%2091101" target="_blank" rel="noopener">
+              Parking / Direction
+            </a>
+
+            <a class="bsu-redesigned-button" href="https://www.bsideuhair.com/san-gabriel">
+              Switch to San Gabriel
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  \`;
+
+  function normalizeText(str) {
+    return String(str || "").replace(/\\s+/g, " ").trim().toLowerCase();
+  }
+
+  function findOriginalHeaderCard() {
+    const all = Array.from(document.querySelectorAll("body *"));
+
+    const titleEl = all.find(function (el) {
+      const text = normalizeText(el.textContent);
+      const ownText = normalizeText(Array.from(el.childNodes)
+        .filter(function (n) { return n.nodeType === Node.TEXT_NODE; })
+        .map(function (n) { return n.textContent; })
+        .join(" "));
+
+      return ownText === "b side u - pasadena" ||
+             ownText === "bsideu - pasadena" ||
+             text === "b side u - pasadena" ||
+             text === "bsideu - pasadena";
+    });
+
+    if (!titleEl) return null;
+
+    let node = titleEl;
 
     while (node && node !== document.body) {
-      const text = node.textContent || "";
-      const hasTitle = text.includes("B SIDE U") || text.includes("BSIDEU");
-      const hasAddress = text.includes("350 S Lake");
+      const rect = node.getBoundingClientRect();
+      const text = normalizeText(node.textContent);
 
-      if (hasTitle && hasAddress) {
+      const isWideCard = rect.width > window.innerWidth * 0.55;
+      const hasAddress = text.includes("350 s lake") || text.includes("pasadena, ca 91101");
+      const hasParking = text.includes("parking") || text.includes("direction");
+      const notTooTall = rect.height < 340;
+
+      if (isWideCard && notTooTall && (hasAddress || hasParking)) {
         return node;
       }
 
       node = node.parentElement;
     }
 
-    return null;
+    return titleEl.parentElement;
   }
 
-  function getLinkByText(textPart) {
-    const links = Array.from(document.querySelectorAll("a"));
-    return links.find(function (a) {
-      return (a.textContent || "").toLowerCase().includes(textPart.toLowerCase());
-    });
+  function rebuildHeader() {
+    if (document.querySelector(".bsu-redesigned-header")) return;
+
+    const card = findOriginalHeaderCard();
+    if (!card) return;
+
+    card.innerHTML = HEADER_HTML;
+    card.style.padding = "0";
+    card.style.border = "0";
+    card.style.background = "transparent";
+    card.style.boxShadow = "none";
+    card.style.overflow = "visible";
   }
 
-  function redesignPasadenaHeader() {
-    const headerCard = findHeaderCard();
-    if (!headerCard) return;
-
-    if (headerCard.querySelector(".bsu-custom-hero")) return;
-
-    const parkingLink = getLinkByText("Parking");
-    const switchLink = getLinkByText("San Gabriel");
-
-    const parkingHref = parkingLink ? parkingLink.getAttribute("href") : "#";
-    const switchHref = switchLink ? switchLink.getAttribute("href") : "#";
-
-    const customHero = document.createElement("div");
-    customHero.className = "bsu-custom-hero";
-
-    customHero.innerHTML = \`
-      <div class="bsu-custom-hero-inner">
-        <h1 class="bsu-custom-title">B SIDE U - Pasadena</h1>
-
-        <div class="bsu-custom-meta">
-          <div class="bsu-open-pill">
-            <span class="bsu-open-dot"></span>
-            <span>Open today until 7:00 PM</span>
-          </div>
-
-          <div class="bsu-location-row">
-            <div class="bsu-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>
-
-            <div class="bsu-action-row">
-              <a class="bsu-hero-btn" href="\${parkingHref}">Parking / Direction</a>
-              <a class="bsu-hero-btn" href="\${switchHref}">Switch to San Gabriel</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    \`;
-
-    headerCard.innerHTML = "";
-    headerCard.appendChild(customHero);
+  function runManyTimes() {
+    rebuildHeader();
+    setTimeout(rebuildHeader, 100);
+    setTimeout(rebuildHeader, 300);
+    setTimeout(rebuildHeader, 700);
+    setTimeout(rebuildHeader, 1200);
+    setTimeout(rebuildHeader, 2000);
+    setTimeout(rebuildHeader, 3500);
   }
 
-  redesignPasadenaHeader();
+  runManyTimes();
 
   const headerObserver = new MutationObserver(function () {
-    redesignPasadenaHeader();
+    rebuildHeader();
   });
 
   headerObserver.observe(document.body, {
@@ -334,14 +366,8 @@
     subtree: true
   });
 
-  window.addEventListener("load", redesignPasadenaHeader);
-  window.addEventListener("resize", redesignPasadenaHeader);
-
-  setTimeout(redesignPasadenaHeader, 100);
-  setTimeout(redesignPasadenaHeader, 300);
-  setTimeout(redesignPasadenaHeader, 700);
-  setTimeout(redesignPasadenaHeader, 1200);
-  setTimeout(redesignPasadenaHeader, 2000);
+  window.addEventListener("load", runManyTimes);
+  window.addEventListener("resize", runManyTimes);
 
   /* Remove Morning · 2 openings / Afternoon · 1 opening */
   function removeOpeningCounts() {
@@ -351,7 +377,6 @@
       text = text
         .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
         .replace(/\\s*·\\s*\\d+\\s*opening/gi, "")
-        .replace(/\\s*·\\s*\\d+\\s*openings?/gi, "")
         .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
         .replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi, "")
         .trim();
