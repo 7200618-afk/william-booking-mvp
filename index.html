@@ -4,16 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B SIDE U Pasadena Booking</title>
-
   <style>
-    html,
-    body {
+    html, body {
       margin: 0;
       background: #fff;
       color: #111;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     }
-
     .bsu-loading {
       min-height: 100vh;
       display: flex;
@@ -25,33 +22,139 @@
     }
   </style>
 </head>
-
 <body>
   <div class="bsu-loading">Loading B SIDE U booking...</div>
 
   <script>
     (async function () {
-      const sourceUrl =
-        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
+      const sourceUrl = "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
 
       try {
         const response = await fetch(sourceUrl, { cache: "no-store" });
-
-        if (!response.ok) {
-          throw new Error("Unable to load booking page.");
-        }
+        if (!response.ok) throw new Error("Unable to load booking page.");
 
         let html = await response.text();
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V5
-   Force smaller photo wall + align Services / Afternoon.
+   B SIDE U Pasadena Layout Balance V6
+   Balanced photo wall + Services / Afternoon alignment.
    ========================================================= */
 
 .profile-link-under-card,
 .staff-item.is-active .profile-link-under-card {
   display: none !important;
+}
+
+/* Header: compact, four separate rows */
+.pasadena-header {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  grid-template-areas:
+    "title"
+    "status"
+    "address"
+    "actions" !important;
+  align-items: start !important;
+  justify-items: start !important;
+  row-gap: 8px !important;
+  padding: 23px 30px 25px !important;
+  margin-bottom: 16px !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(17,17,17,.08) !important;
+  background: radial-gradient(circle at 100% 100%, #f4f4f4 0 76px, transparent 78px), linear-gradient(135deg, #fff 0%, #fff 62%, #fbfbfb 100%) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.038) !important;
+  overflow: hidden !important;
+}
+.pasadena-header::after {
+  right: -58px !important;
+  bottom: -74px !important;
+  width: 148px !important;
+  height: 148px !important;
+  background: rgba(20,20,20,.04) !important;
+}
+.pasadena-title {
+  grid-area: title !important;
+  margin: 0 0 1px !important;
+  max-width: none !important;
+  font-size: clamp(32px, 2.9vw, 40px) !important;
+  line-height: .98 !important;
+  letter-spacing: -.05em !important;
+  font-weight: 950 !important;
+}
+.pasadena-open {
+  grid-area: status !important;
+  display: inline-flex !important;
+  width: fit-content !important;
+  min-height: 28px !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  gap: 8px !important;
+  align-items: center !important;
+  border-radius: 999px !important;
+  background: #111 !important;
+  color: #fff !important;
+  font-size: 12.5px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -.015em !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+.pasadena-open::before {
+  width: 8px !important;
+  height: 8px !important;
+  background: #55ce79 !important;
+  box-shadow: 0 0 0 4px rgba(85,206,121,.18) !important;
+}
+.pasadena-address-row { display: contents !important; }
+.pasadena-address {
+  grid-area: address !important;
+  display: block !important;
+  max-width: 760px !important;
+  margin: 0 !important;
+  color: #666 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  font-weight: 800 !important;
+  letter-spacing: -.02em !important;
+}
+.pasadena-links {
+  grid-area: actions !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin: 1px 0 0 !important;
+}
+.pasadena-links a {
+  min-height: 34px !important;
+  padding: 0 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(17,17,17,.13) !important;
+  background: #fff !important;
+  color: #111 !important;
+  text-decoration: none !important;
+  font-size: 12.2px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -.015em !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+
+.date-area,
+.date-area.is-fixed-fallback {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+.date-nav {
+  background: #fff !important;
+  color: #111 !important;
+  border: 1px solid rgba(20,20,20,.12) !important;
+  box-shadow: none !important;
 }
 
 @media (min-width: 1024px) {
@@ -71,117 +174,61 @@
     border-radius: 24px !important;
   }
 
-  .staff-strip {
-    gap: 9px !important;
-  }
-
+  .staff-strip { gap: 9px !important; }
   .staff-card {
     min-height: 126px !important;
     border-radius: 19px !important;
     padding: 8px 7px 7px !important;
-    box-shadow: 0 6px 16px rgba(20,20,20,0.04) !important;
+    box-shadow: 0 6px 16px rgba(20,20,20,.04) !important;
   }
-
   .avatar {
     width: 54px !important;
     height: 54px !important;
     margin-bottom: 6px !important;
   }
+  .staff-name, .service-name { font-size: 12.6px !important; }
+  .staff-status, .service-meta { font-size: 9.6px !important; }
 
-  .staff-name,
-  .service-name {
-    font-size: 12.6px !important;
-  }
-
-  .staff-status,
-  .service-meta {
-    font-size: 9.6px !important;
-  }
-
-  .service-pills {
-    gap: 8px !important;
-  }
-
+  .service-pills { gap: 8px !important; }
   .service-pill {
     min-height: 48px !important;
     border-radius: 16px !important;
     padding: 8px 9px !important;
     box-shadow: none !important;
   }
+  .service-meta { margin-top: 4px !important; }
 
-  .service-meta {
-    margin-top: 4px !important;
-  }
-
-  /* Right column and time card */
+  /* Right column alignment: photo wall height is between the previous 168 and 218. */
   .desktop-results-area {
     gap: 0 !important;
     align-content: start !important;
   }
 
-  .desktop-results-area .slot-area,
-  .slot-area {
-    padding: 0 14px 13px !important;
-    border-radius: 24px !important;
-    min-height: 0 !important;
-    box-shadow: 0 8px 22px rgba(20,20,20,0.045) !important;
-    margin-top: 0 !important;
-  }
-
-  .slot-group {
-    margin-top: 8px !important;
-  }
-
-  .slot-group:first-child {
-    margin-top: 0 !important;
-  }
-
-  .slot-group-title {
-    margin: 0 0 7px !important;
-    font-size: 10px !important;
-    letter-spacing: 0.15em !important;
-    line-height: 1 !important;
-  }
-
-  .times {
-    gap: 8px !important;
-  }
-
-  .time-btn {
-    min-height: 44px !important;
-    border-radius: 14px !important;
-    font-size: 13.5px !important;
-    box-shadow: none !important;
-  }
-
-  /* FORCE photo wall smaller. These target every wrapper level, not only carousel. */
   .desktop-photo-wall-section {
     display: block !important;
-    height: 168px !important;
-    max-height: 168px !important;
+    height: 198px !important;
+    max-height: 198px !important;
     min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    align-self: start !important;
     overflow: hidden !important;
+    align-self: start !important;
   }
-
   .desktop-photo-wall-section .bsu-team-wall,
   .desktop-photo-wall-section .staff-groups,
   .desktop-photo-wall-section .staff-group,
   .desktop-photo-wall-section .staff-carousel {
-    height: 168px !important;
-    max-height: 168px !important;
+    height: 198px !important;
+    max-height: 198px !important;
     min-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
-    border-radius: 18px !important;
+    border-radius: 19px !important;
     background: #f6f6f6 !important;
-    box-shadow: inset 0 0 0 1px rgba(20,20,20,0.045) !important;
+    box-shadow: inset 0 0 0 1px rgba(20,20,20,.045) !important;
     overflow: hidden !important;
   }
-
   .desktop-photo-wall-section .bsu-team-head,
   .desktop-photo-wall-section .bsu-divider,
   .desktop-photo-wall-section .gallery-head,
@@ -190,168 +237,49 @@
   .desktop-photo-wall-section .view-toggle {
     display: none !important;
   }
-
   .desktop-photo-wall-section .staff-carousel-track {
     height: 100% !important;
     align-items: stretch !important;
     gap: 3px !important;
   }
-
   .desktop-photo-wall-section .staff-carousel-item {
     height: 100% !important;
-    max-height: 168px !important;
+    max-height: 198px !important;
     aspect-ratio: auto !important;
     flex: 0 0 calc((100% - 9px) / 4) !important;
-    opacity: 0.88 !important;
+    opacity: .9 !important;
   }
-
   .desktop-photo-wall-section .staff-carousel-item img,
   .desktop-photo-wall-section img {
-    height: 100% !important;
     width: 100% !important;
+    height: 100% !important;
     object-fit: cover !important;
   }
-}
 
-/* Header: force four rows so time is never same row as address/buttons */
-.pasadena-header {
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  grid-template-areas:
-    "title"
-    "status"
-    "address"
-    "actions" !important;
-  align-items: start !important;
-  justify-items: start !important;
-  row-gap: 8px !important;
-  padding: 23px 30px 25px !important;
-  margin-bottom: 16px !important;
-  border-radius: 28px !important;
-  border: 1px solid rgba(17, 17, 17, 0.08) !important;
-  background:
-    radial-gradient(circle at 100% 100%, #f4f4f4 0 76px, transparent 78px),
-    linear-gradient(135deg, #ffffff 0%, #ffffff 62%, #fbfbfb 100%) !important;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.038) !important;
-  overflow: hidden !important;
-}
-
-.pasadena-header::after {
-  right: -58px !important;
-  bottom: -74px !important;
-  width: 148px !important;
-  height: 148px !important;
-  background: rgba(20, 20, 20, 0.04) !important;
-}
-
-.pasadena-title {
-  grid-area: title !important;
-  margin: 0 0 1px !important;
-  padding: 0 !important;
-  max-width: none !important;
-  font-size: clamp(32px, 2.9vw, 40px) !important;
-  line-height: 0.98 !important;
-  letter-spacing: -0.05em !important;
-  font-weight: 950 !important;
-  color: #111 !important;
-}
-
-.pasadena-open {
-  grid-area: status !important;
-  display: inline-flex !important;
-  width: fit-content !important;
-  max-width: 100% !important;
-  min-height: 28px !important;
-  padding: 0 12px !important;
-  margin: 0 !important;
-  gap: 8px !important;
-  align-items: center !important;
-  border-radius: 999px !important;
-  background: #111 !important;
-  color: #fff !important;
-  font-size: 12.5px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.015em !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-
-.pasadena-open::before {
-  width: 8px !important;
-  height: 8px !important;
-  background: #55ce79 !important;
-  box-shadow: 0 0 0 4px rgba(85, 206, 121, 0.18) !important;
-}
-
-.pasadena-address-row {
-  display: contents !important;
-}
-
-.pasadena-address {
-  grid-area: address !important;
-  display: block !important;
-  width: auto !important;
-  max-width: 760px !important;
-  margin: 0 !important;
-  color: #666 !important;
-  font-size: 13px !important;
-  line-height: 1.35 !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.02em !important;
-  white-space: normal !important;
-}
-
-.pasadena-links {
-  grid-area: actions !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 8px !important;
-  flex-wrap: wrap !important;
-  width: auto !important;
-  margin: 1px 0 0 !important;
-}
-
-.pasadena-links a {
-  min-height: 34px !important;
-  padding: 0 14px !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(17, 17, 17, 0.13) !important;
-  background: #fff !important;
-  color: #111 !important;
-  text-decoration: none !important;
-  font-size: 12.2px !important;
-  line-height: 1 !important;
-  font-weight: 900 !important;
-  letter-spacing: -0.015em !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
-}
-
-.pasadena-links a:hover {
-  background: #f7f7f7 !important;
-  transform: none !important;
-}
-
-.date-area,
-.date-area.is-fixed-fallback {
-  border: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-}
-
-.date-nav {
-  background: #fff !important;
-  color: #111 !important;
-  border: 1px solid rgba(20, 20, 20, 0.12) !important;
-  box-shadow: none !important;
-}
-
-.date-nav:hover {
-  background: #f7f7f7 !important;
-  box-shadow: none !important;
+  /* Afternoon block: no top padding, but keep a small controlled gap under photo wall. */
+  .desktop-results-area .slot-area,
+  .slot-area {
+    margin-top: 10px !important;
+    padding: 0 14px 13px !important;
+    border-radius: 24px !important;
+    min-height: 0 !important;
+    box-shadow: 0 8px 22px rgba(20,20,20,.045) !important;
+  }
+  .slot-group { margin-top: 8px !important; }
+  .slot-group:first-child { margin-top: 0 !important; }
+  .slot-group-title {
+    margin: 0 0 7px !important;
+    font-size: 10px !important;
+    letter-spacing: .15em !important;
+    line-height: 1 !important;
+  }
+  .times { gap: 8px !important; }
+  .time-btn {
+    min-height: 44px !important;
+    border-radius: 14px !important;
+    font-size: 13.5px !important;
+    box-shadow: none !important;
+  }
 }
 
 @media (max-width: 900px) {
@@ -359,43 +287,30 @@
     padding: 23px 24px 25px !important;
     border-radius: 26px !important;
   }
-
-  .pasadena-title {
-    font-size: clamp(31px, 7vw, 42px) !important;
-  }
-
-  .pasadena-address {
-    font-size: 13px !important;
-  }
+  .pasadena-title { font-size: clamp(31px, 7vw, 42px) !important; }
+  .pasadena-address { font-size: 13px !important; }
 }
 
 @media (max-width: 600px) {
-  .page {
-    padding: 10px 10px 26px !important;
-  }
-
+  .page { padding: 10px 10px 26px !important; }
   .pasadena-header {
     padding: 20px 16px 18px !important;
     border-radius: 22px !important;
     row-gap: 8px !important;
   }
-
   .pasadena-title {
     font-size: clamp(29px, 10.5vw, 40px) !important;
-    line-height: 0.98 !important;
+    line-height: .98 !important;
   }
-
   .pasadena-open {
     min-height: 28px !important;
     padding: 0 11px !important;
     font-size: 12px !important;
   }
-
   .pasadena-address {
     font-size: 12.8px !important;
     line-height: 1.38 !important;
   }
-
   .pasadena-links {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -403,7 +318,6 @@
     width: 100% !important;
     margin-top: 3px !important;
   }
-
   .pasadena-links a {
     width: 100% !important;
     min-height: 38px !important;
@@ -426,31 +340,18 @@
         .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi, "")
         .replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi, "")
         .trim();
-
-      if (text !== newText) {
-        el.textContent = newText;
-      }
+      if (text !== newText) el.textContent = newText;
     });
   }
-
-  function runFixes() {
-    removeOpeningCounts();
-  }
-
+  function runFixes() { removeOpeningCounts(); }
   runFixes();
   setTimeout(runFixes, 100);
   setTimeout(runFixes, 300);
   setTimeout(runFixes, 700);
   setTimeout(runFixes, 1200);
   setTimeout(runFixes, 2500);
-
   var observer = new MutationObserver(runFixes);
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    characterData: true
-  });
-
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
   document.addEventListener("click", function () {
     setTimeout(runFixes, 50);
     setTimeout(runFixes, 250);
@@ -467,8 +368,7 @@
         document.write(html);
         document.close();
       } catch (error) {
-        document.body.innerHTML =
-          '<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
+        document.body.innerHTML = '<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
       }
     })();
   </script>
