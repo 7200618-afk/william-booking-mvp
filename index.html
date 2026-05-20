@@ -4,174 +4,338 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B SIDE U Pasadena Booking</title>
+
   <style>
-    html,body{margin:0;background:#fff;color:#111;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;}
-    .bsu-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#666;}
+    html,
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    .bsu-loading {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #666;
+    }
   </style>
 </head>
+
 <body>
   <div class="bsu-loading">Loading B SIDE U booking...</div>
+
   <script>
-    (async function(){
-      const sourceUrl = "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
+    (async function () {
+      /*
+        This loads the previous working full booking page with gallery,
+        then applies the requested fixes safely.
+      */
+      const sourceUrl =
+        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
+
       try {
         const response = await fetch(sourceUrl, { cache: "no-store" });
-        if (!response.ok) throw new Error("Unable to load booking page.");
+
+        if (!response.ok) {
+          throw new Error("Unable to load booking page.");
+        }
+
         let html = await response.text();
 
         const customCss = `
+/* ===============================
+   B SIDE U Custom Fixes
+   =============================== */
+
+/* 1. Remove View Profile under staff avatars */
 .profile-link-under-card,
-.staff-item.is-active .profile-link-under-card{
-  display:none!important;
+.staff-item.is-active .profile-link-under-card {
+  display: none !important;
 }
-.date-area{
-  border:0!important;
-  box-shadow:none!important;
-  background:transparent!important;
-  padding:0!important;
+
+/* 2. Address / links should be on a separate row under open hour */
+.pasadena-open {
+  display: inline-flex !important;
+  width: auto !important;
+  margin-bottom: 10px !important;
 }
-.date-area.is-fixed-fallback{
-  background:transparent!important;
-  box-shadow:none!important;
-  border:0!important;
+
+.pasadena-address {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+  line-height: 1.45 !important;
 }
-@media (min-width:1024px){
-  .profile-link-under-card,
-  .staff-item.is-active .profile-link-under-card{
-    display:none!important;
+
+.pasadena-links {
+  display: flex !important;
+  width: 100% !important;
+  margin-top: 0 !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+/* Desktop header layout */
+@media (min-width: 1024px) {
+  .pasadena-open {
+    display: inline-flex !important;
+    width: auto !important;
+    margin-bottom: 12px !important;
   }
-  .pasadena-open{
-    display:inline-flex!important;
-    width:auto!important;
+
+  .pasadena-address {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
   }
-  .pasadena-address{
-    display:inline-block!important;
-    margin-top:12px!important;
-    margin-right:12px!important;
-    vertical-align:middle!important;
-  }
-  .pasadena-links{
-    display:inline-flex!important;
-    margin-top:12px!important;
-    vertical-align:middle!important;
-    gap:8px!important;
+
+  .pasadena-links {
+    display: flex !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    gap: 8px !important;
   }
 }
-.bsu-click-modal{
-  position:fixed;
-  inset:0;
-  z-index:100000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:22px;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+
+/* 3. Remove outer frame around calendar/date area */
+.date-area {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
 }
-.bsu-click-modal.is-open{display:flex;}
-.bsu-click-modal-inner{
-  position:relative;
-  width:min(92vw,980px);
-  height:min(88vh,860px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+
+.date-area.is-fixed-fallback {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
 }
-.bsu-click-modal img,
-.bsu-click-modal video{
-  max-width:100%;
-  max-height:100%;
-  object-fit:contain;
-  border-radius:18px;
-  background:#000;
-  box-shadow:0 28px 70px rgba(0,0,0,.32);
+
+/* Keep the date center/button itself clean */
+.date-label {
+  background: #fff !important;
 }
-.bsu-click-modal-close{
-  position:absolute;
-  top:-14px;
-  right:-14px;
-  width:42px;
-  height:42px;
-  border:0;
-  border-radius:999px;
-  background:#fff;
-  color:#111;
-  font-size:24px;
-  font-weight:900;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 12px 28px rgba(0,0,0,.22);
+
+.date-nav {
+  background: #fff !important;
+  color: #111 !important;
+  border: 1px solid rgba(20, 20, 20, 0.12) !important;
+  box-shadow: none !important;
 }
-@media (max-width:640px){
-  .bsu-click-modal{padding:14px;}
-  .bsu-click-modal-inner{width:96vw;height:84vh;}
-  .bsu-click-modal-close{top:0;right:0;}
-}`;
+
+.date-nav:hover {
+  background: #f7f7f7 !important;
+  box-shadow: none !important;
+}
+
+/* 4. Gallery click modal */
+.bsu-gallery-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.bsu-gallery-modal.is-open {
+  display: flex;
+}
+
+.bsu-gallery-modal-inner {
+  position: relative;
+  width: min(92vw, 980px);
+  height: min(88vh, 860px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#bsuGalleryModalStage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bsu-gallery-modal img,
+.bsu-gallery-modal video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #000;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.32);
+}
+
+.bsu-gallery-modal-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font-size: 24px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  z-index: 2;
+}
+
+@media (max-width: 640px) {
+  .bsu-gallery-modal {
+    padding: 14px;
+  }
+
+  .bsu-gallery-modal-inner {
+    width: 96vw;
+    height: 84vh;
+  }
+
+  .bsu-gallery-modal-close {
+    top: 0;
+    right: 0;
+  }
+}
+`;
 
         const customJs = `
 <script>
-(function(){
-  function ensureModal(){
-    let modal = document.getElementById('bsuClickImageModal');
-    if(modal) return modal;
-    modal = document.createElement('div');
-    modal.id = 'bsuClickImageModal';
-    modal.className = 'bsu-click-modal';
-    modal.innerHTML = '<div class="bsu-click-modal-inner"><button class="bsu-click-modal-close" type="button" aria-label="Close">×</button><div id="bsuClickImageStage"></div></div>';
+(function () {
+  function createGalleryModal() {
+    let modal = document.getElementById("bsuGalleryModal");
+
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "bsuGalleryModal";
+    modal.className = "bsu-gallery-modal";
+    modal.innerHTML = \`
+      <div class="bsu-gallery-modal-inner">
+        <button class="bsu-gallery-modal-close" type="button" aria-label="Close">×</button>
+        <div id="bsuGalleryModalStage"></div>
+      </div>
+    \`;
+
     document.body.appendChild(modal);
-    modal.addEventListener('click', function(e){
-      if(e.target === modal || e.target.classList.contains('bsu-click-modal-close')){
-        modal.classList.remove('is-open');
-        const stage = document.getElementById('bsuClickImageStage');
-        if(stage) stage.innerHTML = '';
+
+    modal.addEventListener("click", function (event) {
+      if (
+        event.target === modal ||
+        event.target.classList.contains("bsu-gallery-modal-close")
+      ) {
+        closeGalleryModal();
       }
     });
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape' && modal.classList.contains('is-open')){
-        modal.classList.remove('is-open');
-        const stage = document.getElementById('bsuClickImageStage');
-        if(stage) stage.innerHTML = '';
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeGalleryModal();
       }
     });
+
     return modal;
   }
 
-  function openMediaFrom(el){
-    const media = el.matches('img,video') ? el : el.querySelector('img,video');
-    if(!media) return false;
-    const src = media.currentSrc || media.src || media.getAttribute('data-src');
-    if(!src) return false;
-    const modal = ensureModal();
-    const stage = document.getElementById('bsuClickImageStage');
-    const isVideo = media.tagName.toLowerCase() === 'video' || /\\.(mp4|mov|webm)(\\?|$)/i.test(src);
-    stage.innerHTML = isVideo
-      ? '<video src="' + src + '" controls autoplay playsinline></video>'
-      : '<img src="' + src + '" alt="B SIDE U work">';
-    modal.classList.add('is-open');
-    return true;
+  function closeGalleryModal() {
+    const modal = document.getElementById("bsuGalleryModal");
+    const stage = document.getElementById("bsuGalleryModalStage");
+
+    if (stage) {
+      stage.innerHTML = "";
+    }
+
+    if (modal) {
+      modal.classList.remove("is-open");
+    }
   }
 
-  document.addEventListener('click', function(e){
-    const item = e.target.closest('.staff-carousel-item, .grid-item, .g-media, #bsu-gallery img, #bsu-gallery video');
-    if(!item) return;
-    if(!document.getElementById('bsu-gallery') || !document.getElementById('bsu-gallery').contains(item)) return;
-    e.preventDefault();
-    e.stopPropagation();
-    openMediaFrom(item);
-  }, true);
+  function openGalleryModal(media) {
+    const modal = createGalleryModal();
+    const stage = document.getElementById("bsuGalleryModalStage");
+
+    if (!media || !stage) return;
+
+    const src =
+      media.currentSrc ||
+      media.src ||
+      media.getAttribute("data-src") ||
+      media.getAttribute("poster") ||
+      "";
+
+    if (!src) return;
+
+    const tagName = media.tagName.toLowerCase();
+
+    const isVideo =
+      tagName === "video" ||
+      /\\.(mp4|mov|webm)(\\?|$)/i.test(src);
+
+    stage.innerHTML = isVideo
+      ? \`<video src="\${src}" controls autoplay playsinline></video>\`
+      : \`<img src="\${src}" alt="B SIDE U work">\`;
+
+    modal.classList.add("is-open");
+  }
+
+  document.addEventListener(
+    "click",
+    function (event) {
+      const gallery = document.getElementById("bsu-gallery");
+      if (!gallery) return;
+
+      const item = event.target.closest(
+        ".staff-carousel-item, .grid-item, .g-media, #bsu-gallery img, #bsu-gallery video"
+      );
+
+      if (!item || !gallery.contains(item)) return;
+
+      const media = item.matches("img, video")
+        ? item
+        : item.querySelector("img, video");
+
+      if (!media) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      openGalleryModal(media);
+    },
+    true
+  );
 })();
-<\/script>`;
+<\\/script>
+`;
 
         html = html.replace("</style>", "\n" + customCss + "\n</style>");
         html = html.replace("</body>", customJs + "\n</body>");
+
         document.open();
         document.write(html);
         document.close();
       } catch (error) {
-        document.body.innerHTML = '<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
+        document.body.innerHTML =
+          '<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
       }
     })();
   </script>
