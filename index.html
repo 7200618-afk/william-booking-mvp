@@ -31,10 +31,6 @@
 
   <script>
     (async function () {
-      /*
-        Loads the last full working booking page with gallery,
-        then applies the requested visual fixes.
-      */
       const sourceUrl =
         "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/41b5a444c3ada20bc9d620047297643db44dcc17/index.html";
 
@@ -58,20 +54,21 @@
   display: none !important;
 }
 
-/* Open hour stays on its own row */
+/* Open hour must be its own line */
 .pasadena-open {
-  display: inline-flex !important;
-  width: auto !important;
-  margin-bottom: 0 !important;
+  display: flex !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  margin-bottom: 12px !important;
 }
 
-/* Address row created by JS */
+/* Address + buttons row */
 .pasadena-address-row {
   display: flex !important;
   align-items: center !important;
   gap: 14px !important;
   flex-wrap: wrap !important;
-  margin-top: 12px !important;
+  margin-top: 0 !important;
   position: relative !important;
   z-index: 2 !important;
   width: 100% !important;
@@ -94,12 +91,22 @@
   flex-wrap: wrap !important;
 }
 
+/* Prevent original address / links from jumping next to open hour */
+.pasadena-header > .pasadena-address:not(.pasadena-address-row .pasadena-address) {
+  display: block !important;
+}
+
+.pasadena-header > .pasadena-links:not(.pasadena-address-row .pasadena-links) {
+  display: flex !important;
+}
+
 /* Desktop */
 @media (min-width: 1024px) {
   .pasadena-open {
-    display: inline-flex !important;
-    width: auto !important;
-    margin-bottom: 0 !important;
+    display: flex !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    margin-bottom: 12px !important;
   }
 
   .pasadena-address-row {
@@ -107,7 +114,6 @@
     align-items: center !important;
     gap: 14px !important;
     flex-wrap: wrap !important;
-    margin-top: 12px !important;
     width: 100% !important;
   }
 
@@ -128,9 +134,16 @@
 
 /* Mobile */
 @media (max-width: 600px) {
+  .pasadena-open {
+    display: flex !important;
+    width: max-content !important;
+    max-width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+
   .pasadena-address-row {
     display: block !important;
-    margin-top: 10px !important;
+    margin-top: 0 !important;
   }
 
   .pasadena-address-row .pasadena-address {
@@ -145,6 +158,11 @@
     width: 100% !important;
     margin: 10px 0 0 !important;
   }
+}
+
+/* Remove Morning · 8 openings visually if JS misses it briefly */
+.slot-group-title {
+  white-space: nowrap;
 }
 
 /* Remove outer frame around calendar/date area */
@@ -274,7 +292,12 @@
       row = document.createElement("div");
       row.className = "pasadena-address-row";
 
-      address.parentNode.insertBefore(row, address);
+      if (open.nextSibling) {
+        open.parentNode.insertBefore(row, open.nextSibling);
+      } else {
+        open.parentNode.appendChild(row);
+      }
+
       row.appendChild(address);
       row.appendChild(links);
     }
