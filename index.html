@@ -53,7 +53,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V33 - large booking failure modal */
+/* B SIDE U Pasadena Layout Balance V34 - larger mobile photo wall carousel */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -190,18 +190,86 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 @media(max-width:599px){
 .desktop-service-panel,.desktop-right-panel{display:contents!important}
-.desktop-photo-wall-section{display:block!important;width:100%!important;height:160px!important;max-height:160px!important;margin:18px 0 0!important;padding:0!important;overflow:hidden!important;border-radius:18px!important;background:#f6f6f6!important;box-shadow:none!important}
-.desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
-.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel{height:160px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:18px!important;background:transparent!important;overflow:hidden!important}
-.desktop-photo-wall-section .staff-carousel-track{height:160px!important;display:flex!important;align-items:stretch!important;gap:3px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x proximity!important;-webkit-overflow-scrolling:touch!important}
-.desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
-.desktop-photo-wall-section .staff-carousel-item{height:160px!important;max-height:160px!important;flex:0 0 42%!important;min-width:42%!important;scroll-snap-align:start!important;border-radius:0!important;overflow:hidden!important}
-.desktop-photo-wall-section .staff-carousel-item img,.desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
-.desktop-photo-wall-section::before{display:none!important;content:none!important}
+
+.desktop-photo-wall-section{
+  display:block!important;
+  width:100%!important;
+  height:184px!important;
+  max-height:184px!important;
+  margin:18px 0 0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:20px!important;
+  background:#f6f6f6!important;
+  box-shadow:none!important;
+}
+
+.desktop-photo-wall-section .bsu-team-head,
+.desktop-photo-wall-section .bsu-divider,
+.desktop-photo-wall-section .gallery-head,
+.desktop-photo-wall-section .staff-group-head,
+.desktop-photo-wall-section .bsu-filter-group,
+.desktop-photo-wall-section .view-toggle{
+  display:none!important;
+}
+
+.desktop-photo-wall-section .bsu-team-wall,
+.desktop-photo-wall-section .staff-groups,
+.desktop-photo-wall-section .staff-group,
+.desktop-photo-wall-section .staff-carousel{
+  height:184px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:20px!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-track{
+  height:184px!important;
+  display:flex!important;
+  align-items:stretch!important;
+  gap:4px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:none!important;
+  transform:none!important;
+  will-change:scroll-position!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{
+  display:none!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-item{
+  height:184px!important;
+  max-height:184px!important;
+  flex:0 0 56%!important;
+  min-width:56%!important;
+  scroll-snap-align:start!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-item img,
+.desktop-photo-wall-section img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+
+.desktop-photo-wall-section::before{
+  display:none!important;
+  content:none!important;
+}
 }
 
 @media(max-width:900px){.pasadena-header{padding:23px 24px 25px!important;border-radius:26px!important}.pasadena-title{font-size:clamp(31px,7vw,42px)!important}.pasadena-address{font-size:13px!important}}
-@media(max-width:600px){.page{padding:10px 10px 26px!important}.pasadena-header{padding:20px 16px 18px!important;border-radius:22px!important;row-gap:8px!important}.pasadena-title{font-size:clamp(29px,10.5vw,40px)!important;line-height:.98!important}.pasadena-open{min-height:28px!important;padding:0 11px!important;font-size:12px!important}.pasadena-address{font-size:12.8px!important;line-height:1.38!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:38px!important;padding:0 8px!important;font-size:11.8px!important;text-align:center!important}.desktop-photo-wall-section{height:154px!important;max-height:154px!important;border-radius:17px!important}.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel,.desktop-photo-wall-section .staff-carousel-track,.desktop-photo-wall-section .staff-carousel-item{height:154px!important;max-height:154px!important}.desktop-photo-wall-section .staff-carousel-item{flex-basis:43%!important;min-width:43%!important}}
+@media(max-width:600px){.page{padding:10px 10px 26px!important}.pasadena-header{padding:20px 16px 18px!important;border-radius:22px!important;row-gap:8px!important}.pasadena-title{font-size:clamp(29px,10.5vw,40px)!important;line-height:.98!important}.pasadena-open{min-height:28px!important;padding:0 11px!important;font-size:12px!important}.pasadena-address{font-size:12.8px!important;line-height:1.38!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:38px!important;padding:0 8px!important;font-size:11.8px!important;text-align:center!important}.desktop-photo-wall-section{height:184px!important;max-height:184px!important;border-radius:20px!important}.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel,.desktop-photo-wall-section .staff-carousel-track,.desktop-photo-wall-section .staff-carousel-item{height:184px!important;max-height:184px!important}.desktop-photo-wall-section .staff-carousel-item{flex-basis:56%!important;min-width:56%!important}}
 `;
 
         const customJs=`
@@ -209,6 +277,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 (function(){
 let lastGalleryStaff="";
 let mobileLockedScrollY=null;
+let mobilePhotoWallRaf=null;
+let mobilePhotoWallPauseTimer=null;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -314,6 +384,70 @@ function patchCreateBookingFailureModal(){
   };
 }
 
+function setupMobilePhotoWallCarousel(){
+  if(mobilePhotoWallRaf){
+    cancelAnimationFrame(mobilePhotoWallRaf);
+    mobilePhotoWallRaf=null;
+  }
+
+  if(!isMobile())return;
+
+  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
+  if(!track)return;
+
+  track.style.setProperty("transform","none","important");
+
+  var paused=false;
+  var lastTs=null;
+
+  function pauseCarousel(){
+    paused=true;
+    if(mobilePhotoWallPauseTimer)clearTimeout(mobilePhotoWallPauseTimer);
+    mobilePhotoWallPauseTimer=setTimeout(function(){
+      paused=false;
+      lastTs=null;
+    },2200);
+  }
+
+  if(!track.dataset.bsuMobileCarouselBound){
+    track.dataset.bsuMobileCarouselBound="1";
+    track.addEventListener("touchstart",pauseCarousel,{passive:true});
+    track.addEventListener("pointerdown",pauseCarousel,{passive:true});
+    track.addEventListener("wheel",pauseCarousel,{passive:true});
+    track.addEventListener("scroll",function(){pauseCarousel();},{passive:true});
+  }
+
+  function tick(ts){
+    if(!isMobile()){
+      mobilePhotoWallRaf=null;
+      return;
+    }
+
+    if(!document.body.contains(track)){
+      mobilePhotoWallRaf=null;
+      return;
+    }
+
+    if(lastTs===null)lastTs=ts;
+    var dt=Math.min(48,ts-lastTs);
+    lastTs=ts;
+
+    var maxScroll=track.scrollWidth-track.clientWidth;
+
+    if(!paused && maxScroll>12){
+      track.scrollLeft+=dt*0.018;
+
+      if(track.scrollLeft>=maxScroll-2){
+        track.scrollLeft=0;
+      }
+    }
+
+    mobilePhotoWallRaf=requestAnimationFrame(tick);
+  }
+
+  mobilePhotoWallRaf=requestAnimationFrame(tick);
+}
+
 function getSelectedStaffName(){var el=document.querySelector(".staff-item.is-active .staff-name")||document.querySelector(".staff-card.is-active .staff-name");return el?(el.textContent||"").trim():""}
 function getDateText(){var el=document.querySelector(".date-nav")||document.querySelector(".date-area");return el?(el.textContent||""):""}
 function parseDisplayDate(){var m=getDateText().match(/(\\d{1,2})\\s*\\/\\s*(\\d{1,2})/);if(!m)return null;var now=new Date();var y=now.getFullYear();var dt=new Date(y,Number(m[1])-1,Number(m[2]));if(dt.getTime()<now.getTime()-15552000000)dt.setFullYear(y+1);return dt}
@@ -328,7 +462,7 @@ function moveServicesForDesktop(){var resultsArea=document.querySelector(".deskt
 function removeOpeningCounts(){document.querySelectorAll(".slot-group-title").forEach(function(el){var text=el.textContent||"";var newText=text.replace(/\\s*·\\s*\\d+\\s*openings?/gi,"").replace(/\\s*·\\s*\\d+\\s*opening/gi,"").replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi,"").replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi,"").trim();if(text!==newText)el.textContent=newText})}
 function lockMobileScrollOnSelection(){document.addEventListener("click",function(e){if(!isMobile())return;var t=e.target;if(t&&t.closest&&t.closest(".staff-item,.staff-card,.service-pill")){mobileLockedScrollY=window.scrollY;[0,40,100,180,320].forEach(function(ms){setTimeout(function(){if(mobileLockedScrollY!==null)window.scrollTo(0,mobileLockedScrollY)},ms)});setTimeout(function(){mobileLockedScrollY=null},420)}},true)}
 function markNextAvailableClick(){document.addEventListener("click",function(e){if(e.target&&e.target.closest&&e.target.closest(".next-available-btn")){window.__bsuKeepCurrentStaffOnNextAvailable=true}},true)}
-function runFixes(){moveServicesForDesktop();removeOpeningCounts();fixOffDayFullyBookedStatus();syncGalleryToSelectedStaff();movePhotoWall()}
+function runFixes(){moveServicesForDesktop();removeOpeningCounts();fixOffDayFullyBookedStatus();syncGalleryToSelectedStaff();movePhotoWall();setupMobilePhotoWallCarousel()}
 
 patchCreateBookingFailureModal();
 markNextAvailableClick();
