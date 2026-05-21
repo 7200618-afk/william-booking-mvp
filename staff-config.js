@@ -124,13 +124,6 @@ export const STAFF_DATA = {
         duration_minutes: 40,
         service_variation_id: "5VLGRSZYIO5AL3SU6AGZU6KP",
         service_variation_version: 1777094072086
-      },
-      color_full: {
-        label: "Full Color",
-        price: 120,
-        duration_minutes: 120,
-        service_variation_id: "FPADYBGJBAVOXMTJHXFQ43H4",
-        service_variation_version: 1769964790194
       }
     }
   },
