@@ -53,7 +53,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V38 - scroll lock removed, mobile swipe carousel kept */
+/* B SIDE U Pasadena Layout Balance V39 - mobile jump guard + swipe carousel */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -283,11 +283,84 @@ let mobilePhotoWallTrack=null;
 let mobilePhotoWallPauseUntil=0;
 let mobilePhotoWallLastTs=null;
 
+let bsuPreventJumpUntil=0;
+let bsuSavedScrollY=0;
+let bsuOriginalScrollTo=null;
+let bsuOriginalScrollIntoView=null;
+
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function setImportantDisplay(el,value){if(!el)return;el.style.setProperty("display",value,"important")}
 function isMobile(){return window.innerWidth<600}
+
+function installProgrammaticScrollGuard(){
+  if(bsuOriginalScrollTo && bsuOriginalScrollIntoView)return;
+
+  bsuOriginalScrollTo=window.scrollTo.bind(window);
+  bsuOriginalScrollIntoView=Element.prototype.scrollIntoView;
+
+  window.scrollTo=function(x,y){
+    if(isMobile() && Date.now()<bsuPreventJumpUntil){
+      return bsuOriginalScrollTo(0,bsuSavedScrollY);
+    }
+
+    return bsuOriginalScrollTo(x,y);
+  };
+
+  Element.prototype.scrollIntoView=function(){
+    if(isMobile() && Date.now()<bsuPreventJumpUntil){
+      return;
+    }
+
+    return bsuOriginalScrollIntoView.apply(this,arguments);
+  };
+}
+
+function preventMobileJumpBriefly(){
+  if(!isMobile())return;
+
+  installProgrammaticScrollGuard();
+
+  bsuSavedScrollY=window.scrollY || window.pageYOffset || 0;
+  bsuPreventJumpUntil=Date.now()+900;
+
+  setTimeout(function(){
+    if(isMobile() && Date.now()<bsuPreventJumpUntil){
+      bsuOriginalScrollTo(0,bsuSavedScrollY);
+    }
+  },60);
+
+  setTimeout(function(){
+    if(isMobile() && Date.now()<bsuPreventJumpUntil){
+      bsuOriginalScrollTo(0,bsuSavedScrollY);
+    }
+  },180);
+
+  setTimeout(function(){
+    if(isMobile() && Date.now()<bsuPreventJumpUntil){
+      bsuOriginalScrollTo(0,bsuSavedScrollY);
+    }
+  },420);
+}
+
+function protectStaffAndServiceClicks(){
+  ["touchstart","pointerdown","click"].forEach(function(eventName){
+    document.addEventListener(eventName,function(e){
+      if(!isMobile())return;
+
+      var t=e.target;
+
+      if(
+        t &&
+        t.closest &&
+        t.closest(".staff-item,.staff-card,.service-pill")
+      ){
+        preventMobileJumpBriefly();
+      }
+    },true);
+  });
+}
 
 function ensureBookingFailureModal(){
   if(document.getElementById("bsuBookingFailOverlay"))return;
@@ -489,6 +562,7 @@ function runFixes(){moveServicesForDesktop();removeOpeningCounts();fixOffDayFull
 
 patchCreateBookingFailureModal();
 markNextAvailableClick();
+protectStaffAndServiceClicks();
 runFixes();
 setTimeout(runFixes,100);
 setTimeout(runFixes,300);
