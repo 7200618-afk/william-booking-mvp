@@ -37,8 +37,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V17
-   Services above times, tighter spacing.
+   B SIDE U Pasadena Layout Balance V18
+   Desktop: Services + times in one right panel, compact service buttons.
    ========================================================= */
 
 .profile-link-under-card,
@@ -218,11 +218,10 @@
     grid-template-columns: minmax(390px, 430px) minmax(0, 1fr) !important;
     grid-template-areas:
       "date date"
-      "left service"
-      "left slots"
+      "left right"
       "photo photo" !important;
-    grid-template-rows: auto auto auto auto !important;
-    gap: 6px 16px !important;
+    grid-template-rows: auto auto auto !important;
+    gap: 12px 16px !important;
     align-items: start !important;
   }
 
@@ -240,20 +239,29 @@
 
   .desktop-results-area { display: contents !important; }
 
-  .desktop-service-panel {
-    grid-area: service !important;
+  .desktop-right-panel {
+    grid-area: right !important;
     display: block !important;
     align-self: start !important;
     margin: 0 !important;
-    padding: 10px 12px 10px !important;
-    border-radius: 18px !important;
+    padding: 11px 12px 12px !important;
+    border-radius: 22px !important;
     background: #fff !important;
-    border: 1px solid rgba(20,20,20,.08) !important;
-    box-shadow: 0 4px 14px rgba(20,20,20,.035) !important;
+    border: 1px solid rgba(20,20,20,.085) !important;
+    box-shadow: 0 5px 16px rgba(20,20,20,.038) !important;
+  }
+
+  .desktop-service-panel {
+    display: block !important;
+    margin: 0 0 10px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .desktop-service-panel .section-label {
-    margin: 0 2px 6px !important;
+    margin: 0 2px 7px !important;
   }
 
   .desktop-service-panel .service-pills {
@@ -262,24 +270,27 @@
 
   .desktop-service-panel .message {
     margin-top: 4px !important;
-    font-size: 11.5px !important;
-    line-height: 1.25 !important;
+    font-size: 11.2px !important;
+    line-height: 1.2 !important;
   }
 
   .desktop-service-placeholder {
     display: none !important;
   }
 
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state,
   .desktop-results-area .slot-area,
   .slot-area,
   .desktop-results-area .empty-state {
-    grid-area: slots !important;
-    align-self: start !important;
-    margin-top: 0 !important;
-    padding: 10px 12px 12px !important;
-    border-radius: 18px !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
     min-height: 0 !important;
-    box-shadow: 0 4px 14px rgba(20,20,20,.035) !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 
   .staff-strip {
@@ -305,8 +316,8 @@
     padding: 0 8px !important;
     font-size: 10.3px !important;
   }
-  .service-name { font-size: 12.5px !important; }
-  .service-meta { font-size: 9.5px !important; }
+  .service-name { font-size: 12px !important; }
+  .service-meta { font-size: 9px !important; }
 
   .section-divider {
     height: 1px !important;
@@ -314,17 +325,18 @@
     background: #fff !important;
   }
 
-  .service-pills { gap: 7px !important; }
+  .service-pills { gap: 6px !important; }
   .service-pill {
-    min-height: 42px !important;
-    border-radius: 14px !important;
-    padding: 6px 8px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    border-radius: 12px !important;
+    padding: 5px 7px !important;
     box-shadow: none !important;
   }
-  .service-meta { margin-top: 3px !important; }
+  .service-meta { margin-top: 2px !important; }
 
   .slot-group {
-    margin-top: 6px !important;
+    margin-top: 7px !important;
   }
   .slot-group:first-child {
     margin-top: 0 !important;
@@ -347,9 +359,6 @@
     box-shadow: none !important;
   }
 
-  .empty-state {
-    padding: 12px 14px !important;
-  }
   .empty-title {
     font-size: 20px !important;
     margin-bottom: 4px !important;
@@ -437,7 +446,8 @@
 }
 
 @media (max-width: 1023px) {
-  .desktop-service-panel {
+  .desktop-service-panel,
+  .desktop-right-panel {
     display: contents !important;
   }
 }
@@ -513,11 +523,13 @@
 
   function moveServicesForDesktop() {
     var bookingLayout = document.querySelector(".booking-layout");
-    var controlsCard = bookingLayout ? bookingLayout.querySelector(":scope > div:nth-child(2)") : null;
     var resultsArea = document.querySelector(".desktop-results-area");
     var servicePills = document.querySelector(".service-pills");
+    var slotArea = document.querySelector(".desktop-results-area .slot-area") || document.querySelector(".slot-area");
+    var emptyState = document.querySelector(".desktop-results-area .empty-state") || document.querySelector(".empty-state");
+    var timeBlock = slotArea || emptyState;
 
-    if (!bookingLayout || !controlsCard || !resultsArea || !servicePills) return;
+    if (!bookingLayout || !resultsArea || !servicePills) return;
 
     var isDesktop = window.innerWidth >= 1024;
 
@@ -527,7 +539,9 @@
 
     var message = document.querySelector(".message");
     var panel = document.querySelector(".desktop-service-panel");
+    var rightPanel = document.querySelector(".desktop-right-panel");
     var placeholder = document.querySelector(".desktop-service-placeholder");
+    var timePlaceholder = document.querySelector(".desktop-time-placeholder");
 
     if (!placeholder && serviceLabel && serviceLabel.parentNode) {
       placeholder = document.createElement("div");
@@ -535,31 +549,50 @@
       serviceLabel.parentNode.insertBefore(placeholder, serviceLabel);
     }
 
+    if (!timePlaceholder && timeBlock && timeBlock.parentNode) {
+      timePlaceholder = document.createElement("div");
+      timePlaceholder.className = "desktop-time-placeholder";
+      timeBlock.parentNode.insertBefore(timePlaceholder, timeBlock);
+    }
+
     if (!panel) {
       panel = document.createElement("div");
       panel.className = "desktop-service-panel";
     }
 
+    if (!rightPanel) {
+      rightPanel = document.createElement("div");
+      rightPanel.className = "desktop-right-panel";
+    }
+
     if (isDesktop) {
+      if (!rightPanel.parentNode) {
+        resultsArea.insertBefore(rightPanel, resultsArea.firstChild);
+      }
       if (!panel.parentNode) {
-        resultsArea.insertBefore(panel, resultsArea.firstChild);
+        rightPanel.appendChild(panel);
+      } else if (panel.parentNode !== rightPanel) {
+        rightPanel.appendChild(panel);
       }
 
       if (serviceLabel && serviceLabel.parentNode !== panel) panel.appendChild(serviceLabel);
       if (servicePills.parentNode !== panel) panel.appendChild(servicePills);
       if (message && message.parentNode !== panel) panel.appendChild(message);
-    } else if (placeholder && placeholder.parentNode) {
-      if (serviceLabel && serviceLabel.parentNode !== placeholder.parentNode) {
-        placeholder.parentNode.insertBefore(serviceLabel, placeholder.nextSibling);
+      if (timeBlock && timeBlock.parentNode !== rightPanel) rightPanel.appendChild(timeBlock);
+    } else {
+      if (placeholder && placeholder.parentNode) {
+        if (serviceLabel && serviceLabel.parentNode !== placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(serviceLabel, placeholder.nextSibling);
+        }
+        if (servicePills.parentNode !== placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(servicePills, serviceLabel ? serviceLabel.nextSibling : placeholder.nextSibling);
+        }
+        if (message && message.parentNode !== placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(message, servicePills.nextSibling);
+        }
       }
-      if (servicePills.parentNode !== placeholder.parentNode) {
-        placeholder.parentNode.insertBefore(servicePills, serviceLabel ? serviceLabel.nextSibling : placeholder.nextSibling);
-      }
-      if (message && message.parentNode !== placeholder.parentNode) {
-        placeholder.parentNode.insertBefore(message, servicePills.nextSibling);
-      }
-      if (panel && panel.parentNode && panel.childNodes.length === 0) {
-        panel.remove();
+      if (timePlaceholder && timePlaceholder.parentNode && timeBlock && timeBlock.parentNode !== timePlaceholder.parentNode) {
+        timePlaceholder.parentNode.insertBefore(timeBlock, timePlaceholder.nextSibling);
       }
     }
   }
