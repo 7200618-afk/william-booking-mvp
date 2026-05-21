@@ -53,9 +53,95 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V32 - services fixed right from 600px up */
+/* B SIDE U Pasadena Layout Balance V33 - large booking failure modal */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
+
+.bsu-booking-fail-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483647!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:18px!important;
+  background:rgba(10,10,10,.58)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+.bsu-booking-fail-overlay.is-visible{display:flex!important}
+.bsu-booking-fail-card{
+  width:100%!important;
+  max-width:430px!important;
+  border-radius:28px!important;
+  background:#fff!important;
+  color:#111!important;
+  padding:26px 22px 22px!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.28)!important;
+  text-align:center!important;
+  animation:bsuFailPop .2s cubic-bezier(.2,.8,.2,1)!important;
+}
+@keyframes bsuFailPop{
+  from{transform:translateY(12px) scale(.98);opacity:0}
+  to{transform:translateY(0) scale(1);opacity:1}
+}
+.bsu-booking-fail-icon{
+  width:54px!important;
+  height:54px!important;
+  margin:0 auto 14px!important;
+  border-radius:999px!important;
+  background:#111!important;
+  color:#fff!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-size:28px!important;
+  font-weight:950!important;
+  line-height:1!important;
+}
+.bsu-booking-fail-title{
+  margin:0 0 8px!important;
+  font-size:28px!important;
+  line-height:.98!important;
+  font-weight:950!important;
+  letter-spacing:-.05em!important;
+}
+.bsu-booking-fail-text{
+  margin:0 auto 18px!important;
+  max-width:340px!important;
+  color:#555!important;
+  font-size:14px!important;
+  line-height:1.45!important;
+  font-weight:750!important;
+}
+.bsu-booking-fail-detail{
+  margin:0 0 18px!important;
+  padding:12px 13px!important;
+  border-radius:16px!important;
+  background:#f5f5f5!important;
+  color:#333!important;
+  font-size:12.5px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+}
+.bsu-booking-fail-btn{
+  width:100%!important;
+  height:48px!important;
+  border:0!important;
+  border-radius:16px!important;
+  background:#111!important;
+  color:#fff!important;
+  font-size:14px!important;
+  font-weight:950!important;
+  cursor:pointer!important;
+}
+.bsu-booking-fail-small{
+  margin-top:10px!important;
+  color:#777!important;
+  font-size:11.5px!important;
+  font-weight:750!important;
+}
+
 .pasadena-header{display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"title" "status" "address" "actions"!important;align-items:start!important;justify-items:start!important;row-gap:8px!important;padding:23px 30px 25px!important;margin-bottom:16px!important;border-radius:28px!important;border:1px solid rgba(17,17,17,.08)!important;background:radial-gradient(circle at 100% 100%,#f4f4f4 0 76px,transparent 78px),linear-gradient(135deg,#fff 0%,#fff 62%,#fbfbfb 100%)!important;box-shadow:0 10px 28px rgba(0,0,0,.038)!important;overflow:hidden!important}.pasadena-header::after{right:-58px!important;bottom:-74px!important;width:148px!important;height:148px!important;background:rgba(20,20,20,.04)!important}.pasadena-title{grid-area:title!important;margin:0 0 1px!important;max-width:none!important;font-size:clamp(32px,2.9vw,40px)!important;line-height:.98!important;letter-spacing:-.05em!important;font-weight:950!important}.pasadena-open{grid-area:status!important;display:inline-flex!important;width:fit-content!important;min-height:28px!important;padding:0 12px!important;margin:0!important;gap:8px!important;align-items:center!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:12.5px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}.pasadena-open::before{width:8px!important;height:8px!important;background:#55ce79!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}.pasadena-address-row{display:contents!important}.pasadena-address{grid-area:address!important;display:block!important;max-width:760px!important;margin:0!important;color:#666!important;font-size:13px!important;line-height:1.35!important;font-weight:800!important;letter-spacing:-.02em!important}.pasadena-links{grid-area:actions!important;display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;margin:1px 0 0!important}.pasadena-links a{min-height:34px!important;padding:0 14px!important;border-radius:999px!important;border:1px solid rgba(17,17,17,.13)!important;background:#fff!important;color:#111!important;text-decoration:none!important;font-size:12.2px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}.date-area,.date-area.is-fixed-fallback{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important}.date-nav{background:#fff!important;color:#111!important;border:1px solid rgba(20,20,20,.12)!important;box-shadow:none!important}
 
 @media(min-width:600px){
@@ -123,10 +209,111 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 (function(){
 let lastGalleryStaff="";
 let mobileLockedScrollY=null;
+
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
 function setImportantDisplay(el,value){if(!el)return;el.style.setProperty("display",value,"important")}
 function isMobile(){return window.innerWidth<600}
+
+function ensureBookingFailureModal(){
+  if(document.getElementById("bsuBookingFailOverlay"))return;
+
+  var overlay=document.createElement("div");
+  overlay.id="bsuBookingFailOverlay";
+  overlay.className="bsu-booking-fail-overlay";
+  overlay.innerHTML=
+    '<div class="bsu-booking-fail-card" role="dialog" aria-modal="true" aria-labelledby="bsuBookingFailTitle">'+
+      '<div class="bsu-booking-fail-icon">!</div>'+
+      '<h2 id="bsuBookingFailTitle" class="bsu-booking-fail-title">Booking Not Completed</h2>'+
+      '<p class="bsu-booking-fail-text">Sorry, this appointment time was just taken by another customer. Your appointment was not booked.</p>'+
+      '<div id="bsuBookingFailDetail" class="bsu-booking-fail-detail">Please choose another available time.</div>'+
+      '<button id="bsuBookingFailBtn" class="bsu-booking-fail-btn" type="button">Choose Another Time</button>'+
+      '<div class="bsu-booking-fail-small">No appointment was created.</div>'+
+    '</div>';
+
+  document.body.appendChild(overlay);
+
+  function closeFailureModal(){
+    overlay.classList.remove("is-visible");
+
+    var bookingModal=document.getElementById("bookingModal");
+    if(bookingModal)bookingModal.classList.remove("is-visible");
+
+    document.body.style.overflow="";
+    setTimeout(function(){
+      try{
+        var selected=document.querySelector(".time-btn.is-selected");
+        if(selected)selected.classList.remove("is-selected");
+      }catch(e){}
+    },30);
+  }
+
+  overlay.addEventListener("click",function(e){
+    if(e.target===overlay)closeFailureModal();
+  });
+
+  var btn=document.getElementById("bsuBookingFailBtn");
+  if(btn)btn.addEventListener("click",closeFailureModal);
+
+  document.addEventListener("keydown",function(e){
+    if(e.key==="Escape"&&overlay.classList.contains("is-visible"))closeFailureModal();
+  });
+}
+
+function showBookingFailureModal(message){
+  ensureBookingFailureModal();
+
+  var detail=document.getElementById("bsuBookingFailDetail");
+  if(detail){
+    detail.textContent=message&&message.length<180
+      ? message
+      : "Please choose another available time.";
+  }
+
+  var overlay=document.getElementById("bsuBookingFailOverlay");
+  if(overlay)overlay.classList.add("is-visible");
+}
+
+function patchCreateBookingFailureModal(){
+  if(window.__bsuCreateBookingFailurePatched)return;
+  window.__bsuCreateBookingFailurePatched=true;
+
+  var originalFetch=window.fetch.bind(window);
+
+  window.fetch=async function(input,init){
+    var response=await originalFetch(input,init);
+
+    try{
+      var url=typeof input==="string" ? input : (input&&input.url ? input.url : "");
+      var method=String((init&&init.method)||"GET").toUpperCase();
+
+      if(url.indexOf("/api/create-booking")!==-1 && method==="POST" && !response.ok){
+        response.clone().json().then(function(data){
+          var msg=(data&&data.error)||"Booking failed. Please choose another available time.";
+
+          if(
+            response.status===409 ||
+            /no longer available|being booked|another customer|choose another/i.test(msg)
+          ){
+            setTimeout(function(){
+              showBookingFailureModal(msg);
+            },80);
+          }
+        }).catch(function(){
+          if(response.status===409){
+            setTimeout(function(){
+              showBookingFailureModal("This appointment time is no longer available. Please choose another time.");
+            },80);
+          }
+        });
+      }
+    }catch(e){}
+
+    return response;
+  };
+}
+
 function getSelectedStaffName(){var el=document.querySelector(".staff-item.is-active .staff-name")||document.querySelector(".staff-card.is-active .staff-name");return el?(el.textContent||"").trim():""}
 function getDateText(){var el=document.querySelector(".date-nav")||document.querySelector(".date-area");return el?(el.textContent||""):""}
 function parseDisplayDate(){var m=getDateText().match(/(\\d{1,2})\\s*\\/\\s*(\\d{1,2})/);if(!m)return null;var now=new Date();var y=now.getFullYear();var dt=new Date(y,Number(m[1])-1,Number(m[2]));if(dt.getTime()<now.getTime()-15552000000)dt.setFullYear(y+1);return dt}
@@ -142,7 +329,20 @@ function removeOpeningCounts(){document.querySelectorAll(".slot-group-title").fo
 function lockMobileScrollOnSelection(){document.addEventListener("click",function(e){if(!isMobile())return;var t=e.target;if(t&&t.closest&&t.closest(".staff-item,.staff-card,.service-pill")){mobileLockedScrollY=window.scrollY;[0,40,100,180,320].forEach(function(ms){setTimeout(function(){if(mobileLockedScrollY!==null)window.scrollTo(0,mobileLockedScrollY)},ms)});setTimeout(function(){mobileLockedScrollY=null},420)}},true)}
 function markNextAvailableClick(){document.addEventListener("click",function(e){if(e.target&&e.target.closest&&e.target.closest(".next-available-btn")){window.__bsuKeepCurrentStaffOnNextAvailable=true}},true)}
 function runFixes(){moveServicesForDesktop();removeOpeningCounts();fixOffDayFullyBookedStatus();syncGalleryToSelectedStaff();movePhotoWall()}
-markNextAvailableClick();lockMobileScrollOnSelection();runFixes();setTimeout(runFixes,100);setTimeout(runFixes,300);setTimeout(runFixes,700);setTimeout(runFixes,1200);setTimeout(runFixes,2500);var observer=new MutationObserver(runFixes);observer.observe(document.body,{childList:true,subtree:true,characterData:true});window.addEventListener("resize",runFixes);document.addEventListener("click",function(){setTimeout(runFixes,50);setTimeout(runFixes,250);setTimeout(runFixes,600)},true)
+
+patchCreateBookingFailureModal();
+markNextAvailableClick();
+lockMobileScrollOnSelection();
+runFixes();
+setTimeout(runFixes,100);
+setTimeout(runFixes,300);
+setTimeout(runFixes,700);
+setTimeout(runFixes,1200);
+setTimeout(runFixes,2500);
+var observer=new MutationObserver(runFixes);
+observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+window.addEventListener("resize",runFixes);
+document.addEventListener("click",function(){setTimeout(runFixes,50);setTimeout(runFixes,250);setTimeout(runFixes,600)},true)
 })();
 <\/script>
 `;
