@@ -53,7 +53,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V37 - mobile swipe carousel + hard scroll lock */
+/* B SIDE U Pasadena Layout Balance V38 - scroll lock removed, mobile swipe carousel kept */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -277,17 +277,11 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 <script>
 (function(){
 let lastGalleryStaff="";
-let mobileLockedScrollY=null;
 
 let mobilePhotoWallRaf=null;
 let mobilePhotoWallTrack=null;
 let mobilePhotoWallPauseUntil=0;
 let mobilePhotoWallLastTs=null;
-
-let mobileScrollLockRaf=null;
-let mobileScrollLockY=0;
-let mobileScrollLockUntil=0;
-let originalWindowScrollTo=null;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -422,6 +416,7 @@ function setupMobilePhotoWallCarousel(){
   track.style.setProperty("overflow-y","hidden","important");
   track.style.setProperty("scroll-behavior","auto","important");
   track.style.setProperty("-webkit-overflow-scrolling","touch","important");
+  track.style.setProperty("touch-action","pan-x","important");
 
   if(mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
@@ -464,7 +459,7 @@ function setupMobilePhotoWallCarousel(){
     var isPaused=Date.now()<mobilePhotoWallPauseUntil;
 
     if(!isPaused && maxScroll>12){
-      currentTrack.scrollLeft+=dt*0.035;
+      currentTrack.scrollLeft+=dt*0.025;
 
       if(currentTrack.scrollLeft>=maxScroll-2){
         currentTrack.scrollLeft=0;
@@ -475,66 +470,6 @@ function setupMobilePhotoWallCarousel(){
   }
 
   mobilePhotoWallRaf=requestAnimationFrame(tick);
-}
-
-function installMobileScrollToGuard(){
-  if(originalWindowScrollTo)return;
-
-  originalWindowScrollTo=window.scrollTo.bind(window);
-
-  window.scrollTo=function(x,y){
-    if(isMobile() && Date.now()<mobileScrollLockUntil){
-      return originalWindowScrollTo(0,mobileScrollLockY);
-    }
-
-    return originalWindowScrollTo(x,y);
-  };
-}
-
-function startMobileScrollLock(){
-  if(!isMobile())return;
-
-  installMobileScrollToGuard();
-
-  mobileScrollLockY=window.scrollY || window.pageYOffset || 0;
-  mobileScrollLockUntil=Date.now()+2200;
-
-  if(mobileScrollLockRaf)return;
-
-  function keepScroll(){
-    if(Date.now()>mobileScrollLockUntil){
-      mobileScrollLockRaf=null;
-      return;
-    }
-
-    var currentY=window.scrollY || window.pageYOffset || 0;
-
-    if(Math.abs(currentY-mobileScrollLockY)>1){
-      originalWindowScrollTo(0,mobileScrollLockY);
-    }
-
-    mobileScrollLockRaf=requestAnimationFrame(keepScroll);
-  }
-
-  mobileScrollLockRaf=requestAnimationFrame(keepScroll);
-}
-
-function lockMobileScrollOnSelection(){
-  ["touchstart","pointerdown","click"].forEach(function(eventName){
-    document.addEventListener(eventName,function(e){
-      if(!isMobile())return;
-
-      var t=e.target;
-
-      if(
-        t &&
-        t.closest &&
-        t.closest(".staff-item,.staff-card,.service-pill")
-      ){
-        startMobileScrollLock();
-      }
-    },true);
-  });
 }
 
 function getSelectedStaffName(){var el=document.querySelector(".staff-item.is-active .staff-name")||document.querySelector(".staff-card.is-active .staff-name");return el?(el.textContent||"").trim():""}
@@ -554,7 +489,6 @@ function runFixes(){moveServicesForDesktop();removeOpeningCounts();fixOffDayFull
 
 patchCreateBookingFailureModal();
 markNextAvailableClick();
-lockMobileScrollOnSelection();
 runFixes();
 setTimeout(runFixes,100);
 setTimeout(runFixes,300);
