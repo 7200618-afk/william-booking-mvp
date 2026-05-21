@@ -37,8 +37,8 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V15
-   Date bar sits above available times column on desktop.
+   B SIDE U Pasadena Layout Balance V16
+   Restore wide date bar; move Services above available times on desktop.
    ========================================================= */
 
 .profile-link-under-card,
@@ -217,17 +217,17 @@
     display: grid !important;
     grid-template-columns: minmax(390px, 430px) minmax(0, 1fr) !important;
     grid-template-areas:
-      "left date"
+      "date date"
+      "left service"
       "left slots"
       "photo photo" !important;
-    grid-template-rows: auto auto auto !important;
-    gap: 10px 16px !important;
+    grid-template-rows: auto auto auto auto !important;
+    gap: 12px 16px !important;
     align-items: start !important;
   }
 
   .date-area {
     grid-area: date !important;
-    align-self: start !important;
     width: 100% !important;
     margin: 0 !important;
   }
@@ -239,6 +239,31 @@
   }
 
   .desktop-results-area { display: contents !important; }
+
+  .desktop-service-panel {
+    grid-area: service !important;
+    display: block !important;
+    align-self: start !important;
+    margin: 0 !important;
+    padding: 14px 15px 15px !important;
+    border-radius: 22px !important;
+    background: #fff !important;
+    border: 1px solid rgba(20,20,20,.09) !important;
+    box-shadow: 0 6px 18px rgba(20,20,20,.04) !important;
+  }
+
+  .desktop-service-panel .section-label {
+    margin: 0 2px 10px !important;
+  }
+
+  .desktop-service-panel .message {
+    margin-top: 8px !important;
+    font-size: 12px !important;
+  }
+
+  .desktop-service-placeholder {
+    display: none !important;
+  }
 
   .desktop-results-area .slot-area,
   .slot-area,
@@ -409,6 +434,12 @@
   }
 }
 
+@media (max-width: 1023px) {
+  .desktop-service-panel {
+    display: contents !important;
+  }
+}
+
 @media (max-width: 900px) {
   .pasadena-header {
     padding: 23px 24px 25px !important;
@@ -478,6 +509,59 @@
     page.parentNode.insertBefore(nav, page);
   }
 
+  function moveServicesForDesktop() {
+    var bookingLayout = document.querySelector(".booking-layout");
+    var controlsCard = bookingLayout ? bookingLayout.querySelector(":scope > div:nth-child(2)") : null;
+    var resultsArea = document.querySelector(".desktop-results-area");
+    var servicePills = document.querySelector(".service-pills");
+
+    if (!bookingLayout || !controlsCard || !resultsArea || !servicePills) return;
+
+    var isDesktop = window.innerWidth >= 1024;
+
+    var serviceLabel = Array.from(document.querySelectorAll(".section-label")).find(function (el) {
+      return /services/i.test(el.textContent || "") && !el.closest(".desktop-service-panel");
+    }) || document.querySelector(".desktop-service-panel .section-label");
+
+    var message = document.querySelector(".message");
+    var panel = document.querySelector(".desktop-service-panel");
+    var placeholder = document.querySelector(".desktop-service-placeholder");
+
+    if (!placeholder && serviceLabel && serviceLabel.parentNode) {
+      placeholder = document.createElement("div");
+      placeholder.className = "desktop-service-placeholder";
+      serviceLabel.parentNode.insertBefore(placeholder, serviceLabel);
+    }
+
+    if (!panel) {
+      panel = document.createElement("div");
+      panel.className = "desktop-service-panel";
+    }
+
+    if (isDesktop) {
+      if (!panel.parentNode) {
+        resultsArea.insertBefore(panel, resultsArea.firstChild);
+      }
+
+      if (serviceLabel && serviceLabel.parentNode !== panel) panel.appendChild(serviceLabel);
+      if (servicePills.parentNode !== panel) panel.appendChild(servicePills);
+      if (message && message.parentNode !== panel) panel.appendChild(message);
+    } else if (placeholder && placeholder.parentNode) {
+      if (serviceLabel && serviceLabel.parentNode !== placeholder.parentNode) {
+        placeholder.parentNode.insertBefore(serviceLabel, placeholder.nextSibling);
+      }
+      if (servicePills.parentNode !== placeholder.parentNode) {
+        placeholder.parentNode.insertBefore(servicePills, serviceLabel ? serviceLabel.nextSibling : placeholder.nextSibling);
+      }
+      if (message && message.parentNode !== placeholder.parentNode) {
+        placeholder.parentNode.insertBefore(message, servicePills.nextSibling);
+      }
+      if (panel && panel.parentNode && panel.childNodes.length === 0) {
+        panel.remove();
+      }
+    }
+  }
+
   function removeOpeningCounts() {
     document.querySelectorAll(".slot-group-title").forEach(function (el) {
       var text = el.textContent || "";
@@ -492,6 +576,7 @@
   }
   function runFixes() {
     addDesktopSiteNav();
+    moveServicesForDesktop();
     removeOpeningCounts();
   }
   runFixes();
@@ -502,6 +587,7 @@
   setTimeout(runFixes, 2500);
   var observer = new MutationObserver(runFixes);
   observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  window.addEventListener("resize", runFixes);
   document.addEventListener("click", function () {
     setTimeout(runFixes, 50);
     setTimeout(runFixes, 250);
