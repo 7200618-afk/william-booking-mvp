@@ -37,8 +37,9 @@
 
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V18
-   Desktop: Services + times in one right panel, compact service buttons.
+   B SIDE U Pasadena Layout Balance V19
+   No availability card sits under services and swaps with time slots.
+   Service button outlines removed.
    ========================================================= */
 
 .profile-link-under-card,
@@ -253,7 +254,7 @@
 
   .desktop-service-panel {
     display: block !important;
-    margin: 0 0 10px !important;
+    margin: 0 0 13px !important;
     padding: 0 !important;
     border: 0 !important;
     background: transparent !important;
@@ -274,7 +275,9 @@
     line-height: 1.2 !important;
   }
 
-  .desktop-service-placeholder {
+  .desktop-service-placeholder,
+  .desktop-time-placeholder,
+  .desktop-empty-placeholder {
     display: none !important;
   }
 
@@ -291,6 +294,10 @@
     min-height: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
+  }
+
+  .desktop-right-panel .empty-state {
+    margin-top: 0 !important;
   }
 
   .staff-strip {
@@ -332,6 +339,16 @@
     border-radius: 12px !important;
     padding: 5px 7px !important;
     box-shadow: none !important;
+    border: 0 !important;
+    outline: 0 !important;
+    background: #f4f4f4 !important;
+  }
+  .service-pill.is-active,
+  .service-pill.active,
+  .service-pill[aria-pressed="true"],
+  .service-pill[aria-selected="true"] {
+    background: #111 !important;
+    color: #fff !important;
   }
   .service-meta { margin-top: 2px !important; }
 
@@ -521,13 +538,20 @@
     page.parentNode.insertBefore(nav, page);
   }
 
+  function hasVisibleTimes(slotArea) {
+    if (!slotArea) return false;
+    var buttons = Array.from(slotArea.querySelectorAll(".time-btn"));
+    return buttons.some(function (btn) {
+      return btn.offsetParent !== null && !btn.disabled && (btn.textContent || "").trim();
+    });
+  }
+
   function moveServicesForDesktop() {
     var bookingLayout = document.querySelector(".booking-layout");
     var resultsArea = document.querySelector(".desktop-results-area");
     var servicePills = document.querySelector(".service-pills");
-    var slotArea = document.querySelector(".desktop-results-area .slot-area") || document.querySelector(".slot-area");
-    var emptyState = document.querySelector(".desktop-results-area .empty-state") || document.querySelector(".empty-state");
-    var timeBlock = slotArea || emptyState;
+    var slotArea = document.querySelector(".desktop-results-area .slot-area") || document.querySelector(".desktop-right-panel .slot-area") || document.querySelector(".slot-area");
+    var emptyState = document.querySelector(".desktop-results-area .empty-state") || document.querySelector(".desktop-right-panel .empty-state") || document.querySelector(".empty-state");
 
     if (!bookingLayout || !resultsArea || !servicePills) return;
 
@@ -541,7 +565,8 @@
     var panel = document.querySelector(".desktop-service-panel");
     var rightPanel = document.querySelector(".desktop-right-panel");
     var placeholder = document.querySelector(".desktop-service-placeholder");
-    var timePlaceholder = document.querySelector(".desktop-time-placeholder");
+    var slotPlaceholder = document.querySelector(".desktop-slot-placeholder");
+    var emptyPlaceholder = document.querySelector(".desktop-empty-placeholder");
 
     if (!placeholder && serviceLabel && serviceLabel.parentNode) {
       placeholder = document.createElement("div");
@@ -549,10 +574,16 @@
       serviceLabel.parentNode.insertBefore(placeholder, serviceLabel);
     }
 
-    if (!timePlaceholder && timeBlock && timeBlock.parentNode) {
-      timePlaceholder = document.createElement("div");
-      timePlaceholder.className = "desktop-time-placeholder";
-      timeBlock.parentNode.insertBefore(timePlaceholder, timeBlock);
+    if (!slotPlaceholder && slotArea && slotArea.parentNode) {
+      slotPlaceholder = document.createElement("div");
+      slotPlaceholder.className = "desktop-slot-placeholder";
+      slotArea.parentNode.insertBefore(slotPlaceholder, slotArea);
+    }
+
+    if (!emptyPlaceholder && emptyState && emptyState.parentNode) {
+      emptyPlaceholder = document.createElement("div");
+      emptyPlaceholder.className = "desktop-empty-placeholder";
+      emptyState.parentNode.insertBefore(emptyPlaceholder, emptyState);
     }
 
     if (!panel) {
@@ -569,16 +600,20 @@
       if (!rightPanel.parentNode) {
         resultsArea.insertBefore(rightPanel, resultsArea.firstChild);
       }
-      if (!panel.parentNode) {
-        rightPanel.appendChild(panel);
-      } else if (panel.parentNode !== rightPanel) {
+      if (!panel.parentNode || panel.parentNode !== rightPanel) {
         rightPanel.appendChild(panel);
       }
 
       if (serviceLabel && serviceLabel.parentNode !== panel) panel.appendChild(serviceLabel);
       if (servicePills.parentNode !== panel) panel.appendChild(servicePills);
       if (message && message.parentNode !== panel) panel.appendChild(message);
-      if (timeBlock && timeBlock.parentNode !== rightPanel) rightPanel.appendChild(timeBlock);
+
+      if (slotArea && slotArea.parentNode !== rightPanel) rightPanel.appendChild(slotArea);
+      if (emptyState && emptyState.parentNode !== rightPanel) rightPanel.appendChild(emptyState);
+
+      var showTimes = hasVisibleTimes(slotArea);
+      if (slotArea) slotArea.style.display = showTimes ? "block" : "none";
+      if (emptyState) emptyState.style.display = showTimes ? "none" : "block";
     } else {
       if (placeholder && placeholder.parentNode) {
         if (serviceLabel && serviceLabel.parentNode !== placeholder.parentNode) {
@@ -591,9 +626,14 @@
           placeholder.parentNode.insertBefore(message, servicePills.nextSibling);
         }
       }
-      if (timePlaceholder && timePlaceholder.parentNode && timeBlock && timeBlock.parentNode !== timePlaceholder.parentNode) {
-        timePlaceholder.parentNode.insertBefore(timeBlock, timePlaceholder.nextSibling);
+      if (slotPlaceholder && slotPlaceholder.parentNode && slotArea && slotArea.parentNode !== slotPlaceholder.parentNode) {
+        slotPlaceholder.parentNode.insertBefore(slotArea, slotPlaceholder.nextSibling);
       }
+      if (emptyPlaceholder && emptyPlaceholder.parentNode && emptyState && emptyState.parentNode !== emptyPlaceholder.parentNode) {
+        emptyPlaceholder.parentNode.insertBefore(emptyState, emptyPlaceholder.nextSibling);
+      }
+      if (slotArea) slotArea.style.display = "";
+      if (emptyState) emptyState.style.display = "";
     }
   }
 
