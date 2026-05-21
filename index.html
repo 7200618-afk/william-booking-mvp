@@ -35,10 +35,36 @@
 
         let html = await response.text();
 
+        /* Date change behavior fix:
+           The original page keeps the first selected stylist when users change dates.
+           Replace that logic so every date change re-picks the best/first available staff for that date.
+        */
+        html = html.replace(
+          /function refreshForDateChange\(\) \{[\s\S]*?\n    \}\n\n    prevDayBtn\.addEventListener/,
+          `function refreshForDateChange() {
+      availabilityRequestId++;
+      statusRequestId++;
+
+      updateDateUI();
+      staffStatusCache = {};
+
+      selectBestDefaultStaff();
+
+      renderStaffStrip(true);
+      renderServicePills();
+      clearResults();
+      searchAvailability();
+
+      setTimeout(scrollSelectedStaffIntoView, 120);
+    }
+
+    prevDayBtn.addEventListener`
+        );
+
         const customCss = `
 /* =========================================================
-   B SIDE U Pasadena Layout Balance V21
-   Remove right services outer frame + add breathing space before times.
+   B SIDE U Pasadena Layout Balance V22
+   Narrow service/time column + reset staff on date change.
    ========================================================= */
 
 .profile-link-under-card,
@@ -66,11 +92,11 @@
 
 @media (min-width: 1024px) {
   .page { max-width: 1120px !important; padding: 20px 22px 48px !important; }
-  .booking-layout { display: grid !important; grid-template-columns: minmax(390px, 430px) minmax(0, 1fr) !important; grid-template-areas: "date date" "left right" "photo photo" !important; grid-template-rows: auto auto auto !important; gap: 12px 16px !important; align-items: start !important; }
+  .booking-layout { display: grid !important; grid-template-columns: minmax(390px, 430px) minmax(0, 600px) !important; grid-template-areas: "date date" "left right" "photo photo" !important; grid-template-rows: auto auto auto !important; gap: 12px 16px !important; align-items: start !important; justify-content: center !important; }
   .date-area { grid-area: date !important; width: 100% !important; margin: 0 !important; }
   .booking-layout > div:nth-child(2) { grid-area: left !important; padding: 16px !important; border-radius: 26px !important; }
   .desktop-results-area { display: contents !important; }
-  .desktop-right-panel { grid-area: right !important; display: block !important; align-self: start !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+  .desktop-right-panel { grid-area: right !important; display: block !important; align-self: start !important; width: 100% !important; max-width: 600px !important; margin: 0 !important; padding: 0 !important; border-radius: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
   .desktop-service-panel { display: block !important; margin: 0 0 18px !important; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
   .desktop-service-panel .section-label { margin: 0 2px 7px !important; }
   .desktop-service-panel .service-pills { gap: 6px !important; }
