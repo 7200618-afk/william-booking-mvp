@@ -53,7 +53,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V36 - mobile carousel + scroll jump fixed */
+/* B SIDE U Pasadena Layout Balance V37 - mobile swipe carousel + hard scroll lock */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -232,12 +232,14 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   display:flex!important;
   align-items:stretch!important;
   gap:5px!important;
-  overflow:visible!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
   scroll-snap-type:none!important;
-  -webkit-overflow-scrolling:auto!important;
+  -webkit-overflow-scrolling:touch!important;
   scrollbar-width:none!important;
-  transform:translate3d(0,0,0)!important;
-  will-change:transform!important;
+  transform:none!important;
+  will-change:scroll-position!important;
+  touch-action:pan-x!important;
 }
 
 .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{
@@ -279,13 +281,13 @@ let mobileLockedScrollY=null;
 
 let mobilePhotoWallRaf=null;
 let mobilePhotoWallTrack=null;
-let mobilePhotoWallOffset=0;
 let mobilePhotoWallPauseUntil=0;
 let mobilePhotoWallLastTs=null;
 
 let mobileScrollLockRaf=null;
 let mobileScrollLockY=0;
 let mobileScrollLockUntil=0;
+let originalWindowScrollTo=null;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -397,13 +399,8 @@ function stopMobilePhotoWallCarousel(){
     mobilePhotoWallRaf=null;
   }
 
-  if(mobilePhotoWallTrack){
-    mobilePhotoWallTrack.style.removeProperty("transform");
-  }
-
   mobilePhotoWallTrack=null;
   mobilePhotoWallLastTs=null;
-  mobilePhotoWallOffset=0;
 }
 
 function pauseMobilePhotoWallCarousel(){
@@ -420,14 +417,15 @@ function setupMobilePhotoWallCarousel(){
   var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
   if(!track)return;
 
+  track.style.setProperty("transform","none","important");
+  track.style.setProperty("overflow-x","auto","important");
+  track.style.setProperty("overflow-y","hidden","important");
   track.style.setProperty("scroll-behavior","auto","important");
-  track.style.setProperty("overflow-x","visible","important");
-  track.style.setProperty("will-change","transform","important");
+  track.style.setProperty("-webkit-overflow-scrolling","touch","important");
 
   if(mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
     mobilePhotoWallTrack=track;
-    mobilePhotoWallOffset=0;
     mobilePhotoWallLastTs=null;
   }
 
@@ -462,21 +460,15 @@ function setupMobilePhotoWallCarousel(){
     var dt=Math.min(50,ts-mobilePhotoWallLastTs);
     mobilePhotoWallLastTs=ts;
 
-    var maxMove=currentTrack.scrollWidth-currentTrack.clientWidth;
+    var maxScroll=currentTrack.scrollWidth-currentTrack.clientWidth;
     var isPaused=Date.now()<mobilePhotoWallPauseUntil;
 
-    if(!isPaused && maxMove>12){
-      mobilePhotoWallOffset+=dt*0.035;
+    if(!isPaused && maxScroll>12){
+      currentTrack.scrollLeft+=dt*0.035;
 
-      if(mobilePhotoWallOffset>=maxMove-2){
-        mobilePhotoWallOffset=0;
+      if(currentTrack.scrollLeft>=maxScroll-2){
+        currentTrack.scrollLeft=0;
       }
-
-      currentTrack.style.setProperty(
-        "transform",
-        "translate3d(-"+mobilePhotoWallOffset+"px,0,0)",
-        "important"
-      );
     }
 
     mobilePhotoWallRaf=requestAnimationFrame(tick);
@@ -485,11 +477,27 @@ function setupMobilePhotoWallCarousel(){
   mobilePhotoWallRaf=requestAnimationFrame(tick);
 }
 
+function installMobileScrollToGuard(){
+  if(originalWindowScrollTo)return;
+
+  originalWindowScrollTo=window.scrollTo.bind(window);
+
+  window.scrollTo=function(x,y){
+    if(isMobile() && Date.now()<mobileScrollLockUntil){
+      return originalWindowScrollTo(0,mobileScrollLockY);
+    }
+
+    return originalWindowScrollTo(x,y);
+  };
+}
+
 function startMobileScrollLock(){
   if(!isMobile())return;
 
+  installMobileScrollToGuard();
+
   mobileScrollLockY=window.scrollY || window.pageYOffset || 0;
-  mobileScrollLockUntil=Date.now()+1800;
+  mobileScrollLockUntil=Date.now()+2200;
 
   if(mobileScrollLockRaf)return;
 
@@ -501,8 +509,8 @@ function startMobileScrollLock(){
 
     var currentY=window.scrollY || window.pageYOffset || 0;
 
-    if(Math.abs(currentY-mobileScrollLockY)>2){
-      window.scrollTo(0,mobileScrollLockY);
+    if(Math.abs(currentY-mobileScrollLockY)>1){
+      originalWindowScrollTo(0,mobileScrollLockY);
     }
 
     mobileScrollLockRaf=requestAnimationFrame(keepScroll);
