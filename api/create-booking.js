@@ -1,7 +1,40 @@
 import { randomUUID } from "crypto";
 import { LOCATION_ID, STAFF_DATA } from "../staff-config.js";
 
+const BOOKING_LOCK_TTL_MS = 15 * 1000;
+const bookingLocks = globalThis.__BSU_BOOKING_LOCKS__ || new Map();
+globalThis.__BSU_BOOKING_LOCKS__ = bookingLocks;
+
+function cleanupExpiredBookingLocks() {
+  const now = Date.now();
+
+  for (const [key, expiresAt] of bookingLocks.entries()) {
+    if (expiresAt <= now) {
+      bookingLocks.delete(key);
+    }
+  }
+}
+
+function acquireBookingLock(key) {
+  cleanupExpiredBookingLocks();
+
+  if (bookingLocks.has(key)) {
+    return false;
+  }
+
+  bookingLocks.set(key, Date.now() + BOOKING_LOCK_TTL_MS);
+  return true;
+}
+
+function releaseBookingLock(key) {
+  if (key) {
+    bookingLocks.delete(key);
+  }
+}
+
 export default async function handler(req, res) {
+  let bookingLockKey = null;
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed. Use POST." });
   }
@@ -36,6 +69,29 @@ export default async function handler(req, res) {
     if (!service) {
       return res.status(400).json({
         error: "Invalid service."
+      });
+    }
+
+    const selectedTimeMs = new Date(start_at).getTime();
+
+    if (!Number.isFinite(selectedTimeMs)) {
+      return res.status(400).json({
+        error: "Invalid appointment time."
+      });
+    }
+
+    const normalizedStartAt = new Date(selectedTimeMs).toISOString();
+    bookingLockKey = [
+      LOCATION_ID,
+      staff.team_member_id,
+      service.service_variation_id,
+      normalizedStartAt
+    ].join("|");
+
+    if (!acquireBookingLock(bookingLockKey)) {
+      return res.status(409).json({
+        error:
+          "This time is being booked by another customer right now. Please wait a moment and choose another available time."
       });
     }
 
@@ -89,7 +145,7 @@ export default async function handler(req, res) {
       return detail || fallback;
     }
 
-    const selectedLocalDate = getLosAngelesDateFromUtc(start_at);
+    const selectedLocalDate = getLosAngelesDateFromUtc(normalizedStartAt);
     const previousDate = addDaysToIsoDate(selectedLocalDate, -1);
     const nextDate = addDaysToIsoDate(selectedLocalDate, 1);
 
@@ -139,8 +195,6 @@ export default async function handler(req, res) {
         square: availabilityData
       });
     }
-
-    const selectedTimeMs = new Date(start_at).getTime();
 
     const exactAvailability = (availabilityData.availabilities || []).find(
       availability => {
@@ -325,5 +379,7 @@ export default async function handler(req, res) {
       error: "Server error",
       detail: error.message
     });
+  } finally {
+    releaseBookingLock(bookingLockKey);
   }
 }
