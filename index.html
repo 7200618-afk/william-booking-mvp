@@ -288,7 +288,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   top:0!important;
   z-index:999!important;
   background:#fff!important;
-  padding:0 0 8px!important;
+  padding:8px 0 8px!important;
   margin:0 0 10px!important;
   box-shadow:none!important;
 }
@@ -372,7 +372,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   scrollbar-width:none!important;
   transform:none!important;
   will-change:scroll-position!important;
-  touch-action:pan-x!important;
+  touch-action:auto!important;
   scroll-behavior:auto!important;
 }
 
@@ -412,7 +412,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     overflow-y:hidden!important;
     -webkit-overflow-scrolling:touch!important;
     scroll-behavior:auto!important;
-    touch-action:pan-x!important;
+    touch-action:auto!important;
   }
 }
 
@@ -647,7 +647,7 @@ function setupMobilePhotoWallCarousel(){
   track.style.setProperty("overflow-y","hidden","important");
   track.style.setProperty("scroll-behavior","auto","important");
   track.style.setProperty("-webkit-overflow-scrolling","touch","important");
-  track.style.setProperty("touch-action","pan-x","important");
+  track.style.setProperty("touch-action","auto","important");
 
   if(mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
@@ -689,7 +689,7 @@ function setupMobilePhotoWallCarousel(){
     var isPaused=Date.now()<mobilePhotoWallPauseUntil;
 
     if(!isPaused&&maxScroll>12){
-      currentTrack.scrollLeft+=dt*0.026;
+      currentTrack.scrollLeft+=dt*0.045;
 
       if(currentTrack.scrollLeft>=maxScroll-2){
         currentTrack.scrollLeft=0;
