@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -329,7 +328,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V54 - success cancellation policy card */
+/* B SIDE U Pasadena V54 - service height updated, policy action buttons removed */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -489,21 +488,21 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 .service-pill{
-  min-height:36px!important;
-  height:36px!important;
-  border-radius:12px!important;
-  padding:5px 8px!important;
+  min-height:42px!important;
+  height:42px!important;
+  border-radius:14px!important;
+  padding:7px 10px!important;
 }
 
 .service-name{
-  font-size:12px!important;
+  font-size:12.8px!important;
   line-height:1!important;
 }
 
 .service-meta{
-  font-size:9px!important;
+  font-size:9.8px!important;
   line-height:1!important;
-  margin-top:2px!important;
+  margin-top:3px!important;
 }
 
 .bsu-booking-fail-overlay{position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(10,10,10,.58)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
@@ -552,7 +551,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .staff-name{font-size:14px!important}
 .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
 .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
-.service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 8px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
 .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
 .slot-area{padding-top:2px!important}
 .slot-group{margin-top:7px!important}
@@ -587,7 +586,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-availability-loading-frame{min-height:150px!important}
 .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .bsu-loading-chip{height:34px!important}
-.service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 8px!important}
+.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important}
 .pasadena-links{display:flex!important;justify-content:flex-start!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;width:100%!important;margin-top:3px!important}
 .pasadena-links a{width:auto!important;min-height:30px!important;padding:0 10px!important;font-size:11px!important;text-align:center!important}
 .bsu-success-policy-card{padding:18px 15px!important;border-radius:20px!important;margin:16px 0!important}
@@ -748,19 +747,7 @@ function createSuccessPolicyCard(){
     '</div>'+
     '<p class="bsu-success-policy-text">'+
       getPolicySubText()+' <a href="'+POLICY_URL+'" target="_blank" rel="noopener">See full policy</a>'+
-    '</p>'+
-    '<div class="bsu-success-policy-actions">'+
-      '<a class="bsu-success-policy-action" href="'+POLICY_URL+'" target="_blank" rel="noopener">Cancel</a>'+
-      '<button class="bsu-success-policy-action is-primary" type="button" data-bsu-book-again>Book Again</button>'+
-      '<a class="bsu-success-policy-action" href="'+POLICY_URL+'" target="_blank" rel="noopener">Reschedule</a>'+
-    '</div>';
-
-  var bookAgain=card.querySelector("[data-bsu-book-again]");
-  if(bookAgain){
-    bookAgain.addEventListener("click",function(){
-      window.location.reload();
-    });
-  }
+    '</p>';
 
   return card;
 }
