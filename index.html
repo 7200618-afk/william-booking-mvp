@@ -328,7 +328,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V49 - same design, fix initial staff auto-select after sorting */
+/* B SIDE U Pasadena V50 - same design, mobile photo track autoplay */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -425,9 +425,9 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .desktop-photo-wall-section{display:block!important;width:100%!important;height:220px!important;max-height:220px!important;margin:18px 0 0!important;padding:0!important;overflow:hidden!important;border-radius:22px!important;background:#f6f6f6!important;box-shadow:none!important}
 .desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
 .desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow:hidden!important}
-.desktop-photo-wall-section .staff-carousel{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important;touch-action:pan-x pan-y!important}
+.desktop-photo-wall-section .staff-carousel{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow:hidden!important;scrollbar-width:none!important;touch-action:pan-y!important}
 .desktop-photo-wall-section .staff-carousel::-webkit-scrollbar{display:none!important}
-.desktop-photo-wall-section .staff-carousel-track{height:220px!important;display:flex!important;align-items:stretch!important;gap:5px!important;overflow:visible!important;scroll-snap-type:none!important;scrollbar-width:none!important;transform:none!important;transition:none!important;will-change:scroll-position!important;touch-action:pan-x pan-y!important;scroll-behavior:auto!important;width:max-content!important}
+.desktop-photo-wall-section .staff-carousel-track{height:220px!important;display:flex!important;align-items:stretch!important;gap:5px!important;overflow:visible!important;scroll-snap-type:none!important;scrollbar-width:none!important;transform:none!important;transition:none!important;will-change:transform!important;touch-action:pan-y!important;scroll-behavior:auto!important;width:max-content!important}
 .desktop-photo-wall-section .staff-carousel-track.no-anim{transition:none!important}
 .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
 .desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important;flex:0 0 46vw!important;min-width:46vw!important;width:46vw!important;scroll-snap-align:none!important;border-radius:0!important;overflow:hidden!important}
@@ -662,6 +662,7 @@ function stopMobilePhotoWallCarousel(){
     cancelAnimationFrame(mobilePhotoWallRaf);
     mobilePhotoWallRaf=null;
   }
+
   mobilePhotoWallScroller=null;
   mobilePhotoWallTrack=null;
   mobilePhotoWallLastTs=null;
@@ -704,7 +705,10 @@ function prepareMobilePhotoWallClones(track){
     track.dataset.bsuMobileBaseCount=String(baseItems.length);
   }
 
-  return baseItems.length;
+  return Array.from(track.children).filter(function(item){
+    return !item.classList.contains("bsu-mobile-photo-clone") &&
+           !item.classList.contains("is-clone");
+  }).length;
 }
 
 function setupMobilePhotoWallCarousel(){
@@ -713,15 +717,20 @@ function setupMobilePhotoWallCarousel(){
 
   if(!isMobile()){
     stopMobilePhotoWallCarousel();
+
     if(track){
       track.querySelectorAll(".bsu-mobile-photo-clone").forEach(function(clone){
         clone.remove();
       });
+
       delete track.dataset.bsuMobileBaseCount;
+      delete track.dataset.bsuMobileX;
+
       track.style.removeProperty("transform");
       track.style.removeProperty("transition");
       track.style.removeProperty("width");
     }
+
     return;
   }
 
@@ -729,27 +738,32 @@ function setupMobilePhotoWallCarousel(){
 
   prepareMobilePhotoWallClones(track);
 
-  scroller.style.setProperty("overflow-x","auto","important");
-  scroller.style.setProperty("overflow-y","hidden","important");
-  scroller.style.setProperty("-webkit-overflow-scrolling","touch","important");
-  scroller.style.setProperty("touch-action","pan-x pan-y","important");
-  scroller.style.setProperty("scroll-behavior","auto","important");
+  scroller.style.setProperty("overflow","hidden","important");
+  scroller.style.setProperty("touch-action","pan-y","important");
 
-  track.style.setProperty("transform","none","important");
-  track.style.setProperty("transition","none","important");
+  track.style.setProperty("display","flex","important");
   track.style.setProperty("width","max-content","important");
+  track.style.setProperty("transition","none","important");
+  track.style.setProperty("will-change","transform","important");
 
   mobilePhotoWallLoopWidth=Math.max(0,track.scrollWidth/2);
 
-  if(mobilePhotoWallScroller!==scroller||mobilePhotoWallTrack!==track){
+  if(mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
+
     mobilePhotoWallScroller=scroller;
     mobilePhotoWallTrack=track;
     mobilePhotoWallLastTs=null;
+    mobilePhotoWallLoopWidth=Math.max(0,track.scrollWidth/2);
+
+    if(!track.dataset.bsuMobileX){
+      track.dataset.bsuMobileX="0";
+    }
   }
 
   if(!scroller.dataset.bsuMobileCarouselBound){
     scroller.dataset.bsuMobileCarouselBound="1";
+
     scroller.addEventListener("touchstart",pauseMobilePhotoWallCarousel,{passive:true});
     scroller.addEventListener("touchmove",pauseMobilePhotoWallCarousel,{passive:true});
     scroller.addEventListener("pointerdown",pauseMobilePhotoWallCarousel,{passive:true});
@@ -764,7 +778,7 @@ function setupMobilePhotoWallCarousel(){
       return;
     }
 
-    if(!mobilePhotoWallScroller||!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallScroller)){
+    if(!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallTrack)){
       stopMobilePhotoWallCarousel();
       return;
     }
@@ -776,17 +790,26 @@ function setupMobilePhotoWallCarousel(){
     var dt=Math.min(48,ts-mobilePhotoWallLastTs);
     mobilePhotoWallLastTs=ts;
 
-    var maxScroll=mobilePhotoWallScroller.scrollWidth-mobilePhotoWallScroller.clientWidth;
     var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
     var isPaused=Date.now()<mobilePhotoWallPauseUntil;
 
-    if(!isPaused&&maxScroll>12&&loopWidth>12){
-      mobilePhotoWallScroller.scrollLeft+=dt*0.035;
+    var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
 
-      if(mobilePhotoWallScroller.scrollLeft>=loopWidth){
-        mobilePhotoWallScroller.scrollLeft=mobilePhotoWallScroller.scrollLeft-loopWidth;
+    if(!isPaused&&loopWidth>12){
+      x+=dt*0.035;
+
+      if(x>=loopWidth){
+        x=x-loopWidth;
       }
+
+      mobilePhotoWallTrack.dataset.bsuMobileX=String(x);
     }
+
+    mobilePhotoWallTrack.style.setProperty(
+      "transform",
+      "translate3d(" + (-x) + "px,0,0)",
+      "important"
+    );
 
     mobilePhotoWallRaf=requestAnimationFrame(tick);
   }
