@@ -34,10 +34,6 @@
       updateDateUI();
       staffStatusCache = {};
 
-      /*
-        Keep the currently selected staff when changing date
-        or clicking Next available.
-      */
       hasUserSelectedStaff = true;
       initialStaffAutoSelectDone = true;
 
@@ -329,7 +325,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V55 - policy above calendar, book again below calendar */
+/* B SIDE U Pasadena V56 - fixed success policy placement + larger service buttons */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -339,21 +335,23 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 .bsu-success-policy-card{
   width:100%!important;
-  margin:18px 0 12px!important;
-  padding:20px 18px!important;
+  max-width:100%!important;
+  margin:14px 0 12px!important;
+  padding:14px 12px!important;
   border:1px solid rgba(17,17,17,.08)!important;
-  border-radius:22px!important;
+  border-radius:18px!important;
   background:#fff!important;
   box-shadow:none!important;
   box-sizing:border-box!important;
+  overflow:hidden!important;
 }
 
 .bsu-success-policy-title{
-  margin:0 0 14px!important;
-  font-size:24px!important;
-  line-height:1!important;
+  margin:0 0 12px!important;
+  font-size:22px!important;
+  line-height:.95!important;
   font-weight:950!important;
-  letter-spacing:-.045em!important;
+  letter-spacing:-.05em!important;
   color:#111!important;
 }
 
@@ -361,13 +359,13 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
-  min-height:38px!important;
-  padding:0 18px!important;
-  margin:0 0 14px!important;
+  min-height:34px!important;
+  padding:0 14px!important;
+  margin:0 0 13px!important;
   border-radius:999px!important;
   background:#111!important;
   color:#fff!important;
-  font-size:15px!important;
+  font-size:13px!important;
   line-height:1!important;
   font-weight:950!important;
   letter-spacing:-.025em!important;
@@ -376,8 +374,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 .bsu-success-policy-track{
   position:relative!important;
-  height:34px!important;
-  margin:2px 0 13px!important;
+  height:28px!important;
+  margin:0 0 10px!important;
   border-radius:999px!important;
   background:#f3f3f3!important;
   overflow:hidden!important;
@@ -398,8 +396,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   position:absolute!important;
   top:50%!important;
   left:64%!important;
-  width:30px!important;
-  height:30px!important;
+  width:26px!important;
+  height:26px!important;
   transform:translate(-50%,-50%)!important;
   border-radius:999px!important;
   background:#fff!important;
@@ -408,7 +406,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   align-items:center!important;
   justify-content:center!important;
   color:#111!important;
-  font-size:19px!important;
+  font-size:16px!important;
   font-weight:950!important;
   line-height:1!important;
   box-sizing:border-box!important;
@@ -418,18 +416,18 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   display:flex!important;
   align-items:center!important;
   justify-content:space-between!important;
-  margin:0 0 16px!important;
-  font-size:12.5px!important;
-  font-weight:750!important;
+  margin:0 0 12px!important;
+  font-size:11.5px!important;
+  font-weight:850!important;
   color:#222!important;
 }
 
 .bsu-success-policy-text{
   margin:0!important;
   color:#222!important;
-  font-size:17px!important;
-  line-height:1.38!important;
-  font-weight:500!important;
+  font-size:14.5px!important;
+  line-height:1.35!important;
+  font-weight:600!important;
   letter-spacing:-.035em!important;
 }
 
@@ -442,8 +440,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 .bsu-book-again-under-calendar{
   width:100%!important;
-  min-height:44px!important;
-  margin:10px 0 18px!important;
+  min-height:42px!important;
+  margin:10px 0 14px!important;
   border:0!important;
   border-radius:14px!important;
   background:#111!important;
@@ -470,25 +468,25 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 .service-pills{
-  gap:6px!important;
+  gap:7px!important;
 }
 
 .service-pill{
-  min-height:36px!important;
-  height:36px!important;
-  border-radius:12px!important;
-  padding:5px 8px!important;
+  min-height:42px!important;
+  height:42px!important;
+  border-radius:14px!important;
+  padding:7px 10px!important;
 }
 
 .service-name{
-  font-size:12px!important;
+  font-size:12.8px!important;
   line-height:1!important;
 }
 
 .service-meta{
-  font-size:9px!important;
+  font-size:9.8px!important;
   line-height:1!important;
-  margin-top:2px!important;
+  margin-top:3px!important;
 }
 
 .bsu-booking-fail-overlay{position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(10,10,10,.58)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
@@ -528,7 +526,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .desktop-right-panel{grid-area:right!important;display:flex!important;flex-direction:column!important;align-self:start!important;justify-self:start!important;width:100%!important;max-width:600px!important;margin:0!important;padding:0!important;border-radius:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
 .desktop-service-panel{display:block!important;width:100%!important;margin:0 0 18px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
 .desktop-service-panel .section-label{margin:0 2px 7px!important}
-.desktop-service-panel .service-pills{gap:6px!important}
+.desktop-service-panel .service-pills{gap:7px!important}
 .desktop-service-placeholder,.desktop-slot-placeholder,.desktop-empty-placeholder{display:none!important}
 .desktop-right-panel .slot-area,.desktop-right-panel .empty-state,.desktop-results-area .slot-area,.slot-area,.desktop-results-area .empty-state{display:block!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;min-height:150px!important;background:transparent!important;box-shadow:none!important}
 .staff-strip{gap:12px!important}
@@ -537,7 +535,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .staff-name{font-size:14px!important}
 .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
 .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
-.service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 8px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
 .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
 .slot-area{padding-top:2px!important}
 .slot-group{margin-top:7px!important}
@@ -572,13 +570,9 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-availability-loading-frame{min-height:150px!important}
 .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .bsu-loading-chip{height:34px!important}
-.service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 8px!important}
+.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important}
 .pasadena-links{display:flex!important;justify-content:flex-start!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;width:100%!important;margin-top:3px!important}
 .pasadena-links a{width:auto!important;min-height:30px!important;padding:0 10px!important;font-size:11px!important;text-align:center!important}
-.bsu-success-policy-card{padding:18px 15px!important;border-radius:20px!important;margin:16px 0 12px!important}
-.bsu-success-policy-title{font-size:23px!important;margin-bottom:13px!important}
-.bsu-success-policy-pill{min-height:36px!important;padding:0 16px!important;font-size:14px!important}
-.bsu-success-policy-text{font-size:16px!important}
 .bsu-book-again-under-calendar{min-height:42px!important;font-size:13.5px!important;border-radius:13px!important;margin:10px 0 16px!important}
 .desktop-photo-wall-section{display:block!important;width:100%!important;height:220px!important;max-height:220px!important;margin:18px 0 0!important;padding:0!important;overflow:hidden!important;border-radius:22px!important;background:#f6f6f6!important;box-shadow:none!important}
 .desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
@@ -607,7 +601,6 @@ let mobilePhotoWallLastTs=null;
 let mobilePhotoWallLoopWidth=0;
 let mobilePhotoWallReadyTimer=null;
 let mobilePhotoWallReadyStartedAt=0;
-let lastSelectedBookingLabel="";
 
 const POLICY_URL="https://www.bsideuhair.com/appointment-policy";
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
@@ -695,20 +688,6 @@ function setupMobileStickyDateAndStaff(){
   }
 }
 
-function captureSelectedBookingLabel(target){
-  try{
-    var timeBtn=target&&target.closest?target.closest(".time-btn"):null;
-    if(timeBtn){
-      var time=(timeBtn.textContent||"").trim();
-      var dateEl=document.querySelector(".date-nav")||document.querySelector(".date-area");
-      var date=(dateEl&&dateEl.textContent?dateEl.textContent.trim():"").replace(/\\s+/g," ");
-      if(time){
-        lastSelectedBookingLabel=(date?date+" · ":"")+time;
-      }
-    }
-  }catch(e){}
-}
-
 function getPolicySubText(){
   return "Please cancel or reschedule at least 3 hours before your appointment.";
 }
@@ -734,6 +713,77 @@ function createSuccessPolicyCard(){
   return card;
 }
 
+function isVisible(el){
+  if(!el)return false;
+  var rect=el.getBoundingClientRect();
+  var style=window.getComputedStyle(el);
+  return rect.width>0&&rect.height>0&&style.display!=="none"&&style.visibility!=="hidden"&&style.opacity!=="0";
+}
+
+function findSuccessContainer(){
+  var addCalendarNode=Array.from(document.querySelectorAll("*")).find(function(el){
+    return /add to calendar/i.test((el.textContent||"").trim());
+  });
+
+  if(addCalendarNode){
+    var current=addCalendarNode;
+    var best=null;
+
+    for(var i=0;i<10;i++){
+      if(!current)break;
+
+      if(isVisible(current)){
+        var text=(current.textContent||"").toLowerCase();
+        var rect=current.getBoundingClientRect();
+
+        if(
+          text.indexOf("add to calendar")>-1 &&
+          (
+            text.indexOf("thanks")>-1 ||
+            text.indexOf("appointment")>-1 ||
+            text.indexOf("location")>-1
+          ) &&
+          rect.width>180 &&
+          rect.width<700
+        ){
+          best=current;
+        }
+      }
+
+      current=current.parentElement;
+    }
+
+    if(best)return best;
+  }
+
+  var candidates=Array.from(document.querySelectorAll('[role="dialog"],.modal,.booking-modal,.success-modal,.confirmation-modal,.appointment-modal,.modal-content,.booking-card,.success-card'));
+
+  candidates=candidates.filter(function(el){
+    if(!isVisible(el))return false;
+    var text=(el.textContent||"").toLowerCase();
+    var rect=el.getBoundingClientRect();
+
+    return (
+      rect.width>180 &&
+      rect.width<700 &&
+      (
+        text.indexOf("add to calendar")>-1 ||
+        text.indexOf("location")>-1 ||
+        text.indexOf("appointment")>-1 && text.indexOf("thanks")>-1
+      )
+    );
+  });
+
+  if(candidates.length){
+    candidates.sort(function(a,b){
+      return a.getBoundingClientRect().width - b.getBoundingClientRect().width;
+    });
+    return candidates[0];
+  }
+
+  return null;
+}
+
 function insertBookAgainUnderCalendar(container){
   if(!container)return;
   if(container.querySelector(".bsu-book-again-under-calendar"))return;
@@ -744,7 +794,7 @@ function insertBookAgainUnderCalendar(container){
 
   if(!addCalendarNode)return;
 
-  var addCalendarAnchor=addCalendarNode.closest("button,a,div,section")||addCalendarNode;
+  var addCalendarAnchor=addCalendarNode.closest("button,a") || addCalendarNode;
 
   var btn=document.createElement("button");
   btn.type="button";
@@ -760,62 +810,6 @@ function insertBookAgainUnderCalendar(container){
   }
 }
 
-function isVisible(el){
-  if(!el)return false;
-  var rect=el.getBoundingClientRect();
-  var style=window.getComputedStyle(el);
-  return rect.width>0&&rect.height>0&&style.display!=="none"&&style.visibility!=="hidden"&&style.opacity!=="0";
-}
-
-function findSuccessContainer(){
-  var candidates=Array.from(document.querySelectorAll('[role="dialog"],.modal,.booking-modal,.success-modal,.confirmation-modal,.appointment-modal,.modal-content,.booking-card,.success-card'));
-
-  candidates=candidates.filter(function(el){
-    if(!isVisible(el))return false;
-    var text=(el.textContent||"").toLowerCase();
-    return (
-      text.indexOf("add to calendar")>-1 ||
-      text.indexOf("book again")>-1 ||
-      text.indexOf("location")>-1 ||
-      text.indexOf("appointment")>-1 && text.indexOf("confirmed")>-1
-    );
-  });
-
-  if(candidates.length){
-    candidates.sort(function(a,b){
-      return b.getBoundingClientRect().width*a.getBoundingClientRect().height - a.getBoundingClientRect().width*b.getBoundingClientRect().height;
-    });
-    return candidates[0];
-  }
-
-  return null;
-}
-
-function findLocationAnchor(container){
-  if(!container)return null;
-
-  var nodes=Array.from(container.querySelectorAll("*")).filter(function(el){
-    var text=(el.textContent||"").trim().toLowerCase();
-    return text==="location"||text==="location:";
-  });
-
-  if(!nodes.length)return null;
-
-  var locationEl=nodes[0];
-  var anchor=locationEl;
-
-  for(var i=0;i<4;i++){
-    if(anchor.parentElement&&anchor.parentElement!==container){
-      var parentText=(anchor.parentElement.textContent||"").trim().toLowerCase();
-      if(parentText.indexOf("location")>-1&&parentText.length<220){
-        anchor=anchor.parentElement;
-      }
-    }
-  }
-
-  return anchor;
-}
-
 function insertSuccessPolicyCard(){
   var container=findSuccessContainer();
   if(!container)return;
@@ -824,32 +818,19 @@ function insertSuccessPolicyCard(){
     return /add to calendar/i.test((el.textContent||"").trim());
   });
 
-  if(addCalendarNode){
-    var addCalendarAnchor=addCalendarNode.closest("button,a,div,section")||addCalendarNode;
+  if(!addCalendarNode)return;
 
-    if(!container.querySelector(".bsu-success-policy-card")){
-      var card=createSuccessPolicyCard();
+  var addCalendarAnchor=addCalendarNode.closest("button,a") || addCalendarNode;
 
-      if(addCalendarAnchor.parentNode){
-        addCalendarAnchor.parentNode.insertBefore(card,addCalendarAnchor);
-      }
+  if(!container.querySelector(".bsu-success-policy-card")){
+    var card=createSuccessPolicyCard();
+
+    if(addCalendarAnchor.parentNode){
+      addCalendarAnchor.parentNode.insertBefore(card,addCalendarAnchor);
     }
-
-    insertBookAgainUnderCalendar(container);
-    return;
   }
 
-  if(container.querySelector(".bsu-success-policy-card"))return;
-
-  var cardFallback=createSuccessPolicyCard();
-  var locationAnchor=findLocationAnchor(container);
-
-  if(locationAnchor&&locationAnchor.parentNode){
-    locationAnchor.parentNode.insertBefore(cardFallback,locationAnchor);
-    return;
-  }
-
-  container.appendChild(cardFallback);
+  insertBookAgainUnderCalendar(container);
 }
 
 function ensureBookingFailureModal(){
@@ -1492,8 +1473,7 @@ document.addEventListener("visibilitychange",function(){
   }
 });
 
-document.addEventListener("click",function(e){
-  captureSelectedBookingLabel(e.target);
+document.addEventListener("click",function(){
   setTimeout(runFixes,50);
   setTimeout(runFixes,250);
   setTimeout(runFixes,600);
