@@ -99,7 +99,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V42 - smooth mobile photo marquee + sticky date/staff */
+/* B SIDE U Pasadena Layout Balance V43 - sticky date+staff only, mobile desktop-style marquee */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -224,7 +224,17 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   100%{background-position:-220% 0}
 }
 
-.pasadena-header{display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"title" "status" "address" "actions"!important;align-items:start!important;justify-items:start!important;row-gap:8px!important;padding:23px 30px 25px!important;margin-bottom:16px!important;border-radius:28px!important;border:1px solid rgba(17,17,17,.08)!important;background:radial-gradient(circle at 100% 100%,#f4f4f4 0 76px,transparent 78px),linear-gradient(135deg,#fff 0%,#fff 62%,#fbfbfb 100%)!important;box-shadow:0 10px 28px rgba(0,0,0,.038)!important;overflow:hidden!important}.pasadena-header::after{right:-58px!important;bottom:-74px!important;width:148px!important;height:148px!important;background:rgba(20,20,20,.04)!important}.pasadena-title{grid-area:title!important;margin:0 0 1px!important;max-width:none!important;font-size:clamp(32px,2.9vw,40px)!important;line-height:.98!important;letter-spacing:-.05em!important;font-weight:950!important}.pasadena-open{grid-area:status!important;display:inline-flex!important;width:fit-content!important;min-height:28px!important;padding:0 12px!important;margin:0!important;gap:8px!important;align-items:center!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:12.5px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}.pasadena-open::before{width:8px!important;height:8px!important;background:#55ce79!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}.pasadena-address-row{display:contents!important}.pasadena-address{grid-area:address!important;display:block!important;max-width:760px!important;margin:0!important;color:#666!important;font-size:13px!important;line-height:1.35!important;font-weight:800!important;letter-spacing:-.02em!important}.pasadena-links{grid-area:actions!important;display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;margin:1px 0 0!important}.pasadena-links a{min-height:34px!important;padding:0 14px!important;border-radius:999px!important;border:1px solid rgba(17,17,17,.13)!important;background:#fff!important;color:#111!important;text-decoration:none!important;font-size:12.2px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}.date-area,.date-area.is-fixed-fallback{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important}.date-nav{background:#fff!important;color:#111!important;border:1px solid rgba(20,20,20,.12)!important;box-shadow:none!important}
+.pasadena-header{display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"title" "status" "address" "actions"!important;align-items:start!important;justify-items:start!important;row-gap:8px!important;padding:23px 30px 25px!important;margin-bottom:16px!important;border-radius:28px!important;border:1px solid rgba(17,17,17,.08)!important;background:radial-gradient(circle at 100% 100%,#f4f4f4 0 76px,transparent 78px),linear-gradient(135deg,#fff 0%,#fff 62%,#fbfbfb 100%)!important;box-shadow:0 10px 28px rgba(0,0,0,.038)!important;overflow:hidden!important}
+.pasadena-header::after{right:-58px!important;bottom:-74px!important;width:148px!important;height:148px!important;background:rgba(20,20,20,.04)!important}
+.pasadena-title{grid-area:title!important;margin:0 0 1px!important;max-width:none!important;font-size:clamp(32px,2.9vw,40px)!important;line-height:.98!important;letter-spacing:-.05em!important;font-weight:950!important}
+.pasadena-open{grid-area:status!important;display:inline-flex!important;width:fit-content!important;min-height:28px!important;padding:0 12px!important;margin:0!important;gap:8px!important;align-items:center!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:12.5px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}
+.pasadena-open::before{width:8px!important;height:8px!important;background:#55ce79!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}
+.pasadena-address-row{display:contents!important}
+.pasadena-address{grid-area:address!important;display:block!important;max-width:760px!important;margin:0!important;color:#666!important;font-size:13px!important;line-height:1.35!important;font-weight:800!important;letter-spacing:-.02em!important}
+.pasadena-links{grid-area:actions!important;display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;margin:1px 0 0!important}
+.pasadena-links a{min-height:34px!important;padding:0 14px!important;border-radius:999px!important;border:1px solid rgba(17,17,17,.13)!important;background:#fff!important;color:#111!important;text-decoration:none!important;font-size:12.2px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}
+.date-area,.date-area.is-fixed-fallback{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important}
+.date-nav{background:#fff!important;color:#111!important;border:1px solid rgba(20,20,20,.12)!important;box-shadow:none!important}
 
 @media(min-width:600px){
 .page{max-width:1120px!important;padding:20px 22px 48px!important}
@@ -277,6 +287,12 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   min-height:0!important;
 }
 
+.bsu-date-placeholder,
+.bsu-staff-label-placeholder,
+.bsu-staff-strip-placeholder{
+  display:none!important;
+}
+
 .bsu-mobile-sticky-date-staff{
   position:sticky!important;
   top:0!important;
@@ -298,10 +314,19 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   transform:none!important;
 }
 
-.bsu-mobile-sticky-date-staff > div:nth-child(2){
+.bsu-mobile-sticky-staff-only{
   width:100%!important;
   margin:0!important;
+  padding:0!important;
   background:#fff!important;
+}
+
+.bsu-mobile-sticky-staff-only .section-label{
+  margin:0 2px 8px!important;
+}
+
+.bsu-mobile-sticky-staff-only .staff-strip{
+  padding-bottom:8px!important;
 }
 
 .desktop-service-panel,.desktop-right-panel{display:contents!important}
@@ -329,7 +354,9 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .desktop-photo-wall-section .gallery-head,
 .desktop-photo-wall-section .staff-group-head,
 .desktop-photo-wall-section .bsu-filter-group,
-.desktop-photo-wall-section .view-toggle{display:none!important}
+.desktop-photo-wall-section .view-toggle{
+  display:none!important;
+}
 
 .desktop-photo-wall-section .bsu-team-wall,
 .desktop-photo-wall-section .staff-groups,
@@ -350,15 +377,31 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   display:flex!important;
   align-items:stretch!important;
   gap:5px!important;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
+  overflow:visible!important;
   scroll-snap-type:none!important;
-  -webkit-overflow-scrolling:touch!important;
+  -webkit-overflow-scrolling:auto!important;
   scrollbar-width:none!important;
-  transform:none!important;
-  will-change:scroll-position!important;
-  touch-action:pan-x!important;
-  scroll-behavior:auto!important;
+  transform:translate3d(0,0,0)!important;
+  will-change:transform!important;
+  touch-action:auto!important;
+}
+
+.desktop-photo-wall-section.bsu-mobile-marquee-ready .staff-carousel-track{
+  width:max-content!important;
+  animation:bsuMobilePhotoMarquee 42s linear infinite!important;
+}
+
+.desktop-photo-wall-section.bsu-mobile-marquee-ready .staff-carousel-track:active{
+  animation-play-state:paused!important;
+}
+
+@keyframes bsuMobilePhotoMarquee{
+  0%{
+    transform:translate3d(0,0,0);
+  }
+  100%{
+    transform:translate3d(-50%,0,0);
+  }
 }
 
 .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
@@ -366,8 +409,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .desktop-photo-wall-section .staff-carousel-item{
   height:220px!important;
   max-height:220px!important;
-  flex:0 0 46%!important;
-  min-width:46%!important;
+  flex:0 0 46vw!important;
+  min-width:46vw!important;
   scroll-snap-align:none!important;
   border-radius:0!important;
   overflow:hidden!important;
@@ -380,21 +423,21 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   object-fit:cover!important;
 }
 
-.desktop-photo-wall-section::before{display:none!important;content:none!important}
+.desktop-photo-wall-section::before{
+  display:none!important;
+  content:none!important;
+}
 }
 
 @media(max-width:900px){.pasadena-header{padding:23px 24px 25px!important;border-radius:26px!important}.pasadena-title{font-size:clamp(31px,7vw,42px)!important}.pasadena-address{font-size:13px!important}}
-@media(max-width:600px){.page{padding:10px 10px 26px!important}.pasadena-header{padding:20px 16px 18px!important;border-radius:22px!important;row-gap:8px!important}.pasadena-title{font-size:clamp(29px,10.5vw,40px)!important;line-height:.98!important}.pasadena-open{min-height:28px!important;padding:0 11px!important;font-size:12px!important}.pasadena-address{font-size:12.8px!important;line-height:1.38!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:38px!important;padding:0 8px!important;font-size:11.8px!important;text-align:center!important}.desktop-photo-wall-section{height:220px!important;max-height:220px!important;border-radius:22px!important}.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel,.desktop-photo-wall-section .staff-carousel-track,.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important}.desktop-photo-wall-section .staff-carousel-item{flex-basis:46%!important;min-width:46%!important}}
+@media(max-width:600px){.page{padding:10px 10px 26px!important}.pasadena-header{padding:20px 16px 18px!important;border-radius:22px!important;row-gap:8px!important}.pasadena-title{font-size:clamp(29px,10.5vw,40px)!important;line-height:.98!important}.pasadena-open{min-height:28px!important;padding:0 11px!important;font-size:12px!important}.pasadena-address{font-size:12.8px!important;line-height:1.38!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:38px!important;padding:0 8px!important;font-size:11.8px!important;text-align:center!important}.desktop-photo-wall-section{height:220px!important;max-height:220px!important;border-radius:22px!important}.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel,.desktop-photo-wall-section .staff-carousel-track,.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important}}
 `;
 
         const customJs=`
 <script>
 (function(){
 let lastGalleryStaff="";
-let mobilePhotoWallRaf=null;
-let mobilePhotoWallTrack=null;
-let mobilePhotoWallPauseUntil=0;
-let mobilePhotoWallLastTs=null;
+let mobilePhotoWallReady=false;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -405,37 +448,60 @@ function isMobile(){return window.innerWidth<600}
 function setupMobileStickyDateAndStaff(){
   var booking=document.querySelector(".booking-layout");
   var dateArea=document.querySelector(".date-area");
-  if(!booking||!dateArea)return;
+  var staffStrip=document.querySelector(".staff-strip");
+
+  if(!booking||!dateArea||!staffStrip)return;
 
   var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
+  var staffOnly=document.querySelector(".bsu-mobile-sticky-staff-only");
 
-  function getStaffPanel(){
-    var strip=document.querySelector(".staff-strip");
-    if(!strip)return null;
+  var staffLabel=staffStrip.previousElementSibling;
+  if(!staffLabel||!staffLabel.classList||!staffLabel.classList.contains("section-label")){
+    staffLabel=Array.from(document.querySelectorAll(".section-label")).find(function(el){
+      return /staff|stylists|barbers/i.test(el.textContent||"");
+    });
+  }
 
-    var node=strip;
-    while(node&&node.parentElement){
-      if(node.parentElement===booking)return node;
-      if(stickyWrap&&node.parentElement===stickyWrap)return node;
-      node=node.parentElement;
-    }
+  var datePlaceholder=document.querySelector(".bsu-date-placeholder");
+  var staffLabelPlaceholder=document.querySelector(".bsu-staff-label-placeholder");
+  var staffStripPlaceholder=document.querySelector(".bsu-staff-strip-placeholder");
 
-    return null;
+  if(!datePlaceholder&&dateArea.parentNode){
+    datePlaceholder=document.createElement("div");
+    datePlaceholder.className="bsu-date-placeholder";
+    dateArea.parentNode.insertBefore(datePlaceholder,dateArea);
+  }
+
+  if(staffLabel&&!staffLabelPlaceholder&&staffLabel.parentNode){
+    staffLabelPlaceholder=document.createElement("div");
+    staffLabelPlaceholder.className="bsu-staff-label-placeholder";
+    staffLabel.parentNode.insertBefore(staffLabelPlaceholder,staffLabel);
+  }
+
+  if(!staffStripPlaceholder&&staffStrip.parentNode){
+    staffStripPlaceholder=document.createElement("div");
+    staffStripPlaceholder.className="bsu-staff-strip-placeholder";
+    staffStrip.parentNode.insertBefore(staffStripPlaceholder,staffStrip);
   }
 
   if(!isMobile()){
-    if(stickyWrap){
-      var parent=stickyWrap.parentNode;
-      while(stickyWrap.firstChild){
-        parent.insertBefore(stickyWrap.firstChild,stickyWrap);
-      }
-      stickyWrap.remove();
+    if(datePlaceholder&&datePlaceholder.parentNode&&dateArea.parentNode!==datePlaceholder.parentNode){
+      datePlaceholder.parentNode.insertBefore(dateArea,datePlaceholder.nextSibling);
     }
+
+    if(staffLabel&&staffLabelPlaceholder&&staffLabelPlaceholder.parentNode&&staffLabel.parentNode!==staffLabelPlaceholder.parentNode){
+      staffLabelPlaceholder.parentNode.insertBefore(staffLabel,staffLabelPlaceholder.nextSibling);
+    }
+
+    if(staffStripPlaceholder&&staffStripPlaceholder.parentNode&&staffStrip.parentNode!==staffStripPlaceholder.parentNode){
+      staffStripPlaceholder.parentNode.insertBefore(staffStrip,staffStripPlaceholder.nextSibling);
+    }
+
+    if(stickyWrap)stickyWrap.remove();
+    if(staffOnly)staffOnly.remove();
+
     return;
   }
-
-  var staffPanel=getStaffPanel();
-  if(!staffPanel)return;
 
   if(!stickyWrap){
     stickyWrap=document.createElement("div");
@@ -443,13 +509,55 @@ function setupMobileStickyDateAndStaff(){
     booking.insertBefore(stickyWrap,booking.firstChild);
   }
 
-  if(dateArea.parentNode!==stickyWrap){
-    stickyWrap.appendChild(dateArea);
+  if(!staffOnly){
+    staffOnly=document.createElement("div");
+    staffOnly.className="bsu-mobile-sticky-staff-only";
+    stickyWrap.appendChild(staffOnly);
   }
 
-  if(staffPanel.parentNode!==stickyWrap){
-    stickyWrap.appendChild(staffPanel);
+  if(dateArea.parentNode!==stickyWrap){
+    stickyWrap.insertBefore(dateArea,stickyWrap.firstChild);
   }
+
+  if(staffLabel&&staffLabel.parentNode!==staffOnly){
+    staffOnly.appendChild(staffLabel);
+  }
+
+  if(staffStrip.parentNode!==staffOnly){
+    staffOnly.appendChild(staffStrip);
+  }
+}
+
+function setupMobilePhotoWallLikeDesktop(){
+  var photo=document.querySelector(".desktop-photo-wall-section");
+  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
+
+  if(!photo||!track)return;
+
+  if(!isMobile()){
+    photo.classList.remove("bsu-mobile-marquee-ready");
+    track.style.removeProperty("animation");
+    track.style.removeProperty("width");
+    return;
+  }
+
+  photo.classList.add("bsu-mobile-marquee-ready");
+
+  if(!track.dataset.bsuDesktopStyleMobile){
+    track.dataset.bsuDesktopStyleMobile="1";
+
+    var originalItems=Array.from(track.children).filter(function(item){
+      return !item.classList.contains("bsu-photo-clone");
+    });
+
+    originalItems.forEach(function(item){
+      var clone=item.cloneNode(true);
+      clone.classList.add("bsu-photo-clone");
+      track.appendChild(clone);
+    });
+  }
+
+  mobilePhotoWallReady=true;
 }
 
 function ensureBookingFailureModal(){
@@ -546,91 +654,6 @@ function patchCreateBookingFailureModal(){
 
     return response;
   };
-}
-
-function stopMobilePhotoWallCarousel(){
-  if(mobilePhotoWallRaf){
-    cancelAnimationFrame(mobilePhotoWallRaf);
-    mobilePhotoWallRaf=null;
-  }
-
-  mobilePhotoWallTrack=null;
-  mobilePhotoWallLastTs=null;
-}
-
-function pauseMobilePhotoWallCarousel(){
-  mobilePhotoWallPauseUntil=Date.now()+2500;
-  mobilePhotoWallLastTs=null;
-}
-
-function setupMobilePhotoWallCarousel(){
-  if(!isMobile()){
-    stopMobilePhotoWallCarousel();
-    return;
-  }
-
-  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
-  if(!track)return;
-
-  track.style.setProperty("transform","none","important");
-  track.style.setProperty("overflow-x","auto","important");
-  track.style.setProperty("overflow-y","hidden","important");
-  track.style.setProperty("scroll-behavior","auto","important");
-  track.style.setProperty("-webkit-overflow-scrolling","touch","important");
-  track.style.setProperty("touch-action","pan-x","important");
-
-  if(mobilePhotoWallTrack!==track){
-    stopMobilePhotoWallCarousel();
-    mobilePhotoWallTrack=track;
-    mobilePhotoWallLastTs=null;
-  }
-
-  if(!track.dataset.bsuMobileCarouselBound){
-    track.dataset.bsuMobileCarouselBound="1";
-
-    track.addEventListener("touchstart",pauseMobilePhotoWallCarousel,{passive:true});
-    track.addEventListener("touchmove",pauseMobilePhotoWallCarousel,{passive:true});
-    track.addEventListener("pointerdown",pauseMobilePhotoWallCarousel,{passive:true});
-    track.addEventListener("wheel",pauseMobilePhotoWallCarousel,{passive:true});
-  }
-
-  if(mobilePhotoWallRaf)return;
-
-  function tick(ts){
-    if(!isMobile()){
-      stopMobilePhotoWallCarousel();
-      return;
-    }
-
-    if(!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallTrack)){
-      stopMobilePhotoWallCarousel();
-      return;
-    }
-
-    var currentTrack=mobilePhotoWallTrack;
-
-    if(mobilePhotoWallLastTs===null){
-      mobilePhotoWallLastTs=ts;
-    }
-
-    var dt=Math.min(48,ts-mobilePhotoWallLastTs);
-    mobilePhotoWallLastTs=ts;
-
-    var maxScroll=currentTrack.scrollWidth-currentTrack.clientWidth;
-    var isPaused=Date.now()<mobilePhotoWallPauseUntil;
-
-    if(!isPaused&&maxScroll>12){
-      currentTrack.scrollLeft+=dt*0.018;
-
-      if(currentTrack.scrollLeft>=maxScroll-2){
-        currentTrack.scrollLeft=0;
-      }
-    }
-
-    mobilePhotoWallRaf=requestAnimationFrame(tick);
-  }
-
-  mobilePhotoWallRaf=requestAnimationFrame(tick);
 }
 
 function getSelectedStaffName(){var el=document.querySelector(".staff-item.is-active .staff-name")||document.querySelector(".staff-card.is-active .staff-name");return el?(el.textContent||"").trim():""}
@@ -763,7 +786,7 @@ function runFixes(){
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
   movePhotoWall();
-  setupMobilePhotoWallCarousel();
+  setupMobilePhotoWallLikeDesktop();
 }
 
 patchCreateBookingFailureModal();
