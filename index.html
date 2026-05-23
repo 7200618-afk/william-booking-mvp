@@ -99,7 +99,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V43 - sticky date+staff only, mobile desktop-style marquee */
+/* B SIDE U Pasadena Layout Balance V44 - mobile uses desktop-style photo wall, no mobile scroll carousel */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -437,7 +437,6 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 <script>
 (function(){
 let lastGalleryStaff="";
-let mobilePhotoWallReady=false;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -536,8 +535,10 @@ function setupMobilePhotoWallLikeDesktop(){
 
   if(!isMobile()){
     photo.classList.remove("bsu-mobile-marquee-ready");
-    track.style.removeProperty("animation");
-    track.style.removeProperty("width");
+    track.querySelectorAll(".bsu-photo-clone").forEach(function(clone){
+      clone.remove();
+    });
+    delete track.dataset.bsuDesktopStyleMobile;
     return;
   }
 
@@ -556,8 +557,6 @@ function setupMobilePhotoWallLikeDesktop(){
       track.appendChild(clone);
     });
   }
-
-  mobilePhotoWallReady=true;
 }
 
 function ensureBookingFailureModal(){
