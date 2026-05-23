@@ -329,7 +329,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V58 - first-load mobile photo wall auto-start fixed */
+/* B SIDE U Pasadena V59 - CSS-driven mobile photo wall auto-scroll */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 .bsu-hide-success-action,.bsu-hide-waitlist,.bsu-hide-sangabriel-link{display:none!important}
@@ -343,6 +343,30 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   pointer-events:none!important;
   -webkit-user-drag:none!important;
   user-select:none!important;
+}
+
+@keyframes bsuMobilePhotoWallAutoLeft{
+  0%{transform:translate3d(0,0,0)}
+  100%{transform:translate3d(-50%,0,0)}
+}
+
+@media(max-width:599px){
+  .desktop-photo-wall-section .staff-carousel{
+    overflow:hidden!important;
+    touch-action:pan-y!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track{
+    animation:bsuMobilePhotoWallAutoLeft 28s linear infinite!important;
+    transform:none!important;
+    will-change:transform!important;
+    pointer-events:none!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track:hover,
+  .desktop-photo-wall-section .staff-carousel-track:active{
+    animation-play-state:running!important;
+  }
 }
 
 .calendar-btn{
@@ -1034,7 +1058,7 @@ function stopMobilePhotoWallCarousel(){
 }
 
 function setupMobilePhotoWallTouchPause(scroller){
-  /* Touch pause / manual drag disabled by request. Carousel keeps auto-moving left. */
+  /* Manual touch pause / drag is disabled. CSS animation keeps moving automatically. */
   mobilePhotoWallPaused=false;
 }
 
@@ -1075,6 +1099,39 @@ function prepareMobilePhotoWallClones(track){
   }).length;
 }
 
+function startMobilePhotoWallCssAutoScroll(){
+  if(!isMobile())return;
+
+  var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
+  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
+  if(!scroller||!track)return;
+
+  var baseCount=prepareMobilePhotoWallClones(track);
+  if(baseCount<2)return;
+
+  stopMobilePhotoWallCarousel();
+
+  scroller.style.setProperty("overflow","hidden","important");
+  scroller.style.setProperty("touch-action","pan-y","important");
+
+  track.style.setProperty("display","flex","important");
+  track.style.setProperty("width","max-content","important");
+  track.style.setProperty("transition","none","important");
+  track.style.setProperty("will-change","transform","important");
+  track.style.setProperty("pointer-events","none","important");
+  track.style.setProperty("animation","bsuMobilePhotoWallAutoLeft 28s linear infinite","important");
+  track.style.setProperty("animation-play-state","running","important");
+
+  /* Restart animation once, so first page load starts immediately even if the gallery was inserted late. */
+  if(!track.dataset.bsuAutoScrollStarted){
+    track.dataset.bsuAutoScrollStarted="1";
+    track.style.setProperty("animation","none","important");
+    void track.offsetWidth;
+    track.style.setProperty("animation","bsuMobilePhotoWallAutoLeft 28s linear infinite","important");
+    track.style.setProperty("animation-play-state","running","important");
+  }
+}
+
 function isMobilePhotoWallReady(){
   var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
   var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
@@ -1087,15 +1144,7 @@ function isMobilePhotoWallReady(){
            !item.classList.contains("is-clone");
   });
 
-  if(items.length<2)return false;
-
-  var scrollerWidth=scroller.clientWidth||0;
-  var trackWidth=track.scrollWidth||0;
-
-  if(scrollerWidth<80)return false;
-  if(trackWidth<=scrollerWidth+20)return false;
-
-  return true;
+  return items.length>=2;
 }
 
 function waitForMobilePhotoWallReady(){
@@ -1109,31 +1158,21 @@ function waitForMobilePhotoWallReady(){
     return;
   }
 
-  var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
-  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
-
-  if(scroller&&track){
-    var items=Array.from(track.children).filter(function(item){
-      return !item.classList.contains("bsu-mobile-photo-clone") &&
-             !item.classList.contains("is-clone");
-    });
-
-    if(items.length>=2){
-      if(mobilePhotoWallReadyTimer){
-        clearTimeout(mobilePhotoWallReadyTimer);
-        mobilePhotoWallReadyTimer=null;
-      }
-      mobilePhotoWallReadyStartedAt=0;
-      setupMobilePhotoWallCarousel();
-      return;
+  if(isMobilePhotoWallReady()){
+    if(mobilePhotoWallReadyTimer){
+      clearTimeout(mobilePhotoWallReadyTimer);
+      mobilePhotoWallReadyTimer=null;
     }
+    mobilePhotoWallReadyStartedAt=0;
+    startMobilePhotoWallCssAutoScroll();
+    return;
   }
 
   if(!mobilePhotoWallReadyStartedAt){
     mobilePhotoWallReadyStartedAt=Date.now();
   }
 
-  if(Date.now()-mobilePhotoWallReadyStartedAt>12000){
+  if(Date.now()-mobilePhotoWallReadyStartedAt>15000){
     mobilePhotoWallReadyStartedAt=0;
     return;
   }
@@ -1143,212 +1182,27 @@ function waitForMobilePhotoWallReady(){
   mobilePhotoWallReadyTimer=setTimeout(function(){
     mobilePhotoWallReadyTimer=null;
     waitForMobilePhotoWallReady();
-  },200);
+  },150);
 }
 
 function setupMobilePhotoWallCarousel(){
-  var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
-  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
-
-  if(!isMobile()){
-    stopMobilePhotoWallCarousel();
-
-    if(track){
-      track.querySelectorAll(".bsu-mobile-photo-clone").forEach(function(clone){
-        clone.remove();
-      });
-
-      delete track.dataset.bsuMobileBaseCount;
-      delete track.dataset.bsuMobileX;
-
-      track.style.removeProperty("transform");
-      track.style.removeProperty("transition");
-      track.style.removeProperty("width");
-    }
-
-    return;
-  }
-
-  if(!scroller||!track)return;
-
-  prepareMobilePhotoWallClones(track);
-
-  scroller.style.setProperty("overflow","hidden","important");
-  scroller.style.setProperty("touch-action","pan-y","important");
-  setupMobilePhotoWallTouchPause(scroller);
-
-  track.style.setProperty("pointer-events","none","important");
-  track.style.setProperty("display","flex","important");
-  track.style.setProperty("width","max-content","important");
-  track.style.setProperty("transition","none","important");
-  track.style.setProperty("will-change","transform","important");
-
-  function calculateMobilePhotoLoopWidth(){
-    var baseItems=Array.from(track.children).filter(function(item){
-      return !item.classList.contains("bsu-mobile-photo-clone") &&
-             !item.classList.contains("is-clone");
-    });
-
-    if(!baseItems.length)return Math.max(0,track.scrollWidth/2);
-
-    var first=baseItems[0];
-    var firstWidth=first ? first.getBoundingClientRect().width : 0;
-    var gap=0;
-    try{
-      gap=parseFloat(window.getComputedStyle(track).columnGap||window.getComputedStyle(track).gap||"0")||0;
-    }catch(e){}
-
-    var measured=0;
-    baseItems.forEach(function(item){
-      measured+=item.getBoundingClientRect().width||firstWidth||0;
-    });
-
-    if(baseItems.length>1){
-      measured+=gap*(baseItems.length-1);
-    }
-
-    return Math.max(measured,track.scrollWidth/2,0);
-  }
-
-  mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
-
-  if(mobilePhotoWallTrack!==track){
-    stopMobilePhotoWallCarousel();
-
-    mobilePhotoWallTrack=track;
-    mobilePhotoWallLastTs=null;
-    mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
-
-    if(!track.dataset.bsuMobileX){
-      track.dataset.bsuMobileX="0";
-    }
-  }
-
-  if(mobilePhotoWallRaf)return;
-
-  function tick(ts){
-    if(!isMobile()){
-      stopMobilePhotoWallCarousel();
-      return;
-    }
-
-    if(!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallTrack)){
-      stopMobilePhotoWallCarousel();
-      waitForMobilePhotoWallReady();
-      return;
-    }
-
-    if(mobilePhotoWallLastTs===null){
-      mobilePhotoWallLastTs=ts;
-    }
-
-    var dt=Math.min(48,ts-mobilePhotoWallLastTs);
-    mobilePhotoWallLastTs=ts;
-
-    var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
-    if(loopWidth<=12){
-      var visibleItems=Array.from(mobilePhotoWallTrack.children).filter(function(item){
-        return !item.classList.contains("bsu-mobile-photo-clone") &&
-               !item.classList.contains("is-clone");
-      });
-      var fallbackWidth=visibleItems.length && visibleItems[0] ? visibleItems[0].getBoundingClientRect().width*visibleItems.length : 0;
-      loopWidth=Math.max(loopWidth,fallbackWidth);
-      mobilePhotoWallLoopWidth=loopWidth;
-    }
-
-    var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
-
-    if(loopWidth>12){
-      x+=dt*0.035;
-
-      if(x>=loopWidth){
-        x=x-loopWidth;
-      }
-
-      mobilePhotoWallTrack.dataset.bsuMobileX=String(x);
-    }
-
-    mobilePhotoWallTrack.style.setProperty(
-      "transform",
-      "translate3d(" + (-x) + "px,0,0)",
-      "important"
-    );
-
-    mobilePhotoWallRaf=requestAnimationFrame(tick);
-  }
-
-  mobilePhotoWallRaf=requestAnimationFrame(tick);
-
-  setTimeout(function(){
-    if(isMobile()&&mobilePhotoWallTrack===track){
-      mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
-    }
-  },250);
-
-  setTimeout(function(){
-    if(isMobile()&&mobilePhotoWallTrack===track){
-      mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
-    }
-  },900);
+  startMobilePhotoWallCssAutoScroll();
 }
 
 function forceMobilePhotoWallFirstLoadStart(){
-  if(!isMobile())return;
-
-  var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
-  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
-  if(!scroller||!track)return;
-
-  var items=Array.from(track.children).filter(function(item){
-    return !item.classList.contains("bsu-mobile-photo-clone") &&
-           !item.classList.contains("is-clone");
-  });
-
-  if(items.length<2)return;
-
-  scroller.style.setProperty("overflow","hidden","important");
-  scroller.style.setProperty("touch-action","pan-y","important");
-  track.style.setProperty("pointer-events","none","important");
-  track.style.setProperty("display","flex","important");
-  track.style.setProperty("width","max-content","important");
-  track.style.setProperty("transition","none","important");
-  track.style.setProperty("will-change","transform","important");
-
-  prepareMobilePhotoWallClones(track);
-
-  var width=Math.max(0,track.scrollWidth/2);
-  if(width<=12){
-    items.forEach(function(item){
-      width+=item.getBoundingClientRect().width||0;
-    });
-  }
-
-  if(width>12){
-    mobilePhotoWallLoopWidth=width;
-  }
-
-  if(mobilePhotoWallTrack!==track){
-    stopMobilePhotoWallCarousel();
-    mobilePhotoWallTrack=track;
-    mobilePhotoWallLastTs=null;
-    if(!track.dataset.bsuMobileX){
-      track.dataset.bsuMobileX="0";
-    }
-  }
-
-  setupMobilePhotoWallCarousel();
+  startMobilePhotoWallCssAutoScroll();
 }
 
 function scheduleMobilePhotoWallFirstLoadStart(){
   if(!isMobile())return;
 
   requestAnimationFrame(function(){
-    forceMobilePhotoWallFirstLoadStart();
-    requestAnimationFrame(forceMobilePhotoWallFirstLoadStart);
+    startMobilePhotoWallCssAutoScroll();
+    requestAnimationFrame(startMobilePhotoWallCssAutoScroll);
   });
 
-  [150,350,700,1100,1700,2500,3800,5500,7500,10000,13000].forEach(function(ms){
-    setTimeout(forceMobilePhotoWallFirstLoadStart,ms);
+  [80,180,350,650,1000,1500,2200,3200,4600,6500,9000,12000].forEach(function(ms){
+    setTimeout(startMobilePhotoWallCssAutoScroll,ms);
   });
 }
 
@@ -1373,8 +1227,6 @@ function patchGalleryStaffAutoStart(){
       window.bsuSetGalleryStaff=function(){
         var result=originalSetGalleryStaff.apply(this,arguments);
         scheduleMobilePhotoWallFirstLoadStart();
-        setTimeout(scheduleMobilePhotoWallFirstLoadStart,260);
-        setTimeout(scheduleMobilePhotoWallFirstLoadStart,900);
         return result;
       };
 
