@@ -329,9 +329,10 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V54 - service height updated, policy action buttons removed */
+/* B SIDE U Pasadena V55 - waitlist coming soon, success actions hidden, service height slightly increased */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
+.bsu-hide-success-action{display:none!important}
 
 .calendar-btn{
   box-shadow:none!important;
@@ -489,8 +490,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 .service-pill{
-  min-height:42px!important;
-  height:42px!important;
+  min-height:48px!important;
+  height:48px!important;
   border-radius:14px!important;
   padding:7px 10px!important;
 }
@@ -552,7 +553,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .staff-name{font-size:14px!important}
 .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
 .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
-.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+.service-pill{min-height:48px!important;height:48px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
 .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
 .slot-area{padding-top:2px!important}
 .slot-group{margin-top:7px!important}
@@ -587,7 +588,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-availability-loading-frame{min-height:150px!important}
 .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .bsu-loading-chip{height:34px!important}
-.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important}
+.service-pill{min-height:48px!important;height:48px!important;border-radius:14px!important;padding:7px 10px!important}
 .pasadena-links{display:flex!important;justify-content:flex-start!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;width:100%!important;margin-top:3px!important}
 .pasadena-links a{width:auto!important;min-height:30px!important;padding:0 10px!important;font-size:11px!important;text-align:center!important}
 .bsu-success-policy-card{padding:18px 15px!important;border-radius:20px!important;margin:16px 0!important}
@@ -760,6 +761,30 @@ function isVisible(el){
   return rect.width>0&&rect.height>0&&style.display!=="none"&&style.visibility!=="hidden"&&style.opacity!=="0";
 }
 
+function updateWaitlistComingSoon(){
+  document.querySelectorAll(".waitlist-btn,button,a").forEach(function(el){
+    var text=(el.textContent||"").trim();
+    if(/^join\s+waitlist$/i.test(text)){
+      el.textContent="Join Waitlist (Coming Soon)";
+      el.setAttribute("aria-label","Join Waitlist (Coming Soon)");
+    }
+  });
+}
+
+function hideSuccessManageActions(){
+  var container=findSuccessContainer();
+  if(!container)return;
+
+  Array.from(container.querySelectorAll("a,button")).forEach(function(el){
+    var text=(el.textContent||"").trim();
+    if(/^(cancel|reschedule|rescedule)(\s+appointment)?$/i.test(text)){
+      el.classList.add("bsu-hide-success-action");
+      el.setAttribute("aria-hidden","true");
+      el.setAttribute("tabindex","-1");
+    }
+  });
+}
+
 function findSuccessContainer(){
   var candidates=Array.from(document.querySelectorAll('[role="dialog"],.modal,.booking-modal,.success-modal,.confirmation-modal,.appointment-modal,.modal-content,.booking-card,.success-card'));
 
@@ -813,7 +838,10 @@ function insertSuccessPolicyCard(){
   var container=findSuccessContainer();
   if(!container)return;
 
-  if(container.querySelector(".bsu-success-policy-card"))return;
+  if(container.querySelector(".bsu-success-policy-card")){
+    hideSuccessManageActions();
+    return;
+  }
 
   var card=createSuccessPolicyCard();
   var locationAnchor=findLocationAnchor(container);
@@ -1434,6 +1462,8 @@ function runFixes(){
   movePhotoWall();
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
+  updateWaitlistComingSoon();
+  hideSuccessManageActions();
 }
 
 patchCreateBookingFailureModal();
@@ -1455,6 +1485,8 @@ var observer=new MutationObserver(function(){
   runFixes();
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
+  updateWaitlistComingSoon();
+  hideSuccessManageActions();
 });
 observer.observe(document.body,{childList:true,subtree:true,characterData:true});
 
@@ -1468,6 +1500,8 @@ window.addEventListener("load",function(){
   mobilePhotoWallReadyStartedAt=0;
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
+  updateWaitlistComingSoon();
+  hideSuccessManageActions();
 });
 
 document.addEventListener("visibilitychange",function(){
