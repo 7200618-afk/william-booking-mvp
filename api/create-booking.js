@@ -5,6 +5,21 @@ const BOOKING_LOCK_TTL_MS = 15 * 1000;
 const bookingLocks = globalThis.__BSU_BOOKING_LOCKS__ || new Map();
 globalThis.__BSU_BOOKING_LOCKS__ = bookingLocks;
 
+const DO_NOT_BOOK_MESSAGE =
+  "We’re sorry, but we’re unable to accept this booking online. Please contact the shop directly.";
+
+const DO_NOT_BOOK_GROUP_ID = String(
+  process.env.SQUARE_DO_NOT_BOOK_GROUP_ID || ""
+).trim();
+
+const DO_NOT_BOOK_GROUP_NAME = String(
+  process.env.SQUARE_DO_NOT_BOOK_GROUP_NAME || "B SIDE U - Do Not Book"
+).trim();
+
+let cachedDoNotBookGroupId = DO_NOT_BOOK_GROUP_ID || null;
+let cachedDoNotBookGroupFetchedAt = 0;
+const DO_NOT_BOOK_GROUP_CACHE_MS = 10 * 60 * 1000;
+
 function cleanupExpiredBookingLocks() {
   const now = Date.now();
 
@@ -30,6 +45,244 @@ function releaseBookingLock(key) {
   if (key) {
     bookingLocks.delete(key);
   }
+}
+
+function normalizeEmail(email) {
+  return String(email || "").trim().toLowerCase();
+}
+
+function normalizePhone(phone) {
+  return String(phone || "").trim();
+}
+
+function normalizePhoneDigits(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+
+  if (digits.length === 11 && digits.startsWith("1")) {
+    return digits.slice(1);
+  }
+
+  return digits;
+}
+
+function buildPhoneCandidates(phone) {
+  const raw = normalizePhone(phone);
+  const digits10 = normalizePhoneDigits(phone);
+  const candidates = new Set();
+
+  if (raw) {
+    candidates.add(raw);
+  }
+
+  if (digits10 && digits10.length === 10) {
+    candidates.add(digits10);
+    candidates.add(`+1${digits10}`);
+    candidates.add(`1${digits10}`);
+    candidates.add(
+      `(${digits10.slice(0, 3)}) ${digits10.slice(3, 6)}-${digits10.slice(6)}`
+    );
+    candidates.add(
+      `${digits10.slice(0, 3)}-${digits10.slice(3, 6)}-${digits10.slice(6)}`
+    );
+    candidates.add(
+      `${digits10.slice(0, 3)} ${digits10.slice(3, 6)} ${digits10.slice(6)}`
+    );
+  }
+
+  return Array.from(candidates).filter(Boolean);
+}
+
+function normalizeGroupName(name) {
+  return String(name || "").trim().toLowerCase();
+}
+
+function getSquareErrorMessage(data, fallback) {
+  const detail =
+    data?.errors?.[0]?.detail ||
+    data?.errors?.[0]?.field ||
+    data?.errors?.[0]?.code;
+
+  return detail || fallback;
+}
+
+async function squareFetchJson(url, options) {
+  const response = await fetch(url, options);
+  const data = await response.json().catch(() => ({}));
+
+  return { response, data };
+}
+
+async function getDoNotBookGroupId(squareHeaders) {
+  if (DO_NOT_BOOK_GROUP_ID) {
+    return DO_NOT_BOOK_GROUP_ID;
+  }
+
+  const now = Date.now();
+
+  if (
+    cachedDoNotBookGroupId &&
+    now - cachedDoNotBookGroupFetchedAt < DO_NOT_BOOK_GROUP_CACHE_MS
+  ) {
+    return cachedDoNotBookGroupId;
+  }
+
+  if (!DO_NOT_BOOK_GROUP_NAME) {
+    return null;
+  }
+
+  const { response, data } = await squareFetchJson(
+    "https://connect.squareup.com/v2/customers/groups",
+    {
+      method: "GET",
+      headers: squareHeaders
+    }
+  );
+
+  if (!response.ok) {
+    console.warn("Unable to list Square customer groups.", data);
+    return null;
+  }
+
+  const targetName = normalizeGroupName(DO_NOT_BOOK_GROUP_NAME);
+  const group = (data.groups || []).find(
+    item => normalizeGroupName(item.name) === targetName
+  );
+
+  if (group?.id) {
+    cachedDoNotBookGroupId = group.id;
+    cachedDoNotBookGroupFetchedAt = now;
+    return group.id;
+  }
+
+  return null;
+}
+
+function customerBelongsToGroup(customer, groupId) {
+  if (!customer || !groupId) {
+    return false;
+  }
+
+  const groupIds = Array.isArray(customer.group_ids) ? customer.group_ids : [];
+  return groupIds.includes(groupId);
+}
+
+async function searchCustomersByEmail(squareHeaders, email) {
+  const cleanEmail = normalizeEmail(email);
+
+  if (!cleanEmail) {
+    return [];
+  }
+
+  const { response, data } = await squareFetchJson(
+    "https://connect.squareup.com/v2/customers/search",
+    {
+      method: "POST",
+      headers: squareHeaders,
+      body: JSON.stringify({
+        query: {
+          filter: {
+            email_address: {
+              exact: cleanEmail
+            }
+          }
+        },
+        limit: 10
+      })
+    }
+  );
+
+  if (!response.ok) {
+    console.warn("Square customer email search failed.", data);
+    return [];
+  }
+
+  return data.customers || [];
+}
+
+async function searchCustomersByPhone(squareHeaders, phone) {
+  const phoneCandidates = buildPhoneCandidates(phone);
+  const foundCustomers = new Map();
+
+  for (const candidate of phoneCandidates) {
+    const { response, data } = await squareFetchJson(
+      "https://connect.squareup.com/v2/customers/search",
+      {
+        method: "POST",
+        headers: squareHeaders,
+        body: JSON.stringify({
+          query: {
+            filter: {
+              phone_number: {
+                exact: candidate
+              }
+            }
+          },
+          limit: 10
+        })
+      }
+    );
+
+    if (!response.ok) {
+      console.warn("Square customer phone search failed.", data);
+      continue;
+    }
+
+    for (const customer of data.customers || []) {
+      if (customer?.id) {
+        foundCustomers.set(customer.id, customer);
+      }
+    }
+  }
+
+  return Array.from(foundCustomers.values());
+}
+
+async function findMatchingCustomers(squareHeaders, customerEmail, customerPhone) {
+  const foundCustomers = new Map();
+
+  const emailMatches = await searchCustomersByEmail(squareHeaders, customerEmail);
+  const phoneMatches = await searchCustomersByPhone(squareHeaders, customerPhone);
+
+  for (const customer of [...emailMatches, ...phoneMatches]) {
+    if (customer?.id) {
+      foundCustomers.set(customer.id, customer);
+    }
+  }
+
+  return Array.from(foundCustomers.values());
+}
+
+async function isDoNotBookCustomer(squareHeaders, customers) {
+  const doNotBookGroupId = await getDoNotBookGroupId(squareHeaders);
+
+  if (!doNotBookGroupId) {
+    return false;
+  }
+
+  return customers.some(customer =>
+    customerBelongsToGroup(customer, doNotBookGroupId)
+  );
+}
+
+function getLosAngelesDateFromUtc(utcString) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date(utcString));
+
+  const year = parts.find(part => part.type === "year")?.value;
+  const month = parts.find(part => part.type === "month")?.value;
+  const day = parts.find(part => part.type === "day")?.value;
+
+  return `${year}-${month}-${day}`;
+}
+
+function addDaysToIsoDate(isoDate, days) {
+  const d = new Date(`${isoDate}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
 }
 
 export default async function handler(req, res) {
@@ -81,6 +334,7 @@ export default async function handler(req, res) {
     }
 
     const normalizedStartAt = new Date(selectedTimeMs).toISOString();
+
     bookingLockKey = [
       LOCATION_ID,
       staff.team_member_id,
@@ -107,42 +361,26 @@ export default async function handler(req, res) {
       "Content-Type": "application/json"
     };
 
-    function getLosAngelesDateFromUtc(utcString) {
-      const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "America/Los_Angeles",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).formatToParts(new Date(utcString));
+    const cleanEmail = normalizeEmail(customerEmail);
+    const cleanPhone = normalizePhone(customerPhone);
+    const cleanName = String(customerName || "").trim();
 
-      const year = parts.find(part => part.type === "year")?.value;
-      const month = parts.find(part => part.type === "month")?.value;
-      const day = parts.find(part => part.type === "day")?.value;
+    const matchingCustomers = await findMatchingCustomers(
+      squareHeaders,
+      cleanEmail,
+      cleanPhone
+    );
 
-      return `${year}-${month}-${day}`;
-    }
+    const blockedCustomer = await isDoNotBookCustomer(
+      squareHeaders,
+      matchingCustomers
+    );
 
-    function addDaysToIsoDate(isoDate, days) {
-      const d = new Date(`${isoDate}T00:00:00Z`);
-      d.setUTCDate(d.getUTCDate() + days);
-      return d.toISOString().slice(0, 10);
-    }
-
-    function normalizeEmail(email) {
-      return String(email || "").trim().toLowerCase();
-    }
-
-    function normalizePhone(phone) {
-      return String(phone || "").trim();
-    }
-
-    function getSquareErrorMessage(data, fallback) {
-      const detail =
-        data?.errors?.[0]?.detail ||
-        data?.errors?.[0]?.field ||
-        data?.errors?.[0]?.code;
-
-      return detail || fallback;
+    if (blockedCustomer) {
+      return res.status(403).json({
+        error: DO_NOT_BOOK_MESSAGE,
+        code: "CUSTOMER_DO_NOT_BOOK"
+      });
     }
 
     const selectedLocalDate = getLosAngelesDateFromUtc(normalizedStartAt);
@@ -217,47 +455,17 @@ export default async function handler(req, res) {
 
     let customerId = null;
 
-    const cleanEmail = normalizeEmail(customerEmail);
-    const cleanPhone = normalizePhone(customerPhone);
-    const cleanName = String(customerName || "").trim();
+    if (matchingCustomers.length > 0) {
+      customerId = matchingCustomers[0].id;
+    }
 
     const nameParts = cleanName.split(/\s+/).filter(Boolean);
     const givenName = nameParts[0] || "Guest";
     const familyName = nameParts.slice(1).join(" ") || "Customer";
 
     /*
-      先按 email 搜索客户，避免每次预约都创建重复 customer。
-    */
-    const customerSearchResponse = await fetch(
-      "https://connect.squareup.com/v2/customers/search",
-      {
-        method: "POST",
-        headers: squareHeaders,
-        body: JSON.stringify({
-          query: {
-            filter: {
-              email_address: {
-                exact: cleanEmail
-              }
-            }
-          },
-          limit: 1
-        })
-      }
-    );
-
-    const customerSearchData = await customerSearchResponse.json();
-
-    if (
-      customerSearchResponse.ok &&
-      customerSearchData.customers &&
-      customerSearchData.customers.length > 0
-    ) {
-      customerId = customerSearchData.customers[0].id;
-    }
-
-    /*
       找不到客户就创建新客户。
+      注意：如果客户换了 phone/email，就会被当成新客户，Square group 也无法识别。
     */
     if (!customerId) {
       const createCustomerResponse = await fetch(
