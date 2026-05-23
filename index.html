@@ -99,7 +99,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V41 - loading stays in slot frame */
+/* B SIDE U Pasadena Layout Balance V42 - smooth mobile photo marquee + sticky date/staff */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -271,6 +271,39 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 @media(max-width:599px){
+.date-sticky-spacer{
+  display:none!important;
+  height:0!important;
+  min-height:0!important;
+}
+
+.bsu-mobile-sticky-date-staff{
+  position:sticky!important;
+  top:0!important;
+  z-index:999!important;
+  background:#fff!important;
+  padding:0 0 10px!important;
+  margin:0 0 10px!important;
+  box-shadow:0 10px 18px rgba(255,255,255,.92)!important;
+}
+
+.bsu-mobile-sticky-date-staff .date-area,
+.bsu-mobile-sticky-date-staff .date-area.is-fixed-fallback{
+  position:relative!important;
+  top:auto!important;
+  left:auto!important;
+  width:100%!important;
+  z-index:auto!important;
+  margin:0 0 10px!important;
+  transform:none!important;
+}
+
+.bsu-mobile-sticky-date-staff > div:nth-child(2){
+  width:100%!important;
+  margin:0!important;
+  background:#fff!important;
+}
+
 .desktop-service-panel,.desktop-right-panel{display:contents!important}
 .desktop-right-panel .slot-area,.desktop-right-panel .empty-state,.desktop-results-area .slot-area,.slot-area,.desktop-results-area .empty-state{min-height:150px!important}
 
@@ -325,6 +358,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   transform:none!important;
   will-change:scroll-position!important;
   touch-action:pan-x!important;
+  scroll-behavior:auto!important;
 }
 
 .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
@@ -367,6 +401,56 @@ const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Su
 
 function setImportantDisplay(el,value){if(!el)return;el.style.setProperty("display",value,"important")}
 function isMobile(){return window.innerWidth<600}
+
+function setupMobileStickyDateAndStaff(){
+  var booking=document.querySelector(".booking-layout");
+  var dateArea=document.querySelector(".date-area");
+  if(!booking||!dateArea)return;
+
+  var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
+
+  function getStaffPanel(){
+    var strip=document.querySelector(".staff-strip");
+    if(!strip)return null;
+
+    var node=strip;
+    while(node&&node.parentElement){
+      if(node.parentElement===booking)return node;
+      if(stickyWrap&&node.parentElement===stickyWrap)return node;
+      node=node.parentElement;
+    }
+
+    return null;
+  }
+
+  if(!isMobile()){
+    if(stickyWrap){
+      var parent=stickyWrap.parentNode;
+      while(stickyWrap.firstChild){
+        parent.insertBefore(stickyWrap.firstChild,stickyWrap);
+      }
+      stickyWrap.remove();
+    }
+    return;
+  }
+
+  var staffPanel=getStaffPanel();
+  if(!staffPanel)return;
+
+  if(!stickyWrap){
+    stickyWrap=document.createElement("div");
+    stickyWrap.className="bsu-mobile-sticky-date-staff";
+    booking.insertBefore(stickyWrap,booking.firstChild);
+  }
+
+  if(dateArea.parentNode!==stickyWrap){
+    stickyWrap.appendChild(dateArea);
+  }
+
+  if(staffPanel.parentNode!==stickyWrap){
+    stickyWrap.appendChild(staffPanel);
+  }
+}
 
 function ensureBookingFailureModal(){
   if(document.getElementById("bsuBookingFailOverlay"))return;
@@ -518,7 +602,7 @@ function setupMobilePhotoWallCarousel(){
       return;
     }
 
-    if(!mobilePhotoWallTrack || !document.body.contains(mobilePhotoWallTrack)){
+    if(!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallTrack)){
       stopMobilePhotoWallCarousel();
       return;
     }
@@ -529,14 +613,14 @@ function setupMobilePhotoWallCarousel(){
       mobilePhotoWallLastTs=ts;
     }
 
-    var dt=Math.min(50,ts-mobilePhotoWallLastTs);
+    var dt=Math.min(48,ts-mobilePhotoWallLastTs);
     mobilePhotoWallLastTs=ts;
 
     var maxScroll=currentTrack.scrollWidth-currentTrack.clientWidth;
     var isPaused=Date.now()<mobilePhotoWallPauseUntil;
 
-    if(!isPaused && maxScroll>12){
-      currentTrack.scrollLeft+=dt*0.025;
+    if(!isPaused&&maxScroll>12){
+      currentTrack.scrollLeft+=dt*0.018;
 
       if(currentTrack.scrollLeft>=maxScroll-2){
         currentTrack.scrollLeft=0;
@@ -673,6 +757,7 @@ function markNextAvailableClick(){
   },true);
 }
 function runFixes(){
+  setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
