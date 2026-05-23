@@ -329,10 +329,10 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V55 - waitlist coming soon, success actions hidden, service height slightly increased */
+/* B SIDE U Pasadena V56 - waitlist hidden, San Gabriel switch hidden, service height 45, mobile carousel touch pause */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
-.bsu-hide-success-action{display:none!important}
+.bsu-hide-success-action,.bsu-hide-waitlist,.bsu-hide-sangabriel-link{display:none!important}
 
 .calendar-btn{
   box-shadow:none!important;
@@ -553,7 +553,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .staff-name{font-size:14px!important}
 .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
 .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
-.service-pill{min-height:48px!important;height:48px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+.service-pill{min-height:45px!important;height:45px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
 .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
 .slot-area{padding-top:2px!important}
 .slot-group{margin-top:7px!important}
@@ -588,7 +588,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-availability-loading-frame{min-height:150px!important}
 .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .bsu-loading-chip{height:34px!important}
-.service-pill{min-height:48px!important;height:48px!important;border-radius:14px!important;padding:7px 10px!important}
+.service-pill{min-height:45px!important;height:45px!important;border-radius:14px!important;padding:7px 10px!important}
 .pasadena-links{display:flex!important;justify-content:flex-start!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;width:100%!important;margin-top:3px!important}
 .pasadena-links a{width:auto!important;min-height:30px!important;padding:0 10px!important;font-size:11px!important;text-align:center!important}
 .bsu-success-policy-card{padding:18px 15px!important;border-radius:20px!important;margin:16px 0!important}
@@ -624,6 +624,7 @@ let mobilePhotoWallLastTs=null;
 let mobilePhotoWallLoopWidth=0;
 let mobilePhotoWallReadyTimer=null;
 let mobilePhotoWallReadyStartedAt=0;
+let mobilePhotoWallPaused=false;
 let lastSelectedBookingLabel="";
 
 const POLICY_URL="https://www.bsideuhair.com/appointment-policy";
@@ -761,12 +762,26 @@ function isVisible(el){
   return rect.width>0&&rect.height>0&&style.display!=="none"&&style.visibility!=="hidden"&&style.opacity!=="0";
 }
 
-function updateWaitlistComingSoon(){
+function hideWaitlistButton(){
   document.querySelectorAll(".waitlist-btn,button,a").forEach(function(el){
     var text=(el.textContent||"").trim();
-    if(/^join\s+waitlist$/i.test(text)){
-      el.textContent="Join Waitlist (Coming Soon)";
-      el.setAttribute("aria-label","Join Waitlist (Coming Soon)");
+    if(/^join\s+waitlist(\s*\(coming soon\))?$/i.test(text)){
+      el.classList.add("bsu-hide-waitlist");
+      el.setAttribute("aria-hidden","true");
+      el.setAttribute("tabindex","-1");
+    }
+  });
+}
+
+function hideSanGabrielSwitchButton(){
+  document.querySelectorAll(".pasadena-links a,a,button").forEach(function(el){
+    var text=(el.textContent||"").trim();
+    var href=String(el.getAttribute("href")||"").toLowerCase();
+
+    if(/switch\s+to\s+san\s*gabriel/i.test(text)||/san\s*gabriel/i.test(text)&&/switch/i.test(text)||href.indexOf("sangabriel")>-1||href.indexOf("san-gabriel")>-1){
+      el.classList.add("bsu-hide-sangabriel-link");
+      el.setAttribute("aria-hidden","true");
+      el.setAttribute("tabindex","-1");
     }
   });
 }
@@ -1005,6 +1020,29 @@ function stopMobilePhotoWallCarousel(){
   mobilePhotoWallLoopWidth=0;
 }
 
+function setupMobilePhotoWallTouchPause(scroller){
+  if(!scroller||scroller.dataset.bsuTouchPauseBound==="1")return;
+  scroller.dataset.bsuTouchPauseBound="1";
+
+  function pause(){
+    mobilePhotoWallPaused=true;
+  }
+
+  function resume(){
+    mobilePhotoWallLastTs=null;
+    mobilePhotoWallPaused=false;
+  }
+
+  scroller.addEventListener("touchstart",pause,{passive:true});
+  scroller.addEventListener("touchend",resume,{passive:true});
+  scroller.addEventListener("touchcancel",resume,{passive:true});
+  scroller.addEventListener("pointerdown",pause,{passive:true});
+  scroller.addEventListener("pointerup",resume,{passive:true});
+  scroller.addEventListener("pointercancel",resume,{passive:true});
+  scroller.addEventListener("mouseenter",pause);
+  scroller.addEventListener("mouseleave",resume);
+}
+
 function prepareMobilePhotoWallClones(track){
   if(!track)return 0;
 
@@ -1132,6 +1170,7 @@ function setupMobilePhotoWallCarousel(){
 
   scroller.style.setProperty("overflow","hidden","important");
   scroller.style.setProperty("touch-action","pan-y","important");
+  setupMobilePhotoWallTouchPause(scroller);
 
   track.style.setProperty("display","flex","important");
   track.style.setProperty("width","max-content","important");
@@ -1175,6 +1214,12 @@ function setupMobilePhotoWallCarousel(){
 
     var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
     var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
+
+    if(mobilePhotoWallPaused){
+      mobilePhotoWallLastTs=ts;
+      mobilePhotoWallRaf=requestAnimationFrame(tick);
+      return;
+    }
 
     if(loopWidth>12){
       x+=dt*0.035;
@@ -1462,7 +1507,8 @@ function runFixes(){
   movePhotoWall();
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
-  updateWaitlistComingSoon();
+  hideWaitlistButton();
+  hideSanGabrielSwitchButton();
   hideSuccessManageActions();
 }
 
@@ -1485,7 +1531,8 @@ var observer=new MutationObserver(function(){
   runFixes();
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
-  updateWaitlistComingSoon();
+  hideWaitlistButton();
+  hideSanGabrielSwitchButton();
   hideSuccessManageActions();
 });
 observer.observe(document.body,{childList:true,subtree:true,characterData:true});
@@ -1500,7 +1547,8 @@ window.addEventListener("load",function(){
   mobilePhotoWallReadyStartedAt=0;
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
-  updateWaitlistComingSoon();
+  hideWaitlistButton();
+  hideSanGabrielSwitchButton();
   hideSuccessManageActions();
 });
 
