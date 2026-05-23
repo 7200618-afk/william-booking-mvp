@@ -97,8 +97,190 @@
       slotCardEl.classList.remove("is-visible");`
         );
 
+        html=html.replace(
+          /function getOrderedStaffKeys\(date\) \{[\s\S]*?\n    \}\n\n    function getProfileUrl/,
+          `function getOpeningCountFromCache(staffKey, date) {
+      const staff = STAFF_DATA[staffKey];
+
+      if (!staff) return -1;
+
+      const statusServiceKey =
+        staffKey === selectedStaffKey && selectedServiceKey
+          ? selectedServiceKey
+          : staff.defaultService;
+
+      const cacheKey = getStatusCacheKey(staffKey, statusServiceKey, date);
+      const cached = staffStatusCache[cacheKey];
+
+      if (!cached) return -1;
+
+      if (typeof cached.openingCount === "number") {
+        return cached.openingCount;
+      }
+
+      return cached.hasOpening ? 1 : 0;
+    }
+
+    function getStaffTiePriority(staffKey) {
+      const fixedOrder = ["william", "ryan", "ken", "nami", "fiona", "jacob"];
+      const normalizedKey = String(staffKey || "").toLowerCase();
+      const index = fixedOrder.indexOf(normalizedKey);
+
+      /*
+        New employees are not in the fixed list.
+        If opening count is the same, new employees come first.
+      */
+      if (index === -1) {
+        return -1000 + (STAFF_DATA[staffKey]?.order || 0);
+      }
+
+      return index;
+    }
+
+    function sortByOpeningCountThenStaffOrder(a, b, date) {
+      const countA = getOpeningCountFromCache(a, date);
+      const countB = getOpeningCountFromCache(b, date);
+
+      if (countB !== countA) {
+        return countB - countA;
+      }
+
+      const priorityA = getStaffTiePriority(a);
+      const priorityB = getStaffTiePriority(b);
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      return (STAFF_DATA[a]?.order || 0) - (STAFF_DATA[b]?.order || 0);
+    }
+
+    function sortByStaffTieOrder(a, b) {
+      const priorityA = getStaffTiePriority(a);
+      const priorityB = getStaffTiePriority(b);
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      return (STAFF_DATA[a]?.order || 0) - (STAFF_DATA[b]?.order || 0);
+    }
+
+    function getOrderedStaffKeys(date) {
+      const keys = Object.keys(STAFF_DATA);
+
+      const workingOpenNonJacob = [];
+      const jacobWorking = [];
+      const workingFullNonJacob = [];
+      const notWorking = [];
+
+      keys.forEach(key => {
+        const staff = STAFF_DATA[key];
+        const isJacob = String(key || "").toLowerCase() === "jacob";
+        const workingToday = isWorking(key, date);
+
+        const statusServiceKey =
+          key === selectedStaffKey && selectedServiceKey
+            ? selectedServiceKey
+            : staff.defaultService;
+
+        const cacheKey = getStatusCacheKey(key, statusServiceKey, date);
+        const cached = staffStatusCache[cacheKey];
+
+        if (!workingToday) {
+          notWorking.push(key);
+          return;
+        }
+
+        /*
+          Jacob special rule:
+          If Jacob works today, he is always after open working staff
+          and before fully booked staff, regardless of opening count.
+        */
+        if (isJacob) {
+          jacobWorking.push(key);
+          return;
+        }
+
+        if (cached && cached.isFull) {
+          workingFullNonJacob.push(key);
+          return;
+        }
+
+        workingOpenNonJacob.push(key);
+      });
+
+      workingOpenNonJacob.sort((a, b) => {
+        return sortByOpeningCountThenStaffOrder(a, b, date);
+      });
+
+      jacobWorking.sort(sortByStaffTieOrder);
+      workingFullNonJacob.sort(sortByStaffTieOrder);
+      notWorking.sort(sortByStaffTieOrder);
+
+      return [
+        ...workingOpenNonJacob,
+        ...jacobWorking,
+        ...workingFullNonJacob,
+        ...notWorking
+      ];
+    }
+
+    function getProfileUrl`
+        );
+
+        html=html.replace(
+          /staffStatusCache\[cacheKey\] = \{\s*text: formatPasadenaTime\(todayOpenings\[0\]\.start_at\),\s*isFull: false,\s*hasOpening: true\s*\};/g,
+          `staffStatusCache[cacheKey] = {
+          text: formatPasadenaTime(todayOpenings[0].start_at),
+          isFull: false,
+          hasOpening: true,
+          openingCount: todayOpenings.length
+        };`
+        );
+
+        html=html.replace(
+          /staffStatusCache\[cacheKey\] = \{\s*text: "Fully booked",\s*isFull: true,\s*hasOpening: false\s*\};/g,
+          `staffStatusCache[cacheKey] = {
+          text: "Fully booked",
+          isFull: true,
+          hasOpening: false,
+          openingCount: 0
+        };`
+        );
+
+        html=html.replace(
+          /staffStatusCache\[cacheKey\] = \{\s*text: nextWorkDate \? formatShortDate\(nextWorkDate\) : "No schedule",\s*isFull: false,\s*hasOpening: false\s*\};/g,
+          `staffStatusCache[cacheKey] = {
+        text: nextWorkDate ? formatShortDate(nextWorkDate) : "No schedule",
+        isFull: false,
+        hasOpening: false,
+        openingCount: 0
+      };`
+        );
+
+        html=html.replace(
+          /staffStatusCache\[selectedCacheKey\] = \{\s*text: formatPasadenaTime\(availabilities\[0\]\.start_at\),\s*isFull: false,\s*hasOpening: true\s*\};/g,
+          `staffStatusCache[selectedCacheKey] = {
+            text: formatPasadenaTime(availabilities[0].start_at),
+            isFull: false,
+            hasOpening: true,
+            openingCount: availabilities.length
+          };`
+        );
+
+        html=html.replace(
+          /staffStatusCache\[selectedCacheKey\] = \{\s*text: "Fully booked",\s*isFull: true,\s*hasOpening: false\s*\};/g,
+          `staffStatusCache[selectedCacheKey] = {
+          text: "Fully booked",
+          isFull: true,
+          hasOpening: false,
+          openingCount: 0
+        };`
+        );
+
         const customCss=`
-/* B SIDE U Pasadena V46 - same design, improved create-booking failure handling */
+/* B SIDE U Pasadena V47 - same design, staff sorting by opening count */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
