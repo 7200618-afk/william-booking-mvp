@@ -175,37 +175,6 @@ function setupMobileStickyDateAndStaff(){
   if(staffStrip.parentNode!==staffOnly)staffOnly.appendChild(staffStrip);
 }
 
-function scrollToMobileStickyOnce(){
-  if(!isMobile())return;
-
-  setupMobileStickyDateAndStaff();
-
-  var sticky=document.querySelector(".bsu-mobile-sticky-date-staff");
-  if(!sticky)return;
-
-  var targetY=window.scrollY+sticky.getBoundingClientRect().top;
-
-  window.scrollTo({
-    top:Math.max(0,Math.round(targetY)),
-    behavior:"smooth"
-  });
-}
-
-function installMobileStaffClickScroll(){
-  if(window.__bsuStaffClickScrollInstalled)return;
-  window.__bsuStaffClickScrollInstalled=true;
-
-  document.addEventListener("click",function(e){
-    if(!isMobile())return;
-
-    var card=e.target&&e.target.closest&&e.target.closest(".staff-item,.staff-card");
-    if(!card)return;
-
-    setTimeout(function(){
-      scrollToMobileStickyOnce();
-    },260);
-  },false);
-}
 
 
 function ensureBookingFailureModal(){
@@ -244,7 +213,6 @@ function runFixes(){setupMobileStickyDateAndStaff();moveServicesForDesktop();rem
 
 patchCreateBookingFailureModal();
 markNextAvailableClick();
-installMobileStaffClickScroll();
 runFixes();
 setTimeout(runFixes,100);setTimeout(runFixes,300);setTimeout(runFixes,700);setTimeout(runFixes,1200);setTimeout(runFixes,2500);
 var observer=new MutationObserver(runFixes);observer.observe(document.body,{childList:true,subtree:true,characterData:true});
