@@ -328,7 +328,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V50 - same design, mobile photo track autoplay */
+/* B SIDE U Pasadena V51 - same design, mobile photo autoplay only, no finger horizontal swipe */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -444,9 +444,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 (function(){
 let lastGalleryStaff="";
 let mobilePhotoWallRaf=null;
-let mobilePhotoWallScroller=null;
 let mobilePhotoWallTrack=null;
-let mobilePhotoWallPauseUntil=0;
 let mobilePhotoWallLastTs=null;
 let mobilePhotoWallLoopWidth=0;
 
@@ -663,15 +661,9 @@ function stopMobilePhotoWallCarousel(){
     mobilePhotoWallRaf=null;
   }
 
-  mobilePhotoWallScroller=null;
   mobilePhotoWallTrack=null;
   mobilePhotoWallLastTs=null;
   mobilePhotoWallLoopWidth=0;
-}
-
-function pauseMobilePhotoWallCarousel(){
-  mobilePhotoWallPauseUntil=Date.now()+1800;
-  mobilePhotoWallLastTs=null;
 }
 
 function prepareMobilePhotoWallClones(track){
@@ -751,7 +743,6 @@ function setupMobilePhotoWallCarousel(){
   if(mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
 
-    mobilePhotoWallScroller=scroller;
     mobilePhotoWallTrack=track;
     mobilePhotoWallLastTs=null;
     mobilePhotoWallLoopWidth=Math.max(0,track.scrollWidth/2);
@@ -759,15 +750,6 @@ function setupMobilePhotoWallCarousel(){
     if(!track.dataset.bsuMobileX){
       track.dataset.bsuMobileX="0";
     }
-  }
-
-  if(!scroller.dataset.bsuMobileCarouselBound){
-    scroller.dataset.bsuMobileCarouselBound="1";
-
-    scroller.addEventListener("touchstart",pauseMobilePhotoWallCarousel,{passive:true});
-    scroller.addEventListener("touchmove",pauseMobilePhotoWallCarousel,{passive:true});
-    scroller.addEventListener("pointerdown",pauseMobilePhotoWallCarousel,{passive:true});
-    scroller.addEventListener("wheel",pauseMobilePhotoWallCarousel,{passive:true});
   }
 
   if(mobilePhotoWallRaf)return;
@@ -791,11 +773,9 @@ function setupMobilePhotoWallCarousel(){
     mobilePhotoWallLastTs=ts;
 
     var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
-    var isPaused=Date.now()<mobilePhotoWallPauseUntil;
-
     var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
 
-    if(!isPaused&&loopWidth>12){
+    if(loopWidth>12){
       x+=dt*0.035;
 
       if(x>=loopWidth){
