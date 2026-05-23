@@ -175,23 +175,69 @@ function setupMobileStickyDateAndStaff(){
   if(staffStrip.parentNode!==staffOnly)staffOnly.appendChild(staffStrip);
 }
 
-function scrollMobileToStickyAfterStaffClick(){
+let bsuStaffScrollPendingUntil=0;
+let bsuStaffScrollTimer=null;
+
+function getMobileStickyScrollTarget(){
+  var sticky=document.querySelector(".bsu-mobile-sticky-date-staff");
+  if(!sticky)return null;
+
+  var rect=sticky.getBoundingClientRect();
+  var y=window.pageYOffset || document.documentElement.scrollTop || 0;
+  var target=Math.round(rect.top+y);
+
+  if(target<0)target=0;
+  return target;
+}
+
+function forceMobileStickyPosition(){
   if(!isMobile())return;
-  setTimeout(function(){
-    var sticky=document.querySelector(".bsu-mobile-sticky-date-staff");
-    if(!sticky)return;
-    var top=sticky.getBoundingClientRect().top+window.pageYOffset;
-    window.scrollTo({top:Math.max(0,top),behavior:"smooth"});
-  },140);
+
+  setupMobileStickyDateAndStaff();
+
+  var target=getMobileStickyScrollTarget();
+  if(target===null)return;
+
+  window.scrollTo({top:target,behavior:"auto"});
+}
+
+function scheduleMobileStickyScroll(){
+  if(!isMobile())return;
+
+  bsuStaffScrollPendingUntil=Date.now()+1400;
+
+  [0,40,90,150,240,360,520,760,1050,1320].forEach(function(delay){
+    setTimeout(function(){
+      if(Date.now()>bsuStaffScrollPendingUntil)return;
+      forceMobileStickyPosition();
+    },delay);
+  });
+
+  if(bsuStaffScrollTimer)return;
+
+  bsuStaffScrollTimer=setInterval(function(){
+    if(Date.now()>bsuStaffScrollPendingUntil){
+      clearInterval(bsuStaffScrollTimer);
+      bsuStaffScrollTimer=null;
+      return;
+    }
+    forceMobileStickyPosition();
+  },80);
 }
 
 function installMobileStaffClickScroll(){
   if(window.__bsuStaffClickScrollInstalled)return;
   window.__bsuStaffClickScrollInstalled=true;
-  document.addEventListener("click",function(e){
-    if(!isMobile())return;
-    if(e.target&&e.target.closest&&e.target.closest(".staff-item,.staff-card"))scrollMobileToStickyAfterStaffClick();
-  },true);
+
+  ["touchstart","pointerdown","click"].forEach(function(eventName){
+    document.addEventListener(eventName,function(e){
+      if(!isMobile())return;
+      var target=e.target;
+      if(target&&target.closest&&target.closest(".staff-item,.staff-card")){
+        scheduleMobileStickyScroll();
+      }
+    },true);
+  });
 }
 
 function ensureBookingFailureModal(){
@@ -226,7 +272,7 @@ function movePhotoWall(){var photo=document.querySelector(".desktop-photo-wall-s
 function moveServicesForDesktop(){var resultsArea=document.querySelector(".desktop-results-area");var servicePills=document.querySelector(".service-pills");var slotArea=document.querySelector(".desktop-results-area .slot-area")||document.querySelector(".desktop-right-panel .slot-area")||document.querySelector(".slot-area");var emptyState=document.querySelector(".desktop-results-area .empty-state")||document.querySelector(".desktop-right-panel .empty-state")||document.querySelector(".empty-state");if(!resultsArea||!servicePills)return;var desktop=!isMobile();var serviceLabel=Array.from(document.querySelectorAll(".section-label")).find(function(el){return /services/i.test(el.textContent||"")&&!el.closest(".desktop-service-panel")})||document.querySelector(".desktop-service-panel .section-label");var message=document.querySelector(".message");var panel=document.querySelector(".desktop-service-panel")||document.createElement("div");panel.className="desktop-service-panel";var rightPanel=document.querySelector(".desktop-right-panel")||document.createElement("div");rightPanel.className="desktop-right-panel";var placeholder=document.querySelector(".desktop-service-placeholder");var slotPlaceholder=document.querySelector(".desktop-slot-placeholder");var emptyPlaceholder=document.querySelector(".desktop-empty-placeholder");if(!placeholder&&serviceLabel&&serviceLabel.parentNode){placeholder=document.createElement("div");placeholder.className="desktop-service-placeholder";serviceLabel.parentNode.insertBefore(placeholder,serviceLabel)}if(!slotPlaceholder&&slotArea&&slotArea.parentNode){slotPlaceholder=document.createElement("div");slotPlaceholder.className="desktop-slot-placeholder";slotArea.parentNode.insertBefore(slotPlaceholder,slotArea)}if(!emptyPlaceholder&&emptyState&&emptyState.parentNode){emptyPlaceholder=document.createElement("div");emptyPlaceholder.className="desktop-empty-placeholder";emptyState.parentNode.insertBefore(emptyPlaceholder,emptyState)}if(desktop){if(!rightPanel.parentNode)resultsArea.insertBefore(rightPanel,resultsArea.firstChild);if(panel.parentNode!==rightPanel)rightPanel.appendChild(panel);if(serviceLabel&&serviceLabel.parentNode!==panel)panel.appendChild(serviceLabel);if(servicePills.parentNode!==panel)panel.appendChild(servicePills);if(message&&message.parentNode!==panel)panel.appendChild(message);if(slotArea&&slotArea.parentNode!==rightPanel)rightPanel.appendChild(slotArea);if(emptyState&&emptyState.parentNode!==rightPanel)rightPanel.appendChild(emptyState);var showTimes=hasTimeButtons(slotArea);var loading=hasLoadingFrame(slotArea);var emptyVisible=emptyState&&emptyState.classList&&emptyState.classList.contains("is-visible");setImportantDisplay(slotArea,(showTimes||loading)?"block":"none");setImportantDisplay(emptyState,(!showTimes&&!loading&&emptyVisible)?"block":"none")}else{if(placeholder&&placeholder.parentNode){if(serviceLabel&&serviceLabel.parentNode!==placeholder.parentNode)placeholder.parentNode.insertBefore(serviceLabel,placeholder.nextSibling);if(servicePills.parentNode!==placeholder.parentNode)placeholder.parentNode.insertBefore(servicePills,serviceLabel?serviceLabel.nextSibling:placeholder.nextSibling);if(message&&message.parentNode!==placeholder.parentNode)placeholder.parentNode.insertBefore(message,servicePills.nextSibling)}if(slotPlaceholder&&slotPlaceholder.parentNode&&slotArea&&slotArea.parentNode!==slotPlaceholder.parentNode)slotPlaceholder.parentNode.insertBefore(slotArea,slotPlaceholder.nextSibling);if(emptyPlaceholder&&emptyPlaceholder.parentNode&&emptyState&&emptyState.parentNode!==emptyPlaceholder.parentNode)emptyPlaceholder.parentNode.insertBefore(emptyState,emptyPlaceholder.nextSibling);if(slotArea)slotArea.style.removeProperty("display");if(emptyState)emptyState.style.removeProperty("display")}}
 function removeOpeningCounts(){document.querySelectorAll(".slot-group-title").forEach(function(el){var text=el.textContent||"";var newText=text.replace(/\\s*·\\s*\\d+\\s*openings?/gi,"").replace(/\\s*·\\s*\\d+\\s*opening/gi,"").replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi,"").replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi,"").trim();if(text!==newText)el.textContent=newText})}
 function markNextAvailableClick(){document.addEventListener("click",function(e){if(e.target&&e.target.closest&&e.target.closest(".next-available-btn"))window.__bsuKeepCurrentStaffOnNextAvailable=true},true)}
-function runFixes(){setupMobileStickyDateAndStaff();moveServicesForDesktop();removeOpeningCounts();fixOffDayFullyBookedStatus();syncGalleryToSelectedStaff();movePhotoWall();setupMobilePhotoWallCarousel()}
+function runFixes(){setupMobileStickyDateAndStaff();moveServicesForDesktop();removeOpeningCounts();fixOffDayFullyBookedStatus();syncGalleryToSelectedStaff();movePhotoWall();setupMobilePhotoWallCarousel();if(isMobile()&&Date.now()<bsuStaffScrollPendingUntil){setTimeout(forceMobileStickyPosition,30)}}
 
 patchCreateBookingFailureModal();
 markNextAvailableClick();
