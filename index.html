@@ -99,7 +99,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena Layout Balance V45 - mobile photo wall removed + sticky date/staff no fade */
+/* B SIDE U Pasadena Layout Balance V42 - smooth mobile photo marquee + sticky date/staff */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -277,12 +277,18 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   min-height:0!important;
 }
 
+.bsu-date-placeholder,
+.bsu-staff-label-placeholder,
+.bsu-staff-strip-placeholder{
+  display:none!important;
+}
+
 .bsu-mobile-sticky-date-staff{
   position:sticky!important;
   top:0!important;
   z-index:999!important;
   background:#fff!important;
-  padding:0 0 10px!important;
+  padding:0 0 8px!important;
   margin:0 0 10px!important;
   box-shadow:none!important;
 }
@@ -298,10 +304,19 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   transform:none!important;
 }
 
-.bsu-mobile-sticky-date-staff > div:nth-child(2){
+.bsu-mobile-sticky-staff-only{
   width:100%!important;
   margin:0!important;
+  padding:0!important;
   background:#fff!important;
+}
+
+.bsu-mobile-sticky-staff-only .section-label{
+  margin:0 2px 8px!important;
+}
+
+.bsu-mobile-sticky-staff-only .staff-strip{
+  padding-bottom:6px!important;
 }
 
 .desktop-service-panel,.desktop-right-panel{display:contents!important}
@@ -311,18 +326,109 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .bsu-loading-chip{height:34px!important}
 
-/* Mobile photo wall removed */
-.desktop-photo-wall-section{display:none!important}
+.desktop-photo-wall-section{
+  display:block!important;
+  width:100%!important;
+  height:220px!important;
+  max-height:220px!important;
+  margin:18px 0 0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border-radius:22px!important;
+  background:#f6f6f6!important;
+  box-shadow:none!important;
+}
+
+.desktop-photo-wall-section .bsu-team-head,
+.desktop-photo-wall-section .bsu-divider,
+.desktop-photo-wall-section .gallery-head,
+.desktop-photo-wall-section .staff-group-head,
+.desktop-photo-wall-section .bsu-filter-group,
+.desktop-photo-wall-section .view-toggle{display:none!important}
+
+.desktop-photo-wall-section .bsu-team-wall,
+.desktop-photo-wall-section .staff-groups,
+.desktop-photo-wall-section .staff-group,
+.desktop-photo-wall-section .staff-carousel{
+  height:220px!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:22px!important;
+  background:transparent!important;
+  overflow:hidden!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-track{
+  height:220px!important;
+  display:flex!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:none!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:none!important;
+  transform:none!important;
+  will-change:scroll-position!important;
+  touch-action:pan-x!important;
+  scroll-behavior:auto!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
+
+.desktop-photo-wall-section .staff-carousel-item{
+  height:220px!important;
+  max-height:220px!important;
+  flex:0 0 46%!important;
+  min-width:46%!important;
+  scroll-snap-align:none!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-item img,
+.desktop-photo-wall-section img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+
+.desktop-photo-wall-section::before{display:none!important;content:none!important}
+}
+
+
+
+/* Mobile staff photo wall: shown below availability, swipeable + auto-scroll. */
+@media(max-width:599px){
+  .desktop-photo-wall-section{
+    order:99!important;
+    margin-top:16px!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-track{
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    scroll-behavior:auto!important;
+    touch-action:pan-x!important;
+  }
 }
 
 @media(max-width:900px){.pasadena-header{padding:23px 24px 25px!important;border-radius:26px!important}.pasadena-title{font-size:clamp(31px,7vw,42px)!important}.pasadena-address{font-size:13px!important}}
-@media(max-width:600px){.page{padding:10px 10px 26px!important}.pasadena-header{padding:20px 16px 18px!important;border-radius:22px!important;row-gap:8px!important}.pasadena-title{font-size:clamp(29px,10.5vw,40px)!important;line-height:.98!important}.pasadena-open{min-height:28px!important;padding:0 11px!important;font-size:12px!important}.pasadena-address{font-size:12.8px!important;line-height:1.38!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:38px!important;padding:0 8px!important;font-size:11.8px!important;text-align:center!important}}
+@media(max-width:600px){.page{padding:10px 10px 26px!important}.pasadena-header{padding:20px 16px 18px!important;border-radius:22px!important;row-gap:8px!important}.pasadena-title{font-size:clamp(29px,10.5vw,40px)!important;line-height:.98!important}.pasadena-open{min-height:28px!important;padding:0 11px!important;font-size:12px!important}.pasadena-address{font-size:12.8px!important;line-height:1.38!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:38px!important;padding:0 8px!important;font-size:11.8px!important;text-align:center!important}.desktop-photo-wall-section{height:220px!important;max-height:220px!important;border-radius:22px!important}.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel,.desktop-photo-wall-section .staff-carousel-track,.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important}.desktop-photo-wall-section .staff-carousel-item{flex-basis:46%!important;min-width:46%!important}}
 `;
 
         const customJs=`
 <script>
 (function(){
 let lastGalleryStaff="";
+let mobilePhotoWallRaf=null;
+let mobilePhotoWallTrack=null;
+let mobilePhotoWallPauseUntil=0;
+let mobilePhotoWallLastTs=null;
+
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -332,37 +438,59 @@ function isMobile(){return window.innerWidth<600}
 function setupMobileStickyDateAndStaff(){
   var booking=document.querySelector(".booking-layout");
   var dateArea=document.querySelector(".date-area");
-  if(!booking||!dateArea)return;
+  var staffStrip=document.querySelector(".staff-strip");
+
+  if(!booking||!dateArea||!staffStrip)return;
 
   var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
+  var staffOnly=document.querySelector(".bsu-mobile-sticky-staff-only");
 
-  function getStaffPanel(){
-    var strip=document.querySelector(".staff-strip");
-    if(!strip)return null;
+  var staffLabel=staffStrip.previousElementSibling;
+  if(!staffLabel||!staffLabel.classList||!staffLabel.classList.contains("section-label")){
+    staffLabel=Array.from(document.querySelectorAll(".section-label")).find(function(el){
+      return /staff|stylists|barbers/i.test(el.textContent||"");
+    });
+  }
 
-    var node=strip;
-    while(node&&node.parentElement){
-      if(node.parentElement===booking)return node;
-      if(stickyWrap&&node.parentElement===stickyWrap)return node;
-      node=node.parentElement;
-    }
+  var datePlaceholder=document.querySelector(".bsu-date-placeholder");
+  var staffLabelPlaceholder=document.querySelector(".bsu-staff-label-placeholder");
+  var staffStripPlaceholder=document.querySelector(".bsu-staff-strip-placeholder");
 
-    return null;
+  if(!datePlaceholder&&dateArea.parentNode){
+    datePlaceholder=document.createElement("div");
+    datePlaceholder.className="bsu-date-placeholder";
+    dateArea.parentNode.insertBefore(datePlaceholder,dateArea);
+  }
+
+  if(staffLabel&&!staffLabelPlaceholder&&staffLabel.parentNode){
+    staffLabelPlaceholder=document.createElement("div");
+    staffLabelPlaceholder.className="bsu-staff-label-placeholder";
+    staffLabel.parentNode.insertBefore(staffLabelPlaceholder,staffLabel);
+  }
+
+  if(!staffStripPlaceholder&&staffStrip.parentNode){
+    staffStripPlaceholder=document.createElement("div");
+    staffStripPlaceholder.className="bsu-staff-strip-placeholder";
+    staffStrip.parentNode.insertBefore(staffStripPlaceholder,staffStrip);
   }
 
   if(!isMobile()){
-    if(stickyWrap){
-      var parent=stickyWrap.parentNode;
-      while(stickyWrap.firstChild){
-        parent.insertBefore(stickyWrap.firstChild,stickyWrap);
-      }
-      stickyWrap.remove();
+    if(datePlaceholder&&datePlaceholder.parentNode&&dateArea.parentNode!==datePlaceholder.parentNode){
+      datePlaceholder.parentNode.insertBefore(dateArea,datePlaceholder.nextSibling);
     }
+
+    if(staffLabel&&staffLabelPlaceholder&&staffLabelPlaceholder.parentNode&&staffLabel.parentNode!==staffLabelPlaceholder.parentNode){
+      staffLabelPlaceholder.parentNode.insertBefore(staffLabel,staffLabelPlaceholder.nextSibling);
+    }
+
+    if(staffStripPlaceholder&&staffStripPlaceholder.parentNode&&staffStrip.parentNode!==staffStripPlaceholder.parentNode){
+      staffStripPlaceholder.parentNode.insertBefore(staffStrip,staffStripPlaceholder.nextSibling);
+    }
+
+    if(stickyWrap)stickyWrap.remove();
+    if(staffOnly)staffOnly.remove();
     return;
   }
-
-  var staffPanel=getStaffPanel();
-  if(!staffPanel)return;
 
   if(!stickyWrap){
     stickyWrap=document.createElement("div");
@@ -370,12 +498,22 @@ function setupMobileStickyDateAndStaff(){
     booking.insertBefore(stickyWrap,booking.firstChild);
   }
 
-  if(dateArea.parentNode!==stickyWrap){
-    stickyWrap.appendChild(dateArea);
+  if(!staffOnly){
+    staffOnly=document.createElement("div");
+    staffOnly.className="bsu-mobile-sticky-staff-only";
+    stickyWrap.appendChild(staffOnly);
   }
 
-  if(staffPanel.parentNode!==stickyWrap){
-    stickyWrap.appendChild(staffPanel);
+  if(dateArea.parentNode!==stickyWrap){
+    stickyWrap.insertBefore(dateArea,stickyWrap.firstChild);
+  }
+
+  if(staffLabel&&staffLabel.parentNode!==staffOnly){
+    staffOnly.appendChild(staffLabel);
+  }
+
+  if(staffStrip.parentNode!==staffOnly){
+    staffOnly.appendChild(staffStrip);
   }
 }
 
@@ -473,6 +611,95 @@ function patchCreateBookingFailureModal(){
 
     return response;
   };
+}
+
+function stopMobilePhotoWallCarousel(){
+  if(mobilePhotoWallRaf){
+    cancelAnimationFrame(mobilePhotoWallRaf);
+    mobilePhotoWallRaf=null;
+  }
+  mobilePhotoWallTrack=null;
+  mobilePhotoWallLastTs=null;
+}
+
+function pauseMobilePhotoWallCarousel(){
+  mobilePhotoWallPauseUntil=Date.now()+2500;
+  mobilePhotoWallLastTs=null;
+}
+
+function setupMobilePhotoWallCarousel(){
+  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
+
+  if(!isMobile()){
+    stopMobilePhotoWallCarousel();
+    if(track){
+      track.style.removeProperty("overflow-x");
+      track.style.removeProperty("scroll-behavior");
+      track.style.removeProperty("touch-action");
+    }
+    return;
+  }
+
+  if(!track)return;
+
+  track.style.setProperty("transform","none","important");
+  track.style.setProperty("overflow-x","auto","important");
+  track.style.setProperty("overflow-y","hidden","important");
+  track.style.setProperty("scroll-behavior","auto","important");
+  track.style.setProperty("-webkit-overflow-scrolling","touch","important");
+  track.style.setProperty("touch-action","pan-x","important");
+
+  if(mobilePhotoWallTrack!==track){
+    stopMobilePhotoWallCarousel();
+    mobilePhotoWallTrack=track;
+    mobilePhotoWallLastTs=null;
+  }
+
+  if(!track.dataset.bsuMobileCarouselBound){
+    track.dataset.bsuMobileCarouselBound="1";
+    track.addEventListener("touchstart",pauseMobilePhotoWallCarousel,{passive:true});
+    track.addEventListener("touchmove",pauseMobilePhotoWallCarousel,{passive:true});
+    track.addEventListener("pointerdown",pauseMobilePhotoWallCarousel,{passive:true});
+    track.addEventListener("wheel",pauseMobilePhotoWallCarousel,{passive:true});
+  }
+
+  if(mobilePhotoWallRaf)return;
+
+  function tick(ts){
+    if(!isMobile()){
+      stopMobilePhotoWallCarousel();
+      return;
+    }
+
+    if(!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallTrack)){
+      stopMobilePhotoWallCarousel();
+      return;
+    }
+
+    var currentTrack=mobilePhotoWallTrack;
+
+    if(mobilePhotoWallLastTs===null){
+      mobilePhotoWallLastTs=ts;
+    }
+
+    var dt=Math.min(48,ts-mobilePhotoWallLastTs);
+    mobilePhotoWallLastTs=ts;
+
+    var maxScroll=currentTrack.scrollWidth-currentTrack.clientWidth;
+    var isPaused=Date.now()<mobilePhotoWallPauseUntil;
+
+    if(!isPaused&&maxScroll>12){
+      currentTrack.scrollLeft+=dt*0.026;
+
+      if(currentTrack.scrollLeft>=maxScroll-2){
+        currentTrack.scrollLeft=0;
+      }
+    }
+
+    mobilePhotoWallRaf=requestAnimationFrame(tick);
+  }
+
+  mobilePhotoWallRaf=requestAnimationFrame(tick);
 }
 
 function getSelectedStaffName(){var el=document.querySelector(".staff-item.is-active .staff-name")||document.querySelector(".staff-card.is-active .staff-name");return el?(el.textContent||"").trim():""}
@@ -605,6 +832,7 @@ function runFixes(){
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
   movePhotoWall();
+  setupMobilePhotoWallCarousel();
 }
 
 patchCreateBookingFailureModal();
