@@ -329,7 +329,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V62 - photo wall auto-scroll split for desktop and mobile */
+/* B SIDE U Pasadena V63 - photo wall auto-scroll with popup click restored */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 .bsu-hide-success-action,.bsu-hide-waitlist,.bsu-hide-sangabriel-link{display:none!important}
@@ -363,6 +363,14 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     animation:none!important;
     transition:none!important;
     will-change:transform!important;
+    pointer-events:auto!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item{
+    pointer-events:auto!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel-item img{
     pointer-events:none!important;
   }
 }
@@ -1088,6 +1096,34 @@ function removePhotoWallClones(track){
   });
 }
 
+function bindPhotoWallPopupClicks(){
+  if(window.__bsuPhotoWallPopupClickBound)return;
+  window.__bsuPhotoWallPopupClickBound=true;
+
+  document.addEventListener("click",function(e){
+    var clone=e.target&&e.target.closest?e.target.closest(".desktop-photo-wall-section .bsu-photo-wall-clone"):null;
+    if(!clone)return;
+
+    var track=clone.closest(".staff-carousel-track");
+    if(!track)return;
+
+    var baseItems=getBasePhotoWallItems(track);
+    var index=Number(clone.dataset.bsuWallCloneIndex||"-1");
+
+    if(!Number.isFinite(index)||index<0){
+      var clones=Array.from(track.querySelectorAll(".bsu-photo-wall-clone"));
+      index=clones.indexOf(clone)%baseItems.length;
+    }
+
+    var source=baseItems[index];
+    if(source){
+      e.preventDefault();
+      e.stopPropagation();
+      source.dispatchEvent(new MouseEvent("click",{bubbles:true,cancelable:true,view:window}));
+    }
+  },true);
+}
+
 function rebuildPhotoWallClones(track){
   if(!track)return false;
 
@@ -1101,10 +1137,11 @@ function rebuildPhotoWallClones(track){
     removePhotoWallClones(track);
     baseItems=getBasePhotoWallItems(track);
 
-    baseItems.forEach(function(item){
+    baseItems.forEach(function(item,index){
       var clone=item.cloneNode(true);
       clone.classList.add("bsu-photo-wall-clone");
       clone.setAttribute("aria-hidden","true");
+      clone.dataset.bsuWallCloneIndex=String(index);
       clone.querySelectorAll("a,button").forEach(function(el){
         el.setAttribute("tabindex","-1");
       });
@@ -1140,11 +1177,15 @@ function preparePhotoWallAutoScroll(){
 
   if(isMobile()){
     track.style.setProperty("width","max-content","important");
-    track.style.setProperty("pointer-events","none","important");
+    track.style.setProperty("pointer-events","auto","important");
   }else{
     track.style.removeProperty("width");
-    track.style.removeProperty("pointer-events");
+    track.style.setProperty("pointer-events","auto","important");
   }
+
+  track.querySelectorAll(".staff-carousel-item").forEach(function(item){
+    item.style.setProperty("pointer-events","auto","important");
+  });
 
   track.querySelectorAll("img").forEach(function(img){
     img.setAttribute("draggable","false");
@@ -1152,6 +1193,7 @@ function preparePhotoWallAutoScroll(){
     img.style.setProperty("user-select","none","important");
   });
 
+  bindPhotoWallPopupClicks();
   rebuildPhotoWallClones(track);
   return parts;
 }
