@@ -126,10 +126,6 @@
       const normalizedKey = String(staffKey || "").toLowerCase();
       const index = fixedOrder.indexOf(normalizedKey);
 
-      /*
-        New employees are not in the fixed list.
-        If opening count is the same, new employees come first.
-      */
       if (index === -1) {
         return -1000 + (STAFF_DATA[staffKey]?.order || 0);
       }
@@ -192,11 +188,6 @@
           return;
         }
 
-        /*
-          Jacob special rule:
-          If Jacob works today, he is always after open working staff
-          and before fully booked staff, regardless of opening count.
-        */
         if (isJacob) {
           jacobWorking.push(key);
           return;
@@ -280,9 +271,13 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V47 - same design, staff sorting by opening count */
+/* B SIDE U Pasadena V48 - same design, remove calendar shadow, improve mobile photo autoplay */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
+
+.calendar-btn{
+  box-shadow:none!important;
+}
 
 .bsu-booking-fail-overlay{position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(10,10,10,.58)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
 .bsu-booking-fail-overlay.is-visible{display:flex!important}
@@ -372,10 +367,13 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-loading-chip{height:34px!important}
 .desktop-photo-wall-section{display:block!important;width:100%!important;height:220px!important;max-height:220px!important;margin:18px 0 0!important;padding:0!important;overflow:hidden!important;border-radius:22px!important;background:#f6f6f6!important;box-shadow:none!important}
 .desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
-.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow:hidden!important}
-.desktop-photo-wall-section .staff-carousel-track{height:220px!important;display:flex!important;align-items:stretch!important;gap:5px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:none!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important;transform:none!important;will-change:scroll-position!important;touch-action:pan-x pan-y!important;scroll-behavior:auto!important}
+.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow:hidden!important}
+.desktop-photo-wall-section .staff-carousel{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important;touch-action:pan-x pan-y!important}
+.desktop-photo-wall-section .staff-carousel::-webkit-scrollbar{display:none!important}
+.desktop-photo-wall-section .staff-carousel-track{height:220px!important;display:flex!important;align-items:stretch!important;gap:5px!important;overflow:visible!important;scroll-snap-type:none!important;scrollbar-width:none!important;transform:none!important;transition:none!important;will-change:scroll-position!important;touch-action:pan-x pan-y!important;scroll-behavior:auto!important;width:max-content!important}
+.desktop-photo-wall-section .staff-carousel-track.no-anim{transition:none!important}
 .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
-.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important;flex:0 0 46%!important;min-width:46%!important;scroll-snap-align:none!important;border-radius:0!important;overflow:hidden!important}
+.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important;flex:0 0 46vw!important;min-width:46vw!important;width:46vw!important;scroll-snap-align:none!important;border-radius:0!important;overflow:hidden!important}
 .desktop-photo-wall-section .staff-carousel-item img,.desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
 .desktop-photo-wall-section::before{display:none!important;content:none!important}
 }
@@ -389,9 +387,11 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 (function(){
 let lastGalleryStaff="";
 let mobilePhotoWallRaf=null;
+let mobilePhotoWallScroller=null;
 let mobilePhotoWallTrack=null;
 let mobilePhotoWallPauseUntil=0;
 let mobilePhotoWallLastTs=null;
+let mobilePhotoWallLoopWidth=0;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -605,44 +605,98 @@ function stopMobilePhotoWallCarousel(){
     cancelAnimationFrame(mobilePhotoWallRaf);
     mobilePhotoWallRaf=null;
   }
+  mobilePhotoWallScroller=null;
   mobilePhotoWallTrack=null;
   mobilePhotoWallLastTs=null;
+  mobilePhotoWallLoopWidth=0;
 }
 
 function pauseMobilePhotoWallCarousel(){
-  mobilePhotoWallPauseUntil=Date.now()+2200;
+  mobilePhotoWallPauseUntil=Date.now()+1800;
   mobilePhotoWallLastTs=null;
 }
 
+function prepareMobilePhotoWallClones(track){
+  if(!track)return 0;
+
+  var baseItems=Array.from(track.children).filter(function(item){
+    return !item.classList.contains("bsu-mobile-photo-clone") &&
+           !item.classList.contains("is-clone");
+  });
+
+  var baseCount=baseItems.length;
+  var oldCount=track.dataset.bsuMobileBaseCount||"";
+
+  if(oldCount!==String(baseCount)){
+    track.querySelectorAll(".bsu-mobile-photo-clone,.is-clone").forEach(function(clone){
+      clone.remove();
+    });
+
+    baseItems=Array.from(track.children).filter(function(item){
+      return !item.classList.contains("bsu-mobile-photo-clone") &&
+             !item.classList.contains("is-clone");
+    });
+
+    baseItems.forEach(function(item){
+      var clone=item.cloneNode(true);
+      clone.classList.add("bsu-mobile-photo-clone");
+      clone.setAttribute("aria-hidden","true");
+      track.appendChild(clone);
+    });
+
+    track.dataset.bsuMobileBaseCount=String(baseItems.length);
+  }
+
+  return baseItems.length;
+}
+
 function setupMobilePhotoWallCarousel(){
+  var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
   var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
 
   if(!isMobile()){
     stopMobilePhotoWallCarousel();
+    if(track){
+      track.querySelectorAll(".bsu-mobile-photo-clone").forEach(function(clone){
+        clone.remove();
+      });
+      delete track.dataset.bsuMobileBaseCount;
+      track.style.removeProperty("transform");
+      track.style.removeProperty("transition");
+      track.style.removeProperty("width");
+    }
     return;
   }
 
-  if(!track)return;
+  if(!scroller||!track)return;
+
+  prepareMobilePhotoWallClones(track);
+
+  scroller.style.setProperty("overflow-x","auto","important");
+  scroller.style.setProperty("overflow-y","hidden","important");
+  scroller.style.setProperty("-webkit-overflow-scrolling","touch","important");
+  scroller.style.setProperty("touch-action","pan-x pan-y","important");
+  scroller.style.setProperty("scroll-behavior","auto","important");
 
   track.style.setProperty("transform","none","important");
-  track.style.setProperty("overflow-x","auto","important");
-  track.style.setProperty("overflow-y","hidden","important");
-  track.style.setProperty("scroll-behavior","auto","important");
-  track.style.setProperty("-webkit-overflow-scrolling","touch","important");
-  track.style.setProperty("touch-action","pan-x pan-y","important");
+  track.style.setProperty("transition","none","important");
+  track.style.setProperty("width","max-content","important");
 
-  if(mobilePhotoWallTrack!==track){
+  mobilePhotoWallLoopWidth=Math.max(0,track.scrollWidth/2);
+
+  if(mobilePhotoWallScroller!==scroller||mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
+    mobilePhotoWallScroller=scroller;
     mobilePhotoWallTrack=track;
     mobilePhotoWallLastTs=null;
   }
 
-  if(!track.dataset.bsuMobileCarouselBound){
-    track.dataset.bsuMobileCarouselBound="1";
-    track.addEventListener("touchstart",pauseMobilePhotoWallCarousel,{passive:true});
-    track.addEventListener("touchmove",pauseMobilePhotoWallCarousel,{passive:true});
-    track.addEventListener("pointerdown",pauseMobilePhotoWallCarousel,{passive:true});
-    track.addEventListener("wheel",pauseMobilePhotoWallCarousel,{passive:true});
+  if(!scroller.dataset.bsuMobileCarouselBound){
+    scroller.dataset.bsuMobileCarouselBound="1";
+    scroller.addEventListener("touchstart",pauseMobilePhotoWallCarousel,{passive:true});
+    scroller.addEventListener("touchmove",pauseMobilePhotoWallCarousel,{passive:true});
+    scroller.addEventListener("pointerdown",pauseMobilePhotoWallCarousel,{passive:true});
+    scroller.addEventListener("wheel",pauseMobilePhotoWallCarousel,{passive:true});
   }
 
   if(mobilePhotoWallRaf)return;
@@ -653,12 +707,10 @@ function setupMobilePhotoWallCarousel(){
       return;
     }
 
-    if(!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallTrack)){
+    if(!mobilePhotoWallScroller||!mobilePhotoWallTrack||!document.body.contains(mobilePhotoWallScroller)){
       stopMobilePhotoWallCarousel();
       return;
     }
-
-    var currentTrack=mobilePhotoWallTrack;
 
     if(mobilePhotoWallLastTs===null){
       mobilePhotoWallLastTs=ts;
@@ -667,14 +719,15 @@ function setupMobilePhotoWallCarousel(){
     var dt=Math.min(48,ts-mobilePhotoWallLastTs);
     mobilePhotoWallLastTs=ts;
 
-    var maxScroll=currentTrack.scrollWidth-currentTrack.clientWidth;
+    var maxScroll=mobilePhotoWallScroller.scrollWidth-mobilePhotoWallScroller.clientWidth;
+    var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
     var isPaused=Date.now()<mobilePhotoWallPauseUntil;
 
-    if(!isPaused&&maxScroll>12){
-      currentTrack.scrollLeft+=dt*0.022;
+    if(!isPaused&&maxScroll>12&&loopWidth>12){
+      mobilePhotoWallScroller.scrollLeft+=dt*0.035;
 
-      if(currentTrack.scrollLeft>=maxScroll-2){
-        currentTrack.scrollLeft=0;
+      if(mobilePhotoWallScroller.scrollLeft>=loopWidth){
+        mobilePhotoWallScroller.scrollLeft=mobilePhotoWallScroller.scrollLeft-loopWidth;
       }
     }
 
