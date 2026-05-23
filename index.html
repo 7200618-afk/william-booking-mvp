@@ -14,7 +14,6 @@
   <script>
     (async function(){
       const sourceUrl="https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html";
-
       try{
         const response=await fetch(sourceUrl,{cache:"no-store"});
         if(!response.ok)throw new Error("Unable to load booking page.");
@@ -99,7 +98,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V47 - restore desktop layout + booking failure reset */
+/* B SIDE U Pasadena V46 - same design, improved create-booking failure handling */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -134,285 +133,73 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .date-nav{background:#fff!important;color:#111!important;border:1px solid rgba(20,20,20,.12)!important;box-shadow:none!important}
 
 @media(min-width:600px){
-  .page{max-width:1120px!important;padding:16px 22px 48px!important}
-
-  .bsu-mobile-sticky-date-staff,
-  .bsu-mobile-sticky-staff-only{display:contents!important}
-
-  .booking-layout{
-    display:grid!important;
-    grid-template-columns:minmax(390px,430px) minmax(0,600px)!important;
-    grid-template-areas:
-      "date date"
-      "left right"
-      "photo photo"!important;
-    grid-template-rows:auto auto auto!important;
-    gap:12px 44px!important;
-    align-items:start!important;
-    justify-content:center!important;
-  }
-
-  .date-area{
-    grid-area:date!important;
-    width:100%!important;
-    margin:0!important;
-    position:relative!important;
-    top:auto!important;
-    left:auto!important;
-    transform:none!important;
-    z-index:auto!important;
-  }
-
-  .bsu-desktop-staff-panel,
-  .booking-layout>div:nth-child(2){
-    grid-area:left!important;
-    padding:16px!important;
-    border-radius:26px!important;
-  }
-
-  .desktop-results-area{display:contents!important}
-
-  .desktop-right-panel{
-    grid-area:right!important;
-    display:flex!important;
-    flex-direction:column!important;
-    align-self:start!important;
-    justify-self:start!important;
-    width:100%!important;
-    max-width:600px!important;
-    margin:0!important;
-    padding:0!important;
-    border-radius:0!important;
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-  }
-
-  .desktop-service-panel{
-    display:block!important;
-    width:100%!important;
-    margin:0 0 18px!important;
-    padding:0!important;
-    border:0!important;
-    background:transparent!important;
-    box-shadow:none!important;
-  }
-
-  .desktop-service-panel .section-label{margin:0 2px 7px!important}
-  .desktop-service-panel .service-pills{gap:6px!important}
-
-  .desktop-service-placeholder,
-  .desktop-slot-placeholder,
-  .desktop-empty-placeholder,
-  .bsu-date-placeholder,
-  .bsu-staff-label-placeholder,
-  .bsu-staff-strip-placeholder{display:none!important}
-
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state,
-  .desktop-results-area .slot-area,
-  .slot-area,
-  .desktop-results-area .empty-state{
-    display:block!important;
-    width:100%!important;
-    margin:0!important;
-    padding:0!important;
-    border:0!important;
-    border-radius:0!important;
-    min-height:150px!important;
-    background:transparent!important;
-    box-shadow:none!important;
-  }
-
-  .staff-strip{gap:12px!important}
-  .staff-card{min-height:148px!important;border-radius:22px!important;padding:12px 8px 10px!important;box-shadow:0 8px 20px rgba(20,20,20,.05)!important}
-  .avatar{width:66px!important;height:66px!important;margin-bottom:8px!important}
-  .staff-name{font-size:14px!important}
-  .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
-  .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
-
-  .service-pills{gap:6px!important}
-  .service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 7px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
-  .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
-  .service-name{font-size:12px!important}
-  .service-meta{font-size:9px!important;margin-top:2px!important}
-
-  .slot-area{padding-top:2px!important}
-  .slot-group{margin-top:7px!important}
-  .slot-group:first-child{margin-top:0!important}
-  .slot-group-title{margin:0 0 6px!important;font-size:9.5px!important;letter-spacing:.15em!important;line-height:1!important}
-  .times{gap:6px!important}
-  .time-btn{min-height:34px!important;height:34px!important;border-radius:11px!important;font-size:12.2px!important;padding:0 6px!important;box-shadow:none!important}
-
-  .empty-state{padding-top:2px!important}
-  .empty-title{font-size:20px!important;margin-bottom:4px!important}
-  .empty-sub{font-size:12.5px!important;margin-bottom:8px!important}
-  .empty-actions{gap:7px!important}
-  .next-available-btn,.waitlist-btn{min-height:36px!important;height:36px!important;border-radius:12px!important;font-size:12px!important}
-
-  .desktop-photo-wall-section{
-    grid-area:photo!important;
-    display:block!important;
-    width:100%!important;
-    height:205px!important;
-    max-height:205px!important;
-    min-height:0!important;
-    margin:8px 0 0!important;
-    padding:0!important;
-    overflow:hidden!important;
-    align-self:start!important;
-    position:relative!important;
-  }
-  .desktop-photo-wall-section::after{display:none!important;content:none!important}
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group,
-  .desktop-photo-wall-section .staff-carousel{
-    width:100%!important;
-    height:205px!important;
-    max-height:205px!important;
-    min-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    border:0!important;
-    border-radius:22px!important;
-    background:#f6f6f6!important;
-    box-shadow:inset 0 0 0 1px rgba(20,20,20,.045)!important;
-    overflow:hidden!important;
-  }
-  .desktop-photo-wall-section .bsu-team-head,
-  .desktop-photo-wall-section .bsu-divider,
-  .desktop-photo-wall-section .gallery-head,
-  .desktop-photo-wall-section .staff-group-head,
-  .desktop-photo-wall-section .bsu-filter-group,
-  .desktop-photo-wall-section .view-toggle{display:none!important}
-  .desktop-photo-wall-section .staff-carousel-track{height:100%!important;align-items:stretch!important;gap:3px!important}
-  .desktop-photo-wall-section .staff-carousel-item{height:100%!important;max-height:205px!important;aspect-ratio:auto!important;flex:0 0 calc((100% - 15px)/6)!important;opacity:.9!important}
-  .desktop-photo-wall-section .staff-carousel-item img,
-  .desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
+.page{max-width:1120px!important;padding:16px 22px 48px!important}
+.booking-layout{display:grid!important;grid-template-columns:minmax(390px,430px) minmax(0,600px)!important;grid-template-areas:"date date" "left right" "photo photo"!important;grid-template-rows:auto auto auto!important;gap:12px 44px!important;align-items:start!important;justify-content:center!important}
+.date-area{grid-area:date!important;width:100%!important;margin:0!important;position:relative!important;top:auto!important;left:auto!important;transform:none!important}
+.booking-layout>div:nth-child(2){grid-area:left!important;padding:16px!important;border-radius:26px!important}
+.desktop-results-area{display:contents!important}
+.desktop-right-panel{grid-area:right!important;display:flex!important;flex-direction:column!important;align-self:start!important;justify-self:start!important;width:100%!important;max-width:600px!important;margin:0!important;padding:0!important;border-radius:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.desktop-service-panel{display:block!important;width:100%!important;margin:0 0 18px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.desktop-service-panel .section-label{margin:0 2px 7px!important}
+.desktop-service-panel .service-pills{gap:6px!important}
+.desktop-service-placeholder,.desktop-slot-placeholder,.desktop-empty-placeholder{display:none!important}
+.desktop-right-panel .slot-area,.desktop-right-panel .empty-state,.desktop-results-area .slot-area,.slot-area,.desktop-results-area .empty-state{display:block!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;min-height:150px!important;background:transparent!important;box-shadow:none!important}
+.staff-strip{gap:12px!important}
+.staff-card{min-height:148px!important;border-radius:22px!important;padding:12px 8px 10px!important;box-shadow:0 8px 20px rgba(20,20,20,.05)!important}
+.avatar{width:66px!important;height:66px!important;margin-bottom:8px!important}
+.staff-name{font-size:14px!important}
+.staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
+.section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
+.service-pills{gap:6px!important}
+.service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 7px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+.service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
+.service-name{font-size:12px!important}
+.service-meta{font-size:9px!important;margin-top:2px!important}
+.slot-area{padding-top:2px!important}
+.slot-group{margin-top:7px!important}
+.slot-group:first-child{margin-top:0!important}
+.slot-group-title{margin:0 0 6px!important;font-size:9.5px!important;letter-spacing:.15em!important;line-height:1!important}
+.times{gap:6px!important}
+.time-btn{min-height:34px!important;height:34px!important;border-radius:11px!important;font-size:12.2px!important;padding:0 6px!important;box-shadow:none!important}
+.empty-state{padding-top:2px!important}
+.empty-title{font-size:20px!important;margin-bottom:4px!important}
+.empty-sub{font-size:12.5px!important;margin-bottom:8px!important}
+.empty-actions{gap:7px!important}
+.next-available-btn,.waitlist-btn{min-height:36px!important;height:36px!important;border-radius:12px!important;font-size:12px!important}
+.desktop-photo-wall-section{grid-area:photo!important;display:block!important;width:100%!important;height:205px!important;max-height:205px!important;min-height:0!important;margin:8px 0 0!important;padding:0!important;overflow:hidden!important;align-self:start!important;position:relative!important}
+.desktop-photo-wall-section::after{display:none!important;content:none!important}
+.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel{width:100%!important;height:205px!important;max-height:205px!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:#f6f6f6!important;box-shadow:inset 0 0 0 1px rgba(20,20,20,.045)!important;overflow:hidden!important}
+.desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
+.desktop-photo-wall-section .staff-carousel-track{height:100%!important;align-items:stretch!important;gap:3px!important}
+.desktop-photo-wall-section .staff-carousel-item{height:100%!important;max-height:205px!important;aspect-ratio:auto!important;flex:0 0 calc((100% - 15px)/6)!important;opacity:.9!important}
+.desktop-photo-wall-section .staff-carousel-item img,.desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
 }
 
 @media(max-width:599px){
-  .date-sticky-spacer{display:none!important;height:0!important;min-height:0!important}
-  .bsu-date-placeholder,.bsu-staff-label-placeholder,.bsu-staff-strip-placeholder{display:none!important}
-
-  .bsu-mobile-sticky-date-staff{
-    position:sticky!important;
-    top:0!important;
-    z-index:999!important;
-    background:#fff!important;
-    padding:10px 0 8px!important;
-    margin:0 0 10px!important;
-    box-shadow:none!important;
-  }
-  .bsu-mobile-sticky-date-staff .date-area,
-  .bsu-mobile-sticky-date-staff .date-area.is-fixed-fallback{
-    position:relative!important;
-    top:auto!important;
-    left:auto!important;
-    width:100%!important;
-    z-index:auto!important;
-    margin:0 0 10px!important;
-    transform:none!important;
-  }
-  .bsu-mobile-sticky-staff-only{width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
-  .bsu-mobile-sticky-staff-only .section-label{margin:0 2px 8px!important}
-  .bsu-mobile-sticky-staff-only .staff-strip{padding-bottom:6px!important}
-
-  .desktop-service-panel,.desktop-right-panel{display:contents!important}
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state,
-  .desktop-results-area .slot-area,
-  .slot-area,
-  .desktop-results-area .empty-state{min-height:150px!important}
-
-  .bsu-availability-loading-frame{min-height:150px!important}
-  .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-  .bsu-loading-chip{height:34px!important}
-
-  .desktop-photo-wall-section{
-    display:block!important;
-    width:100%!important;
-    height:220px!important;
-    max-height:220px!important;
-    margin:18px 0 0!important;
-    padding:0!important;
-    overflow:hidden!important;
-    border-radius:22px!important;
-    background:#f6f6f6!important;
-    box-shadow:none!important;
-  }
-  .desktop-photo-wall-section .bsu-team-head,
-  .desktop-photo-wall-section .bsu-divider,
-  .desktop-photo-wall-section .gallery-head,
-  .desktop-photo-wall-section .staff-group-head,
-  .desktop-photo-wall-section .bsu-filter-group,
-  .desktop-photo-wall-section .view-toggle{display:none!important}
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group,
-  .desktop-photo-wall-section .staff-carousel{
-    height:220px!important;
-    width:100%!important;
-    margin:0!important;
-    padding:0!important;
-    border:0!important;
-    border-radius:22px!important;
-    background:transparent!important;
-    overflow:hidden!important;
-  }
-  .desktop-photo-wall-section .staff-carousel-track{
-    height:220px!important;
-    display:flex!important;
-    align-items:stretch!important;
-    gap:5px!important;
-    overflow-x:auto!important;
-    overflow-y:hidden!important;
-    scroll-snap-type:none!important;
-    -webkit-overflow-scrolling:touch!important;
-    scrollbar-width:none!important;
-    transform:none!important;
-    will-change:scroll-position!important;
-    touch-action:pan-x pan-y!important;
-    scroll-behavior:auto!important;
-  }
-  .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
-  .desktop-photo-wall-section .staff-carousel-item{
-    height:220px!important;
-    max-height:220px!important;
-    flex:0 0 46%!important;
-    min-width:46%!important;
-    scroll-snap-align:none!important;
-    border-radius:0!important;
-    overflow:hidden!important;
-  }
-  .desktop-photo-wall-section .staff-carousel-item img,
-  .desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
-  .desktop-photo-wall-section::before{display:none!important;content:none!important}
+.date-sticky-spacer{display:none!important;height:0!important;min-height:0!important}
+.bsu-date-placeholder,.bsu-staff-label-placeholder,.bsu-staff-strip-placeholder{display:none!important}
+.bsu-mobile-sticky-date-staff{position:sticky!important;top:0!important;z-index:999!important;background:#fff!important;padding:10px 0 8px!important;margin:0 0 10px!important;box-shadow:none!important}
+.bsu-mobile-sticky-date-staff .date-area,.bsu-mobile-sticky-date-staff .date-area.is-fixed-fallback{position:relative!important;top:auto!important;left:auto!important;width:100%!important;z-index:auto!important;margin:0 0 10px!important;transform:none!important}
+.bsu-mobile-sticky-staff-only{width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
+.bsu-mobile-sticky-staff-only .section-label{margin:0 2px 8px!important}
+.bsu-mobile-sticky-staff-only .staff-strip{padding-bottom:6px!important}
+.desktop-service-panel,.desktop-right-panel{display:contents!important}
+.desktop-right-panel .slot-area,.desktop-right-panel .empty-state,.desktop-results-area .slot-area,.slot-area,.desktop-results-area .empty-state{min-height:150px!important}
+.bsu-availability-loading-frame{min-height:150px!important}
+.bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.bsu-loading-chip{height:34px!important}
+.desktop-photo-wall-section{display:block!important;width:100%!important;height:220px!important;max-height:220px!important;margin:18px 0 0!important;padding:0!important;overflow:hidden!important;border-radius:22px!important;background:#f6f6f6!important;box-shadow:none!important}
+.desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
+.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow:hidden!important}
+.desktop-photo-wall-section .staff-carousel-track{height:220px!important;display:flex!important;align-items:stretch!important;gap:5px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:none!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important;transform:none!important;will-change:scroll-position!important;touch-action:pan-x pan-y!important;scroll-behavior:auto!important}
+.desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
+.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important;flex:0 0 46%!important;min-width:46%!important;scroll-snap-align:none!important;border-radius:0!important;overflow:hidden!important}
+.desktop-photo-wall-section .staff-carousel-item img,.desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
+.desktop-photo-wall-section::before{display:none!important;content:none!important}
 }
 
-@media(max-width:900px){
-  .pasadena-header{padding:18px 22px 20px!important;border-radius:24px!important}
-  .pasadena-title{font-size:clamp(29px,6.2vw,38px)!important}
-  .pasadena-address{font-size:12.5px!important}
-}
-
-@media(max-width:600px){
-  .page{padding:8px 10px 26px!important}
-  .pasadena-header{padding:16px 15px 16px!important;border-radius:21px!important;row-gap:7px!important;margin-bottom:12px!important}
-  .pasadena-title{font-size:clamp(27px,9.4vw,36px)!important;line-height:.98!important}
-  .pasadena-open{min-height:27px!important;padding:0 10px!important;font-size:11.7px!important}
-  .pasadena-address{font-size:12.3px!important;line-height:1.35!important}
-  .pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}
-  .pasadena-links a{width:100%!important;min-height:36px!important;padding:0 8px!important;font-size:11.5px!important;text-align:center!important}
-  .desktop-photo-wall-section{height:220px!important;max-height:220px!important;border-radius:22px!important}
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group,
-  .desktop-photo-wall-section .staff-carousel,
-  .desktop-photo-wall-section .staff-carousel-track,
-  .desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important}
-}
+@media(max-width:900px){.pasadena-header{padding:18px 22px 20px!important;border-radius:24px!important}.pasadena-title{font-size:clamp(29px,6.2vw,38px)!important}.pasadena-address{font-size:12.5px!important}}
+@media(max-width:600px){.page{padding:8px 10px 26px!important}.pasadena-header{padding:16px 15px 16px!important;border-radius:21px!important;row-gap:7px!important;margin-bottom:12px!important}.pasadena-title{font-size:clamp(27px,9.4vw,36px)!important;line-height:.98!important}.pasadena-open{min-height:27px!important;padding:0 10px!important;font-size:11.7px!important}.pasadena-address{font-size:12.3px!important;line-height:1.35!important}.pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}.pasadena-links a{width:100%!important;min-height:36px!important;padding:0 8px!important;font-size:11.5px!important;text-align:center!important}.desktop-photo-wall-section{height:220px!important;max-height:220px!important;border-radius:22px!important}.desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel,.desktop-photo-wall-section .staff-carousel-track,.desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important}}
 `;
 
         const customJs=`
@@ -425,130 +212,35 @@ let mobilePhotoWallPauseUntil=0;
 let mobilePhotoWallLastTs=null;
 
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
-const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];
-const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-function setImportantDisplay(el,value){
-  if(!el)return;
-  el.style.setProperty("display",value,"important");
-}
-
-function isMobile(){
-  return window.innerWidth<600;
-}
-
-function getStaffPanel(){
-  var strip=document.querySelector(".staff-strip");
-  var booking=document.querySelector(".booking-layout");
-  if(!strip||!booking)return null;
-
-  var node=strip;
-  while(node&&node.parentElement){
-    if(node.parentElement===booking){
-      return node;
-    }
-    if(node.classList&&node.classList.contains("bsu-mobile-sticky-staff-only")){
-      break;
-    }
-    node=node.parentElement;
-  }
-
-  var panel=document.querySelector(".bsu-desktop-staff-panel");
-  if(panel)return panel;
-
-  return strip.closest("div");
-}
-
-function restoreDesktopLayout(){
-  if(isMobile())return;
-
-  var booking=document.querySelector(".booking-layout");
-  var dateArea=document.querySelector(".date-area");
-  var staffStrip=document.querySelector(".staff-strip");
-  var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
-  var staffOnly=document.querySelector(".bsu-mobile-sticky-staff-only");
-
-  if(!booking||!dateArea||!staffStrip)return;
-
-  var staffPanel=getStaffPanel();
-
-  if(stickyWrap){
-    var staffLabel=stickyWrap.querySelector(".section-label");
-    var stickyStaffStrip=stickyWrap.querySelector(".staff-strip");
-
-    if(staffOnly){
-      staffOnly.remove();
-    }
-
-    if(staffLabel&&staffPanel&&staffLabel.parentNode!==staffPanel){
-      staffPanel.insertBefore(staffLabel,staffPanel.firstChild);
-    }
-
-    if(stickyStaffStrip&&staffPanel&&stickyStaffStrip.parentNode!==staffPanel){
-      staffPanel.appendChild(stickyStaffStrip);
-    }
-
-    stickyWrap.remove();
-  }
-
-  if(staffPanel){
-    staffPanel.classList.add("bsu-desktop-staff-panel");
-
-    if(staffPanel.parentNode!==booking){
-      booking.appendChild(staffPanel);
-    }
-  }
-
-  if(dateArea.parentNode!==booking){
-    booking.insertBefore(dateArea,booking.firstChild);
-  }
-
-  if(staffPanel&&staffPanel.parentNode===booking&&dateArea.nextSibling!==staffPanel){
-    booking.insertBefore(staffPanel,dateArea.nextSibling);
-  }
-
-  document.querySelectorAll(".bsu-date-placeholder,.bsu-staff-label-placeholder,.bsu-staff-strip-placeholder").forEach(function(el){
-    el.remove();
-  });
-}
+function setImportantDisplay(el,value){if(!el)return;el.style.setProperty("display",value,"important")}
+function isMobile(){return window.innerWidth<600}
 
 function restoreMobileStickyParts(){
   var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
   if(!stickyWrap)return;
-
-  var booking=document.querySelector(".booking-layout");
   var dateArea=stickyWrap.querySelector(".date-area");
   var staffLabel=stickyWrap.querySelector(".section-label");
   var staffStrip=stickyWrap.querySelector(".staff-strip");
-  var staffPanel=getStaffPanel();
-
-  if(booking&&dateArea){
-    booking.insertBefore(dateArea,booking.firstChild);
-  }
-
-  if(staffPanel){
-    if(staffLabel){
-      staffPanel.insertBefore(staffLabel,staffPanel.firstChild);
-    }
-
-    if(staffStrip){
-      staffPanel.appendChild(staffStrip);
-    }
-  }
-
+  var datePlaceholder=document.querySelector(".bsu-date-placeholder");
+  var staffLabelPlaceholder=document.querySelector(".bsu-staff-label-placeholder");
+  var staffStripPlaceholder=document.querySelector(".bsu-staff-strip-placeholder");
+  if(dateArea&&datePlaceholder&&datePlaceholder.parentNode)datePlaceholder.parentNode.insertBefore(dateArea,datePlaceholder.nextSibling);
+  if(staffLabel&&staffLabelPlaceholder&&staffLabelPlaceholder.parentNode)staffLabelPlaceholder.parentNode.insertBefore(staffLabel,staffLabelPlaceholder.nextSibling);
+  if(staffStrip&&staffStripPlaceholder&&staffStripPlaceholder.parentNode)staffStripPlaceholder.parentNode.insertBefore(staffStrip,staffStripPlaceholder.nextSibling);
   stickyWrap.remove();
 }
 
 function setupMobileStickyDateAndStaff(){
   if(!isMobile()){
-    restoreDesktopLayout();
+    restoreMobileStickyParts();
     return;
   }
 
   var booking=document.querySelector(".booking-layout");
   var dateArea=document.querySelector(".date-area");
   var staffStrip=document.querySelector(".staff-strip");
-
   if(!booking||!dateArea||!staffStrip)return;
 
   var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
@@ -616,7 +308,7 @@ function ensureBookingFailureModal(){
       '<h2 id="bsuBookingFailTitle" class="bsu-booking-fail-title">Booking Not Completed</h2>'+
       '<p class="bsu-booking-fail-text">Your appointment was not booked.</p>'+
       '<div id="bsuBookingFailDetail" class="bsu-booking-fail-detail">Please choose another available time.</div>'+
-      '<button id="bsuBookingFailBtn" class="bsu-booking-fail-btn" type="button">OK</button>'+
+      '<button id="bsuBookingFailBtn" class="bsu-booking-fail-btn" type="button">Choose Another Time</button>'+
       '<div class="bsu-booking-fail-small">No appointment was created.</div>'+
     '</div>';
 
@@ -624,22 +316,7 @@ function ensureBookingFailureModal(){
 
   function closeFailureModal(){
     overlay.classList.remove("is-visible");
-
-    var bookingModal=document.getElementById("bookingModal");
-    if(bookingModal){
-      bookingModal.classList.remove("is-visible");
-    }
-
-    document.body.style.overflow="";
-
-    setTimeout(function(){
-      try{
-        var selected=document.querySelector(".time-btn.is-selected");
-        if(selected){
-          selected.classList.remove("is-selected");
-        }
-      }catch(e){}
-    },30);
+    resetBookingConfirmState();
   }
 
   overlay.addEventListener("click",function(e){
@@ -650,9 +327,7 @@ function ensureBookingFailureModal(){
   if(btn)btn.addEventListener("click",closeFailureModal);
 
   document.addEventListener("keydown",function(e){
-    if(e.key==="Escape"&&overlay.classList.contains("is-visible")){
-      closeFailureModal();
-    }
+    if(e.key==="Escape"&&overlay.classList.contains("is-visible"))closeFailureModal();
   });
 }
 
@@ -667,9 +342,7 @@ function showBookingFailureModal(message){
   }
 
   var overlay=document.getElementById("bsuBookingFailOverlay");
-  if(overlay){
-    overlay.classList.add("is-visible");
-  }
+  if(overlay)overlay.classList.add("is-visible");
 }
 
 function resetBookingConfirmState(){
@@ -677,28 +350,29 @@ function resetBookingConfirmState(){
     var bookingModal=document.getElementById("bookingModal");
     if(bookingModal){
       bookingModal.classList.remove("is-visible");
+      bookingModal.style.removeProperty("display");
     }
 
     document.body.style.overflow="";
 
-    var buttons=Array.from(document.querySelectorAll("button"));
-    buttons.forEach(function(btn){
+    Array.from(document.querySelectorAll("button")).forEach(function(btn){
       var text=(btn.textContent||"").toLowerCase();
+      var original=btn.dataset&&btn.dataset.originalText ? btn.dataset.originalText : "";
 
       if(
         text.indexOf("confirm booking")>-1 ||
         text.indexOf("booking")>-1 ||
         text.indexOf("confirm")>-1 ||
-        text.indexOf("processing")>-1 ||
-        text.indexOf("please wait")>-1
+        original.toLowerCase().indexOf("confirm booking")>-1
       ){
         btn.disabled=false;
         btn.removeAttribute("disabled");
-        btn.classList.remove("is-loading");
-        btn.classList.remove("loading");
+        btn.classList.remove("is-loading","loading","disabled");
 
-        if(btn.dataset.originalText){
-          btn.textContent=btn.dataset.originalText;
+        if(original){
+          btn.textContent=original;
+        }else if(text.indexOf("booking")>-1){
+          btn.textContent="Confirm Booking";
         }
       }
     });
@@ -728,13 +402,13 @@ function patchCreateBookingFailureModal(){
           var msg=(data&&data.error)||"Booking failed. Please try again.";
 
           setTimeout(function(){
-            resetBookingConfirmState();
             showBookingFailureModal(msg);
+            resetBookingConfirmState();
           },80);
         }).catch(function(){
           setTimeout(function(){
-            resetBookingConfirmState();
             showBookingFailureModal("Booking failed. Please try again.");
+            resetBookingConfirmState();
           },80);
         });
       }
@@ -749,7 +423,6 @@ function stopMobilePhotoWallCarousel(){
     cancelAnimationFrame(mobilePhotoWallRaf);
     mobilePhotoWallRaf=null;
   }
-
   mobilePhotoWallTrack=null;
   mobilePhotoWallLastTs=null;
 }
@@ -840,17 +513,12 @@ function getDateText(){
 }
 
 function parseDisplayDate(){
-  var m=getDateText().match(/(\d{1,2})\s*\/\s*(\d{1,2})/);
+  var m=getDateText().match(/(\\d{1,2})\\s*\\/\\s*(\\d{1,2})/);
   if(!m)return null;
-
   var now=new Date();
   var y=now.getFullYear();
   var dt=new Date(y,Number(m[1])-1,Number(m[2]));
-
-  if(dt.getTime()<now.getTime()-15552000000){
-    dt.setFullYear(y+1);
-  }
-
+  if(dt.getTime()<now.getTime()-15552000000)dt.setFullYear(y+1);
   return dt;
 }
 
@@ -863,16 +531,13 @@ function staffWorksOn(name,dt){
 function nextWorkLabel(name,dt){
   var days=WORK_DAYS[name];
   if(!days||!dt)return"";
-
   for(var i=1;i<=14;i++){
     var n=new Date(dt);
     n.setDate(dt.getDate()+i);
-
     if(days.indexOf(DAY_KEYS[n.getDay()])>-1){
       return DAY_LABELS[n.getDay()]+" "+(n.getMonth()+1)+"/"+n.getDate();
     }
   }
-
   return"";
 }
 
@@ -883,7 +548,6 @@ function fixOffDayFullyBookedStatus(){
   document.querySelectorAll(".staff-item,.staff-card").forEach(function(card){
     var n=card.querySelector(".staff-name");
     var s=card.querySelector(".staff-status");
-
     if(!n||!s)return;
 
     var name=(n.textContent||"").trim();
@@ -893,7 +557,6 @@ function fixOffDayFullyBookedStatus(){
 
     if(!staffWorksOn(name,dt)){
       var label=nextWorkLabel(name,dt);
-
       if(label){
         s.textContent=label;
         s.style.setProperty("background","#f2f2f2","important");
@@ -907,7 +570,6 @@ function fixOffDayFullyBookedStatus(){
 function syncGalleryToSelectedStaff(){
   var name=getSelectedStaffName();
   if(!name)return;
-
   window.bsuInitialGalleryStaff=name;
 
   if(name===lastGalleryStaff)return;
@@ -920,7 +582,6 @@ function syncGalleryToSelectedStaff(){
 
 function hasTimeButtons(slotArea){
   if(!slotArea)return false;
-
   var buttons=Array.from(slotArea.querySelectorAll(".time-btn"));
   return buttons.some(function(btn){
     return !btn.disabled&&(btn.textContent||"").trim().length>0;
@@ -949,12 +610,10 @@ function currentResultsAnchor(){
 function movePhotoWall(){
   var photo=document.querySelector(".desktop-photo-wall-section");
   var booking=document.querySelector(".booking-layout");
-
   if(!photo||!booking)return;
 
   if(isMobile()){
     var anchor=currentResultsAnchor();
-
     if(anchor&&anchor.parentNode&&photo.previousElementSibling!==anchor){
       anchor.parentNode.insertBefore(photo,anchor.nextSibling);
     }
@@ -976,10 +635,11 @@ function moveServicesForDesktop(){
   var desktop=!isMobile();
 
   var serviceLabel=Array.from(document.querySelectorAll(".section-label")).find(function(el){
-    return /services/i.test(el.textContent||"")&&!el.closest(".desktop-service-panel")&&!el.closest(".bsu-mobile-sticky-date-staff");
+    return /services/i.test(el.textContent||"")&&!el.closest(".desktop-service-panel");
   })||document.querySelector(".desktop-service-panel .section-label");
 
   var message=document.querySelector(".message");
+
   var panel=document.querySelector(".desktop-service-panel")||document.createElement("div");
   panel.className="desktop-service-panel";
 
@@ -1075,10 +735,10 @@ function removeOpeningCounts(){
   document.querySelectorAll(".slot-group-title").forEach(function(el){
     var text=el.textContent||"";
     var newText=text
-      .replace(/\s*·\s*\d+\s*openings?/gi,"")
-      .replace(/\s*·\s*\d+\s*opening/gi,"")
-      .replace(/\s*\(\s*\d+\s*openings?\s*\)/gi,"")
-      .replace(/\s*\(\s*\d+\s*opening\s*\)/gi,"")
+      .replace(/\\s*·\\s*\\d+\\s*openings?/gi,"")
+      .replace(/\\s*·\\s*\\d+\\s*opening/gi,"")
+      .replace(/\\s*\\(\\s*\\d+\\s*openings?\\s*\\)/gi,"")
+      .replace(/\\s*\\(\\s*\\d+\\s*opening\\s*\\)/gi,"")
       .trim();
 
     if(text!==newText){
@@ -1097,7 +757,6 @@ function markNextAvailableClick(){
 
 function runFixes(){
   setupMobileStickyDateAndStaff();
-  restoreDesktopLayout();
   moveServicesForDesktop();
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
@@ -1119,10 +778,7 @@ setTimeout(runFixes,2500);
 var observer=new MutationObserver(runFixes);
 observer.observe(document.body,{childList:true,subtree:true,characterData:true});
 
-window.addEventListener("resize",function(){
-  setTimeout(runFixes,50);
-  setTimeout(runFixes,250);
-});
+window.addEventListener("resize",runFixes);
 
 document.addEventListener("click",function(){
   setTimeout(runFixes,50);
