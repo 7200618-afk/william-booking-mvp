@@ -329,7 +329,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V59 - CSS-driven mobile photo wall auto-scroll */
+/* B SIDE U Pasadena V61 - mobile photo wall rebuilt from working RAF transform method */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 .bsu-hide-success-action,.bsu-hide-waitlist,.bsu-hide-sangabriel-link{display:none!important}
@@ -337,7 +337,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .empty-actions .waitlist-btn,
 .empty-actions a.waitlist-btn,
 .empty-actions button.waitlist-btn{display:none!important}
-/* B SIDE U mobile photo wall auto-scroll reset: RAF + scrollLeft, no CSS animation */
+
 .desktop-photo-wall-section .staff-carousel-track,
 .desktop-photo-wall-section .staff-carousel-item,
 .desktop-photo-wall-section .staff-carousel-item img{
@@ -353,10 +353,11 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 
   .desktop-photo-wall-section .staff-carousel-track{
+    display:flex!important;
+    width:max-content!important;
     animation:none!important;
-    transform:none!important;
     transition:none!important;
-    will-change:auto!important;
+    will-change:transform!important;
     pointer-events:none!important;
   }
 }
@@ -1051,84 +1052,143 @@ function getMobilePhotoWallParts(){
   var track=section.querySelector(".staff-carousel-track");
 
   if(!scroller||!track)return null;
+
   return {section:section,scroller:scroller,track:track};
 }
 
 function getBasePhotoWallItems(track){
   if(!track)return [];
   return Array.from(track.children).filter(function(item){
-    return !item.classList.contains("bsu-mobile-photo-clone") &&
-           !item.classList.contains("is-clone") &&
-           item.nodeType===1;
+    return item&&item.nodeType===1&&
+      item.classList&&
+      item.classList.contains("staff-carousel-item")&&
+      !item.classList.contains("bsu-mobile-photo-clone")&&
+      !item.classList.contains("is-clone");
   });
 }
 
 function getPhotoWallSignature(items){
   return items.map(function(item,index){
     var img=item.querySelector&&item.querySelector("img");
-    return index+":"+(img?(img.currentSrc||img.src||img.getAttribute("src")||""):(item.textContent||"").trim());
+    var src=img?(img.currentSrc||img.src||img.getAttribute("src")||""):"";
+    return index+":"+src+":"+(item.offsetWidth||0);
   }).join("|");
 }
 
+function removeMobilePhotoWallClones(track){
+  if(!track)return;
+  track.querySelectorAll(".bsu-mobile-photo-clone").forEach(function(clone){
+    clone.remove();
+  });
+}
+
 function rebuildMobilePhotoWallClones(track){
+  if(!track)return false;
+
   var baseItems=getBasePhotoWallItems(track);
   if(baseItems.length<2)return false;
 
   var signature=getPhotoWallSignature(baseItems);
+  var cloneCount=track.querySelectorAll(".bsu-mobile-photo-clone").length;
 
-  if(track.dataset.bsuMobileWallSignature===signature && track.querySelector(".bsu-mobile-photo-clone")){
-    return true;
+  if(track.dataset.bsuMobileWallSignature!==signature||cloneCount<baseItems.length){
+    removeMobilePhotoWallClones(track);
+    baseItems=getBasePhotoWallItems(track);
+
+    baseItems.forEach(function(item){
+      var clone=item.cloneNode(true);
+      clone.classList.add("bsu-mobile-photo-clone");
+      clone.setAttribute("aria-hidden","true");
+      clone.querySelectorAll("a,button").forEach(function(el){
+        el.setAttribute("tabindex","-1");
+      });
+      track.appendChild(clone);
+    });
+
+    track.dataset.bsuMobileWallSignature=signature;
+    if(!track.dataset.bsuMobileWallX){
+      track.dataset.bsuMobileWallX="0";
+    }
   }
 
-  track.querySelectorAll(".bsu-mobile-photo-clone,.is-clone").forEach(function(clone){
-    clone.remove();
-  });
-
-  baseItems=getBasePhotoWallItems(track);
-
-  baseItems.forEach(function(item){
-    var clone=item.cloneNode(true);
-    clone.classList.add("bsu-mobile-photo-clone");
-    clone.setAttribute("aria-hidden","true");
-    track.appendChild(clone);
-  });
-
-  track.dataset.bsuMobileWallSignature=signature;
-  mobilePhotoWallSignature=signature;
   return true;
 }
 
 function prepareMobilePhotoWallAutoScroll(){
+  var parts=getMobilePhotoWallParts();
+
   if(!isMobile()){
+    if(parts&&parts.track){
+      removeMobilePhotoWallClones(parts.track);
+      delete parts.track.dataset.bsuMobileWallSignature;
+      delete parts.track.dataset.bsuMobileWallX;
+      parts.track.style.removeProperty("transform");
+      parts.track.style.removeProperty("transition");
+      parts.track.style.removeProperty("animation");
+      parts.track.style.removeProperty("will-change");
+      parts.track.style.removeProperty("width");
+      parts.track.style.removeProperty("pointer-events");
+    }
     stopMobilePhotoWallCarousel();
     return null;
   }
 
-  var parts=getMobilePhotoWallParts();
   if(!parts)return null;
 
   var scroller=parts.scroller;
   var track=parts.track;
 
-  rebuildMobilePhotoWallClones(track);
-
   scroller.style.setProperty("overflow","hidden","important");
   scroller.style.setProperty("touch-action","pan-y","important");
-  scroller.style.setProperty("scroll-behavior","auto","important");
   scroller.style.setProperty("-webkit-overflow-scrolling","auto","important");
 
+  track.classList.add("no-anim");
   track.style.setProperty("display","flex","important");
   track.style.setProperty("width","max-content","important");
-  track.style.setProperty("transform","none","important");
   track.style.setProperty("transition","none","important");
   track.style.setProperty("animation","none","important");
+  track.style.setProperty("will-change","transform","important");
   track.style.setProperty("pointer-events","none","important");
 
   track.querySelectorAll("img").forEach(function(img){
     img.setAttribute("draggable","false");
+    img.style.setProperty("-webkit-user-drag","none","important");
+    img.style.setProperty("user-select","none","important");
   });
 
+  rebuildMobilePhotoWallClones(track);
+
   return parts;
+}
+
+function getMobilePhotoWallLoopWidth(track){
+  var baseItems=getBasePhotoWallItems(track);
+  if(baseItems.length<2)return 0;
+
+  var first=baseItems[0];
+  var last=baseItems[baseItems.length-1];
+  var firstLeft=first.offsetLeft||0;
+  var lastRight=(last.offsetLeft||0)+(last.offsetWidth||0);
+  var measured=lastRight-firstLeft;
+
+  if(measured>60)return measured;
+
+  var total=0;
+  baseItems.forEach(function(item){
+    total+=(item.getBoundingClientRect().width||item.offsetWidth||0);
+  });
+
+  var gap=0;
+  try{
+    var style=window.getComputedStyle(track);
+    gap=parseFloat(style.columnGap||style.gap||"0")||0;
+  }catch(e){}
+
+  total+=gap*Math.max(0,baseItems.length-1);
+  if(total>60)return total;
+
+  var fallback=Math.floor((track.scrollWidth||0)/2);
+  return fallback>60?fallback:0;
 }
 
 function startMobilePhotoWallAutoScroll(){
@@ -1137,29 +1197,28 @@ function startMobilePhotoWallAutoScroll(){
   mobilePhotoWallLastTs=null;
 
   function tick(ts){
-    if(!isMobile()){
-      stopMobilePhotoWallCarousel();
-      return;
-    }
-
     var parts=prepareMobilePhotoWallAutoScroll();
 
-    if(parts){
-      var scroller=parts.scroller;
+    if(isMobile()&&parts){
       var track=parts.track;
-      var halfWidth=Math.floor(track.scrollWidth/2);
-      var canMove=halfWidth>scroller.clientWidth+10;
+      var loopWidth=getMobilePhotoWallLoopWidth(track);
 
-      if(canMove){
+      if(loopWidth>60){
         if(mobilePhotoWallLastTs===null)mobilePhotoWallLastTs=ts;
-        var dt=Math.min(50,ts-mobilePhotoWallLastTs);
+
+        var dt=Math.min(64,ts-mobilePhotoWallLastTs);
         mobilePhotoWallLastTs=ts;
 
-        scroller.scrollLeft += dt*0.045;
+        var x=Number(track.dataset.bsuMobileWallX||"0");
+        if(!Number.isFinite(x))x=0;
 
-        if(scroller.scrollLeft>=halfWidth){
-          scroller.scrollLeft = scroller.scrollLeft-halfWidth;
+        x+=(28*dt)/1000;
+        if(x>=loopWidth){
+          x=x-loopWidth;
         }
+
+        track.dataset.bsuMobileWallX=String(x);
+        track.style.setProperty("transform","translate3d("+(-x)+"px,0,0)","important");
       }else{
         mobilePhotoWallLastTs=null;
       }
@@ -1180,7 +1239,6 @@ function restartMobilePhotoWallAutoScroll(){
 }
 
 function scheduleMobilePhotoWallAutoScroll(){
-  if(!isMobile())return;
   startMobilePhotoWallAutoScroll();
 
   if(mobilePhotoWallRestartTimer){
@@ -1190,9 +1248,9 @@ function scheduleMobilePhotoWallAutoScroll(){
   mobilePhotoWallRestartTimer=setTimeout(function(){
     mobilePhotoWallRestartTimer=null;
     restartMobilePhotoWallAutoScroll();
-  },180);
+  },260);
 
-  [80,250,600,1100,1800,3000,5000].forEach(function(ms){
+  [80,220,520,900,1500,2400,3600,5200,7600,10500].forEach(function(ms){
     setTimeout(function(){
       prepareMobilePhotoWallAutoScroll();
       startMobilePhotoWallAutoScroll();
@@ -1215,6 +1273,12 @@ function bindMobilePhotoWallImageLoadStart(){
     img.addEventListener("load",function(){
       scheduleMobilePhotoWallAutoScroll();
     });
+    img.addEventListener("error",function(){
+      scheduleMobilePhotoWallAutoScroll();
+    });
+    if(img.complete){
+      scheduleMobilePhotoWallAutoScroll();
+    }
   });
 }
 
@@ -1228,9 +1292,10 @@ function patchGalleryStaffAutoStart(){
 
       window.bsuSetGalleryStaff=function(){
         var result=originalSetGalleryStaff.apply(this,arguments);
-        setTimeout(scheduleMobilePhotoWallAutoScroll,0);
-        setTimeout(scheduleMobilePhotoWallAutoScroll,180);
-        setTimeout(scheduleMobilePhotoWallAutoScroll,650);
+        scheduleMobilePhotoWallAutoScroll();
+        setTimeout(scheduleMobilePhotoWallAutoScroll,120);
+        setTimeout(scheduleMobilePhotoWallAutoScroll,500);
+        setTimeout(scheduleMobilePhotoWallAutoScroll,1200);
         return result;
       };
 
@@ -1238,7 +1303,7 @@ function patchGalleryStaffAutoStart(){
       clearInterval(window.__bsuGalleryAutoStartPatchTimer);
       window.__bsuGalleryAutoStartPatchTimer=null;
     }
-  },120);
+  },80);
 
   setTimeout(function(){
     if(window.__bsuGalleryAutoStartPatchTimer){
@@ -1246,7 +1311,7 @@ function patchGalleryStaffAutoStart(){
       window.__bsuGalleryAutoStartPatchTimer=null;
     }
     scheduleMobilePhotoWallAutoScroll();
-  },10000);
+  },12000);
 }
 
 function getSelectedStaffName(){
