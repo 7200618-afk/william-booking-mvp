@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,6 @@
   <script>
     (async function(){
       const sourceUrl="https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html";
-
       try{
         const response=await fetch(sourceUrl,{cache:"no-store"});
         if(!response.ok)throw new Error("Unable to load booking page.");
@@ -34,20 +34,20 @@
       statusRequestId++;
       updateDateUI();
       staffStatusCache = {};
+      hasUserSelectedStaff = false;
+      initialStaffAutoSelectDone = false;
 
-      /*
-        Keep the currently selected staff when changing date
-        or clicking Next available.
-      */
-      hasUserSelectedStaff = true;
-      initialStaffAutoSelectDone = true;
+      if (window.__bsuKeepCurrentStaffOnNextAvailable) {
+        window.__bsuKeepCurrentStaffOnNextAvailable = false;
+      } else {
+        selectBestDefaultStaff();
+      }
 
       renderStaffStrip(true);
       renderServicePills();
 
       const galleryStaffName = STAFF_DATA[selectedStaffKey]?.name || selectedStaffKey;
       window.bsuInitialGalleryStaff = galleryStaffName;
-
       if (window.bsuSetGalleryStaff) {
         setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 0);
         setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 250);
@@ -55,7 +55,6 @@
 
       clearResults();
       searchAvailability();
-
       if (window.innerWidth >= 600) {
         setTimeout(scrollSelectedStaffIntoView, 120);
       }
@@ -330,7 +329,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena - requested update only */
+/* B SIDE U Pasadena V54 - service height updated, policy action buttons removed */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
@@ -338,7 +337,6 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   box-shadow:none!important;
 }
 
-/* Success policy card */
 .bsu-success-policy-card{
   width:100%!important;
   margin:18px 0!important;
@@ -442,10 +440,34 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   white-space:nowrap!important;
 }
 
-/* Remove policy action buttons if old version still creates them */
-.bsu-success-policy-actions,
+.bsu-success-policy-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr 1fr!important;
+  gap:8px!important;
+  margin-top:16px!important;
+}
+
 .bsu-success-policy-action{
-  display:none!important;
+  min-height:40px!important;
+  border:0!important;
+  border-radius:13px!important;
+  padding:0 9px!important;
+  background:#f3f3f3!important;
+  color:#111!important;
+  font-size:12.5px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  text-decoration:none!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+
+.bsu-success-policy-action.is-primary{
+  background:#111!important;
+  color:#fff!important;
 }
 
 .pasadena-links{
@@ -463,26 +485,25 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 .service-pills{
-  gap:7px!important;
+  gap:6px!important;
 }
 
-/* Service boxes slightly taller */
 .service-pill{
-  min-height:46px!important;
-  height:46px!important;
-  border-radius:15px!important;
-  padding:8px 11px!important;
+  min-height:42px!important;
+  height:42px!important;
+  border-radius:14px!important;
+  padding:7px 10px!important;
 }
 
 .service-name{
-  font-size:13px!important;
+  font-size:12.8px!important;
   line-height:1!important;
 }
 
 .service-meta{
-  font-size:10px!important;
+  font-size:9.8px!important;
   line-height:1!important;
-  margin-top:4px!important;
+  margin-top:3px!important;
 }
 
 .bsu-booking-fail-overlay{position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(10,10,10,.58)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
@@ -522,7 +543,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .desktop-right-panel{grid-area:right!important;display:flex!important;flex-direction:column!important;align-self:start!important;justify-self:start!important;width:100%!important;max-width:600px!important;margin:0!important;padding:0!important;border-radius:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
 .desktop-service-panel{display:block!important;width:100%!important;margin:0 0 18px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
 .desktop-service-panel .section-label{margin:0 2px 7px!important}
-.desktop-service-panel .service-pills{gap:7px!important}
+.desktop-service-panel .service-pills{gap:6px!important}
 .desktop-service-placeholder,.desktop-slot-placeholder,.desktop-empty-placeholder{display:none!important}
 .desktop-right-panel .slot-area,.desktop-right-panel .empty-state,.desktop-results-area .slot-area,.slot-area,.desktop-results-area .empty-state{display:block!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;min-height:150px!important;background:transparent!important;box-shadow:none!important}
 .staff-strip{gap:12px!important}
@@ -531,7 +552,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .staff-name{font-size:14px!important}
 .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
 .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
-.service-pill{min-height:46px!important;height:46px!important;border-radius:15px!important;padding:8px 11px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
 .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
 .slot-area{padding-top:2px!important}
 .slot-group{margin-top:7px!important}
@@ -566,14 +587,15 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-availability-loading-frame{min-height:150px!important}
 .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .bsu-loading-chip{height:34px!important}
-.service-pill{min-height:46px!important;height:46px!important;border-radius:15px!important;padding:8px 11px!important}
+.service-pill{min-height:42px!important;height:42px!important;border-radius:14px!important;padding:7px 10px!important}
 .pasadena-links{display:flex!important;justify-content:flex-start!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;width:100%!important;margin-top:3px!important}
 .pasadena-links a{width:auto!important;min-height:30px!important;padding:0 10px!important;font-size:11px!important;text-align:center!important}
 .bsu-success-policy-card{padding:18px 15px!important;border-radius:20px!important;margin:16px 0!important}
 .bsu-success-policy-title{font-size:23px!important;margin-bottom:13px!important}
 .bsu-success-policy-pill{min-height:36px!important;padding:0 16px!important;font-size:14px!important}
 .bsu-success-policy-text{font-size:16px!important}
-.bsu-success-policy-actions,.bsu-success-policy-action{display:none!important}
+.bsu-success-policy-actions{gap:7px!important}
+.bsu-success-policy-action{min-height:39px!important;font-size:12px!important;border-radius:12px!important}
 .desktop-photo-wall-section{display:block!important;width:100%!important;height:220px!important;max-height:220px!important;margin:18px 0 0!important;padding:0!important;overflow:hidden!important;border-radius:22px!important;background:#f6f6f6!important;box-shadow:none!important}
 .desktop-photo-wall-section .bsu-team-head,.desktop-photo-wall-section .bsu-divider,.desktop-photo-wall-section .gallery-head,.desktop-photo-wall-section .staff-group-head,.desktop-photo-wall-section .bsu-filter-group,.desktop-photo-wall-section .view-toggle{display:none!important}
 .desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group{height:220px!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;background:transparent!important;overflow:hidden!important}
@@ -604,7 +626,6 @@ let mobilePhotoWallReadyStartedAt=0;
 let lastSelectedBookingLabel="";
 
 const POLICY_URL="https://www.bsideuhair.com/appointment-policy";
-const SANGABRIEL_URL="https://www.bsideuhair.com/appointment-sangabriel";
 const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -690,23 +711,6 @@ function setupMobileStickyDateAndStaff(){
   }
 }
 
-function updateSanGabrielLink(){
-  document.querySelectorAll("a").forEach(function(a){
-    var text=(a.textContent||"").trim().toLowerCase();
-    var href=(a.getAttribute("href")||"").toLowerCase();
-
-    if(
-      text.indexOf("san gabriel")>-1 ||
-      text.indexOf("sangabriel")>-1 ||
-      href.indexOf("san-gabriel")>-1 ||
-      href.indexOf("sangabriel")>-1 ||
-      href.indexOf("appointment-sangabriel")>-1
-    ){
-      a.setAttribute("href",SANGABRIEL_URL);
-    }
-  });
-}
-
 function captureSelectedBookingLabel(target){
   try{
     var timeBtn=target&&target.closest?target.closest(".time-btn"):null;
@@ -722,6 +726,9 @@ function captureSelectedBookingLabel(target){
 }
 
 function getPolicySubText(){
+  if(lastSelectedBookingLabel){
+    return "Please cancel or reschedule at least 3 hours before your appointment.";
+  }
   return "Please cancel or reschedule at least 3 hours before your appointment.";
 }
 
@@ -829,39 +836,6 @@ function insertSuccessPolicyCard(){
   }
 
   container.appendChild(card);
-}
-
-function updateWaitlistAndSuccessActions(){
-  document.querySelectorAll(".waitlist-btn").forEach(function(btn){
-    var text=(btn.textContent||"").trim().toLowerCase();
-
-    if(text.indexOf("join waitlist")>-1){
-      btn.textContent="Join Waitlist (Coming Soon)";
-    }
-  });
-
-  document.querySelectorAll(".bsu-success-policy-actions,.bsu-success-policy-action").forEach(function(el){
-    el.style.setProperty("display","none","important");
-  });
-
-  var successContainer=findSuccessContainer ? findSuccessContainer() : null;
-
-  if(successContainer){
-    Array.from(successContainer.querySelectorAll("button,a")).forEach(function(el){
-      var text=(el.textContent||"").trim().toLowerCase();
-
-      if(
-        text==="cancel" ||
-        text==="reschedule" ||
-        text==="rescedule" ||
-        text.indexOf("cancel appointment")>-1 ||
-        text.indexOf("reschedule appointment")>-1 ||
-        text.indexOf("rescedule appointment")>-1
-      ){
-        el.style.setProperty("display","none","important");
-      }
-    });
-  }
 }
 
 function ensureBookingFailureModal(){
@@ -982,11 +956,8 @@ function patchCreateBookingFailureModal(){
           });
         }else{
           setTimeout(insertSuccessPolicyCard,350);
-          setTimeout(updateWaitlistAndSuccessActions,450);
           setTimeout(insertSuccessPolicyCard,900);
-          setTimeout(updateWaitlistAndSuccessActions,1000);
           setTimeout(insertSuccessPolicyCard,1600);
-          setTimeout(updateWaitlistAndSuccessActions,1700);
         }
       }
     }catch(e){}
@@ -1458,8 +1429,6 @@ function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
   removeOpeningCounts();
-  updateWaitlistAndSuccessActions();
-  updateSanGabrielLink();
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
   movePhotoWall();
@@ -1499,8 +1468,6 @@ window.addEventListener("load",function(){
   mobilePhotoWallReadyStartedAt=0;
   waitForMobilePhotoWallReady();
   insertSuccessPolicyCard();
-  updateWaitlistAndSuccessActions();
-  updateSanGabrielLink();
 });
 
 document.addEventListener("visibilitychange",function(){
@@ -1508,8 +1475,6 @@ document.addEventListener("visibilitychange",function(){
     mobilePhotoWallReadyStartedAt=0;
     waitForMobilePhotoWallReady();
     insertSuccessPolicyCard();
-    updateWaitlistAndSuccessActions();
-    updateSanGabrielLink();
   }
 });
 
@@ -1520,8 +1485,6 @@ document.addEventListener("click",function(e){
   setTimeout(runFixes,600);
   setTimeout(waitForMobilePhotoWallReady,900);
   setTimeout(insertSuccessPolicyCard,900);
-  setTimeout(updateWaitlistAndSuccessActions,900);
-  setTimeout(updateSanGabrielLink,900);
 },true);
 })();
 <\/script>
