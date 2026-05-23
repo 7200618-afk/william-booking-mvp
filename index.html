@@ -329,10 +329,21 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V56 - waitlist hidden, San Gabriel switch hidden, service height 45, mobile carousel touch pause */
+/* B SIDE U Pasadena V57 - waitlist under next available hidden, San Gabriel switch hidden, service height 45, mobile carousel auto-scroll no touch drag */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 .bsu-hide-success-action,.bsu-hide-waitlist,.bsu-hide-sangabriel-link{display:none!important}
+
+.empty-actions .waitlist-btn,
+.empty-actions a.waitlist-btn,
+.empty-actions button.waitlist-btn{display:none!important}
+.desktop-photo-wall-section .staff-carousel-track,
+.desktop-photo-wall-section .staff-carousel-item,
+.desktop-photo-wall-section .staff-carousel-item img{
+  pointer-events:none!important;
+  -webkit-user-drag:none!important;
+  user-select:none!important;
+}
 
 .calendar-btn{
   box-shadow:none!important;
@@ -763,9 +774,11 @@ function isVisible(el){
 }
 
 function hideWaitlistButton(){
-  document.querySelectorAll(".waitlist-btn,button,a").forEach(function(el){
+  document.querySelectorAll(".empty-actions .waitlist-btn,.waitlist-btn,button,a").forEach(function(el){
     var text=(el.textContent||"").trim();
-    if(/^join\s+waitlist(\s*\(coming soon\))?$/i.test(text)){
+    var isWaitlist=/join\s+waitlist/i.test(text)||el.classList.contains("waitlist-btn");
+
+    if(isWaitlist){
       el.classList.add("bsu-hide-waitlist");
       el.setAttribute("aria-hidden","true");
       el.setAttribute("tabindex","-1");
@@ -1021,26 +1034,8 @@ function stopMobilePhotoWallCarousel(){
 }
 
 function setupMobilePhotoWallTouchPause(scroller){
-  if(!scroller||scroller.dataset.bsuTouchPauseBound==="1")return;
-  scroller.dataset.bsuTouchPauseBound="1";
-
-  function pause(){
-    mobilePhotoWallPaused=true;
-  }
-
-  function resume(){
-    mobilePhotoWallLastTs=null;
-    mobilePhotoWallPaused=false;
-  }
-
-  scroller.addEventListener("touchstart",pause,{passive:true});
-  scroller.addEventListener("touchend",resume,{passive:true});
-  scroller.addEventListener("touchcancel",resume,{passive:true});
-  scroller.addEventListener("pointerdown",pause,{passive:true});
-  scroller.addEventListener("pointerup",resume,{passive:true});
-  scroller.addEventListener("pointercancel",resume,{passive:true});
-  scroller.addEventListener("mouseenter",pause);
-  scroller.addEventListener("mouseleave",resume);
+  /* Touch pause / manual drag disabled by request. Carousel keeps auto-moving left. */
+  mobilePhotoWallPaused=false;
 }
 
 function prepareMobilePhotoWallClones(track){
@@ -1172,6 +1167,7 @@ function setupMobilePhotoWallCarousel(){
   scroller.style.setProperty("touch-action","pan-y","important");
   setupMobilePhotoWallTouchPause(scroller);
 
+  track.style.setProperty("pointer-events","none","important");
   track.style.setProperty("display","flex","important");
   track.style.setProperty("width","max-content","important");
   track.style.setProperty("transition","none","important");
@@ -1215,11 +1211,6 @@ function setupMobilePhotoWallCarousel(){
     var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
     var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
 
-    if(mobilePhotoWallPaused){
-      mobilePhotoWallLastTs=ts;
-      mobilePhotoWallRaf=requestAnimationFrame(tick);
-      return;
-    }
 
     if(loopWidth>12){
       x+=dt*0.035;
