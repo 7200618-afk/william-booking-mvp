@@ -1109,21 +1109,31 @@ function waitForMobilePhotoWallReady(){
     return;
   }
 
-  if(isMobilePhotoWallReady()){
-    if(mobilePhotoWallReadyTimer){
-      clearTimeout(mobilePhotoWallReadyTimer);
-      mobilePhotoWallReadyTimer=null;
+  var scroller=document.querySelector(".desktop-photo-wall-section .staff-carousel");
+  var track=document.querySelector(".desktop-photo-wall-section .staff-carousel-track");
+
+  if(scroller&&track){
+    var items=Array.from(track.children).filter(function(item){
+      return !item.classList.contains("bsu-mobile-photo-clone") &&
+             !item.classList.contains("is-clone");
+    });
+
+    if(items.length>=2){
+      if(mobilePhotoWallReadyTimer){
+        clearTimeout(mobilePhotoWallReadyTimer);
+        mobilePhotoWallReadyTimer=null;
+      }
+      mobilePhotoWallReadyStartedAt=0;
+      setupMobilePhotoWallCarousel();
+      return;
     }
-    mobilePhotoWallReadyStartedAt=0;
-    setupMobilePhotoWallCarousel();
-    return;
   }
 
   if(!mobilePhotoWallReadyStartedAt){
     mobilePhotoWallReadyStartedAt=Date.now();
   }
 
-  if(Date.now()-mobilePhotoWallReadyStartedAt>8000){
+  if(Date.now()-mobilePhotoWallReadyStartedAt>12000){
     mobilePhotoWallReadyStartedAt=0;
     return;
   }
@@ -1133,7 +1143,7 @@ function waitForMobilePhotoWallReady(){
   mobilePhotoWallReadyTimer=setTimeout(function(){
     mobilePhotoWallReadyTimer=null;
     waitForMobilePhotoWallReady();
-  },300);
+  },200);
 }
 
 function setupMobilePhotoWallCarousel(){
@@ -1173,14 +1183,41 @@ function setupMobilePhotoWallCarousel(){
   track.style.setProperty("transition","none","important");
   track.style.setProperty("will-change","transform","important");
 
-  mobilePhotoWallLoopWidth=Math.max(0,track.scrollWidth/2);
+  function calculateMobilePhotoLoopWidth(){
+    var baseItems=Array.from(track.children).filter(function(item){
+      return !item.classList.contains("bsu-mobile-photo-clone") &&
+             !item.classList.contains("is-clone");
+    });
+
+    if(!baseItems.length)return Math.max(0,track.scrollWidth/2);
+
+    var first=baseItems[0];
+    var firstWidth=first ? first.getBoundingClientRect().width : 0;
+    var gap=0;
+    try{
+      gap=parseFloat(window.getComputedStyle(track).columnGap||window.getComputedStyle(track).gap||"0")||0;
+    }catch(e){}
+
+    var measured=0;
+    baseItems.forEach(function(item){
+      measured+=item.getBoundingClientRect().width||firstWidth||0;
+    });
+
+    if(baseItems.length>1){
+      measured+=gap*(baseItems.length-1);
+    }
+
+    return Math.max(measured,track.scrollWidth/2,0);
+  }
+
+  mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
 
   if(mobilePhotoWallTrack!==track){
     stopMobilePhotoWallCarousel();
 
     mobilePhotoWallTrack=track;
     mobilePhotoWallLastTs=null;
-    mobilePhotoWallLoopWidth=Math.max(0,track.scrollWidth/2);
+    mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
 
     if(!track.dataset.bsuMobileX){
       track.dataset.bsuMobileX="0";
@@ -1209,8 +1246,17 @@ function setupMobilePhotoWallCarousel(){
     mobilePhotoWallLastTs=ts;
 
     var loopWidth=mobilePhotoWallLoopWidth||Math.max(0,mobilePhotoWallTrack.scrollWidth/2);
-    var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
+    if(loopWidth<=12){
+      var visibleItems=Array.from(mobilePhotoWallTrack.children).filter(function(item){
+        return !item.classList.contains("bsu-mobile-photo-clone") &&
+               !item.classList.contains("is-clone");
+      });
+      var fallbackWidth=visibleItems.length && visibleItems[0] ? visibleItems[0].getBoundingClientRect().width*visibleItems.length : 0;
+      loopWidth=Math.max(loopWidth,fallbackWidth);
+      mobilePhotoWallLoopWidth=loopWidth;
+    }
 
+    var x=Number(mobilePhotoWallTrack.dataset.bsuMobileX||"0");
 
     if(loopWidth>12){
       x+=dt*0.035;
@@ -1232,6 +1278,18 @@ function setupMobilePhotoWallCarousel(){
   }
 
   mobilePhotoWallRaf=requestAnimationFrame(tick);
+
+  setTimeout(function(){
+    if(isMobile()&&mobilePhotoWallTrack===track){
+      mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
+    }
+  },250);
+
+  setTimeout(function(){
+    if(isMobile()&&mobilePhotoWallTrack===track){
+      mobilePhotoWallLoopWidth=calculateMobilePhotoLoopWidth();
+    }
+  },900);
 }
 
 function getSelectedStaffName(){
@@ -1515,6 +1573,8 @@ setTimeout(runFixes,2500);
 setTimeout(waitForMobilePhotoWallReady,3200);
 setTimeout(waitForMobilePhotoWallReady,4500);
 setTimeout(waitForMobilePhotoWallReady,6000);
+setTimeout(waitForMobilePhotoWallReady,8500);
+setTimeout(waitForMobilePhotoWallReady,11000);
 setTimeout(insertSuccessPolicyCard,1000);
 setTimeout(insertSuccessPolicyCard,2000);
 
