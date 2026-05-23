@@ -329,7 +329,7 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V61 - mobile photo wall rebuilt from working RAF transform method */
+/* B SIDE U Pasadena V62 - photo wall auto-scroll split for desktop and mobile */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 .bsu-hide-success-action,.bsu-hide-waitlist,.bsu-hide-sangabriel-link{display:none!important}
@@ -343,6 +343,11 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .desktop-photo-wall-section .staff-carousel-item img{
   -webkit-user-drag:none!important;
   user-select:none!important;
+}
+
+.desktop-photo-wall-section .staff-carousel-track.bsu-photo-wall-auto-track{
+  transition:none!important;
+  will-change:transform!important;
 }
 
 @media(max-width:599px){
@@ -1044,7 +1049,7 @@ function stopMobilePhotoWallCarousel(){
   mobilePhotoWallLastTs=null;
 }
 
-function getMobilePhotoWallParts(){
+function getPhotoWallParts(){
   var section=document.querySelector(".desktop-photo-wall-section");
   if(!section)return null;
 
@@ -1052,7 +1057,6 @@ function getMobilePhotoWallParts(){
   var track=section.querySelector(".staff-carousel-track");
 
   if(!scroller||!track)return null;
-
   return {section:section,scroller:scroller,track:track};
 }
 
@@ -1062,6 +1066,7 @@ function getBasePhotoWallItems(track){
     return item&&item.nodeType===1&&
       item.classList&&
       item.classList.contains("staff-carousel-item")&&
+      !item.classList.contains("bsu-photo-wall-clone")&&
       !item.classList.contains("bsu-mobile-photo-clone")&&
       !item.classList.contains("is-clone");
   });
@@ -1071,33 +1076,34 @@ function getPhotoWallSignature(items){
   return items.map(function(item,index){
     var img=item.querySelector&&item.querySelector("img");
     var src=img?(img.currentSrc||img.src||img.getAttribute("src")||""):"";
-    return index+":"+src+":"+(item.offsetWidth||0);
+    var w=Math.round(item.getBoundingClientRect().width||item.offsetWidth||0);
+    return index+":"+src+":"+w;
   }).join("|");
 }
 
-function removeMobilePhotoWallClones(track){
+function removePhotoWallClones(track){
   if(!track)return;
-  track.querySelectorAll(".bsu-mobile-photo-clone").forEach(function(clone){
+  track.querySelectorAll(".bsu-photo-wall-clone,.bsu-mobile-photo-clone").forEach(function(clone){
     clone.remove();
   });
 }
 
-function rebuildMobilePhotoWallClones(track){
+function rebuildPhotoWallClones(track){
   if(!track)return false;
 
   var baseItems=getBasePhotoWallItems(track);
   if(baseItems.length<2)return false;
 
-  var signature=getPhotoWallSignature(baseItems);
-  var cloneCount=track.querySelectorAll(".bsu-mobile-photo-clone").length;
+  var signature=getPhotoWallSignature(baseItems)+"|mode:"+(isMobile()?"mobile":"desktop");
+  var cloneCount=track.querySelectorAll(".bsu-photo-wall-clone").length;
 
-  if(track.dataset.bsuMobileWallSignature!==signature||cloneCount<baseItems.length){
-    removeMobilePhotoWallClones(track);
+  if(track.dataset.bsuWallSignature!==signature||cloneCount<baseItems.length){
+    removePhotoWallClones(track);
     baseItems=getBasePhotoWallItems(track);
 
     baseItems.forEach(function(item){
       var clone=item.cloneNode(true);
-      clone.classList.add("bsu-mobile-photo-clone");
+      clone.classList.add("bsu-photo-wall-clone");
       clone.setAttribute("aria-hidden","true");
       clone.querySelectorAll("a,button").forEach(function(el){
         el.setAttribute("tabindex","-1");
@@ -1105,34 +1111,17 @@ function rebuildMobilePhotoWallClones(track){
       track.appendChild(clone);
     });
 
-    track.dataset.bsuMobileWallSignature=signature;
-    if(!track.dataset.bsuMobileWallX){
-      track.dataset.bsuMobileWallX="0";
+    track.dataset.bsuWallSignature=signature;
+    if(!track.dataset.bsuWallX){
+      track.dataset.bsuWallX="0";
     }
   }
 
   return true;
 }
 
-function prepareMobilePhotoWallAutoScroll(){
-  var parts=getMobilePhotoWallParts();
-
-  if(!isMobile()){
-    if(parts&&parts.track){
-      removeMobilePhotoWallClones(parts.track);
-      delete parts.track.dataset.bsuMobileWallSignature;
-      delete parts.track.dataset.bsuMobileWallX;
-      parts.track.style.removeProperty("transform");
-      parts.track.style.removeProperty("transition");
-      parts.track.style.removeProperty("animation");
-      parts.track.style.removeProperty("will-change");
-      parts.track.style.removeProperty("width");
-      parts.track.style.removeProperty("pointer-events");
-    }
-    stopMobilePhotoWallCarousel();
-    return null;
-  }
-
+function preparePhotoWallAutoScroll(){
+  var parts=getPhotoWallParts();
   if(!parts)return null;
 
   var scroller=parts.scroller;
@@ -1143,12 +1132,19 @@ function prepareMobilePhotoWallAutoScroll(){
   scroller.style.setProperty("-webkit-overflow-scrolling","auto","important");
 
   track.classList.add("no-anim");
+  track.classList.add("bsu-photo-wall-auto-track");
   track.style.setProperty("display","flex","important");
-  track.style.setProperty("width","max-content","important");
   track.style.setProperty("transition","none","important");
   track.style.setProperty("animation","none","important");
   track.style.setProperty("will-change","transform","important");
-  track.style.setProperty("pointer-events","none","important");
+
+  if(isMobile()){
+    track.style.setProperty("width","max-content","important");
+    track.style.setProperty("pointer-events","none","important");
+  }else{
+    track.style.removeProperty("width");
+    track.style.removeProperty("pointer-events");
+  }
 
   track.querySelectorAll("img").forEach(function(img){
     img.setAttribute("draggable","false");
@@ -1156,12 +1152,11 @@ function prepareMobilePhotoWallAutoScroll(){
     img.style.setProperty("user-select","none","important");
   });
 
-  rebuildMobilePhotoWallClones(track);
-
+  rebuildPhotoWallClones(track);
   return parts;
 }
 
-function getMobilePhotoWallLoopWidth(track){
+function getPhotoWallLoopWidth(track){
   var baseItems=getBasePhotoWallItems(track);
   if(baseItems.length<2)return 0;
 
@@ -1191,17 +1186,17 @@ function getMobilePhotoWallLoopWidth(track){
   return fallback>60?fallback:0;
 }
 
-function startMobilePhotoWallAutoScroll(){
+function startPhotoWallAutoScroll(){
   if(mobilePhotoWallRaf)return;
 
   mobilePhotoWallLastTs=null;
 
   function tick(ts){
-    var parts=prepareMobilePhotoWallAutoScroll();
+    var parts=preparePhotoWallAutoScroll();
 
-    if(isMobile()&&parts){
+    if(parts){
       var track=parts.track;
-      var loopWidth=getMobilePhotoWallLoopWidth(track);
+      var loopWidth=getPhotoWallLoopWidth(track);
 
       if(loopWidth>60){
         if(mobilePhotoWallLastTs===null)mobilePhotoWallLastTs=ts;
@@ -1209,15 +1204,16 @@ function startMobilePhotoWallAutoScroll(){
         var dt=Math.min(64,ts-mobilePhotoWallLastTs);
         mobilePhotoWallLastTs=ts;
 
-        var x=Number(track.dataset.bsuMobileWallX||"0");
+        var x=Number(track.dataset.bsuWallX||"0");
         if(!Number.isFinite(x))x=0;
 
-        x+=(28*dt)/1000;
+        var speed=isMobile()?28:22;
+        x+=(speed*dt)/1000;
         if(x>=loopWidth){
           x=x-loopWidth;
         }
 
-        track.dataset.bsuMobileWallX=String(x);
+        track.dataset.bsuWallX=String(x);
         track.style.setProperty("transform","translate3d("+(-x)+"px,0,0)","important");
       }else{
         mobilePhotoWallLastTs=null;
@@ -1232,14 +1228,14 @@ function startMobilePhotoWallAutoScroll(){
   mobilePhotoWallRaf=requestAnimationFrame(tick);
 }
 
-function restartMobilePhotoWallAutoScroll(){
+function restartPhotoWallAutoScroll(){
   stopMobilePhotoWallCarousel();
-  prepareMobilePhotoWallAutoScroll();
-  startMobilePhotoWallAutoScroll();
+  preparePhotoWallAutoScroll();
+  startPhotoWallAutoScroll();
 }
 
-function scheduleMobilePhotoWallAutoScroll(){
-  startMobilePhotoWallAutoScroll();
+function schedulePhotoWallAutoScroll(){
+  startPhotoWallAutoScroll();
 
   if(mobilePhotoWallRestartTimer){
     clearTimeout(mobilePhotoWallRestartTimer);
@@ -1247,23 +1243,23 @@ function scheduleMobilePhotoWallAutoScroll(){
 
   mobilePhotoWallRestartTimer=setTimeout(function(){
     mobilePhotoWallRestartTimer=null;
-    restartMobilePhotoWallAutoScroll();
+    restartPhotoWallAutoScroll();
   },260);
 
   [80,220,520,900,1500,2400,3600,5200,7600,10500].forEach(function(ms){
     setTimeout(function(){
-      prepareMobilePhotoWallAutoScroll();
-      startMobilePhotoWallAutoScroll();
+      preparePhotoWallAutoScroll();
+      startPhotoWallAutoScroll();
     },ms);
   });
 }
 
 function waitForMobilePhotoWallReady(){
-  scheduleMobilePhotoWallAutoScroll();
+  schedulePhotoWallAutoScroll();
 }
 
 function setupMobilePhotoWallCarousel(){
-  scheduleMobilePhotoWallAutoScroll();
+  schedulePhotoWallAutoScroll();
 }
 
 function bindMobilePhotoWallImageLoadStart(){
@@ -1271,13 +1267,13 @@ function bindMobilePhotoWallImageLoadStart(){
     if(img.dataset.bsuWallAutoBound)return;
     img.dataset.bsuWallAutoBound="1";
     img.addEventListener("load",function(){
-      scheduleMobilePhotoWallAutoScroll();
+      schedulePhotoWallAutoScroll();
     });
     img.addEventListener("error",function(){
-      scheduleMobilePhotoWallAutoScroll();
+      schedulePhotoWallAutoScroll();
     });
     if(img.complete){
-      scheduleMobilePhotoWallAutoScroll();
+      schedulePhotoWallAutoScroll();
     }
   });
 }
@@ -1292,14 +1288,14 @@ function patchGalleryStaffAutoStart(){
 
       window.bsuSetGalleryStaff=function(){
         var result=originalSetGalleryStaff.apply(this,arguments);
-        scheduleMobilePhotoWallAutoScroll();
-        setTimeout(scheduleMobilePhotoWallAutoScroll,120);
-        setTimeout(scheduleMobilePhotoWallAutoScroll,500);
-        setTimeout(scheduleMobilePhotoWallAutoScroll,1200);
+        schedulePhotoWallAutoScroll();
+        setTimeout(schedulePhotoWallAutoScroll,120);
+        setTimeout(schedulePhotoWallAutoScroll,500);
+        setTimeout(schedulePhotoWallAutoScroll,1200);
         return result;
       };
 
-      scheduleMobilePhotoWallAutoScroll();
+      schedulePhotoWallAutoScroll();
       clearInterval(window.__bsuGalleryAutoStartPatchTimer);
       window.__bsuGalleryAutoStartPatchTimer=null;
     }
@@ -1310,7 +1306,7 @@ function patchGalleryStaffAutoStart(){
       clearInterval(window.__bsuGalleryAutoStartPatchTimer);
       window.__bsuGalleryAutoStartPatchTimer=null;
     }
-    scheduleMobilePhotoWallAutoScroll();
+    schedulePhotoWallAutoScroll();
   },12000);
 }
 
@@ -1587,7 +1583,7 @@ patchCreateBookingFailureModal();
 markNextAvailableClick();
 patchGalleryStaffAutoStart();
 runFixes();
-scheduleMobilePhotoWallAutoScroll();
+schedulePhotoWallAutoScroll();
 
 setTimeout(runFixes,100);
 setTimeout(runFixes,300);
@@ -1597,9 +1593,9 @@ setTimeout(runFixes,2500);
 setTimeout(waitForMobilePhotoWallReady,3200);
 setTimeout(waitForMobilePhotoWallReady,4500);
 setTimeout(waitForMobilePhotoWallReady,6000);
-setTimeout(scheduleMobilePhotoWallAutoScroll,3200);
-setTimeout(scheduleMobilePhotoWallAutoScroll,5200);
-setTimeout(scheduleMobilePhotoWallAutoScroll,8200);
+setTimeout(schedulePhotoWallAutoScroll,3200);
+setTimeout(schedulePhotoWallAutoScroll,5200);
+setTimeout(schedulePhotoWallAutoScroll,8200);
 setTimeout(waitForMobilePhotoWallReady,8500);
 setTimeout(waitForMobilePhotoWallReady,11000);
 setTimeout(insertSuccessPolicyCard,1000);
@@ -1618,12 +1614,12 @@ observer.observe(document.body,{childList:true,subtree:true,characterData:true})
 window.addEventListener("resize",function(){
   runFixes();
   waitForMobilePhotoWallReady();
-  scheduleMobilePhotoWallAutoScroll();
+  schedulePhotoWallAutoScroll();
 });
 
 window.addEventListener("load",function(){
   waitForMobilePhotoWallReady();
-  scheduleMobilePhotoWallAutoScroll();
+  schedulePhotoWallAutoScroll();
   insertSuccessPolicyCard();
   hideWaitlistButton();
   hideSanGabrielSwitchButton();
@@ -1633,7 +1629,7 @@ window.addEventListener("load",function(){
 document.addEventListener("visibilitychange",function(){
   if(document.visibilityState==="visible"){
     waitForMobilePhotoWallReady();
-    scheduleMobilePhotoWallAutoScroll();
+    schedulePhotoWallAutoScroll();
     insertSuccessPolicyCard();
   }
 });
