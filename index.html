@@ -14,6 +14,7 @@
   <script>
     (async function(){
       const sourceUrl="https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html";
+
       try{
         const response=await fetch(sourceUrl,{cache:"no-store"});
         if(!response.ok)throw new Error("Unable to load booking page.");
@@ -98,253 +99,59 @@
         );
 
         const customCss=`
-/* B SIDE U Pasadena V46 - restore desktop, compact header, mobile sticky date+staff only, booking failure reset */
+/* B SIDE U Pasadena V47 - restore desktop layout + booking failure reset */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
 html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-btn{touch-action:manipulation!important}
 
-.bsu-booking-fail-overlay{
-  position:fixed!important;
-  inset:0!important;
-  z-index:2147483647!important;
-  display:none!important;
-  align-items:center!important;
-  justify-content:center!important;
-  padding:18px!important;
-  background:rgba(10,10,10,.58)!important;
-  backdrop-filter:blur(8px)!important;
-  -webkit-backdrop-filter:blur(8px)!important;
-}
-.bsu-booking-fail-overlay.is-visible{
-  display:flex!important;
-}
-.bsu-booking-fail-card{
-  width:100%!important;
-  max-width:430px!important;
-  border-radius:28px!important;
-  background:#fff!important;
-  color:#111!important;
-  padding:26px 22px 22px!important;
-  box-shadow:0 28px 90px rgba(0,0,0,.28)!important;
-  text-align:center!important;
-  animation:bsuFailPop .2s cubic-bezier(.2,.8,.2,1)!important;
-}
-@keyframes bsuFailPop{
-  from{transform:translateY(12px) scale(.98);opacity:0}
-  to{transform:translateY(0) scale(1);opacity:1}
-}
-.bsu-booking-fail-icon{
-  width:54px!important;
-  height:54px!important;
-  margin:0 auto 14px!important;
-  border-radius:999px!important;
-  background:#111!important;
-  color:#fff!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  font-size:28px!important;
-  font-weight:950!important;
-  line-height:1!important;
-}
-.bsu-booking-fail-title{
-  margin:0 0 8px!important;
-  font-size:28px!important;
-  line-height:.98!important;
-  font-weight:950!important;
-  letter-spacing:-.05em!important;
-}
-.bsu-booking-fail-text{
-  margin:0 auto 18px!important;
-  max-width:340px!important;
-  color:#555!important;
-  font-size:14px!important;
-  line-height:1.45!important;
-  font-weight:750!important;
-}
-.bsu-booking-fail-detail{
-  margin:0 0 18px!important;
-  padding:12px 13px!important;
-  border-radius:16px!important;
-  background:#f5f5f5!important;
-  color:#333!important;
-  font-size:12.5px!important;
-  line-height:1.35!important;
-  font-weight:800!important;
-}
-.bsu-booking-fail-btn{
-  width:100%!important;
-  height:48px!important;
-  border:0!important;
-  border-radius:16px!important;
-  background:#111!important;
-  color:#fff!important;
-  font-size:14px!important;
-  font-weight:950!important;
-  cursor:pointer!important;
-}
-.bsu-booking-fail-small{
-  margin-top:10px!important;
-  color:#777!important;
-  font-size:11.5px!important;
-  font-weight:750!important;
-}
+.bsu-booking-fail-overlay{position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(10,10,10,.58)!important;backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
+.bsu-booking-fail-overlay.is-visible{display:flex!important}
+.bsu-booking-fail-card{width:100%!important;max-width:430px!important;border-radius:28px!important;background:#fff!important;color:#111!important;padding:26px 22px 22px!important;box-shadow:0 28px 90px rgba(0,0,0,.28)!important;text-align:center!important;animation:bsuFailPop .2s cubic-bezier(.2,.8,.2,1)!important}
+@keyframes bsuFailPop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.bsu-booking-fail-icon{width:54px!important;height:54px!important;margin:0 auto 14px!important;border-radius:999px!important;background:#111!important;color:#fff!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:28px!important;font-weight:950!important;line-height:1!important}
+.bsu-booking-fail-title{margin:0 0 8px!important;font-size:28px!important;line-height:.98!important;font-weight:950!important;letter-spacing:-.05em!important}
+.bsu-booking-fail-text{margin:0 auto 18px!important;max-width:340px!important;color:#555!important;font-size:14px!important;line-height:1.45!important;font-weight:750!important}
+.bsu-booking-fail-detail{margin:0 0 18px!important;padding:12px 13px!important;border-radius:16px!important;background:#f5f5f5!important;color:#333!important;font-size:12.5px!important;line-height:1.35!important;font-weight:800!important}
+.bsu-booking-fail-btn{width:100%!important;height:48px!important;border:0!important;border-radius:16px!important;background:#111!important;color:#fff!important;font-size:14px!important;font-weight:950!important;cursor:pointer!important}
+.bsu-booking-fail-small{margin-top:10px!important;color:#777!important;font-size:11.5px!important;font-weight:750!important}
 
-.bsu-availability-loading-frame{
-  min-height:150px!important;
-  padding:2px 0 0!important;
-  box-sizing:border-box!important;
-}
-.bsu-loading-title{
-  margin:0 0 8px!important;
-  font-size:9.5px!important;
-  letter-spacing:.15em!important;
-  line-height:1!important;
-  text-transform:uppercase!important;
-  color:#777!important;
-  font-weight:950!important;
-}
-.bsu-loading-times{
-  display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  gap:6px!important;
-}
-.bsu-loading-chip{
-  height:34px!important;
-  border-radius:11px!important;
-  background:linear-gradient(90deg,#f1f1f1 0%,#fafafa 45%,#f1f1f1 100%)!important;
-  background-size:220% 100%!important;
-  animation:bsuLoadingPulse 1.15s ease-in-out infinite!important;
-}
-.bsu-loading-chip:nth-child(2){animation-delay:.08s!important}
-.bsu-loading-chip:nth-child(3){animation-delay:.16s!important}
-.bsu-loading-chip:nth-child(4){animation-delay:.24s!important}
-.bsu-loading-chip:nth-child(5){animation-delay:.32s!important}
-.bsu-loading-chip:nth-child(6){animation-delay:.40s!important}
-@keyframes bsuLoadingPulse{
-  0%{background-position:0% 0}
-  100%{background-position:-220% 0}
-}
+.bsu-availability-loading-frame{min-height:150px!important;padding:2px 0 0!important;box-sizing:border-box!important}
+.bsu-loading-title{margin:0 0 8px!important;font-size:9.5px!important;letter-spacing:.15em!important;line-height:1!important;text-transform:uppercase!important;color:#777!important;font-weight:950!important}
+.bsu-loading-times{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.bsu-loading-chip{height:34px!important;border-radius:11px!important;background:linear-gradient(90deg,#f1f1f1 0%,#fafafa 45%,#f1f1f1 100%)!important;background-size:220% 100%!important;animation:bsuLoadingPulse 1.15s ease-in-out infinite!important}
+.bsu-loading-chip:nth-child(2){animation-delay:.08s!important}.bsu-loading-chip:nth-child(3){animation-delay:.16s!important}.bsu-loading-chip:nth-child(4){animation-delay:.24s!important}.bsu-loading-chip:nth-child(5){animation-delay:.32s!important}.bsu-loading-chip:nth-child(6){animation-delay:.40s!important}
+@keyframes bsuLoadingPulse{0%{background-position:0% 0}100%{background-position:-220% 0}}
 
-.pasadena-header{
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  grid-template-areas:"title" "status" "address" "actions"!important;
-  align-items:start!important;
-  justify-items:start!important;
-  row-gap:7px!important;
-  padding:18px 28px 20px!important;
-  margin-bottom:14px!important;
-  border-radius:26px!important;
-  border:1px solid rgba(17,17,17,.08)!important;
-  background:radial-gradient(circle at 100% 100%,#f4f4f4 0 68px,transparent 70px),linear-gradient(135deg,#fff 0%,#fff 62%,#fbfbfb 100%)!important;
-  box-shadow:0 8px 22px rgba(0,0,0,.032)!important;
-  overflow:hidden!important;
-}
-.pasadena-header::after{
-  right:-58px!important;
-  bottom:-74px!important;
-  width:132px!important;
-  height:132px!important;
-  background:rgba(20,20,20,.04)!important;
-}
-.pasadena-title{
-  grid-area:title!important;
-  margin:0!important;
-  max-width:none!important;
-  font-size:clamp(30px,2.55vw,36px)!important;
-  line-height:.98!important;
-  letter-spacing:-.05em!important;
-  font-weight:950!important;
-}
-.pasadena-open{
-  grid-area:status!important;
-  display:inline-flex!important;
-  width:fit-content!important;
-  min-height:26px!important;
-  padding:0 11px!important;
-  margin:0!important;
-  gap:8px!important;
-  align-items:center!important;
-  border-radius:999px!important;
-  background:#111!important;
-  color:#fff!important;
-  font-size:12px!important;
-  line-height:1!important;
-  font-weight:900!important;
-  letter-spacing:-.015em!important;
-  white-space:nowrap!important;
-  box-shadow:none!important;
-}
-.pasadena-open::before{
-  width:8px!important;
-  height:8px!important;
-  background:#55ce79!important;
-  box-shadow:0 0 0 4px rgba(85,206,121,.18)!important;
-}
-.pasadena-address-row{
-  display:contents!important;
-}
-.pasadena-address{
-  grid-area:address!important;
-  display:block!important;
-  max-width:760px!important;
-  margin:0!important;
-  color:#666!important;
-  font-size:12.6px!important;
-  line-height:1.32!important;
-  font-weight:800!important;
-  letter-spacing:-.02em!important;
-}
-.pasadena-links{
-  grid-area:actions!important;
-  display:flex!important;
-  align-items:center!important;
-  gap:8px!important;
-  flex-wrap:wrap!important;
-  margin:1px 0 0!important;
-}
-.pasadena-links a{
-  min-height:32px!important;
-  padding:0 13px!important;
-  border-radius:999px!important;
-  border:1px solid rgba(17,17,17,.13)!important;
-  background:#fff!important;
-  color:#111!important;
-  text-decoration:none!important;
-  font-size:12px!important;
-  line-height:1!important;
-  font-weight:900!important;
-  letter-spacing:-.015em!important;
-  white-space:nowrap!important;
-  box-shadow:none!important;
-}
-.date-area,.date-area.is-fixed-fallback{
-  border:0!important;
-  box-shadow:none!important;
-  background:transparent!important;
-  padding:0!important;
-}
-.date-nav{
-  background:#fff!important;
-  color:#111!important;
-  border:1px solid rgba(20,20,20,.12)!important;
-  box-shadow:none!important;
-}
+.pasadena-header{display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"title" "status" "address" "actions"!important;align-items:start!important;justify-items:start!important;row-gap:7px!important;padding:18px 28px 20px!important;margin-bottom:14px!important;border-radius:26px!important;border:1px solid rgba(17,17,17,.08)!important;background:radial-gradient(circle at 100% 100%,#f4f4f4 0 68px,transparent 70px),linear-gradient(135deg,#fff 0%,#fff 62%,#fbfbfb 100%)!important;box-shadow:0 8px 22px rgba(0,0,0,.032)!important;overflow:hidden!important}
+.pasadena-header::after{right:-58px!important;bottom:-74px!important;width:132px!important;height:132px!important;background:rgba(20,20,20,.04)!important}
+.pasadena-title{grid-area:title!important;margin:0!important;max-width:none!important;font-size:clamp(30px,2.55vw,36px)!important;line-height:.98!important;letter-spacing:-.05em!important;font-weight:950!important}
+.pasadena-open{grid-area:status!important;display:inline-flex!important;width:fit-content!important;min-height:26px!important;padding:0 11px!important;margin:0!important;gap:8px!important;align-items:center!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:12px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}
+.pasadena-open::before{width:8px!important;height:8px!important;background:#55ce79!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}
+.pasadena-address-row{display:contents!important}
+.pasadena-address{grid-area:address!important;display:block!important;max-width:760px!important;margin:0!important;color:#666!important;font-size:12.6px!important;line-height:1.32!important;font-weight:800!important;letter-spacing:-.02em!important}
+.pasadena-links{grid-area:actions!important;display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important;margin:1px 0 0!important}
+.pasadena-links a{min-height:32px!important;padding:0 13px!important;border-radius:999px!important;border:1px solid rgba(17,17,17,.13)!important;background:#fff!important;color:#111!important;text-decoration:none!important;font-size:12px!important;line-height:1!important;font-weight:900!important;letter-spacing:-.015em!important;white-space:nowrap!important;box-shadow:none!important}
+.date-area,.date-area.is-fixed-fallback{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important}
+.date-nav{background:#fff!important;color:#111!important;border:1px solid rgba(20,20,20,.12)!important;box-shadow:none!important}
 
 @media(min-width:600px){
-  .page{
-    max-width:1120px!important;
-    padding:16px 22px 48px!important;
-  }
+  .page{max-width:1120px!important;padding:16px 22px 48px!important}
+
+  .bsu-mobile-sticky-date-staff,
+  .bsu-mobile-sticky-staff-only{display:contents!important}
+
   .booking-layout{
     display:grid!important;
     grid-template-columns:minmax(390px,430px) minmax(0,600px)!important;
-    grid-template-areas:"date date" "left right" "photo photo"!important;
+    grid-template-areas:
+      "date date"
+      "left right"
+      "photo photo"!important;
     grid-template-rows:auto auto auto!important;
     gap:12px 44px!important;
     align-items:start!important;
     justify-content:center!important;
   }
+
   .date-area{
     grid-area:date!important;
     width:100%!important;
@@ -353,15 +160,18 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     top:auto!important;
     left:auto!important;
     transform:none!important;
+    z-index:auto!important;
   }
+
+  .bsu-desktop-staff-panel,
   .booking-layout>div:nth-child(2){
     grid-area:left!important;
     padding:16px!important;
     border-radius:26px!important;
   }
-  .desktop-results-area{
-    display:contents!important;
-  }
+
+  .desktop-results-area{display:contents!important}
+
   .desktop-right-panel{
     grid-area:right!important;
     display:flex!important;
@@ -377,6 +187,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     border:0!important;
     box-shadow:none!important;
   }
+
   .desktop-service-panel{
     display:block!important;
     width:100%!important;
@@ -386,15 +197,17 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     background:transparent!important;
     box-shadow:none!important;
   }
-  .desktop-service-panel .section-label{
-    margin:0 2px 7px!important;
-  }
-  .desktop-service-panel .service-pills{
-    gap:6px!important;
-  }
-  .desktop-service-placeholder,.desktop-slot-placeholder,.desktop-empty-placeholder{
-    display:none!important;
-  }
+
+  .desktop-service-panel .section-label{margin:0 2px 7px!important}
+  .desktop-service-panel .service-pills{gap:6px!important}
+
+  .desktop-service-placeholder,
+  .desktop-slot-placeholder,
+  .desktop-empty-placeholder,
+  .bsu-date-placeholder,
+  .bsu-staff-label-placeholder,
+  .bsu-staff-strip-placeholder{display:none!important}
+
   .desktop-right-panel .slot-area,
   .desktop-right-panel .empty-state,
   .desktop-results-area .slot-area,
@@ -410,107 +223,33 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     background:transparent!important;
     box-shadow:none!important;
   }
-  .staff-strip{
-    gap:12px!important;
-  }
-  .staff-card{
-    min-height:148px!important;
-    border-radius:22px!important;
-    padding:12px 8px 10px!important;
-    box-shadow:0 8px 20px rgba(20,20,20,.05)!important;
-  }
-  .avatar{
-    width:66px!important;
-    height:66px!important;
-    margin-bottom:8px!important;
-  }
-  .staff-name{
-    font-size:14px!important;
-  }
-  .staff-status{
-    min-height:22px!important;
-    margin-top:7px!important;
-    padding:0 8px!important;
-    font-size:10.3px!important;
-  }
-  .section-divider{
-    height:1px!important;
-    margin:15px 0 14px!important;
-    background:#fff!important;
-  }
-  .service-pills{
-    gap:6px!important;
-  }
-  .service-pill{
-    min-height:36px!important;
-    height:36px!important;
-    border-radius:12px!important;
-    padding:5px 7px!important;
-    box-shadow:none!important;
-    border:0!important;
-    outline:0!important;
-    background:#f4f4f4!important;
-  }
-  .service-pill.is-active,
-  .service-pill.active,
-  .service-pill[aria-pressed="true"],
-  .service-pill[aria-selected="true"]{
-    background:#111!important;
-    color:#fff!important;
-  }
-  .service-name{
-    font-size:12px!important;
-  }
-  .service-meta{
-    font-size:9px!important;
-    margin-top:2px!important;
-  }
-  .slot-area{
-    padding-top:2px!important;
-  }
-  .slot-group{
-    margin-top:7px!important;
-  }
-  .slot-group:first-child{
-    margin-top:0!important;
-  }
-  .slot-group-title{
-    margin:0 0 6px!important;
-    font-size:9.5px!important;
-    letter-spacing:.15em!important;
-    line-height:1!important;
-  }
-  .times{
-    gap:6px!important;
-  }
-  .time-btn{
-    min-height:34px!important;
-    height:34px!important;
-    border-radius:11px!important;
-    font-size:12.2px!important;
-    padding:0 6px!important;
-    box-shadow:none!important;
-  }
-  .empty-state{
-    padding-top:2px!important;
-  }
-  .empty-title{
-    font-size:20px!important;
-    margin-bottom:4px!important;
-  }
-  .empty-sub{
-    font-size:12.5px!important;
-    margin-bottom:8px!important;
-  }
-  .empty-actions{
-    gap:7px!important;
-  }
-  .next-available-btn,.waitlist-btn{
-    min-height:36px!important;
-    height:36px!important;
-    border-radius:12px!important;
-    font-size:12px!important;
-  }
+
+  .staff-strip{gap:12px!important}
+  .staff-card{min-height:148px!important;border-radius:22px!important;padding:12px 8px 10px!important;box-shadow:0 8px 20px rgba(20,20,20,.05)!important}
+  .avatar{width:66px!important;height:66px!important;margin-bottom:8px!important}
+  .staff-name{font-size:14px!important}
+  .staff-status{min-height:22px!important;margin-top:7px!important;padding:0 8px!important;font-size:10.3px!important}
+  .section-divider{height:1px!important;margin:15px 0 14px!important;background:#fff!important}
+
+  .service-pills{gap:6px!important}
+  .service-pill{min-height:36px!important;height:36px!important;border-radius:12px!important;padding:5px 7px!important;box-shadow:none!important;border:0!important;outline:0!important;background:#f4f4f4!important}
+  .service-pill.is-active,.service-pill.active,.service-pill[aria-pressed="true"],.service-pill[aria-selected="true"]{background:#111!important;color:#fff!important}
+  .service-name{font-size:12px!important}
+  .service-meta{font-size:9px!important;margin-top:2px!important}
+
+  .slot-area{padding-top:2px!important}
+  .slot-group{margin-top:7px!important}
+  .slot-group:first-child{margin-top:0!important}
+  .slot-group-title{margin:0 0 6px!important;font-size:9.5px!important;letter-spacing:.15em!important;line-height:1!important}
+  .times{gap:6px!important}
+  .time-btn{min-height:34px!important;height:34px!important;border-radius:11px!important;font-size:12.2px!important;padding:0 6px!important;box-shadow:none!important}
+
+  .empty-state{padding-top:2px!important}
+  .empty-title{font-size:20px!important;margin-bottom:4px!important}
+  .empty-sub{font-size:12.5px!important;margin-bottom:8px!important}
+  .empty-actions{gap:7px!important}
+  .next-available-btn,.waitlist-btn{min-height:36px!important;height:36px!important;border-radius:12px!important;font-size:12px!important}
+
   .desktop-photo-wall-section{
     grid-area:photo!important;
     display:block!important;
@@ -524,10 +263,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     align-self:start!important;
     position:relative!important;
   }
-  .desktop-photo-wall-section::after{
-    display:none!important;
-    content:none!important;
-  }
+  .desktop-photo-wall-section::after{display:none!important;content:none!important}
   .desktop-photo-wall-section .bsu-team-wall,
   .desktop-photo-wall-section .staff-groups,
   .desktop-photo-wall-section .staff-group,
@@ -549,40 +285,17 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   .desktop-photo-wall-section .gallery-head,
   .desktop-photo-wall-section .staff-group-head,
   .desktop-photo-wall-section .bsu-filter-group,
-  .desktop-photo-wall-section .view-toggle{
-    display:none!important;
-  }
-  .desktop-photo-wall-section .staff-carousel-track{
-    height:100%!important;
-    align-items:stretch!important;
-    gap:3px!important;
-  }
-  .desktop-photo-wall-section .staff-carousel-item{
-    height:100%!important;
-    max-height:205px!important;
-    aspect-ratio:auto!important;
-    flex:0 0 calc((100% - 15px)/6)!important;
-    opacity:.9!important;
-  }
+  .desktop-photo-wall-section .view-toggle{display:none!important}
+  .desktop-photo-wall-section .staff-carousel-track{height:100%!important;align-items:stretch!important;gap:3px!important}
+  .desktop-photo-wall-section .staff-carousel-item{height:100%!important;max-height:205px!important;aspect-ratio:auto!important;flex:0 0 calc((100% - 15px)/6)!important;opacity:.9!important}
   .desktop-photo-wall-section .staff-carousel-item img,
-  .desktop-photo-wall-section img{
-    width:100%!important;
-    height:100%!important;
-    object-fit:cover!important;
-  }
+  .desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
 }
 
 @media(max-width:599px){
-  .date-sticky-spacer{
-    display:none!important;
-    height:0!important;
-    min-height:0!important;
-  }
-  .bsu-date-placeholder,
-  .bsu-staff-label-placeholder,
-  .bsu-staff-strip-placeholder{
-    display:none!important;
-  }
+  .date-sticky-spacer{display:none!important;height:0!important;min-height:0!important}
+  .bsu-date-placeholder,.bsu-staff-label-placeholder,.bsu-staff-strip-placeholder{display:none!important}
+
   .bsu-mobile-sticky-date-staff{
     position:sticky!important;
     top:0!important;
@@ -602,37 +315,21 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     margin:0 0 10px!important;
     transform:none!important;
   }
-  .bsu-mobile-sticky-staff-only{
-    width:100%!important;
-    margin:0!important;
-    padding:0!important;
-    background:#fff!important;
-  }
-  .bsu-mobile-sticky-staff-only .section-label{
-    margin:0 2px 8px!important;
-  }
-  .bsu-mobile-sticky-staff-only .staff-strip{
-    padding-bottom:6px!important;
-  }
-  .desktop-service-panel,.desktop-right-panel{
-    display:contents!important;
-  }
+  .bsu-mobile-sticky-staff-only{width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
+  .bsu-mobile-sticky-staff-only .section-label{margin:0 2px 8px!important}
+  .bsu-mobile-sticky-staff-only .staff-strip{padding-bottom:6px!important}
+
+  .desktop-service-panel,.desktop-right-panel{display:contents!important}
   .desktop-right-panel .slot-area,
   .desktop-right-panel .empty-state,
   .desktop-results-area .slot-area,
   .slot-area,
-  .desktop-results-area .empty-state{
-    min-height:150px!important;
-  }
-  .bsu-availability-loading-frame{
-    min-height:150px!important;
-  }
-  .bsu-loading-times{
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-  }
-  .bsu-loading-chip{
-    height:34px!important;
-  }
+  .desktop-results-area .empty-state{min-height:150px!important}
+
+  .bsu-availability-loading-frame{min-height:150px!important}
+  .bsu-loading-times{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .bsu-loading-chip{height:34px!important}
+
   .desktop-photo-wall-section{
     display:block!important;
     width:100%!important;
@@ -650,9 +347,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   .desktop-photo-wall-section .gallery-head,
   .desktop-photo-wall-section .staff-group-head,
   .desktop-photo-wall-section .bsu-filter-group,
-  .desktop-photo-wall-section .view-toggle{
-    display:none!important;
-  }
+  .desktop-photo-wall-section .view-toggle{display:none!important}
   .desktop-photo-wall-section .bsu-team-wall,
   .desktop-photo-wall-section .staff-groups,
   .desktop-photo-wall-section .staff-group,
@@ -681,9 +376,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     touch-action:pan-x pan-y!important;
     scroll-behavior:auto!important;
   }
-  .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{
-    display:none!important;
-  }
+  .desktop-photo-wall-section .staff-carousel-track::-webkit-scrollbar{display:none!important}
   .desktop-photo-wall-section .staff-carousel-item{
     height:220px!important;
     max-height:220px!important;
@@ -694,80 +387,31 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     overflow:hidden!important;
   }
   .desktop-photo-wall-section .staff-carousel-item img,
-  .desktop-photo-wall-section img{
-    width:100%!important;
-    height:100%!important;
-    object-fit:cover!important;
-  }
-  .desktop-photo-wall-section::before{
-    display:none!important;
-    content:none!important;
-  }
+  .desktop-photo-wall-section img{width:100%!important;height:100%!important;object-fit:cover!important}
+  .desktop-photo-wall-section::before{display:none!important;content:none!important}
 }
 
 @media(max-width:900px){
-  .pasadena-header{
-    padding:18px 22px 20px!important;
-    border-radius:24px!important;
-  }
-  .pasadena-title{
-    font-size:clamp(29px,6.2vw,38px)!important;
-  }
-  .pasadena-address{
-    font-size:12.5px!important;
-  }
+  .pasadena-header{padding:18px 22px 20px!important;border-radius:24px!important}
+  .pasadena-title{font-size:clamp(29px,6.2vw,38px)!important}
+  .pasadena-address{font-size:12.5px!important}
 }
+
 @media(max-width:600px){
-  .page{
-    padding:8px 10px 26px!important;
-  }
-  .pasadena-header{
-    padding:16px 15px 16px!important;
-    border-radius:21px!important;
-    row-gap:7px!important;
-    margin-bottom:12px!important;
-  }
-  .pasadena-title{
-    font-size:clamp(27px,9.4vw,36px)!important;
-    line-height:.98!important;
-  }
-  .pasadena-open{
-    min-height:27px!important;
-    padding:0 10px!important;
-    font-size:11.7px!important;
-  }
-  .pasadena-address{
-    font-size:12.3px!important;
-    line-height:1.35!important;
-  }
-  .pasadena-links{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:8px!important;
-    width:100%!important;
-    margin-top:3px!important;
-  }
-  .pasadena-links a{
-    width:100%!important;
-    min-height:36px!important;
-    padding:0 8px!important;
-    font-size:11.5px!important;
-    text-align:center!important;
-  }
-  .desktop-photo-wall-section{
-    height:220px!important;
-    max-height:220px!important;
-    border-radius:22px!important;
-  }
+  .page{padding:8px 10px 26px!important}
+  .pasadena-header{padding:16px 15px 16px!important;border-radius:21px!important;row-gap:7px!important;margin-bottom:12px!important}
+  .pasadena-title{font-size:clamp(27px,9.4vw,36px)!important;line-height:.98!important}
+  .pasadena-open{min-height:27px!important;padding:0 10px!important;font-size:11.7px!important}
+  .pasadena-address{font-size:12.3px!important;line-height:1.35!important}
+  .pasadena-links{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;width:100%!important;margin-top:3px!important}
+  .pasadena-links a{width:100%!important;min-height:36px!important;padding:0 8px!important;font-size:11.5px!important;text-align:center!important}
+  .desktop-photo-wall-section{height:220px!important;max-height:220px!important;border-radius:22px!important}
   .desktop-photo-wall-section .bsu-team-wall,
   .desktop-photo-wall-section .staff-groups,
   .desktop-photo-wall-section .staff-group,
   .desktop-photo-wall-section .staff-carousel,
   .desktop-photo-wall-section .staff-carousel-track,
-  .desktop-photo-wall-section .staff-carousel-item{
-    height:220px!important;
-    max-height:220px!important;
-  }
+  .desktop-photo-wall-section .staff-carousel-item{height:220px!important;max-height:220px!important}
 }
 `;
 
@@ -793,28 +437,103 @@ function isMobile(){
   return window.innerWidth<600;
 }
 
+function getStaffPanel(){
+  var strip=document.querySelector(".staff-strip");
+  var booking=document.querySelector(".booking-layout");
+  if(!strip||!booking)return null;
+
+  var node=strip;
+  while(node&&node.parentElement){
+    if(node.parentElement===booking){
+      return node;
+    }
+    if(node.classList&&node.classList.contains("bsu-mobile-sticky-staff-only")){
+      break;
+    }
+    node=node.parentElement;
+  }
+
+  var panel=document.querySelector(".bsu-desktop-staff-panel");
+  if(panel)return panel;
+
+  return strip.closest("div");
+}
+
+function restoreDesktopLayout(){
+  if(isMobile())return;
+
+  var booking=document.querySelector(".booking-layout");
+  var dateArea=document.querySelector(".date-area");
+  var staffStrip=document.querySelector(".staff-strip");
+  var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
+  var staffOnly=document.querySelector(".bsu-mobile-sticky-staff-only");
+
+  if(!booking||!dateArea||!staffStrip)return;
+
+  var staffPanel=getStaffPanel();
+
+  if(stickyWrap){
+    var staffLabel=stickyWrap.querySelector(".section-label");
+    var stickyStaffStrip=stickyWrap.querySelector(".staff-strip");
+
+    if(staffOnly){
+      staffOnly.remove();
+    }
+
+    if(staffLabel&&staffPanel&&staffLabel.parentNode!==staffPanel){
+      staffPanel.insertBefore(staffLabel,staffPanel.firstChild);
+    }
+
+    if(stickyStaffStrip&&staffPanel&&stickyStaffStrip.parentNode!==staffPanel){
+      staffPanel.appendChild(stickyStaffStrip);
+    }
+
+    stickyWrap.remove();
+  }
+
+  if(staffPanel){
+    staffPanel.classList.add("bsu-desktop-staff-panel");
+
+    if(staffPanel.parentNode!==booking){
+      booking.appendChild(staffPanel);
+    }
+  }
+
+  if(dateArea.parentNode!==booking){
+    booking.insertBefore(dateArea,booking.firstChild);
+  }
+
+  if(staffPanel&&staffPanel.parentNode===booking&&dateArea.nextSibling!==staffPanel){
+    booking.insertBefore(staffPanel,dateArea.nextSibling);
+  }
+
+  document.querySelectorAll(".bsu-date-placeholder,.bsu-staff-label-placeholder,.bsu-staff-strip-placeholder").forEach(function(el){
+    el.remove();
+  });
+}
+
 function restoreMobileStickyParts(){
   var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
   if(!stickyWrap)return;
 
+  var booking=document.querySelector(".booking-layout");
   var dateArea=stickyWrap.querySelector(".date-area");
   var staffLabel=stickyWrap.querySelector(".section-label");
   var staffStrip=stickyWrap.querySelector(".staff-strip");
+  var staffPanel=getStaffPanel();
 
-  var datePlaceholder=document.querySelector(".bsu-date-placeholder");
-  var staffLabelPlaceholder=document.querySelector(".bsu-staff-label-placeholder");
-  var staffStripPlaceholder=document.querySelector(".bsu-staff-strip-placeholder");
-
-  if(dateArea&&datePlaceholder&&datePlaceholder.parentNode){
-    datePlaceholder.parentNode.insertBefore(dateArea,datePlaceholder.nextSibling);
+  if(booking&&dateArea){
+    booking.insertBefore(dateArea,booking.firstChild);
   }
 
-  if(staffLabel&&staffLabelPlaceholder&&staffLabelPlaceholder.parentNode){
-    staffLabelPlaceholder.parentNode.insertBefore(staffLabel,staffLabelPlaceholder.nextSibling);
-  }
+  if(staffPanel){
+    if(staffLabel){
+      staffPanel.insertBefore(staffLabel,staffPanel.firstChild);
+    }
 
-  if(staffStrip&&staffStripPlaceholder&&staffStripPlaceholder.parentNode){
-    staffStripPlaceholder.parentNode.insertBefore(staffStrip,staffStripPlaceholder.nextSibling);
+    if(staffStrip){
+      staffPanel.appendChild(staffStrip);
+    }
   }
 
   stickyWrap.remove();
@@ -822,7 +541,7 @@ function restoreMobileStickyParts(){
 
 function setupMobileStickyDateAndStaff(){
   if(!isMobile()){
-    restoreMobileStickyParts();
+    restoreDesktopLayout();
     return;
   }
 
@@ -1257,7 +976,7 @@ function moveServicesForDesktop(){
   var desktop=!isMobile();
 
   var serviceLabel=Array.from(document.querySelectorAll(".section-label")).find(function(el){
-    return /services/i.test(el.textContent||"")&&!el.closest(".desktop-service-panel");
+    return /services/i.test(el.textContent||"")&&!el.closest(".desktop-service-panel")&&!el.closest(".bsu-mobile-sticky-date-staff");
   })||document.querySelector(".desktop-service-panel .section-label");
 
   var message=document.querySelector(".message");
@@ -1378,6 +1097,7 @@ function markNextAvailableClick(){
 
 function runFixes(){
   setupMobileStickyDateAndStaff();
+  restoreDesktopLayout();
   moveServicesForDesktop();
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
@@ -1399,7 +1119,10 @@ setTimeout(runFixes,2500);
 var observer=new MutationObserver(runFixes);
 observer.observe(document.body,{childList:true,subtree:true,characterData:true});
 
-window.addEventListener("resize",runFixes);
+window.addEventListener("resize",function(){
+  setTimeout(runFixes,50);
+  setTimeout(runFixes,250);
+});
 
 document.addEventListener("click",function(){
   setTimeout(runFixes,50);
