@@ -170,6 +170,34 @@ async function squareFetchJson(url, options) {
   return { response, data };
 }
 
+async function updateCustomerContact(squareHeaders, customerId, customerInfo) {
+  if (!customerId) return;
+
+  const { givenName, familyName, cleanEmail, cleanPhone } = customerInfo;
+
+  try {
+    const { response, data } = await squareFetchJson(
+      `https://connect.squareup.com/v2/customers/${encodeURIComponent(customerId)}`,
+      {
+        method: "PUT",
+        headers: squareHeaders,
+        body: JSON.stringify({
+          given_name: givenName,
+          family_name: familyName,
+          email_address: cleanEmail,
+          phone_number: cleanPhone
+        })
+      }
+    );
+
+    if (!response.ok) {
+      console.warn("Square customer contact update failed.", data);
+    }
+  } catch (error) {
+    console.warn("Square customer contact update failed.", error);
+  }
+}
+
 async function getDoNotBookGroupId(squareHeaders) {
   if (DO_NOT_BOOK_GROUP_ID) {
     return DO_NOT_BOOK_GROUP_ID;
@@ -597,6 +625,13 @@ export default async function handler(req, res) {
       });
     }
 
+    await updateCustomerContact(squareHeaders, customerId, {
+      givenName,
+      familyName,
+      cleanEmail,
+      cleanPhone
+    });
+
     const selectedSegment =
       exactAvailability.appointment_segments &&
       exactAvailability.appointment_segments.length > 0
@@ -632,6 +667,10 @@ export default async function handler(req, res) {
     });
 
     const bookingNoteParts = [];
+
+    bookingNoteParts.push(`Customer: ${cleanName}`);
+    bookingNoteParts.push(`Phone: ${cleanPhone}`);
+    bookingNoteParts.push(`Email: ${cleanEmail}`);
 
     if (customerNote) {
       bookingNoteParts.push(`Note from customer: ${customerNote}`);
