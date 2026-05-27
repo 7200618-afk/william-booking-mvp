@@ -2,6 +2,33 @@ import { LOCATION_ID, STAFF_DATA } from "../staff-config.js";
 
 const TIME_ZONE = "America/Los_Angeles";
 const SQUARE_API_VERSION = "2026-01-22";
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
+  "https://pasadena.bsideuhair.com,https://william-booking-mvp.vercel.app")
+  .split(",")
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+function isAllowedOrigin(req) {
+  const origin = req.headers.origin;
+
+  if (!origin) return true;
+  return ALLOWED_ORIGINS.includes(origin);
+}
+
+function isValidIsoDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ""))) return false;
+  const date = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function getSquareErrorMessage(data, fallback) {
+  const detail =
+    data?.errors?.[0]?.detail ||
+    data?.errors?.[0]?.field ||
+    data?.errors?.[0]?.code;
+
+  return detail || fallback;
+}
 
 function addDaysToIsoDate(isoDate, days) {
   const d = new Date(`${isoDate}T00:00:00Z`);
@@ -94,6 +121,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed. Use POST." });
   }
 
+  if (!isAllowedOrigin(req)) {
+    return res.status(403).json({ error: "Request origin is not allowed." });
+  }
+
   try {
     const { staffKey, serviceType, date } = req.body || {};
 
@@ -101,6 +132,10 @@ export default async function handler(req, res) {
       return res.status(400).json({
         error: "Missing staffKey, serviceType, or date."
       });
+    }
+
+    if (!isValidIsoDate(date)) {
+      return res.status(400).json({ error: "Invalid date." });
     }
 
     const staff = STAFF_DATA[staffKey];
@@ -117,11 +152,11 @@ export default async function handler(req, res) {
 
     if (!process.env.SQUARE_ACCESS_TOKEN) {
       return res.status(500).json({
-        error: "Missing SQUARE_ACCESS_TOKEN environment variable."
+        error: "Booking service is not configured."
       });
     }
 
-    const { startAt, endAt, isToday, todayLosAngeles } = getSearchRangeForDate(date);
+    const { startAt, endAt, isToday } = getSearchRangeForDate(date);
 
     const squareHeaders = {
       "Square-Version": SQUARE_API_VERSION,
@@ -162,20 +197,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       return res.status(response.status).json({
-        error: data?.errors?.[0]?.detail || "Failed to search availability.",
-        square: data,
-        debug: {
-          staffKey,
-          serviceType,
-          date,
-          todayLosAngeles,
-          isToday,
-          startAt,
-          endAt,
-          locationId: LOCATION_ID,
-          teamMemberId: staff.team_member_id,
-          serviceVariationId: service.service_variation_id
-        }
+        error: getSquareErrorMessage(data, "Failed to search availability.")
       });
     }
 
@@ -184,23 +206,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       availabilities: filtered,
-      errors: data.errors || [],
-      debug: {
-        staffKey,
-        serviceType,
-        date,
-        todayLosAngeles,
-        isToday,
-        startAt,
-        endAt,
-        squareReturnedCount: rawAvailabilities.length,
-        filteredCount: filtered.length,
-        firstRawStartAt: rawAvailabilities[0]?.start_at || null,
-        firstFilteredStartAt: filtered[0]?.start_at || null,
-        locationId: LOCATION_ID,
-        teamMemberId: staff.team_member_id,
-        serviceVariationId: service.service_variation_id
-      }
+      errors: data.errors || []
     });
   } catch (error) {
     return res.status(500).json({
