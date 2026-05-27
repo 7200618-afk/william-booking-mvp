@@ -403,6 +403,13 @@ export default async function handler(req, res) {
 
     const normalizedStartAt = new Date(selectedTimeMs).toISOString();
 
+    if (selectedTimeMs <= Date.now() + 60 * 1000) {
+      return res.status(409).json({
+        error:
+          "Sorry, this time has already passed. Please choose another available time."
+      });
+    }
+
     bookingLockKey = [
       LOCATION_ID,
       staff.team_member_id,
