@@ -170,34 +170,6 @@ async function squareFetchJson(url, options) {
   return { response, data };
 }
 
-async function updateCustomerContact(squareHeaders, customerId, customerInfo) {
-  if (!customerId) return;
-
-  const { givenName, familyName, cleanEmail, cleanPhone } = customerInfo;
-
-  try {
-    const { response, data } = await squareFetchJson(
-      `https://connect.squareup.com/v2/customers/${encodeURIComponent(customerId)}`,
-      {
-        method: "PUT",
-        headers: squareHeaders,
-        body: JSON.stringify({
-          given_name: givenName,
-          family_name: familyName,
-          email_address: cleanEmail,
-          phone_number: cleanPhone
-        })
-      }
-    );
-
-    if (!response.ok) {
-      console.warn("Square customer contact update failed.", data);
-    }
-  } catch (error) {
-    console.warn("Square customer contact update failed.", error);
-  }
-}
-
 async function getDoNotBookGroupId(squareHeaders) {
   if (DO_NOT_BOOK_GROUP_ID) {
     return DO_NOT_BOOK_GROUP_ID;
@@ -625,13 +597,6 @@ export default async function handler(req, res) {
       });
     }
 
-    await updateCustomerContact(squareHeaders, customerId, {
-      givenName,
-      familyName,
-      cleanEmail,
-      cleanPhone
-    });
-
     const selectedSegment =
       exactAvailability.appointment_segments &&
       exactAvailability.appointment_segments.length > 0
@@ -710,6 +675,13 @@ export default async function handler(req, res) {
           createBookingData,
           "Booking failed. Please choose another time."
         )
+      });
+    }
+
+    if (!createBookingData.booking?.id) {
+      console.warn("Square booking response did not include a booking id.", createBookingData);
+      return res.status(502).json({
+        error: "Booking could not be confirmed. Please choose another time."
       });
     }
 
