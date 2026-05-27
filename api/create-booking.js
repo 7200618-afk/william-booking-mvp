@@ -1,5 +1,16 @@
-import { randomUUID } from "crypto";
+import { createHash } from "crypto";
 import { LOCATION_ID, STAFF_DATA } from "../staff-config.js";
+
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
+  "https://pasadena.bsideuhair.com,https://william-booking-mvp.vercel.app")
+  .split(",")
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 8;
+const rateLimitBuckets = globalThis.__BSU_BOOKING_RATE_LIMITS__ || new Map();
+globalThis.__BSU_BOOKING_RATE_LIMITS__ = rateLimitBuckets;
 
 const BOOKING_LOCK_TTL_MS = 15 * 1000;
 const bookingLocks = globalThis.__BSU_BOOKING_LOCKS__ || new Map();
@@ -19,6 +30,53 @@ const DO_NOT_BOOK_GROUP_NAME = String(
 let cachedDoNotBookGroupId = DO_NOT_BOOK_GROUP_ID || null;
 let cachedDoNotBookGroupFetchedAt = 0;
 const DO_NOT_BOOK_GROUP_CACHE_MS = 10 * 60 * 1000;
+
+function getClientIp(req) {
+  const forwardedFor = req.headers["x-forwarded-for"];
+  const firstForwarded = Array.isArray(forwardedFor)
+    ? forwardedFor[0]
+    : String(forwardedFor || "").split(",")[0];
+
+  return (
+    firstForwarded.trim() ||
+    req.headers["x-real-ip"] ||
+    req.socket?.remoteAddress ||
+    "unknown"
+  );
+}
+
+function isAllowedOrigin(req) {
+  const origin = req.headers.origin;
+
+  if (!origin) return true;
+  return ALLOWED_ORIGINS.includes(origin);
+}
+
+function isRateLimited(req) {
+  const ip = getClientIp(req);
+  const now = Date.now();
+  const bucket = rateLimitBuckets.get(ip) || {
+    count: 0,
+    resetAt: now + RATE_LIMIT_WINDOW_MS
+  };
+
+  if (now > bucket.resetAt) {
+    bucket.count = 0;
+    bucket.resetAt = now + RATE_LIMIT_WINDOW_MS;
+  }
+
+  bucket.count += 1;
+  rateLimitBuckets.set(ip, bucket);
+
+  return bucket.count > RATE_LIMIT_MAX_REQUESTS;
+}
+
+function stableIdempotencyKey(parts) {
+  return createHash("sha256")
+    .update(parts.map(part => String(part || "").trim()).join("|"))
+    .digest("hex")
+    .slice(0, 45);
+}
 
 function cleanupExpiredBookingLocks() {
   const now = Date.now();
@@ -292,6 +350,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed. Use POST." });
   }
 
+  if (!isAllowedOrigin(req)) {
+    return res.status(403).json({ error: "Request origin is not allowed." });
+  }
+
+  if (isRateLimited(req)) {
+    return res.status(429).json({
+      error: "Too many booking attempts. Please wait a minute and try again."
+    });
+  }
+
   try {
     const {
       staffKey,
@@ -355,6 +423,12 @@ export default async function handler(req, res) {
       });
     }
 
+    if (!process.env.SQUARE_ACCESS_TOKEN) {
+      return res.status(500).json({
+        error: "Booking service is not configured."
+      });
+    }
+
     const squareHeaders = {
       "Square-Version": "2026-01-22",
       Authorization: `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`,
@@ -364,6 +438,14 @@ export default async function handler(req, res) {
     const cleanEmail = normalizeEmail(customerEmail);
     const cleanPhone = normalizePhone(customerPhone);
     const cleanName = String(customerName || "").trim();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return res.status(400).json({ error: "Please enter a valid email." });
+    }
+
+    if (cleanPhone.replace(/\D/g, "").length < 7) {
+      return res.status(400).json({ error: "Please enter a valid phone number." });
+    }
 
     const matchingCustomers = await findMatchingCustomers(
       squareHeaders,
@@ -429,8 +511,7 @@ export default async function handler(req, res) {
         error: getSquareErrorMessage(
           availabilityData,
           "Unable to confirm availability. Please try again."
-        ),
-        square: availabilityData
+        )
       });
     }
 
@@ -474,7 +555,13 @@ export default async function handler(req, res) {
           method: "POST",
           headers: squareHeaders,
           body: JSON.stringify({
-            idempotency_key: randomUUID(),
+            idempotency_key: stableIdempotencyKey([
+              "customer",
+              cleanEmail,
+              cleanPhone,
+              givenName,
+              familyName
+            ]),
             given_name: givenName,
             family_name: familyName,
             email_address: cleanEmail,
@@ -490,8 +577,7 @@ export default async function handler(req, res) {
           error: getSquareErrorMessage(
             createCustomerData,
             "Unable to create customer. Please try again."
-          ),
-          square: createCustomerData
+          )
         });
       }
 
@@ -554,7 +640,15 @@ export default async function handler(req, res) {
         method: "POST",
         headers: squareHeaders,
         body: JSON.stringify({
-          idempotency_key: randomUUID(),
+          idempotency_key: stableIdempotencyKey([
+            "booking",
+            LOCATION_ID,
+            staffKey,
+            serviceType,
+            exactAvailability.start_at,
+            cleanEmail,
+            cleanPhone
+          ]),
           booking: {
             customer_id: customerId,
             location_id: LOCATION_ID,
@@ -573,8 +667,7 @@ export default async function handler(req, res) {
         error: getSquareErrorMessage(
           createBookingData,
           "Booking failed. Please choose another time."
-        ),
-        square: createBookingData
+        )
       });
     }
 
