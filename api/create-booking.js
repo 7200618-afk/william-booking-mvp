@@ -668,10 +668,6 @@ export default async function handler(req, res) {
 
     const bookingNoteParts = [];
 
-    bookingNoteParts.push(`Customer: ${cleanName}`);
-    bookingNoteParts.push(`Phone: ${cleanPhone}`);
-    bookingNoteParts.push(`Email: ${cleanEmail}`);
-
     if (customerNote) {
       bookingNoteParts.push(`Note from customer: ${customerNote}`);
     }
