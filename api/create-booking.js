@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { createHash, randomUUID } from "crypto";
 import { LOCATION_ID, STAFF_DATA } from "../staff-config.js";
 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS ||
@@ -647,15 +647,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: squareHeaders,
         body: JSON.stringify({
-          idempotency_key: stableIdempotencyKey([
-            "booking",
-            LOCATION_ID,
-            staffKey,
-            serviceType,
-            exactAvailability.start_at,
-            cleanEmail,
-            cleanPhone
-          ]),
+          idempotency_key: randomUUID(),
           booking: {
             customer_id: customerId,
             location_id: LOCATION_ID,
