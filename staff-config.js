@@ -42,7 +42,7 @@ export const STAFF_DATA = {
   Ryan: {
     name: "Ryan",
     order: 2,
-    days: ["mon", "tue", "thu", "fri", "sat", "sun"],
+    days: ["mon", "tue", "thu", "fri"],
     image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/123121212_1764920283.JPG?width=400&optimize=medium",
     team_member_id: "TMm7W1ZmprhAbD-Q",
     defaultService: "haircut",
