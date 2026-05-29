@@ -219,10 +219,10 @@ ${williamSource}${body.trimStart()}];`;
         const cacheKey = getStatusCacheKey(key, statusServiceKey, date);
         const cached = staffStatusCache[cacheKey];
 
-        if (!workingToday) {
-          notWorking.push(key);
-          return;
-        }
+        if (!workingToday && !(cached && cached.hasOpening)) {
+  notWorking.push(key);
+  return;
+}
 
         if (isJacob) {
           jacobWorking.push(key);
@@ -693,7 +693,7 @@ let mobilePhotoWallSignature="";
 let lastSelectedBookingLabel="";
 
 const POLICY_URL="https://www.bsideuhair.com/appointment-policy";
-const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","thu","fri","sat","sun"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
+const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","wed","thu","fri"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function setImportantDisplay(el,value){if(!el)return;el.style.setProperty("display",value,"important")}
