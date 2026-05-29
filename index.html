@@ -376,9 +376,6 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   will-change:transform!important;
 }
 
-.desktop-photo-wall-section .bsu-william-photo-wall-item{
-  cursor:pointer!important;
-}
 
 @media(max-width:599px){
   .desktop-photo-wall-section .staff-carousel{
@@ -1638,99 +1635,12 @@ function markNextAvailableClick(){
 
 
 
-function getWilliamPhotoSources(){
-  var sources=[];
-
-  try{
-    var candidateGlobals=[window.STAFF_DATA,window.staffData,window.BSU_STAFF_DATA,window.__STAFF_DATA__];
-    candidateGlobals.forEach(function(data){
-      if(!data)return;
-      var william=data.william||data.William||data.WILLIAM;
-      if(!william)return;
-      [william.gallery,william.photos,william.images,william.portfolio,william.photoWall,william.photo_wall].forEach(function(list){
-        if(Array.isArray(list)){
-          list.forEach(function(item){
-            var src=typeof item==="string"?item:(item&&(item.src||item.url||item.image||item.imageUrl));
-            if(src&&sources.indexOf(src)===-1)sources.push(src);
-          });
-        }
-      });
-      [william.avatar,william.avatarUrl,william.image,william.imageUrl,william.photo].forEach(function(src){
-        if(src&&sources.indexOf(src)===-1)sources.push(src);
-      });
-    });
-  }catch(e){}
-
-  document.querySelectorAll(".staff-item,.staff-card").forEach(function(card){
-    var nameEl=card.querySelector(".staff-name");
-    var name=(nameEl&&nameEl.textContent?nameEl.textContent.trim():"");
-    if(!/^william$/i.test(name))return;
-    card.querySelectorAll("img").forEach(function(img){
-      var src=img.currentSrc||img.src||img.getAttribute("src")||"";
-      if(src&&sources.indexOf(src)===-1)sources.push(src);
-    });
-  });
-
-  return sources;
-}
-
-function ensureWilliamPhotoWall(){
-  var selected=getSelectedStaffName();
-  if(!/^william$/i.test(selected||""))return;
-
-  var parts=getPhotoWallParts();
-  if(!parts)return;
-
-  var track=parts.track;
-  var baseItems=getBasePhotoWallItems(track);
-  var visibleBaseItems=baseItems.filter(function(item){
-    var img=item.querySelector&&item.querySelector("img");
-    var src=img?(img.currentSrc||img.src||img.getAttribute("src")||""):"";
-    return !!src;
-  });
-
-  var hasWilliamWall=track.dataset.bsuWilliamWall==="1";
-  if(visibleBaseItems.length>=2&&hasWilliamWall)return;
-
-  var sources=getWilliamPhotoSources();
-  if(!sources.length)return;
-
-  removePhotoWallClones(track);
-  track.innerHTML="";
-
-  var repeat=Math.max(6,sources.length);
-  for(var i=0;i<repeat;i++){
-    var src=sources[i%sources.length];
-    var item=document.createElement("div");
-    item.className="staff-carousel-item bsu-william-photo-wall-item";
-    item.setAttribute("data-staff","William");
-    item.setAttribute("data-staff-name","William");
-
-    var img=document.createElement("img");
-    img.src=src;
-    img.alt="William portfolio photo";
-    img.loading="lazy";
-    img.decoding="async";
-    img.draggable=false;
-
-    item.appendChild(img);
-    track.appendChild(item);
-  }
-
-  track.dataset.bsuWilliamWall="1";
-  track.dataset.bsuWallSignature="";
-  track.dataset.bsuWallX="0";
-  rebuildPhotoWallClones(track);
-  schedulePhotoWallAutoScroll();
-}
-
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
-  ensureWilliamPhotoWall();
   movePhotoWall();
   waitForMobilePhotoWallReady();
   bindMobilePhotoWallImageLoadStart();
