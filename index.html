@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -47,6 +46,18 @@ ${williamSource}${body.trimStart()}];`;
         );
 
         html=html.replace(
+          /if \(!response\.ok\) return \[\];/g,
+          `if (!response.ok) {
+        throw new Error(data.error || "Unable to load availability.");
+      }`
+        );
+
+        html=html.replace(
+          /messageEl\.textContent = "Network error: " \+ error\.message;/g,
+          `messageEl.textContent = "Booking system is temporarily unavailable. Please refresh or call the salon.";`
+        );
+
+        html=html.replace(
           /let heldScrollPosition = null;/,
           `let heldScrollPosition = null;
     let hasUserSelectedStaff = false;
@@ -60,11 +71,22 @@ ${williamSource}${body.trimStart()}];`;
       statusRequestId++;
       updateDateUI();
       staffStatusCache = {};
-      hasUserSelectedStaff = false;
-      initialStaffAutoSelectDone = false;
+
+      const lockedStaffKey = selectedStaffKey;
+      const lockedServiceKey = selectedServiceKey;
 
       if (window.__bsuKeepCurrentStaffOnNextAvailable) {
         window.__bsuKeepCurrentStaffOnNextAvailable = false;
+      }
+
+      if (lockedStaffKey && STAFF_DATA[lockedStaffKey]) {
+        selectedStaffKey = lockedStaffKey;
+        selectedServiceKey =
+          lockedServiceKey && STAFF_DATA[lockedStaffKey].services[lockedServiceKey]
+            ? lockedServiceKey
+            : STAFF_DATA[lockedStaffKey].defaultService;
+        hasUserSelectedStaff = true;
+        initialStaffAutoSelectDone = true;
       } else {
         selectBestDefaultStaff();
       }
@@ -220,9 +242,9 @@ ${williamSource}${body.trimStart()}];`;
         const cached = staffStatusCache[cacheKey];
 
         if (!workingToday && !(cached && cached.hasOpening)) {
-  notWorking.push(key);
-  return;
-}
+          notWorking.push(key);
+          return;
+        }
 
         if (isJacob) {
           jacobWorking.push(key);
@@ -354,6 +376,50 @@ ${williamSource}${body.trimStart()}];`;
       setTimeout(scrollSelectedStaffIntoView, 80);`
         );
 
+        html=html.replace(
+          /nextAvailableBtn\.addEventListener\("click", \(\) => \{\s*if \(!nextAvailableTargetDate\) return;\s*currentDate = new Date\(nextAvailableTargetDate\);\s*refreshForDateChange\(\);\s*\}\);/,
+          `nextAvailableBtn.addEventListener("click", () => {
+      if (!nextAvailableTargetDate) return;
+
+      const lockedStaffKey = selectedStaffKey;
+      const lockedServiceKey = selectedServiceKey;
+
+      currentDate = new Date(nextAvailableTargetDate);
+      availabilityRequestId++;
+      statusRequestId++;
+      updateDateUI();
+      staffStatusCache = {};
+      hasUserSelectedStaff = true;
+      initialStaffAutoSelectDone = true;
+
+      if (lockedStaffKey && STAFF_DATA[lockedStaffKey]) {
+        selectedStaffKey = lockedStaffKey;
+        selectedServiceKey =
+          lockedServiceKey && STAFF_DATA[lockedStaffKey].services[lockedServiceKey]
+            ? lockedServiceKey
+            : STAFF_DATA[lockedStaffKey].defaultService;
+      } else {
+        selectBestDefaultStaff();
+      }
+
+      renderStaffStrip(true);
+      renderServicePills();
+
+      const galleryStaffName = STAFF_DATA[selectedStaffKey]?.name || selectedStaffKey;
+      window.bsuInitialGalleryStaff = galleryStaffName;
+      if (window.bsuSetGalleryStaff) {
+        setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 0);
+        setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 250);
+      }
+
+      clearResults();
+      searchAvailability();
+      if (window.innerWidth >= 600) {
+        setTimeout(scrollSelectedStaffIntoView, 120);
+      }
+    });`
+        );
+
         const customCss=`
 /* B SIDE U Pasadena V63 - photo wall auto-scroll with popup click restored */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
@@ -375,7 +441,6 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   transition:none!important;
   will-change:transform!important;
 }
-
 
 @media(max-width:599px){
   .desktop-photo-wall-section .staff-carousel{
@@ -605,11 +670,14 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 @media(min-width:600px){
 .page{max-width:1120px!important;padding:16px 22px 48px!important}
-.booking-layout{display:grid!important;grid-template-columns:minmax(390px,430px) minmax(0,600px)!important;grid-template-areas:"date date" "left right" "photo photo"!important;grid-template-rows:auto auto auto!important;gap:12px 44px!important;align-items:start!important;justify-content:center!important}
-.date-area{grid-area:date!important;width:100%!important;margin:0!important;position:relative!important;top:auto!important;left:auto!important;transform:none!important}
+.booking-layout{display:grid!important;grid-template-columns:minmax(390px,430px) minmax(0,600px)!important;grid-template-areas:"left right" "photo photo"!important;grid-template-rows:auto auto!important;gap:12px 44px!important;align-items:start!important;justify-content:center!important}
+.date-area{width:100%!important;margin:0 0 12px!important;position:relative!important;top:auto!important;left:auto!important;transform:none!important}
 .booking-layout>div:nth-child(2){grid-area:left!important;padding:16px!important;border-radius:26px!important}
 .desktop-results-area{display:contents!important}
 .desktop-right-panel{grid-area:right!important;display:flex!important;flex-direction:column!important;align-self:start!important;justify-self:start!important;width:100%!important;max-width:600px!important;margin:0!important;padding:0!important;border-radius:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.desktop-service-panel{order:1!important}
+.desktop-right-panel .date-area{order:2!important;margin:0 0 12px!important}
+.desktop-right-panel .slot-area,.desktop-right-panel .empty-state{order:3!important}
 .desktop-service-panel{display:block!important;width:100%!important;margin:0 0 18px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
 .desktop-service-panel .section-label{margin:0 2px 7px!important}
 .desktop-service-panel .service-pills{gap:6px!important}
@@ -651,6 +719,8 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 .bsu-mobile-sticky-staff-only{width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
 .bsu-mobile-sticky-staff-only .section-label{margin:0 2px 8px!important}
 .bsu-mobile-sticky-staff-only .staff-strip{padding-bottom:6px!important}
+.bsu-slot-date-wrap{width:100%!important;margin:0 0 10px!important}
+.bsu-slot-date-wrap .date-area,.bsu-slot-date-wrap .date-area.is-fixed-fallback{position:relative!important;top:auto!important;left:auto!important;width:100%!important;z-index:auto!important;margin:0!important;transform:none!important}
 .desktop-service-panel,.desktop-right-panel{display:contents!important}
 .desktop-right-panel .slot-area,.desktop-right-panel .empty-state,.desktop-results-area .slot-area,.slot-area,.desktop-results-area .empty-state{min-height:150px!important}
 .bsu-availability-loading-frame{min-height:150px!important}
@@ -721,9 +791,8 @@ function setupMobileStickyDateAndStaff(){
   }
 
   var booking=document.querySelector(".booking-layout");
-  var dateArea=document.querySelector(".date-area");
   var staffStrip=document.querySelector(".staff-strip");
-  if(!booking||!dateArea||!staffStrip)return;
+  if(!booking||!staffStrip)return;
 
   var stickyWrap=document.querySelector(".bsu-mobile-sticky-date-staff");
   var staffOnly=document.querySelector(".bsu-mobile-sticky-staff-only");
@@ -733,12 +802,6 @@ function setupMobileStickyDateAndStaff(){
     staffLabel=Array.from(document.querySelectorAll(".section-label")).find(function(el){
       return /staff|stylists|barbers/i.test(el.textContent||"");
     });
-  }
-
-  if(!document.querySelector(".bsu-date-placeholder")&&dateArea.parentNode){
-    var dp=document.createElement("div");
-    dp.className="bsu-date-placeholder";
-    dateArea.parentNode.insertBefore(dp,dateArea);
   }
 
   if(staffLabel&&!document.querySelector(".bsu-staff-label-placeholder")&&staffLabel.parentNode){
@@ -765,10 +828,6 @@ function setupMobileStickyDateAndStaff(){
     stickyWrap.appendChild(staffOnly);
   }
 
-  if(dateArea.parentNode!==stickyWrap){
-    stickyWrap.insertBefore(dateArea,stickyWrap.firstChild);
-  }
-
   if(staffLabel&&staffLabel.parentNode!==staffOnly){
     staffOnly.appendChild(staffLabel);
   }
@@ -776,6 +835,51 @@ function setupMobileStickyDateAndStaff(){
   if(staffStrip.parentNode!==staffOnly){
     staffOnly.appendChild(staffStrip);
   }
+}
+
+function moveDateAboveAvailability(){
+  var dateArea=document.querySelector(".date-area");
+  var slotArea=document.querySelector(".desktop-right-panel .slot-area")||document.querySelector(".desktop-results-area .slot-area")||document.querySelector(".slot-area");
+  var emptyState=document.querySelector(".desktop-right-panel .empty-state")||document.querySelector(".desktop-results-area .empty-state")||document.querySelector(".empty-state");
+  var servicePanel=document.querySelector(".desktop-service-panel");
+  var resultsArea=document.querySelector(".desktop-results-area");
+  var rightPanel=document.querySelector(".desktop-right-panel");
+
+  if(!dateArea)return;
+
+  var targetParent=null;
+  var beforeNode=null;
+
+  if(!isMobile()&&rightPanel){
+    targetParent=rightPanel;
+    beforeNode=slotArea&&slotArea.parentNode===rightPanel ? slotArea : (emptyState&&emptyState.parentNode===rightPanel ? emptyState : null);
+  }else{
+    var anchor=slotArea||emptyState;
+    if(anchor&&anchor.parentNode){
+      var wrap=document.querySelector(".bsu-slot-date-wrap")||document.createElement("div");
+      wrap.className="bsu-slot-date-wrap";
+
+      if(wrap.parentNode!==anchor.parentNode||wrap.nextSibling!==anchor){
+        anchor.parentNode.insertBefore(wrap,anchor);
+      }
+
+      targetParent=wrap;
+      beforeNode=null;
+    }else if(resultsArea){
+      targetParent=resultsArea;
+      beforeNode=resultsArea.firstChild;
+    }
+  }
+
+  if(!targetParent)return;
+
+  if(dateArea.parentNode!==targetParent){
+    targetParent.insertBefore(dateArea,beforeNode);
+  }else if(beforeNode&&dateArea.nextSibling!==beforeNode){
+    targetParent.insertBefore(dateArea,beforeNode);
+  }
+
+  dateArea.classList.add("bsu-date-above-availability");
 }
 
 function captureSelectedBookingLabel(target){
@@ -1633,11 +1737,10 @@ function markNextAvailableClick(){
   },true);
 }
 
-
-
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
+  moveDateAboveAvailability();
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
