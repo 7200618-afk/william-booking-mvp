@@ -31,7 +31,7 @@ export const STAFF_DATA = {
       },
       scissors: {
         label: "Scissors Cut",
-        price: 75,
+        price: 70,
         duration_minutes: 50,
         service_variation_id: "22YZ5VMOQO4K2IKYY6R2OIPM",
         service_variation_version: 1778926320167
