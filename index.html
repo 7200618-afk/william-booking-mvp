@@ -887,6 +887,33 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+/* B SIDE U mobile spacing tweak - separate service row from date row */
+@media(max-width:599px){
+  .service-pills{
+    margin-bottom:14px!important;
+  }
+
+  .desktop-service-panel{
+    margin-bottom:0!important;
+  }
+
+  .bsu-slot-date-wrap{
+    margin-top:4px!important;
+    margin-bottom:12px!important;
+  }
+
+  .bsu-slot-date-wrap .date-area,
+  .bsu-slot-date-wrap .date-area.is-fixed-fallback{
+    margin-top:0!important;
+    margin-bottom:0!important;
+  }
+
+  .desktop-right-panel .date-area{
+    margin-top:4px!important;
+    margin-bottom:12px!important;
+  }
+}
+
 `;
 
         const customJs=`
