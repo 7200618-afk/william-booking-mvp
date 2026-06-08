@@ -2728,7 +2728,665 @@ document.addEventListener("click",function(e){
 `;
 
         html=html.replace("</style>","\n"+customCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n</body>");
+        html=html.replace("
+
+<style id="bsu-final-header-layout-repair">
+/* B SIDE U FINAL REPAIR - header text, desktop staff/services/date layout */
+@media(min-width:600px){
+  .page{
+    max-width:1120px!important;
+    width:100%!important;
+    margin:0 auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Header: same width as photo wall, no outer frame */
+  .pasadena-header,
+  .pasadena-header.bsu-good-hair-header{
+    width:100%!important;
+    max-width:none!important;
+    margin:0 0 18px!important;
+    padding:4px 0 16px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header::before,
+  .pasadena-header::after,
+  .pasadena-header.bsu-good-hair-header::before,
+  .pasadena-header.bsu-good-hair-header::after{
+    display:none!important;
+    content:none!important;
+  }
+
+  .bsu-header-title-new{
+    font-size:clamp(38px,4vw,58px)!important;
+    line-height:.94!important;
+    margin:0 0 9px!important;
+    letter-spacing:-.07em!important;
+  }
+
+  .bsu-header-bottom-new{
+    width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Middle booking row: same left/right edge as header and photo wall */
+  .booking-layout{
+    width:100%!important;
+    max-width:none!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,56fr) minmax(0,44fr)!important;
+    grid-template-areas:"left right" "photo photo"!important;
+    column-gap:28px!important;
+    row-gap:28px!important;
+    align-items:start!important;
+    justify-content:stretch!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+  }
+
+  /* Staff side: visible, no big outside frame */
+  .booking-layout > div:nth-child(2),
+  .booking-layout > *:has(.staff-strip){
+    grid-area:left!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    outline:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:20px 20px!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    display:flex!important;
+    width:100%!important;
+    min-height:164px!important;
+    background:#fff!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    box-shadow:0 10px 24px rgba(20,20,20,.045)!important;
+    border-radius:24px!important;
+    box-sizing:border-box!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:none!important;
+  }
+
+  /* Right support side: service/date/slots use full width and align right edge */
+  .desktop-results-area{
+    display:contents!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+    justify-self:stretch!important;
+  }
+
+  .desktop-service-panel{
+    order:1!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0 0 18px!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel .service-pills,
+  .service-pills{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .service-pill{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .date-area,
+  .date-area.bsu-date-above-availability{
+    order:2!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .desktop-right-panel .date-row,
+  .date-row{
+    display:grid!important;
+    grid-template-columns:56px minmax(0,1fr) 56px!important;
+    gap:10px!important;
+    align-items:center!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .date-row > *,
+  .desktop-right-panel .date-row > *{
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .date-nav{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:46px!important;
+    min-height:46px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+    border-radius:14px!important;
+  }
+
+  .calendar-btn,
+  .prev-day-btn,
+  .next-day-btn,
+  .date-row button{
+    width:56px!important;
+    min-width:56px!important;
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:14px!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    order:3!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .time-btn{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Photo wall stays same width as header / booking row */
+  .desktop-photo-wall-section{
+    grid-area:photo!important;
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    margin:20px 0 0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"left" "right" "photo"!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+  }
+}
+</style>
+
+<script id="bsu-final-header-layout-repair-js">
+(function(){
+  function repairBookingLayout(){
+    var layout=document.querySelector('.booking-layout');
+    if(!layout)return;
+
+    var staffStrip=document.querySelector('.staff-strip');
+    var staffWrapper=staffStrip&&staffStrip.parentElement;
+    if(staffWrapper){
+      staffWrapper.style.setProperty('grid-area','left','important');
+      staffWrapper.style.setProperty('display','block','important');
+      staffWrapper.style.setProperty('background','transparent','important');
+      staffWrapper.style.setProperty('border','0','important');
+      staffWrapper.style.setProperty('box-shadow','none','important');
+      staffWrapper.style.setProperty('padding','0','important');
+      staffWrapper.style.setProperty('border-radius','0','important');
+      staffWrapper.style.setProperty('overflow','visible','important');
+    }
+
+    var right=document.querySelector('.desktop-right-panel');
+    if(right){
+      right.style.setProperty('grid-area','right','important');
+      right.style.setProperty('width','100%','important');
+      right.style.setProperty('max-width','none','important');
+    }
+
+    var dateArea=document.querySelector('.desktop-right-panel .date-area') || document.querySelector('.date-area');
+    if(dateArea){
+      dateArea.style.setProperty('display','block','important');
+      dateArea.style.setProperty('width','100%','important');
+      dateArea.style.setProperty('max-width','none','important');
+    }
+  }
+
+  function run(){
+    repairBookingLayout();
+    setTimeout(repairBookingLayout,80);
+    setTimeout(repairBookingLayout,300);
+    setTimeout(repairBookingLayout,900);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
+  else run();
+
+  var mo=new MutationObserver(function(){repairBookingLayout();});
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+</body>",customJs+"\n
+
+<style id="bsu-final-header-layout-repair">
+/* B SIDE U FINAL REPAIR - header text, desktop staff/services/date layout */
+@media(min-width:600px){
+  .page{
+    max-width:1120px!important;
+    width:100%!important;
+    margin:0 auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Header: same width as photo wall, no outer frame */
+  .pasadena-header,
+  .pasadena-header.bsu-good-hair-header{
+    width:100%!important;
+    max-width:none!important;
+    margin:0 0 18px!important;
+    padding:4px 0 16px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header::before,
+  .pasadena-header::after,
+  .pasadena-header.bsu-good-hair-header::before,
+  .pasadena-header.bsu-good-hair-header::after{
+    display:none!important;
+    content:none!important;
+  }
+
+  .bsu-header-title-new{
+    font-size:clamp(38px,4vw,58px)!important;
+    line-height:.94!important;
+    margin:0 0 9px!important;
+    letter-spacing:-.07em!important;
+  }
+
+  .bsu-header-bottom-new{
+    width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Middle booking row: same left/right edge as header and photo wall */
+  .booking-layout{
+    width:100%!important;
+    max-width:none!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,56fr) minmax(0,44fr)!important;
+    grid-template-areas:"left right" "photo photo"!important;
+    column-gap:28px!important;
+    row-gap:28px!important;
+    align-items:start!important;
+    justify-content:stretch!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+  }
+
+  /* Staff side: visible, no big outside frame */
+  .booking-layout > div:nth-child(2),
+  .booking-layout > *:has(.staff-strip){
+    grid-area:left!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    outline:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:20px 20px!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    display:flex!important;
+    width:100%!important;
+    min-height:164px!important;
+    background:#fff!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    box-shadow:0 10px 24px rgba(20,20,20,.045)!important;
+    border-radius:24px!important;
+    box-sizing:border-box!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:none!important;
+  }
+
+  /* Right support side: service/date/slots use full width and align right edge */
+  .desktop-results-area{
+    display:contents!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+    justify-self:stretch!important;
+  }
+
+  .desktop-service-panel{
+    order:1!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0 0 18px!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel .service-pills,
+  .service-pills{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .service-pill{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .date-area,
+  .date-area.bsu-date-above-availability{
+    order:2!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .desktop-right-panel .date-row,
+  .date-row{
+    display:grid!important;
+    grid-template-columns:56px minmax(0,1fr) 56px!important;
+    gap:10px!important;
+    align-items:center!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .date-row > *,
+  .desktop-right-panel .date-row > *{
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .date-nav{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:46px!important;
+    min-height:46px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+    border-radius:14px!important;
+  }
+
+  .calendar-btn,
+  .prev-day-btn,
+  .next-day-btn,
+  .date-row button{
+    width:56px!important;
+    min-width:56px!important;
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:14px!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    order:3!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .time-btn{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Photo wall stays same width as header / booking row */
+  .desktop-photo-wall-section{
+    grid-area:photo!important;
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    margin:20px 0 0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"left" "right" "photo"!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+  }
+}
+</style>
+
+<script id="bsu-final-header-layout-repair-js">
+(function(){
+  function repairBookingLayout(){
+    var layout=document.querySelector('.booking-layout');
+    if(!layout)return;
+
+    var staffStrip=document.querySelector('.staff-strip');
+    var staffWrapper=staffStrip&&staffStrip.parentElement;
+    if(staffWrapper){
+      staffWrapper.style.setProperty('grid-area','left','important');
+      staffWrapper.style.setProperty('display','block','important');
+      staffWrapper.style.setProperty('background','transparent','important');
+      staffWrapper.style.setProperty('border','0','important');
+      staffWrapper.style.setProperty('box-shadow','none','important');
+      staffWrapper.style.setProperty('padding','0','important');
+      staffWrapper.style.setProperty('border-radius','0','important');
+      staffWrapper.style.setProperty('overflow','visible','important');
+    }
+
+    var right=document.querySelector('.desktop-right-panel');
+    if(right){
+      right.style.setProperty('grid-area','right','important');
+      right.style.setProperty('width','100%','important');
+      right.style.setProperty('max-width','none','important');
+    }
+
+    var dateArea=document.querySelector('.desktop-right-panel .date-area') || document.querySelector('.date-area');
+    if(dateArea){
+      dateArea.style.setProperty('display','block','important');
+      dateArea.style.setProperty('width','100%','important');
+      dateArea.style.setProperty('max-width','none','important');
+    }
+  }
+
+  function run(){
+    repairBookingLayout();
+    setTimeout(repairBookingLayout,80);
+    setTimeout(repairBookingLayout,300);
+    setTimeout(repairBookingLayout,900);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
+  else run();
+
+  var mo=new MutationObserver(function(){repairBookingLayout();});
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
+</body>");
 
         document.open();
         document.write(html);
@@ -2738,5 +3396,334 @@ document.addEventListener("click",function(e){
       }
     })();
   </script>
+
+
+<style id="bsu-final-header-layout-repair">
+/* B SIDE U FINAL REPAIR - header text, desktop staff/services/date layout */
+@media(min-width:600px){
+  .page{
+    max-width:1120px!important;
+    width:100%!important;
+    margin:0 auto!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Header: same width as photo wall, no outer frame */
+  .pasadena-header,
+  .pasadena-header.bsu-good-hair-header{
+    width:100%!important;
+    max-width:none!important;
+    margin:0 0 18px!important;
+    padding:4px 0 16px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header::before,
+  .pasadena-header::after,
+  .pasadena-header.bsu-good-hair-header::before,
+  .pasadena-header.bsu-good-hair-header::after{
+    display:none!important;
+    content:none!important;
+  }
+
+  .bsu-header-title-new{
+    font-size:clamp(38px,4vw,58px)!important;
+    line-height:.94!important;
+    margin:0 0 9px!important;
+    letter-spacing:-.07em!important;
+  }
+
+  .bsu-header-bottom-new{
+    width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Middle booking row: same left/right edge as header and photo wall */
+  .booking-layout{
+    width:100%!important;
+    max-width:none!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,56fr) minmax(0,44fr)!important;
+    grid-template-areas:"left right" "photo photo"!important;
+    column-gap:28px!important;
+    row-gap:28px!important;
+    align-items:start!important;
+    justify-content:stretch!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+  }
+
+  /* Staff side: visible, no big outside frame */
+  .booking-layout > div:nth-child(2),
+  .booking-layout > *:has(.staff-strip){
+    grid-area:left!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    outline:0!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:20px 20px!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    display:flex!important;
+    width:100%!important;
+    min-height:164px!important;
+    background:#fff!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    box-shadow:0 10px 24px rgba(20,20,20,.045)!important;
+    border-radius:24px!important;
+    box-sizing:border-box!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:none!important;
+  }
+
+  /* Right support side: service/date/slots use full width and align right edge */
+  .desktop-results-area{
+    display:contents!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+    justify-self:stretch!important;
+  }
+
+  .desktop-service-panel{
+    order:1!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0 0 18px!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel .service-pills,
+  .service-pills{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .service-pill{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .date-area,
+  .date-area.bsu-date-above-availability{
+    order:2!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+    overflow:visible!important;
+  }
+
+  .desktop-right-panel .date-row,
+  .date-row{
+    display:grid!important;
+    grid-template-columns:56px minmax(0,1fr) 56px!important;
+    gap:10px!important;
+    align-items:center!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .date-row > *,
+  .desktop-right-panel .date-row > *{
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .date-nav{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    height:46px!important;
+    min-height:46px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+    border-radius:14px!important;
+  }
+
+  .calendar-btn,
+  .prev-day-btn,
+  .next-day-btn,
+  .date-row button{
+    width:56px!important;
+    min-width:56px!important;
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:14px!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    order:3!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .time-btn{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Photo wall stays same width as header / booking row */
+  .desktop-photo-wall-section{
+    grid-area:photo!important;
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    margin:20px 0 0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"left" "right" "photo"!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+  }
+}
+</style>
+
+<script id="bsu-final-header-layout-repair-js">
+(function(){
+  function repairBookingLayout(){
+    var layout=document.querySelector('.booking-layout');
+    if(!layout)return;
+
+    var staffStrip=document.querySelector('.staff-strip');
+    var staffWrapper=staffStrip&&staffStrip.parentElement;
+    if(staffWrapper){
+      staffWrapper.style.setProperty('grid-area','left','important');
+      staffWrapper.style.setProperty('display','block','important');
+      staffWrapper.style.setProperty('background','transparent','important');
+      staffWrapper.style.setProperty('border','0','important');
+      staffWrapper.style.setProperty('box-shadow','none','important');
+      staffWrapper.style.setProperty('padding','0','important');
+      staffWrapper.style.setProperty('border-radius','0','important');
+      staffWrapper.style.setProperty('overflow','visible','important');
+    }
+
+    var right=document.querySelector('.desktop-right-panel');
+    if(right){
+      right.style.setProperty('grid-area','right','important');
+      right.style.setProperty('width','100%','important');
+      right.style.setProperty('max-width','none','important');
+    }
+
+    var dateArea=document.querySelector('.desktop-right-panel .date-area') || document.querySelector('.date-area');
+    if(dateArea){
+      dateArea.style.setProperty('display','block','important');
+      dateArea.style.setProperty('width','100%','important');
+      dateArea.style.setProperty('max-width','none','important');
+    }
+  }
+
+  function run(){
+    repairBookingLayout();
+    setTimeout(repairBookingLayout,80);
+    setTimeout(repairBookingLayout,300);
+    setTimeout(repairBookingLayout,900);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);
+  else run();
+
+  var mo=new MutationObserver(function(){repairBookingLayout();});
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+})();
+</script>
+
 </body>
 </html>
