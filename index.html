@@ -1196,6 +1196,133 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
+/* B SIDE U final desktop fix - right edge alignment + remove employee outer frame */
+@media(min-width:900px){
+  .page{
+    max-width:1120px!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header,
+  .booking-layout,
+  .desktop-photo-wall-section{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Make the support column reach the same right edge as header/photo wall. */
+  .booking-layout{
+    grid-template-columns:minmax(0,1fr) 455px!important;
+    column-gap:28px!important;
+    row-gap:12px!important;
+    justify-content:stretch!important;
+    align-items:start!important;
+  }
+
+  /* Remove the large outer frame around all employee cards. */
+  .booking-layout>div:nth-child(2){
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    box-sizing:border-box!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+  }
+
+  .desktop-right-panel{
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    align-self:start!important;
+    box-sizing:border-box!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .date-area,
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .service-pills,
+  .desktop-right-panel .date-row,
+  .desktop-right-panel .date-area,
+  .times,
+  .bsu-loading-times{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Date row should use the whole support-column width. */
+  .desktop-right-panel .date-area{
+    display:grid!important;
+    grid-template-columns:52px minmax(0,1fr) 52px!important;
+    gap:10px!important;
+    align-items:center!important;
+  }
+
+  .desktop-right-panel .date-area .date-nav,
+  .desktop-right-panel .date-area button,
+  .desktop-right-panel .date-area .calendar-btn{
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .date-area .date-nav{
+    width:100%!important;
+    max-width:none!important;
+  }
+
+  /* Services fill from the support-column left edge to the right edge. */
+  .desktop-service-panel .service-pills{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  /* Keep time buttons clean while allowing the afternoon row to reach the right edge. */
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+
+  .time-btn{
+    width:100%!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    grid-template-columns:minmax(0,1fr) 330px!important;
+    column-gap:20px!important;
+    justify-content:stretch!important;
+  }
+
+  .booking-layout>div:nth-child(2){
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+  }
+
+  .desktop-right-panel{
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+  }
+}
+
+
 `;
 
         const customJs=`
