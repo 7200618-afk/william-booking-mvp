@@ -1323,6 +1323,138 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
+
+/* B SIDE U FINAL FIX 2 - clean header, remove staff outer panel, fix desktop date row */
+@media(min-width:600px){
+  /* remove header/head outer frame */
+  .pasadena-header{
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    padding-left:0!important;
+    padding-right:0!important;
+    overflow:visible!important;
+  }
+
+  .pasadena-header::after,
+  .pasadena-header::before{
+    display:none!important;
+    content:none!important;
+  }
+
+  /* remove the big outer frame around the staff area, regardless of wrapper order */
+  .booking-layout > div:nth-child(2),
+  .booking-layout > *:has(.staff-strip),
+  .booking-layout > *:has(.staff-card),
+  .booking-layout > *:has(.staff-item){
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    padding:0!important;
+    outline:0!important;
+  }
+
+  /* keep individual employee cards only */
+  .staff-card,
+  .staff-item{
+    background:#fff!important;
+  }
+}
+
+@media(min-width:900px){
+  /* keep whole middle section aligned with header/photo wall */
+  .page{
+    max-width:1120px!important;
+    box-sizing:border-box!important;
+  }
+
+  .booking-layout,
+  .desktop-photo-wall-section{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  /* staff area shorter; support column right edge aligned */
+  .booking-layout{
+    grid-template-columns:minmax(0,1fr) 455px!important;
+    column-gap:28px!important;
+    justify-content:stretch!important;
+    align-items:start!important;
+  }
+
+  .desktop-right-panel{
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    margin:0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state,
+  .desktop-right-panel .date-area{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  /* IMPORTANT: fix broken date layout. Do not grid the date-area itself. */
+  .desktop-right-panel .date-area{
+    display:block!important;
+    margin:0 0 10px!important;
+  }
+
+  .desktop-right-panel .date-row,
+  .date-row{
+    display:grid!important;
+    grid-template-columns:52px minmax(0,1fr) 52px!important;
+    gap:10px!important;
+    align-items:center!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel .date-row > *,
+  .date-row > *{
+    min-width:0!important;
+  }
+
+  .desktop-right-panel .date-row .date-nav,
+  .date-row .date-nav{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  .desktop-service-panel .service-pills{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+    width:100%!important;
+  }
+
+  .desktop-right-panel .times,
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:6px!important;
+    width:100%!important;
+  }
+
+  .time-btn{
+    width:100%!important;
+  }
+}
+
 `;
 
         const customJs=`
