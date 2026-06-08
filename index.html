@@ -914,576 +914,6 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
-/* B SIDE U desktop hierarchy tweak
-   Employee area = main
-   Service / date / availability = support
-*/
-@media(min-width:600px){
-
-  /* 整体：左边员工为主，右边辅助缩窄 */
-  .booking-layout{
-    grid-template-columns:minmax(520px,640px) minmax(260px,320px)!important;
-    gap:12px 28px!important;
-    align-items:start!important;
-    justify-content:center!important;
-  }
-
-  /* 左边员工框：更像主区域 */
-  .booking-layout>div:nth-child(2){
-    padding:20px!important;
-    border-radius:30px!important;
-    background:#fff!important;
-    border:1px solid rgba(17,17,17,.08)!important;
-    box-shadow:0 12px 34px rgba(0,0,0,.055)!important;
-  }
-
-  .staff-strip{
-    gap:14px!important;
-  }
-
-  .staff-card,
-  .staff-item{
-    min-height:172px!important;
-    border-radius:26px!important;
-    padding:16px 10px 14px!important;
-    box-shadow:0 10px 24px rgba(20,20,20,.06)!important;
-  }
-
-  .avatar{
-    width:78px!important;
-    height:78px!important;
-    margin-bottom:10px!important;
-  }
-
-  .staff-name{
-    font-size:15.5px!important;
-    font-weight:950!important;
-  }
-
-  .staff-status{
-    min-height:25px!important;
-    margin-top:8px!important;
-    padding:0 10px!important;
-    font-size:10.8px!important;
-    border-radius:999px!important;
-  }
-
-  /* 右边辅助区域：缩小、安静、不要抢主视觉 */
-  .desktop-right-panel{
-    max-width:320px!important;
-    width:100%!important;
-    opacity:.94!important;
-  }
-
-  .desktop-service-panel{
-    margin:0 0 12px!important;
-  }
-
-  .desktop-service-panel .section-label,
-  .desktop-right-panel .section-label{
-    font-size:10px!important;
-    letter-spacing:.13em!important;
-    color:#777!important;
-    margin:0 2px 6px!important;
-  }
-
-  .service-pills{
-    gap:5px!important;
-  }
-
-  .service-pill{
-    min-height:39px!important;
-    height:39px!important;
-    border-radius:12px!important;
-    padding:6px 8px!important;
-    background:#f5f5f5!important;
-  }
-
-  .service-name{
-    font-size:11.5px!important;
-    line-height:1!important;
-  }
-
-  .service-meta{
-    font-size:8.8px!important;
-    margin-top:2px!important;
-  }
-
-  /* 日期框：辅助，不要太大 */
-  .desktop-right-panel .date-area{
-    margin:0 0 10px!important;
-  }
-
-  .date-nav{
-    min-height:36px!important;
-    border-radius:12px!important;
-    font-size:12px!important;
-  }
-
-  /* 空位框：辅助，但清楚可点 */
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state,
-  .desktop-results-area .slot-area{
-    min-height:128px!important;
-  }
-
-  .slot-group-title{
-    font-size:8.8px!important;
-    margin-bottom:5px!important;
-    color:#777!important;
-  }
-
-  .times{
-    gap:5px!important;
-  }
-
-  .time-btn{
-    min-height:31px!important;
-    height:31px!important;
-    border-radius:10px!important;
-    font-size:11.5px!important;
-    padding:0 5px!important;
-  }
-
-  .bsu-availability-loading-frame{
-    min-height:128px!important;
-  }
-
-  .bsu-loading-chip{
-    height:31px!important;
-    border-radius:10px!important;
-  }
-}
-
-/* B SIDE U desktop width alignment tweak
-   Make the booking middle area match the header and photo wall width.
-   Left employee area remains the main visual; right panels stay supportive. */
-@media(min-width:600px){
-  .page{
-    max-width:1120px!important;
-  }
-
-  .pasadena-header,
-  .booking-layout,
-  .desktop-photo-wall-section{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  .booking-layout{
-    grid-template-columns:minmax(0,1fr) minmax(280px,320px)!important;
-    gap:12px 28px!important;
-    justify-content:stretch!important;
-    align-items:start!important;
-  }
-
-  .booking-layout>div:nth-child(2){
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-    justify-self:stretch!important;
-  }
-
-  .desktop-right-panel{
-    width:100%!important;
-    max-width:320px!important;
-    justify-self:stretch!important;
-  }
-
-  .desktop-photo-wall-section{
-    grid-column:1 / -1!important;
-    justify-self:stretch!important;
-  }
-}
-
-@media(min-width:600px) and (max-width:899px){
-  .booking-layout{
-    grid-template-columns:minmax(0,1fr) minmax(245px,285px)!important;
-    gap:12px 20px!important;
-  }
-
-  .desktop-right-panel{
-    max-width:285px!important;
-  }
-}
-
-/* B SIDE U desktop fine tune - employee box slightly shorter
-   Keep full booking row aligned with header/photo wall, but give the support column a little more room. */
-@media(min-width:900px){
-  .booking-layout{
-    grid-template-columns:minmax(0,0.92fr) minmax(315px,350px)!important;
-    gap:12px 28px!important;
-  }
-
-  .desktop-right-panel{
-    max-width:350px!important;
-  }
-}
-
-@media(min-width:600px) and (max-width:899px){
-  .booking-layout{
-    grid-template-columns:minmax(0,0.92fr) minmax(265px,300px)!important;
-    gap:12px 20px!important;
-  }
-
-  .desktop-right-panel{
-    max-width:300px!important;
-  }
-}
-
-
-/* B SIDE U desktop right edge alignment tweak
-   Keep the whole support column touching the same right edge as header and photo wall. */
-@media(min-width:900px){
-  .booking-layout{
-    width:100%!important;
-    max-width:none!important;
-    grid-template-columns:minmax(0,0.90fr) minmax(345px,370px)!important;
-    gap:12px 28px!important;
-    justify-content:stretch!important;
-  }
-
-  .desktop-right-panel{
-    width:100%!important;
-    max-width:none!important;
-    min-width:0!important;
-    justify-self:stretch!important;
-    align-self:start!important;
-    box-sizing:border-box!important;
-  }
-
-  .desktop-service-panel,
-  .desktop-right-panel .date-area,
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  .service-pills,
-  .times,
-  .bsu-loading-times{
-    width:100%!important;
-    box-sizing:border-box!important;
-  }
-}
-
-@media(min-width:600px) and (max-width:899px){
-  .booking-layout{
-    width:100%!important;
-    max-width:none!important;
-    grid-template-columns:minmax(0,0.90fr) minmax(285px,315px)!important;
-    justify-content:stretch!important;
-  }
-
-  .desktop-right-panel{
-    width:100%!important;
-    max-width:none!important;
-    justify-self:stretch!important;
-    box-sizing:border-box!important;
-  }
-
-  .desktop-service-panel,
-  .desktop-right-panel .date-area,
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-}
-
-
-/* B SIDE U final desktop fix - right edge alignment + remove employee outer frame */
-@media(min-width:900px){
-  .page{
-    max-width:1120px!important;
-    box-sizing:border-box!important;
-  }
-
-  .pasadena-header,
-  .booking-layout,
-  .desktop-photo-wall-section{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  /* Make the support column reach the same right edge as header/photo wall. */
-  .booking-layout{
-    grid-template-columns:minmax(0,1fr) 455px!important;
-    column-gap:28px!important;
-    row-gap:12px!important;
-    justify-content:stretch!important;
-    align-items:start!important;
-  }
-
-  /* Remove the large outer frame around all employee cards. */
-  .booking-layout>div:nth-child(2){
-    width:100%!important;
-    max-width:none!important;
-    justify-self:stretch!important;
-    box-sizing:border-box!important;
-    padding:0!important;
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-    border-radius:0!important;
-  }
-
-  .desktop-right-panel{
-    width:100%!important;
-    max-width:none!important;
-    justify-self:stretch!important;
-    align-self:start!important;
-    box-sizing:border-box!important;
-    margin:0!important;
-    padding:0!important;
-  }
-
-  .desktop-service-panel,
-  .desktop-right-panel .date-area,
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  .service-pills,
-  .desktop-right-panel .date-row,
-  .desktop-right-panel .date-area,
-  .times,
-  .bsu-loading-times{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  /* Date row should use the whole support-column width. */
-  .desktop-right-panel .date-area{
-    display:grid!important;
-    grid-template-columns:52px minmax(0,1fr) 52px!important;
-    gap:10px!important;
-    align-items:center!important;
-  }
-
-  .desktop-right-panel .date-area .date-nav,
-  .desktop-right-panel .date-area button,
-  .desktop-right-panel .date-area .calendar-btn{
-    box-sizing:border-box!important;
-  }
-
-  .desktop-right-panel .date-area .date-nav{
-    width:100%!important;
-    max-width:none!important;
-  }
-
-  /* Services fill from the support-column left edge to the right edge. */
-  .desktop-service-panel .service-pills{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:7px!important;
-  }
-
-  /* Keep time buttons clean while allowing the afternoon row to reach the right edge. */
-  .times{
-    display:grid!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    gap:6px!important;
-  }
-
-  .time-btn{
-    width:100%!important;
-  }
-}
-
-@media(min-width:600px) and (max-width:899px){
-  .booking-layout{
-    grid-template-columns:minmax(0,1fr) 330px!important;
-    column-gap:20px!important;
-    justify-content:stretch!important;
-  }
-
-  .booking-layout>div:nth-child(2){
-    padding:0!important;
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-    border-radius:0!important;
-  }
-
-  .desktop-right-panel{
-    width:100%!important;
-    max-width:none!important;
-    justify-self:stretch!important;
-  }
-}
-
-
-
-/* B SIDE U FINAL FIX 2 - clean header, remove staff outer panel, fix desktop date row */
-@media(min-width:600px){
-  /* remove header/head outer frame */
-  .pasadena-header{
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-    border-radius:0!important;
-    padding-left:0!important;
-    padding-right:0!important;
-    overflow:visible!important;
-  }
-
-  .pasadena-header::after,
-  .pasadena-header::before{
-    display:none!important;
-    content:none!important;
-  }
-
-  /* remove the big outer frame around the staff area, regardless of wrapper order */
-  .booking-layout > div:nth-child(2),
-  .booking-layout > *:has(.staff-strip),
-  .booking-layout > *:has(.staff-card),
-  .booking-layout > *:has(.staff-item){
-    background:transparent!important;
-    border:0!important;
-    box-shadow:none!important;
-    border-radius:0!important;
-    padding:0!important;
-    outline:0!important;
-  }
-
-  /* keep individual employee cards only */
-  .staff-card,
-  .staff-item{
-    background:#fff!important;
-  }
-}
-
-@media(min-width:900px){
-  /* keep whole middle section aligned with header/photo wall */
-  .page{
-    max-width:1120px!important;
-    box-sizing:border-box!important;
-  }
-
-  .booking-layout,
-  .desktop-photo-wall-section{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  /* staff area shorter; support column right edge aligned */
-  .booking-layout{
-    grid-template-columns:minmax(0,1fr) 455px!important;
-    column-gap:28px!important;
-    justify-content:stretch!important;
-    align-items:start!important;
-  }
-
-  .desktop-right-panel{
-    width:100%!important;
-    max-width:none!important;
-    justify-self:stretch!important;
-    margin:0!important;
-    padding:0!important;
-    box-sizing:border-box!important;
-  }
-
-  .desktop-service-panel,
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state,
-  .desktop-right-panel .date-area{
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  /* IMPORTANT: fix broken date layout. Do not grid the date-area itself. */
-  .desktop-right-panel .date-area{
-    display:block!important;
-    margin:0 0 10px!important;
-  }
-
-  .desktop-right-panel .date-row,
-  .date-row{
-    display:grid!important;
-    grid-template-columns:52px minmax(0,1fr) 52px!important;
-    gap:10px!important;
-    align-items:center!important;
-    width:100%!important;
-    max-width:none!important;
-    box-sizing:border-box!important;
-  }
-
-  .desktop-right-panel .date-row > *,
-  .date-row > *{
-    min-width:0!important;
-  }
-
-  .desktop-right-panel .date-row .date-nav,
-  .date-row .date-nav{
-    width:100%!important;
-    max-width:none!important;
-    min-width:0!important;
-    white-space:nowrap!important;
-    overflow:hidden!important;
-    text-overflow:ellipsis!important;
-  }
-
-  .desktop-service-panel .service-pills{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:7px!important;
-    width:100%!important;
-  }
-
-  .desktop-right-panel .times,
-  .times{
-    display:grid!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    gap:6px!important;
-    width:100%!important;
-  }
-
-  .time-btn{
-    width:100%!important;
-  }
-}
-
-
-
-/* B SIDE U GOOD HAIR HEADER - compact and aligned with photo wall */
-@media(min-width:600px){
-  .page{max-width:1120px!important;width:100%!important;margin:0 auto!important;box-sizing:border-box!important}
-  .pasadena-header,.pasadena-header.bsu-good-hair-header{width:100%!important;max-width:none!important;margin:0 0 28px!important;padding:4px 0 0!important;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important;box-sizing:border-box!important}
-  .pasadena-header::before,.pasadena-header::after,.pasadena-header.bsu-good-hair-header::before,.pasadena-header.bsu-good-hair-header::after{display:none!important;content:none!important}
-  .pasadena-header.bsu-good-hair-header .pasadena-title,.pasadena-header.bsu-good-hair-header .pasadena-open,.pasadena-header.bsu-good-hair-header .pasadena-address-row,.pasadena-header.bsu-good-hair-header .pasadena-address,.pasadena-header.bsu-good-hair-header .pasadena-links{display:none!important}
-  .bsu-good-hair-header-inner{width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"title title" "status status" "sub sub" "address parking"!important;column-gap:24px!important;row-gap:11px!important;align-items:center!important;box-sizing:border-box!important}
-  .bsu-header-title-new{grid-area:title!important;margin:0!important;color:#111!important;font-size:clamp(38px,3.55vw,52px)!important;line-height:.92!important;font-weight:950!important;letter-spacing:-.07em!important}
-  .bsu-header-status-new{grid-area:status!important;display:inline-flex!important;width:fit-content!important;min-height:28px!important;padding:0 13px!important;align-items:center!important;gap:8px!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:13px!important;line-height:1!important;font-weight:950!important;letter-spacing:-.02em!important;box-sizing:border-box!important}
-  .bsu-header-status-new::before{content:""!important;width:9px!important;height:9px!important;flex:0 0 auto!important;border-radius:999px!important;background:#55ce79!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}
-  .bsu-header-sub-new{grid-area:sub!important;margin:0!important;color:#1b1b1b!important;font-size:16px!important;line-height:1.25!important;font-weight:850!important;letter-spacing:-.035em!important}
-  .bsu-header-address-new{grid-area:address!important;margin:0!important;color:#666!important;font-size:13.5px!important;line-height:1.22!important;font-weight:850!important;letter-spacing:-.025em!important}
-  .bsu-header-parking-new{grid-area:parking!important;min-height:34px!important;padding:0 22px!important;border-radius:999px!important;border:1px solid rgba(17,17,17,.14)!important;background:#fff!important;color:#111!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;font-size:13px!important;line-height:1!important;font-weight:950!important;text-decoration:none!important;white-space:nowrap!important;box-sizing:border-box!important}
-  .booking-layout,.desktop-photo-wall-section{width:100%!important;max-width:none!important;box-sizing:border-box!important}
-  .staff-strip,.staff-card,.staff-item,.desktop-service-panel,.service-pills,.desktop-right-panel,.desktop-right-panel .date-area,.desktop-right-panel .slot-area,.desktop-right-panel .empty-state{visibility:visible!important;opacity:1!important}
-}
-@media(max-width:599px){
-  .pasadena-header.bsu-good-hair-header{background:transparent!important;border:0!important;box-shadow:none!important;padding:14px 0 12px!important}
-  .pasadena-header.bsu-good-hair-header .pasadena-title,.pasadena-header.bsu-good-hair-header .pasadena-open,.pasadena-header.bsu-good-hair-header .pasadena-address-row,.pasadena-header.bsu-good-hair-header .pasadena-address,.pasadena-header.bsu-good-hair-header .pasadena-links{display:none!important}
-  .bsu-good-hair-header-inner{display:block!important}
-  .bsu-header-title-new{margin:0 0 10px!important;font-size:clamp(31px,9vw,40px)!important;line-height:.96!important;font-weight:950!important;letter-spacing:-.065em!important}
-  .bsu-header-status-new{display:inline-flex!important;align-items:center!important;gap:7px!important;min-height:28px!important;padding:0 12px!important;margin:0 0 13px!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:12px!important;font-weight:950!important}
-  .bsu-header-status-new::before{content:""!important;width:8px!important;height:8px!important;border-radius:999px!important;background:#55ce79!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}
-  .bsu-header-sub-new{margin:0 0 12px!important;font-size:15px!important;line-height:1.28!important;font-weight:850!important;letter-spacing:-.035em!important}
-  .bsu-header-address-new{margin:0 0 10px!important;color:#666!important;font-size:12.5px!important;font-weight:850!important}
-  .bsu-header-parking-new{min-height:32px!important;padding:0 15px!important;border:1px solid rgba(17,17,17,.14)!important;border-radius:999px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;color:#111!important;text-decoration:none!important;font-size:12px!important;font-weight:950!important}
-}
 `;
 
         const customJs=`
@@ -2557,7 +1987,89 @@ document.addEventListener("click",function(e){
         html=html.replace("</style>","\n"+customCss+"\n</style>");
         html=html.replace("</body>",customJs+"\n</body>");
 
-        html=html.replace("</body>",'\n<script>\n(function(){\n  function getParkingHref(){\n    var old=document.querySelector(\'.pasadena-links a, a[href*="maps"], a[href*="parking"], a[href*="direction"]\');\n    return old ? (old.getAttribute(\'href\') || \'#\') : \'#\';\n  }\n  function applyGoodHairHeader(){\n    var header=document.querySelector(\'.pasadena-header\');\n    if(!header)return;\n    if(header.classList.contains(\'bsu-good-hair-header\') && header.querySelector(\'.bsu-good-hair-header-inner\'))return;\n    var href=getParkingHref();\n    header.classList.add(\'bsu-good-hair-header\');\n    header.insertAdjacentHTML(\'afterbegin\',\n      \'<div class="bsu-good-hair-header-inner">\'+\n        \'<h1 class="bsu-header-title-new">Have a Good Hair Day</h1>\'+\n        \'<div class="bsu-header-status-new">Opening Monday 10:00 am • (213) 273-5462</div>\'+\n        \'<p class="bsu-header-sub-new">Get a haircut that suits your hair type, lifestyle, and look.</p>\'+\n        \'<p class="bsu-header-address-new">350 S Lake Ave Ste 115, Pasadena, CA 91101</p>\'+\n        \'<a class="bsu-header-parking-new" href="\'+href+\'" target="_blank" rel="noopener">Parking Direction</a>\'+\n      \'</div>\'\n    );\n  }\n  function run(){applyGoodHairHeader();}\n  if(document.readyState===\'loading\')document.addEventListener(\'DOMContentLoaded\',run);else run();\n  [100,300,700,1200,2200,4200].forEach(function(ms){setTimeout(run,ms);});\n  new MutationObserver(run).observe(document.documentElement,{childList:true,subtree:true});\n})();\n</script>\n'+"\n</body>");
+
+
+        const goodHairSafeCss=`
+/* B SIDE U SAFE FIX - compact good hair header + restore booking visibility */
+@media(min-width:600px){
+  .page{max-width:1120px!important;margin:0 auto!important;padding:18px 22px 48px!important;box-sizing:border-box!important}
+
+  .pasadena-header{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0 0 22px!important;
+    padding:0!important;
+    border:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+    border-radius:0!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+  .pasadena-header::before,.pasadena-header::after{display:none!important;content:none!important}
+  .bsu-good-header{position:relative!important;width:100%!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-areas:"title title" "status status" "sub sub" "addr park"!important;column-gap:20px!important;row-gap:9px!important;align-items:center!important;box-sizing:border-box!important}
+  .bsu-good-title{grid-area:title!important;margin:0!important;font-size:clamp(44px,5vw,64px)!important;line-height:.92!important;letter-spacing:-.07em!important;font-weight:950!important;color:#080808!important}
+  .bsu-good-status{grid-area:status!important;justify-self:start!important;display:inline-flex!important;align-items:center!important;min-height:28px!important;padding:0 14px!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:13px!important;line-height:1!important;font-weight:950!important;letter-spacing:-.02em!important;white-space:nowrap!important}
+  .bsu-good-status::before{content:""!important;width:9px!important;height:9px!important;border-radius:999px!important;background:#55ce79!important;margin-right:8px!important;box-shadow:0 0 0 4px rgba(85,206,121,.18)!important}
+  .bsu-good-sub{grid-area:sub!important;margin:0!important;font-size:17px!important;line-height:1.25!important;font-weight:850!important;letter-spacing:-.035em!important;color:#191919!important}
+  .bsu-good-address{grid-area:addr!important;margin:0!important;font-size:14px!important;line-height:1.25!important;font-weight:850!important;color:#666!important;letter-spacing:-.025em!important}
+  .bsu-good-parking{grid-area:park!important;justify-self:end!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:36px!important;padding:0 22px!important;border-radius:999px!important;border:1px solid rgba(17,17,17,.14)!important;background:#fff!important;color:#111!important;text-decoration:none!important;font-size:13px!important;line-height:1!important;font-weight:950!important;white-space:nowrap!important}
+
+  .booking-layout{width:100%!important;max-width:100%!important;margin:0 auto!important;display:grid!important;grid-template-columns:minmax(0,610px) minmax(330px,1fr)!important;grid-template-areas:"left right" "photo photo"!important;gap:24px 36px!important;align-items:start!important;justify-content:stretch!important;box-sizing:border-box!important}
+  .booking-layout>div:nth-child(2){grid-area:left!important;padding:0!important;margin:0!important;border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;display:block!important;min-height:0!important;overflow:visible!important}
+  .desktop-results-area{display:contents!important}
+  .desktop-right-panel{grid-area:right!important;display:flex!important;flex-direction:column!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;opacity:1!important;align-self:start!important;justify-self:stretch!important;overflow:visible!important}
+  .desktop-service-panel{display:block!important;order:1!important;width:100%!important;margin:0 0 14px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+  .desktop-right-panel .date-area{display:block!important;order:2!important;width:100%!important;margin:0 0 12px!important;padding:0!important;position:relative!important;top:auto!important;left:auto!important;transform:none!important;border:0!important;background:transparent!important;box-shadow:none!important}
+  .desktop-right-panel .slot-area,.desktop-right-panel .empty-state{display:block!important;order:3!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;min-height:132px!important;overflow:visible!important}
+  .date-nav{display:flex!important;align-items:center!important;justify-content:center!important;min-height:44px!important;border-radius:14px!important;background:#fff!important;border:1px solid rgba(17,17,17,.12)!important;box-shadow:none!important;color:#111!important;font-size:15px!important;font-weight:950!important;white-space:nowrap!important;overflow:hidden!important}
+
+  .staff-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:18px!important;overflow:visible!important;width:100%!important;padding:0!important;margin:0!important}
+  .staff-card,.staff-item{display:flex!important;min-height:168px!important;border-radius:24px!important;padding:15px 10px 13px!important;background:#fff!important;border:1px solid rgba(17,17,17,.10)!important;box-shadow:0 10px 24px rgba(20,20,20,.045)!important;box-sizing:border-box!important}
+  .avatar{width:74px!important;height:74px!important;margin-bottom:10px!important}
+  .staff-name{font-size:15px!important;font-weight:950!important}
+  .staff-status{min-height:25px!important;margin-top:8px!important;padding:0 10px!important;font-size:10.8px!important;border-radius:999px!important}
+
+  .service-pills{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;width:100%!important}
+  .service-pill{min-height:43px!important;height:43px!important;border-radius:13px!important;padding:7px 10px!important;box-shadow:none!important}
+  .service-name{font-size:12.2px!important;line-height:1!important}.service-meta{font-size:9.3px!important;margin-top:3px!important;line-height:1!important}
+  .times{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px!important;width:100%!important}.time-btn{min-height:34px!important;height:34px!important;border-radius:11px!important;font-size:12px!important;padding:0 6px!important;box-shadow:none!important}
+
+  .desktop-photo-wall-section{grid-area:photo!important;width:100%!important;max-width:100%!important;margin:24px 0 0!important;height:205px!important;max-height:205px!important;border-radius:22px!important;overflow:hidden!important;display:block!important}
+  .desktop-photo-wall-section .bsu-team-wall,.desktop-photo-wall-section .staff-groups,.desktop-photo-wall-section .staff-group,.desktop-photo-wall-section .staff-carousel{width:100%!important;height:205px!important;max-height:205px!important;margin:0!important;padding:0!important;border:0!important;border-radius:22px!important;overflow:hidden!important}
+}
+@media(max-width:599px){
+  .pasadena-header{border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;margin:0 0 14px!important;display:block!important}.pasadena-header::before,.pasadena-header::after{display:none!important;content:none!important}
+  .bsu-good-header{display:block!important}.bsu-good-title{margin:0 0 8px!important;font-size:35px!important;line-height:.95!important;letter-spacing:-.06em!important;font-weight:950!important}.bsu-good-status{display:inline-flex!important;align-items:center!important;min-height:27px!important;padding:0 12px!important;border-radius:999px!important;background:#111!important;color:#fff!important;font-size:11.5px!important;font-weight:950!important}.bsu-good-status::before{content:""!important;width:8px!important;height:8px!important;border-radius:999px!important;background:#55ce79!important;margin-right:7px!important}.bsu-good-sub{margin:10px 0 10px!important;font-size:15px!important;line-height:1.25!important;font-weight:850!important}.bsu-good-address{margin:0 0 10px!important;font-size:12.3px!important;line-height:1.3!important;font-weight:800!important;color:#666!important}.bsu-good-parking{display:inline-flex!important;min-height:31px!important;padding:0 14px!important;border:1px solid rgba(17,17,17,.14)!important;border-radius:999px!important;text-decoration:none!important;color:#111!important;font-size:11.5px!important;font-weight:950!important}
+}
+`;
+
+        const goodHairSafeJs=`<script>
+(function(){
+  function getParkingHref(){
+    var old=document.querySelector('.pasadena-links a, a[href*="maps"], a[href*="parking"], a[href*="direction"]');
+    return old ? (old.getAttribute('href') || '#') : 'https://www.google.com/maps/search/?api=1&query=350%20S%20Lake%20Ave%20Ste%20115%20Pasadena%20CA%2091101';
+  }
+  function applyGoodHeader(){
+    var header=document.querySelector('.pasadena-header');
+    if(!header)return;
+    var href=getParkingHref();
+    header.innerHTML='<div class="bsu-good-header">'+
+      '<h1 class="bsu-good-title">Have a Good Hair Day</h1>'+
+      '<div class="bsu-good-status">Opening Monday 10:00 am • (213) 273-5462</div>'+
+      '<p class="bsu-good-sub">Get a haircut that suits your hair type, lifestyle, and look.</p>'+
+      '<p class="bsu-good-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</p>'+
+      '<a class="bsu-good-parking" href="'+href+'" target="_blank" rel="noopener">Parking Direction</a>'+
+    '</div>';
+  }
+  function run(){applyGoodHeader();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+  [80,250,600,1200,2400,5000].forEach(function(ms){setTimeout(run,ms);});
+})();
+<\/script>`;
+
+        html=html.replace("</style>","\n"+goodHairSafeCss+"\n</style>");
+        html=html.replace("</body>",goodHairSafeJs+"\n</body>");
 
         document.open();
         document.write(html);
