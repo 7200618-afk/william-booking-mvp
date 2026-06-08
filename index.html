@@ -1133,6 +1133,69 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
+/* B SIDE U desktop right edge alignment tweak
+   Keep the whole support column touching the same right edge as header and photo wall. */
+@media(min-width:900px){
+  .booking-layout{
+    width:100%!important;
+    max-width:none!important;
+    grid-template-columns:minmax(0,0.90fr) minmax(345px,370px)!important;
+    gap:12px 28px!important;
+    justify-content:stretch!important;
+  }
+
+  .desktop-right-panel{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    justify-self:stretch!important;
+    align-self:start!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .date-area,
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .service-pills,
+  .times,
+  .bsu-loading-times{
+    width:100%!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    width:100%!important;
+    max-width:none!important;
+    grid-template-columns:minmax(0,0.90fr) minmax(285px,315px)!important;
+    justify-content:stretch!important;
+  }
+
+  .desktop-right-panel{
+    width:100%!important;
+    max-width:none!important;
+    justify-self:stretch!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .date-area,
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+}
+
+
 `;
 
         const customJs=`
