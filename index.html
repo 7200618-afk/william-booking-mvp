@@ -1108,6 +1108,31 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+/* B SIDE U desktop fine tune - employee box slightly shorter
+   Keep full booking row aligned with header/photo wall, but give the support column a little more room. */
+@media(min-width:900px){
+  .booking-layout{
+    grid-template-columns:minmax(0,0.92fr) minmax(315px,350px)!important;
+    gap:12px 28px!important;
+  }
+
+  .desktop-right-panel{
+    max-width:350px!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    grid-template-columns:minmax(0,0.92fr) minmax(265px,300px)!important;
+    gap:12px 20px!important;
+  }
+
+  .desktop-right-panel{
+    max-width:300px!important;
+  }
+}
+
+
 `;
 
         const customJs=`
