@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -1056,6 +1055,58 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+/* B SIDE U desktop width alignment tweak
+   Make the booking middle area match the header and photo wall width.
+   Left employee area remains the main visual; right panels stay supportive. */
+@media(min-width:600px){
+  .page{
+    max-width:1120px!important;
+  }
+
+  .pasadena-header,
+  .booking-layout,
+  .desktop-photo-wall-section{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .booking-layout{
+    grid-template-columns:minmax(0,1fr) minmax(280px,320px)!important;
+    gap:12px 28px!important;
+    justify-content:stretch!important;
+    align-items:start!important;
+  }
+
+  .booking-layout>div:nth-child(2){
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    justify-self:stretch!important;
+  }
+
+  .desktop-right-panel{
+    width:100%!important;
+    max-width:320px!important;
+    justify-self:stretch!important;
+  }
+
+  .desktop-photo-wall-section{
+    grid-column:1 / -1!important;
+    justify-self:stretch!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    grid-template-columns:minmax(0,1fr) minmax(245px,285px)!important;
+    gap:12px 20px!important;
+  }
+
+  .desktop-right-panel{
+    max-width:285px!important;
+  }
+}
 
 `;
 
