@@ -46,17 +46,9 @@ ${williamSource}${body.trimStart()}];`;
           }
         );
 
-        html=html.replace(
-          /if \(!response\.ok\) return \[\];/g,
-          `if (!response.ok) {
-        throw new Error(data.error || "Unable to load availability.");
-      }`
-        );
-
-        html=html.replace(
-          /messageEl\.textContent = "Network error: " \+ error\.message;/g,
-          `messageEl.textContent = "Booking system is temporarily unavailable. Please refresh or call the salon.";`
-        );
+        // Keep the original availability fallback.
+        // Do not convert non-OK availability responses into a global error,
+        // because that can hide all staff time slots.
 
         html=html.replace(
           /let heldScrollPosition = null;/,
