@@ -1455,6 +1455,168 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U header update - Good Hair Day copy + same width as photo wall */
+@media(min-width:600px){
+  .page{
+    max-width:1120px!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header,
+  .desktop-photo-wall-section{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+}
+
+.pasadena-header.bsu-good-hair-header{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+  padding:4px 0 18px!important;
+  margin:0 0 16px!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  overflow:visible!important;
+}
+
+.pasadena-header.bsu-good-hair-header::before,
+.pasadena-header.bsu-good-hair-header::after{
+  display:none!important;
+  content:none!important;
+}
+
+.bsu-header-title-new{
+  margin:0 0 8px!important;
+  color:#111!important;
+  font-size:clamp(36px,4vw,54px)!important;
+  line-height:.94!important;
+  letter-spacing:-.065em!important;
+  font-weight:950!important;
+}
+
+.bsu-header-open-new{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-height:30px!important;
+  padding:0 13px!important;
+  margin:0 0 12px!important;
+  border-radius:999px!important;
+  background:#111!important;
+  color:#fff!important;
+  font-size:13.5px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  letter-spacing:-.015em!important;
+  white-space:nowrap!important;
+}
+
+.bsu-header-open-new::before{
+  content:""!important;
+  width:9px!important;
+  height:9px!important;
+  border-radius:999px!important;
+  background:#55ce79!important;
+  box-shadow:0 0 0 4px rgba(85,206,121,.18)!important;
+  flex:0 0 auto!important;
+}
+
+.bsu-header-desc-new{
+  max-width:620px!important;
+  margin:0 0 10px!important;
+  color:#222!important;
+  font-size:18px!important;
+  line-height:1.32!important;
+  font-weight:750!important;
+  letter-spacing:-.035em!important;
+}
+
+.bsu-header-bottom-new{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  width:100%!important;
+  max-width:none!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-header-address-new{
+  min-width:0!important;
+  color:#666!important;
+  font-size:14px!important;
+  line-height:1.3!important;
+  font-weight:850!important;
+  letter-spacing:-.025em!important;
+}
+
+.bsu-header-parking-new{
+  flex:0 0 auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:38px!important;
+  padding:0 18px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(17,17,17,.14)!important;
+  background:#fff!important;
+  color:#111!important;
+  text-decoration:none!important;
+  font-size:13px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  box-shadow:none!important;
+}
+
+@media(max-width:599px){
+  .pasadena-header.bsu-good-hair-header{
+    padding:8px 0 15px!important;
+    margin-bottom:12px!important;
+  }
+
+  .bsu-header-title-new{
+    font-size:clamp(32px,10vw,42px)!important;
+    line-height:.96!important;
+    margin-bottom:8px!important;
+  }
+
+  .bsu-header-open-new{
+    min-height:29px!important;
+    font-size:12.5px!important;
+    padding:0 12px!important;
+    margin-bottom:11px!important;
+  }
+
+  .bsu-header-desc-new{
+    font-size:15.5px!important;
+    line-height:1.35!important;
+    margin-bottom:10px!important;
+  }
+
+  .bsu-header-bottom-new{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+
+  .bsu-header-address-new{
+    font-size:12.8px!important;
+  }
+
+  .bsu-header-parking-new{
+    width:fit-content!important;
+    min-height:34px!important;
+    padding:0 14px!important;
+    font-size:12.2px!important;
+  }
+}
+
 `;
 
         const customJs=`
@@ -2442,7 +2604,47 @@ function markNextAvailableClick(){
   },true);
 }
 
+
+function updateGoodHairDayHeader(){
+  var header=document.querySelector(".pasadena-header");
+  if(!header)return;
+
+  if(header.dataset.bsuHeaderVersion==="goodHairDayV1" && header.querySelector(".bsu-header-title-new")){
+    return;
+  }
+
+  var parkingHref="#";
+  var parkingTarget="";
+  var parkingRel="";
+  var oldParking=Array.from(header.querySelectorAll("a")).find(function(a){
+    var text=(a.textContent||"").toLowerCase();
+    var href=(a.getAttribute("href")||"").toLowerCase();
+    return text.indexOf("parking")>-1 || text.indexOf("direction")>-1 || href.indexOf("maps")>-1 || href.indexOf("google")>-1;
+  });
+
+  if(oldParking){
+    parkingHref=oldParking.getAttribute("href")||"#";
+    parkingTarget=oldParking.getAttribute("target")||"";
+    parkingRel=oldParking.getAttribute("rel")||"";
+  }
+
+  header.classList.add("bsu-good-hair-header");
+  header.dataset.bsuHeaderVersion="goodHairDayV1";
+  header.innerHTML=
+    '<h1 class="bsu-header-title-new">Have a Good Hair Day</h1>'+
+    '<div class="bsu-header-open-new">Opening Monday 10:00 am • (213) 273-5462</div>'+
+    '<p class="bsu-header-desc-new">Get a haircut that suits your hair type, lifestyle, and look.</p>'+
+    '<div class="bsu-header-bottom-new">'+
+      '<div class="bsu-header-address-new">350 S Lake Ave Ste 115, Pasadena, CA 91101</div>'+
+      '<a class="bsu-header-parking-new" href="'+parkingHref.replace(/"/g,"&quot;")+'"'+
+        (parkingTarget?' target="'+parkingTarget.replace(/"/g,"&quot;")+'"':'')+
+        (parkingRel?' rel="'+parkingRel.replace(/"/g,"&quot;")+'"':'')+
+      '>Parking Direction</a>'+
+    '</div>';
+}
+
 function runFixes(){
+  updateGoodHairDayHeader();
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
   moveDateAboveAvailability();
