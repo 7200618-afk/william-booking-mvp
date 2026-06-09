@@ -1714,6 +1714,122 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 `;
 
+
+
+/* =========================================================
+   B SIDE U FINAL DESKTOP ALIGNMENT TWEAK - CSS ONLY
+   Requests:
+   1) Header left edge aligns with booking/photo red-line edge
+   2) Remove employee card outer frames
+   3) Add divider under header and above photo wall
+   ========================================================= */
+@media(min-width:600px){
+  :root{
+    --bsu-edge-fix: 36px;
+    --bsu-divider: rgba(17,17,17,.12);
+  }
+
+  /* Move only the header block left so its content starts at the same edge as staff/photo. */
+  .pasadena-header{
+    margin-left:calc(-1 * var(--bsu-edge-fix))!important;
+    width:calc(100% + var(--bsu-edge-fix))!important;
+    padding:0 0 22px!important;
+    border:0!important;
+    border-bottom:1px solid var(--bsu-divider)!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header::before,
+  .pasadena-header::after{
+    display:none!important;
+    content:none!important;
+  }
+
+  .pasadena-title,
+  .pasadena-open,
+  .pasadena-address,
+  .pasadena-links{
+    transform:none!important;
+  }
+
+  /* Make sure the employee section itself has no outside container frame. */
+  .booking-layout>div:nth-child(2){
+    padding:0!important;
+    border:0!important;
+    outline:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  /* Remove the extra outer frame/shadow from employee cards. */
+  .staff-card,
+  .staff-item{
+    border:0!important;
+    outline:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .staff-card::before,
+  .staff-card::after,
+  .staff-item::before,
+  .staff-item::after{
+    box-shadow:none!important;
+  }
+
+  /* Keep selected staff clear with one clean selection border only. */
+  .staff-card.is-active,
+  .staff-card.active,
+  .staff-card[aria-pressed="true"],
+  .staff-card[aria-selected="true"],
+  .staff-item.is-active,
+  .staff-item.active,
+  .staff-item[aria-pressed="true"],
+  .staff-item[aria-selected="true"]{
+    border:2px solid #111!important;
+    background:#fff!important;
+    box-shadow:none!important;
+  }
+
+  /* Divider above photo wall. The carousel itself still clips images normally. */
+  .desktop-photo-wall-section{
+    position:relative!important;
+    overflow:visible!important;
+    margin-top:34px!important;
+  }
+
+  .desktop-photo-wall-section::before{
+    display:block!important;
+    content:""!important;
+    position:absolute!important;
+    left:0!important;
+    right:0!important;
+    top:-20px!important;
+    height:1px!important;
+    background:var(--bsu-divider)!important;
+    z-index:2!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel,
+  .desktop-photo-wall-section .bsu-team-wall,
+  .desktop-photo-wall-section .staff-groups,
+  .desktop-photo-wall-section .staff-group{
+    overflow:hidden!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:980px){
+  .pasadena-header{
+    margin-left:0!important;
+    width:100%!important;
+  }
+}
+
+
         const customJs=`
 <script>
 (function(){
