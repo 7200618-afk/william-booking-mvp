@@ -1004,6 +1004,108 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U final view-only correction - header text aligns with photo wall left edge */
+@media(min-width:600px){
+  .page{
+    max-width:1120px!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header{
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    margin-bottom:14px!important;
+    padding:0 0 14px 0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-header::after{
+    display:none!important;
+    content:none!important;
+  }
+
+  .pasadena-title,
+  .pasadena-open,
+  .pasadena-address,
+  .pasadena-links{
+    margin-left:0!important;
+    justify-self:start!important;
+    text-align:left!important;
+  }
+
+  .booking-layout{
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    display:grid!important;
+    grid-template-columns:minmax(480px,560px) minmax(300px,480px)!important;
+    grid-template-areas:"left right" "photo photo"!important;
+    grid-template-rows:auto auto!important;
+    column-gap:36px!important;
+    row-gap:14px!important;
+    justify-content:start!important;
+    align-items:start!important;
+    box-sizing:border-box!important;
+  }
+
+  .booking-layout>div:nth-child(2){
+    grid-area:left!important;
+    width:100%!important;
+    max-width:560px!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+    width:100%!important;
+    max-width:480px!important;
+    justify-self:start!important;
+    align-self:start!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .date-area,
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-photo-wall-section{
+    grid-area:photo!important;
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:980px){
+  .booking-layout{
+    grid-template-columns:minmax(390px,1.12fr) minmax(290px,.88fr)!important;
+    column-gap:24px!important;
+  }
+
+  .booking-layout>div:nth-child(2),
+  .desktop-right-panel{
+    max-width:none!important;
+  }
+}
+
 `;
 
         const customJs=`
