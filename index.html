@@ -914,6 +914,96 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U view-only layout adjustment - staff main / right panels support */
+@media(min-width:600px){
+  /* Keep the same design. Only align and balance the desktop view. */
+  .page{
+    max-width:1120px!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Header left edge follows the same page width as the booking layout. */
+  .pasadena-header{
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+
+  .pasadena-title,
+  .pasadena-open,
+  .pasadena-address,
+  .pasadena-links{
+    justify-self:start!important;
+    text-align:left!important;
+  }
+
+  /* Staff column is the main area. Service / date / availability stay as support. */
+  .booking-layout{
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    display:grid!important;
+    grid-template-columns:minmax(430px,510px) minmax(320px,480px)!important;
+    grid-template-areas:"left right" "photo photo"!important;
+    grid-template-rows:auto auto!important;
+    column-gap:36px!important;
+    row-gap:14px!important;
+    justify-content:start!important;
+    align-items:start!important;
+  }
+
+  .booking-layout>div:nth-child(2){
+    grid-area:left!important;
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-right-panel{
+    grid-area:right!important;
+    width:100%!important;
+    max-width:480px!important;
+    justify-self:start!important;
+    align-self:start!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .date-area,
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .desktop-photo-wall-section{
+    grid-area:photo!important;
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:0!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:980px){
+  .booking-layout{
+    grid-template-columns:minmax(390px,1.08fr) minmax(300px,.92fr)!important;
+    column-gap:24px!important;
+  }
+
+  .desktop-right-panel{
+    max-width:none!important;
+  }
+}
+
 `;
 
         const customJs=`
