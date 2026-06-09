@@ -1712,32 +1712,29 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
-
-
 /* =========================================================
-   B SIDE U FINAL FIX - CSS ONLY
-   1) Header aligns to booking/photo left edge
-   2) Remove employee outer frames
-   3) Add divider under header and above photo wall
+   B SIDE U - FINAL CLEAN LAYOUT PATCH (CSS ONLY)
+   - Restore from stable layout
+   - Align header left edge with photo wall
+   - Remove employee outer frames
+   - Keep dividers only in empty spaces
    ========================================================= */
 @media(min-width:600px){
   :root{
-    --bsu-divider: rgba(17,17,17,.12);
+    --bsu-final-edge-shift:-34px;
+    --bsu-divider:rgba(17,17,17,.12);
   }
 
-  .page{
-    max-width:1120px!important;
-    padding-left:22px!important;
-    padding-right:22px!important;
-    box-sizing:border-box!important;
-  }
-
+  /* Header: move left to match photo wall left edge */
   .pasadena-header{
-    width:100%!important;
-    margin-left:0!important;
+    position:relative!important;
+    left:var(--bsu-final-edge-shift)!important;
+    width:calc(100% - var(--bsu-final-edge-shift))!important;
+    max-width:none!important;
+    margin-top:0!important;
     margin-right:0!important;
+    margin-bottom:24px!important;
     padding:4px 0 20px!important;
-    margin-bottom:26px!important;
     border:0!important;
     border-bottom:1px solid var(--bsu-divider)!important;
     border-radius:0!important;
@@ -1753,147 +1750,31 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     content:none!important;
   }
 
-  .pasadena-title{
-    margin:0 0 10px!important;
-    font-size:clamp(34px,4.1vw,54px)!important;
-    line-height:.92!important;
-    letter-spacing:-.065em!important;
-  }
-
-  .pasadena-open{
-    min-height:28px!important;
-    padding:0 13px!important;
-    font-size:12.5px!important;
-  }
-
-  .pasadena-address{
-    font-size:13px!important;
-    line-height:1.35!important;
-  }
-
-  .booking-layout{
-    width:100%!important;
-    max-width:none!important;
-    margin-left:0!important;
-    margin-right:0!important;
-    box-sizing:border-box!important;
-  }
-
-  .booking-layout>div:nth-child(2){
-    padding:0!important;
-    border:0!important;
-    outline:0!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    border-radius:0!important;
-  }
-
-  .staff-card,
-  .staff-item{
-    box-shadow:none!important;
-    outline:0!important;
-  }
-
-  .staff-card:not(.is-active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]),
-  .staff-item:not(.is-active):not(.active):not([aria-pressed="true"]):not([aria-selected="true"]){
-    border:1px solid rgba(17,17,17,.08)!important;
-  }
-
-  .staff-card.is-active,
-  .staff-card.active,
-  .staff-card[aria-pressed="true"],
-  .staff-card[aria-selected="true"],
-  .staff-item.is-active,
-  .staff-item.active,
-  .staff-item[aria-pressed="true"],
-  .staff-item[aria-selected="true"]{
-    border:2px solid #111!important;
-    background:#fff!important;
-    box-shadow:none!important;
-  }
-
-  .desktop-photo-wall-section{
-    position:relative!important;
-    overflow:visible!important;
-    margin-top:36px!important;
-  }
-
-  .desktop-photo-wall-section::before{
-    display:block!important;
-    content:""!important;
-    position:absolute!important;
-    left:0!important;
-    right:0!important;
-    top:-20px!important;
-    height:1px!important;
-    background:var(--bsu-divider)!important;
-    z-index:3!important;
-  }
-
-  .desktop-photo-wall-section .staff-carousel,
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group{
-    overflow:hidden!important;
-  }
-}
-
-@media(max-width:599px){
-  .pasadena-header{
-    border:0!important;
-    border-bottom:1px solid rgba(17,17,17,.12)!important;
-    box-shadow:none!important;
-    background:transparent!important;
-    border-radius:0!important;
-  }
-}
-
-/* =========================================================
-   B SIDE U FINAL USER REQUEST - CSS ONLY
-   - Header left aligns with photo wall left
-   - Photo wall top divider sits in the middle of the blank gap
-   - Remove every staff card outer border/frame
-   ========================================================= */
-@media(min-width:600px){
-  .page{
-    max-width:1120px!important;
-    padding-left:22px!important;
-    padding-right:22px!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
-    box-sizing:border-box!important;
-  }
-
-  /* Make header start exactly at the same left edge as booking/photo wall */
-  .pasadena-header{
-    width:100%!important;
-    max-width:none!important;
-    margin-left:0!important;
-    margin-right:0!important;
-    padding-left:0!important;
-    padding-right:0!important;
-    box-sizing:border-box!important;
-    transform:none!important;
-  }
-
   .pasadena-title,
   .pasadena-open,
   .pasadena-address,
   .pasadena-address-row,
   .pasadena-links{
     margin-left:0!important;
+    transform:none!important;
   }
 
-  .booking-layout,
-  .desktop-photo-wall-section{
-    width:100%!important;
-    max-width:none!important;
-    margin-left:0!important;
-    margin-right:0!important;
-    box-sizing:border-box!important;
+  /* Do not let the employee section itself look like a card */
+  .booking-layout>div:nth-child(2),
+  .staff-section,
+  .staff-panel,
+  .staff-list,
+  .staff-strip{
+    border:0!important;
+    outline:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
   }
 
-  /* Remove the outside frame around every employee card */
+  /* Remove the OUTER frame from each employee card.
+     This intentionally leaves the avatar/name/status/check mark only. */
+  .staff-strip > .staff-card,
+  .staff-strip > .staff-item,
   .staff-card,
   .staff-item,
   .staff-card.is-active,
@@ -1907,31 +1788,30 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     border:0!important;
     outline:0!important;
     box-shadow:none!important;
-    background:#fff!important;
+    background:transparent!important;
   }
 
   .staff-card::before,
   .staff-card::after,
   .staff-item::before,
   .staff-item::after{
+    border:0!important;
+    outline:0!important;
     box-shadow:none!important;
+    background:transparent!important;
   }
 
-  /* Keep selected state clean: only the check mark remains */
-  .staff-card.is-active,
-  .staff-card.active,
-  .staff-card[aria-pressed="true"],
-  .staff-card[aria-selected="true"],
-  .staff-item.is-active,
-  .staff-item.active,
-  .staff-item[aria-pressed="true"],
-  .staff-item[aria-selected="true"]{
-    transform:none!important;
+  /* Make sure the check mark stays visible even after removing the frame */
+  .staff-card.is-active .check,
+  .staff-item.is-active .check,
+  .staff-card .check,
+  .staff-item .check{
+    display:flex!important;
   }
 
-  /* Put the photo divider in the center of the blank space above the image wall */
+  /* Photo wall divider: centered in the blank space above the image wall */
   .desktop-photo-wall-section{
-    margin-top:64px!important;
+    margin-top:72px!important;
     position:relative!important;
     overflow:visible!important;
   }
@@ -1942,10 +1822,10 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     position:absolute!important;
     left:0!important;
     right:0!important;
-    top:-32px!important;
+    top:-36px!important;
     height:1px!important;
-    background:rgba(17,17,17,.12)!important;
-    z-index:3!important;
+    background:var(--bsu-divider)!important;
+    z-index:5!important;
   }
 
   .desktop-photo-wall-section .staff-carousel,
@@ -1954,6 +1834,10 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   .desktop-photo-wall-section .staff-group{
     overflow:hidden!important;
   }
+}
+
+@media(min-width:600px) and (max-width:900px){
+  :root{--bsu-final-edge-shift:-22px;}
 }
 
 @media(max-width:599px){
@@ -1970,8 +1854,10 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     border:0!important;
     outline:0!important;
     box-shadow:none!important;
+    background:transparent!important;
   }
 }
+
 
 `;
 
