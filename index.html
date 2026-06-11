@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -1106,139 +1107,6 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
-
-/* B SIDE U V64 - staff main area larger + selected staff work title above photo wall */
-@media(min-width:600px){
-  .booking-layout{
-    grid-template-columns:minmax(540px,610px) minmax(300px,430px)!important;
-    column-gap:34px!important;
-    row-gap:16px!important;
-  }
-
-  .booking-layout>div:nth-child(2){
-    max-width:610px!important;
-    padding:18px!important;
-    border-radius:28px!important;
-    background:#fff!important;
-  }
-
-  .desktop-right-panel{
-    max-width:430px!important;
-    opacity:.96!important;
-  }
-
-  .staff-strip{
-    gap:14px!important;
-  }
-
-  .staff-card,
-  .staff-item{
-    min-height:168px!important;
-    border-radius:24px!important;
-    padding:14px 10px 12px!important;
-  }
-
-  .avatar,
-  .staff-avatar{
-    width:76px!important;
-    height:76px!important;
-    margin-bottom:9px!important;
-  }
-
-  .staff-name{
-    font-size:15.2px!important;
-    line-height:1!important;
-    font-weight:950!important;
-  }
-
-  .staff-status{
-    min-height:24px!important;
-    margin-top:8px!important;
-    padding:0 9px!important;
-    font-size:10.7px!important;
-  }
-
-  .desktop-service-panel .section-label,
-  .desktop-right-panel .section-label{
-    opacity:.72!important;
-  }
-
-  .desktop-photo-wall-section{
-    height:242px!important;
-    max-height:242px!important;
-    padding-top:35px!important;
-    overflow:hidden!important;
-    background:transparent!important;
-    border-radius:0!important;
-  }
-
-  .desktop-photo-wall-section::before{
-    content:attr(data-work-title)!important;
-    display:block!important;
-    position:absolute!important;
-    left:2px!important;
-    top:0!important;
-    height:20px!important;
-    color:#111!important;
-    font-size:11px!important;
-    line-height:1!important;
-    font-weight:950!important;
-    letter-spacing:.16em!important;
-    text-transform:uppercase!important;
-  }
-
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group,
-  .desktop-photo-wall-section .staff-carousel{
-    height:205px!important;
-    max-height:205px!important;
-  }
-}
-
-@media(min-width:600px) and (max-width:980px){
-  .booking-layout{
-    grid-template-columns:minmax(430px,1.16fr) minmax(280px,.84fr)!important;
-    column-gap:22px!important;
-  }
-}
-
-@media(max-width:599px){
-  .desktop-photo-wall-section{
-    height:256px!important;
-    max-height:256px!important;
-    padding-top:32px!important;
-    position:relative!important;
-    background:transparent!important;
-    border-radius:0!important;
-  }
-
-  .desktop-photo-wall-section::before{
-    content:attr(data-work-title)!important;
-    display:block!important;
-    position:absolute!important;
-    left:2px!important;
-    top:0!important;
-    height:18px!important;
-    color:#111!important;
-    font-size:10.5px!important;
-    line-height:1!important;
-    font-weight:950!important;
-    letter-spacing:.155em!important;
-    text-transform:uppercase!important;
-  }
-
-  .desktop-photo-wall-section .bsu-team-wall,
-  .desktop-photo-wall-section .staff-groups,
-  .desktop-photo-wall-section .staff-group,
-  .desktop-photo-wall-section .staff-carousel,
-  .desktop-photo-wall-section .staff-carousel-track,
-  .desktop-photo-wall-section .staff-carousel-item{
-    height:220px!important;
-    max-height:220px!important;
-  }
-}
-
 `;
 
         const customJs=`
@@ -2077,20 +1945,6 @@ function currentResultsAnchor(){
   return slotArea||emptyState;
 }
 
-
-function updatePhotoWallWorkTitle(){
-  var photo=document.querySelector(".desktop-photo-wall-section");
-  if(!photo)return;
-
-  var name=getSelectedStaffName&&getSelectedStaffName();
-  if(!name){
-    name=(window.bsuInitialGalleryStaff||"Ryan").toString().trim();
-  }
-  if(!name)name="Ryan";
-
-  photo.setAttribute("data-work-title",name+"'s Work");
-}
-
 function movePhotoWall(){
   var photo=document.querySelector(".desktop-photo-wall-section");
   var booking=document.querySelector(".booking-layout");
@@ -2247,7 +2101,6 @@ function runFixes(){
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
-  updatePhotoWallWorkTitle();
   movePhotoWall();
   waitForMobilePhotoWallReady();
   bindMobilePhotoWallImageLoadStart();
