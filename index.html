@@ -20,6 +20,10 @@
         "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
         "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html"
       ];
+      const configUrls=[
+        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/staff-config.js",
+        "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/staff-config.js"
+      ];
       try{
         let html="";
         let lastLoadError=null;
@@ -38,6 +42,62 @@
         if(!html||html.indexOf("</body>")===-1){
           throw lastLoadError||new Error("Unable to load booking page.");
         }
+
+        let staffConfigJs="";
+        let lastConfigError=null;
+        for (const configUrl of configUrls) {
+          try {
+            const configResponse=await fetch(configUrl,{cache:"no-store"});
+            if(!configResponse.ok)throw new Error("Unable to load staff config.");
+            staffConfigJs=await configResponse.text();
+            if(staffConfigJs&&staffConfigJs.indexOf("STAFF_DATA")!==-1)break;
+          } catch(configError) {
+            lastConfigError=configError;
+          }
+        }
+
+        if(!staffConfigJs||staffConfigJs.indexOf("STAFF_DATA")===-1){
+          throw lastConfigError||new Error("Unable to load staff config.");
+        }
+
+        // Inline staff-config.js so the page works on Weebly/mobile without a local ./staff-config.js file.
+        staffConfigJs=staffConfigJs.replace(/export\s+const/g,"const");
+
+        const kendrayaStaffConfig = `
+  Kendraya: {
+    name: "Kendraya",
+    order: 6,
+    days: ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
+    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f3f3'/%3E%3Ctext x='200' y='224' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='112' font-weight='900' fill='%23111'%3EK%3C/text%3E%3C/svg%3E",
+    team_member_id: "TM997nlZD4qz2O8p",
+    defaultService: "haircut",
+    services: {
+      haircut: {
+        label: "Men’s Haircut",
+        price: 45,
+        duration_minutes: 45,
+        service_variation_id: "OMW6HBOSGIGQ56AVPD2ZTWUY",
+        service_variation_version: 1781066148992
+      },
+      scissors: {
+        label: "Scissors Cut",
+        price: 60,
+        duration_minutes: 45,
+        service_variation_id: "PJ6TIQMJZIVJCUE6V6N26YKM",
+        service_variation_version: 1781067334125
+      }
+    }
+  },
+`;
+
+        if(!/Kendraya\s*:/i.test(staffConfigJs)){
+          staffConfigJs=staffConfigJs.replace(/\n\s*Jacob\s*:\s*\{/, kendrayaStaffConfig + "\n  Jacob: {");
+        }
+
+        html=html.replace(
+          /import\s+\{\s*STAFF_DATA\s*,\s*BUSINESS\s*\}\s+from\s+["']\.\/staff-config\.js["'];/,
+          staffConfigJs
+        );
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
         // The gallery only loads staff listed inside STAFF_SOURCES.
@@ -60,6 +120,26 @@ ${williamSource}${body.trimStart()}];`;
           function(match, body){
             if (/["']William["']/.test(body)) return match;
             return match.replace("[", `["William", `);
+          }
+        );
+
+        // Add Kendraya to the photo wall staff source/order.
+        html=html.replace(
+          /const STAFF_SOURCES = \[([\s\S]*?)\];/,
+          function(match, body){
+            if (/name\s*:\s*["']Kendraya["']/i.test(body)) return match;
+            const kendrayaSource = `    { name:"Kendraya", tag:"Kendraya", location:"Pasadena", slug:"kendraya" },
+`;
+            return `const STAFF_SOURCES = [
+${kendrayaSource}${body.trimStart()}];`;
+          }
+        );
+
+        html=html.replace(
+          /const STAFF_ORDER = \[([\s\S]*?)\];/,
+          function(match, body){
+            if (/["']Kendraya["']/.test(body)) return match;
+            return match.replace("[", `["Kendraya", `);
           }
         );
 
@@ -198,7 +278,7 @@ ${williamSource}${body.trimStart()}];`;
     }
 
     function getStaffTiePriority(staffKey) {
-      const fixedOrder = ["william", "ryan", "ken", "nami", "fiona", "jacob"];
+      const fixedOrder = ["william", "ryan", "ken", "kendraya", "nami", "fiona", "jacob"];
       const normalizedKey = String(staffKey || "").toLowerCase();
       const index = fixedOrder.indexOf(normalizedKey);
 
@@ -1074,7 +1154,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
-/* B SIDE U V64 fixes - employee frames, straight photo wall, week/month calendar */
+/* B SIDE U V65 fixes - Kendraya, inner employee frames, straight photo wall, week/month calendar */
 .staff-strip{
   background:#fff!important;
   border:1px solid rgba(17,17,17,.10)!important;
@@ -1135,6 +1215,52 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
+/* B SIDE U V65 - keep only inner employee cards, remove outer staff frames */
+.booking-layout>div:nth-child(2){
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+.staff-strip{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+}
+.staff-card,.staff-item{
+  background:#fff!important;
+  border:1px solid rgba(17,17,17,.12)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.045)!important;
+}
+.staff-card.is-active,.staff-item.is-active{
+  border-color:#111!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.10)!important;
+}
+@media(min-width:600px){
+  .booking-layout>div:nth-child(2){
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+  .staff-strip{
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+}
+@media(max-width:599px){
+  .staff-strip{
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+}
+
+
 `;
 
         const customJs=`
@@ -1148,7 +1274,7 @@ let mobilePhotoWallSignature="";
 let lastSelectedBookingLabel="";
 
 const POLICY_URL="https://www.bsideuhair.com/appointment-policy";
-const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","wed","thu","fri"],Ken:["tue","wed","fri","sat","sun"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
+const WORK_DAYS={William:["mon","thu","fri","sat","sun"],Ryan:["mon","tue","wed","thu","fri"],Ken:["tue","wed","fri","sat","sun"],Kendraya:["sun","mon","tue","wed","thu","fri","sat"],Fiona:["mon","tue","wed","fri","sat"],Nami:["tue","wed","thu","sun"],Jacob:["wed","thu","fri","sat"]};
 const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function setImportantDisplay(el,value){if(!el)return;el.style.setProperty("display",value,"important")}
