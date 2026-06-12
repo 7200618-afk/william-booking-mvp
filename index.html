@@ -17,8 +17,9 @@
   <script>
     (async function(){
       const sourceUrls=[
-        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
         "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html",
+        "https://fastly.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html",
+        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
         "https://cdn.statically.io/gh/7200618-afk/william-booking-mvp/booking-core-source/index.html"
       ];
 
@@ -49,7 +50,7 @@
 
         for(const sourceUrl of sourceUrls){
           try{
-            const response=await fetchWithTimeout(sourceUrl,7000);
+            const response=await fetchWithTimeout(sourceUrl,5000);
             if(!response.ok)throw new Error("Unable to load booking page.");
             html=await response.text();
             if(html&&html.includes("</body>"))break;
@@ -1441,6 +1442,86 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U FINAL - photo wall label uses same section-label style and spacing */
+.bsu-photo-wall-block{
+  width:100%!important;
+  max-width:1076px!important;
+  margin:14px 0 0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-photo-wall-block > .section-label.bsu-photo-wall-label{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:10px!important;
+  width:100%!important;
+  margin:0 2px 8px!important;
+  padding:0!important;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  letter-spacing:.34em!important;
+  text-transform:uppercase!important;
+  color:#666!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-photo-wall-block > .section-label.bsu-photo-wall-label::before{
+  content:""!important;
+  display:block!important;
+  width:9px!important;
+  height:9px!important;
+  flex:0 0 9px!important;
+  border-radius:999px!important;
+  background:#111!important;
+}
+
+.bsu-photo-wall-block > .desktop-photo-wall-section{
+  margin:0!important;
+}
+
+.desktop-photo-wall-section,
+.desktop-photo-wall-section .bsu-team-wall,
+.desktop-photo-wall-section .staff-groups,
+.desktop-photo-wall-section .staff-group,
+.desktop-photo-wall-section .staff-carousel,
+.desktop-photo-wall-section .staff-carousel-item,
+.desktop-photo-wall-section img{
+  border-radius:0!important;
+}
+
+@media(min-width:600px){
+  .booking-layout{
+    grid-template-areas:"left right" "photo photo"!important;
+    grid-template-rows:auto auto!important;
+    row-gap:14px!important;
+  }
+
+  .bsu-photo-wall-block{
+    grid-area:photo!important;
+    margin-top:14px!important;
+  }
+
+  .bsu-photo-wall-label{
+    grid-area:auto!important;
+  }
+}
+
+@media(max-width:599px){
+  .bsu-photo-wall-block{
+    margin:14px 0 0!important;
+  }
+
+  .bsu-photo-wall-block > .section-label.bsu-photo-wall-label{
+    margin:0 2px 8px!important;
+    font-size:10px!important;
+    letter-spacing:.34em!important;
+  }
+}
+
 `;
 
         const customJs=`
@@ -2439,16 +2520,22 @@ function formatPhotoWorkLabelName(name){
 
 function updatePhotoWorkLabel(){
   var photo=document.querySelector(".desktop-photo-wall-section");
-  if(!photo||!photo.parentNode)return;
+  if(!photo)return;
 
-  var label=document.querySelector(".bsu-photo-wall-label");
+  var booking=document.querySelector(".booking-layout");
+  var block=document.querySelector(".bsu-photo-wall-block");
+
+  if(!block){
+    block=document.createElement("div");
+    block.className="bsu-photo-wall-block";
+  }
+
+  var label=block.querySelector(".bsu-photo-wall-label")||document.querySelector(".bsu-photo-wall-label");
   if(!label){
     label=document.createElement("div");
-    label.className="section-label bsu-photo-wall-label";
-  }else{
-    label.classList.add("section-label");
-    label.classList.add("bsu-photo-wall-label");
   }
+
+  label.className="section-label bsu-photo-wall-label";
 
   var name=getSelectedStaffName()||lastGalleryStaff||window.bsuInitialGalleryStaff||"";
   var text=formatPhotoWorkLabelName(name);
@@ -2456,8 +2543,23 @@ function updatePhotoWorkLabel(){
     label.textContent=text;
   }
 
-  if(label.parentNode!==photo.parentNode||label.nextSibling!==photo){
-    photo.parentNode.insertBefore(label,photo);
+  if(label.parentNode!==block){
+    block.insertBefore(label,block.firstChild);
+  }
+
+  if(photo.parentNode!==block){
+    block.appendChild(photo);
+  }
+
+  if(isMobile()){
+    var anchor=currentResultsAnchor();
+    if(anchor&&anchor.parentNode&&block.previousElementSibling!==anchor){
+      anchor.parentNode.insertBefore(block,anchor.nextSibling);
+    }else if(!block.parentNode&&photo.parentNode){
+      photo.parentNode.insertBefore(block,photo);
+    }
+  }else if(booking&&block.parentNode!==booking){
+    booking.appendChild(block);
   }
 }
 
@@ -2467,6 +2569,9 @@ function matchPhotoLabelToSectionLabel(){
   if(!label)return;
 
   var reference=Array.from(document.querySelectorAll(".section-label")).find(function(el){
+    var text=(el.textContent||"").trim().toLowerCase();
+    return el!==label && !el.classList.contains("bsu-photo-wall-label") && (text==="stylists"||text==="services");
+  }) || Array.from(document.querySelectorAll(".section-label")).find(function(el){
     return el!==label && !el.classList.contains("bsu-photo-wall-label") && (el.textContent||"").trim();
   });
 
@@ -2474,7 +2579,7 @@ function matchPhotoLabelToSectionLabel(){
 
   try{
     var cs=window.getComputedStyle(reference);
-    ["fontSize","fontWeight","letterSpacing","textTransform","color","lineHeight"].forEach(function(prop){
+    ["fontSize","fontWeight","letterSpacing","textTransform","color","lineHeight","fontFamily"].forEach(function(prop){
       label.style.setProperty(prop.replace(/[A-Z]/g,function(m){return "-"+m.toLowerCase();}), cs[prop], "important");
     });
   }catch(e){}
@@ -2572,7 +2677,7 @@ document.addEventListener("click",function(e){
         document.write(html);
         document.close();
       }catch(error){
-        document.body.innerHTML='<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
+        document.body.innerHTML='<div class="bsu-loading" style="padding:24px;text-align:center;line-height:1.45;">Unable to load booking page.<br><button type="button" onclick="location.reload()" style="margin-top:14px;border:0;border-radius:999px;background:#111;color:#fff;padding:12px 18px;font-weight:900;">Refresh</button></div>';
       }
     })();
   </script>
