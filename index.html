@@ -18,15 +18,38 @@
     (async function(){
       const sourceUrls=[
         "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
-        "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html"
+        "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html",
+        "https://cdn.statically.io/gh/7200618-afk/william-booking-mvp/booking-core-source/index.html"
       ];
+
+      function fetchWithTimeout(url, timeoutMs){
+        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+        let timer = null;
+
+        const timeoutPromise = new Promise(function(_, reject){
+          timer = setTimeout(function(){
+            if(controller) controller.abort();
+            reject(new Error("Loading timeout"));
+          }, timeoutMs);
+        });
+
+        const fetchPromise = fetch(url,{
+          cache:"no-store",
+          mode:"cors",
+          signal: controller ? controller.signal : undefined
+        });
+
+        return Promise.race([fetchPromise, timeoutPromise]).finally(function(){
+          if(timer) clearTimeout(timer);
+        });
+      }
       try{
         let html="";
         let lastError=null;
 
         for(const sourceUrl of sourceUrls){
           try{
-            const response=await fetch(sourceUrl,{cache:"no-store"});
+            const response=await fetchWithTimeout(sourceUrl,7000);
             if(!response.ok)throw new Error("Unable to load booking page.");
             html=await response.text();
             if(html&&html.includes("</body>"))break;
@@ -1332,7 +1355,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
-/* B SIDE U final tweak - restore service/date order, match work label, unify spacing, mobile loading fallback */
+/* B SIDE U final fix - restore service/date order + exact work label style + mobile loading timeout */
 @media(min-width:600px){
   .desktop-service-panel{
     order:1!important;
@@ -1352,32 +1375,46 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   .booking-layout{
     grid-template-areas:"left right" "worklabel worklabel" "photo photo"!important;
     grid-template-rows:auto auto auto!important;
-    row-gap:12px!important;
+    row-gap:0!important;
   }
 
   .bsu-photo-wall-label{
     grid-area:worklabel!important;
     max-width:1076px!important;
-    margin:0 2px 7px!important;
+    margin:18px 2px 8px!important;
     padding:0!important;
-    gap:10px!important;
-    color:#666!important;
-    font-size:10px!important;
-    line-height:1!important;
-    font-weight:950!important;
-    letter-spacing:.34em!important;
-    text-transform:uppercase!important;
-  }
-
-  .bsu-photo-wall-label::before{
-    width:9px!important;
-    height:9px!important;
-    flex:0 0 9px!important;
   }
 
   .desktop-photo-wall-section{
     margin-top:0!important;
   }
+}
+
+/* Make work title use the same visual rules as Stylists / Services */
+.bsu-photo-wall-label,
+.bsu-photo-wall-label.section-label{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  gap:10px!important;
+  color:#666!important;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  letter-spacing:.34em!important;
+  text-transform:uppercase!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-photo-wall-label::before{
+  content:""!important;
+  display:block!important;
+  width:9px!important;
+  height:9px!important;
+  flex:0 0 9px!important;
+  border-radius:999px!important;
+  background:#111!important;
 }
 
 @media(max-width:599px){
@@ -1391,22 +1428,12 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
     margin-bottom:12px!important;
   }
 
-  .bsu-photo-wall-label{
-    margin:0 2px 7px!important;
+  .bsu-photo-wall-label,
+  .bsu-photo-wall-label.section-label{
+    margin:14px 2px 8px!important;
     padding:0!important;
-    gap:10px!important;
-    color:#666!important;
     font-size:10px!important;
-    line-height:1!important;
-    font-weight:950!important;
     letter-spacing:.34em!important;
-    text-transform:uppercase!important;
-  }
-
-  .bsu-photo-wall-label::before{
-    width:9px!important;
-    height:9px!important;
-    flex:0 0 9px!important;
   }
 
   .desktop-photo-wall-section{
@@ -2417,7 +2444,10 @@ function updatePhotoWorkLabel(){
   var label=document.querySelector(".bsu-photo-wall-label");
   if(!label){
     label=document.createElement("div");
-    label.className="bsu-photo-wall-label";
+    label.className="section-label bsu-photo-wall-label";
+  }else{
+    label.classList.add("section-label");
+    label.classList.add("bsu-photo-wall-label");
   }
 
   var name=getSelectedStaffName()||lastGalleryStaff||window.bsuInitialGalleryStaff||"";
@@ -2431,6 +2461,25 @@ function updatePhotoWorkLabel(){
   }
 }
 
+
+function matchPhotoLabelToSectionLabel(){
+  var label=document.querySelector(".bsu-photo-wall-label");
+  if(!label)return;
+
+  var reference=Array.from(document.querySelectorAll(".section-label")).find(function(el){
+    return el!==label && !el.classList.contains("bsu-photo-wall-label") && (el.textContent||"").trim();
+  });
+
+  if(!reference)return;
+
+  try{
+    var cs=window.getComputedStyle(reference);
+    ["fontSize","fontWeight","letterSpacing","textTransform","color","lineHeight"].forEach(function(prop){
+      label.style.setProperty(prop.replace(/[A-Z]/g,function(m){return "-"+m.toLowerCase();}), cs[prop], "important");
+    });
+  }catch(e){}
+}
+
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
@@ -2440,6 +2489,7 @@ function runFixes(){
   syncGalleryToSelectedStaff();
   movePhotoWall();
   updatePhotoWorkLabel();
+  matchPhotoLabelToSectionLabel();
   waitForMobilePhotoWallReady();
   bindMobilePhotoWallImageLoadStart();
     insertSuccessPolicyCard();
