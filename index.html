@@ -16,52 +16,11 @@
 
   <script>
     (async function(){
-      const sourceUrls=[
-        "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html",
-        "https://fastly.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html",
-        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
-        "https://cdn.statically.io/gh/7200618-afk/william-booking-mvp/booking-core-source/index.html"
-      ];
-
-      function fetchWithTimeout(url, timeoutMs){
-        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-        let timer = null;
-
-        const timeoutPromise = new Promise(function(_, reject){
-          timer = setTimeout(function(){
-            if(controller) controller.abort();
-            reject(new Error("Loading timeout"));
-          }, timeoutMs);
-        });
-
-        const fetchPromise = fetch(url,{
-          cache:"no-store",
-          mode:"cors",
-          signal: controller ? controller.signal : undefined
-        });
-
-        return Promise.race([fetchPromise, timeoutPromise]).finally(function(){
-          if(timer) clearTimeout(timer);
-        });
-      }
+      const sourceUrl="https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html";
       try{
-        let html="";
-        let lastError=null;
-
-        for(const sourceUrl of sourceUrls){
-          try{
-            const response=await fetchWithTimeout(sourceUrl,5000);
-            if(!response.ok)throw new Error("Unable to load booking page.");
-            html=await response.text();
-            if(html&&html.includes("</body>"))break;
-          }catch(fetchError){
-            lastError=fetchError;
-          }
-        }
-
-        if(!html||!html.includes("</body>")){
-          throw lastError||new Error("Unable to load booking page.");
-        }
+        const response=await fetch(sourceUrl,{cache:"no-store"});
+        if(!response.ok)throw new Error("Unable to load booking page.");
+        let html=await response.text();
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
         // The gallery only loads staff listed inside STAFF_SOURCES.
