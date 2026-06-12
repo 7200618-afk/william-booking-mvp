@@ -1108,376 +1108,162 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
-/* B SIDE U final fix - header aligns with staff/photo left edge after header frame removal */
+/* B SIDE U final safe fixes - no loading changes */
 @media(min-width:600px){
-  .pasadena-header{
-    width:100%!important;
-    max-width:1076px!important;
-    margin-left:0!important;
-    margin-right:auto!important;
-    padding:0 0 14px 0!important;
-    border:0!important;
-    border-radius:0!important;
-    background:transparent!important;
-    box-shadow:none!important;
-    overflow:visible!important;
-    box-sizing:border-box!important;
-    transform:translateX(-36px)!important;
-  }
-
-  .pasadena-header::after{
-    display:none!important;
-    content:none!important;
-  }
-
-  .pasadena-title,
-  .pasadena-open,
-  .pasadena-address,
-  .pasadena-links{
-    margin-left:0!important;
-    padding-left:0!important;
-    justify-self:start!important;
-    text-align:left!important;
-  }
-}
-
-@media(min-width:600px) and (max-width:980px){
-  .pasadena-header{
-    transform:none!important;
-  }
-}
-
-
-/* B SIDE U fix - opening pill / photo wall square / work label */
-.pasadena-open{
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  width:max-content!important;
-  max-width:none!important;
-  min-width:0!important;
-  min-height:34px!important;
-  height:auto!important;
-  padding:0 18px 0 14px!important;
-  gap:10px!important;
-  border-radius:999px!important;
-  background:#111!important;
-  color:#fff!important;
-  overflow:hidden!important;
-  white-space:nowrap!important;
-  box-sizing:border-box!important;
-  line-height:1!important;
-}
-.pasadena-open::before{
-  flex:0 0 9px!important;
-  width:9px!important;
-  height:9px!important;
-  margin:0!important;
-}
-.pasadena-open,
-.pasadena-open *{
-  color:#fff!important;
-  line-height:1!important;
-}
-
-.bsu-photo-wall-label{
-  display:flex!important;
-  align-items:center!important;
-  gap:10px!important;
-  width:100%!important;
-  margin:20px 0 9px!important;
-  padding:0!important;
-  color:#666!important;
-  font-size:12px!important;
-  line-height:1!important;
-  font-weight:950!important;
-  letter-spacing:.34em!important;
-  text-transform:uppercase!important;
-  box-sizing:border-box!important;
-}
-.bsu-photo-wall-label::before{
-  content:""!important;
-  display:block!important;
-  width:9px!important;
-  height:9px!important;
-  border-radius:999px!important;
-  background:#111!important;
-  flex:0 0 9px!important;
-}
-
-.desktop-photo-wall-section,
-.desktop-photo-wall-section .bsu-team-wall,
-.desktop-photo-wall-section .staff-groups,
-.desktop-photo-wall-section .staff-group,
-.desktop-photo-wall-section .staff-carousel,
-.desktop-photo-wall-section .staff-carousel-item,
-.desktop-photo-wall-section img{
-  border-radius:0!important;
-}
-
-@media(min-width:600px){
-  .booking-layout{
-    grid-template-areas:"left right" "worklabel worklabel" "photo photo"!important;
-    grid-template-rows:auto auto auto!important;
-  }
-  .bsu-photo-wall-label{
-    grid-area:worklabel!important;
-    max-width:1076px!important;
-    margin:18px 0 8px!important;
-  }
-  .desktop-photo-wall-section{
-    margin-top:0!important;
-  }
-}
-
-@media(max-width:599px){
   .pasadena-open{
-    max-width:100%!important;
-    min-height:31px!important;
-    padding:0 13px 0 11px!important;
-    font-size:11.5px!important;
+    max-width:none!important;
+    width:auto!important;
+    min-width:0!important;
+    padding:0 14px!important;
+    height:32px!important;
+    min-height:32px!important;
+    box-sizing:border-box!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    flex:0 0 auto!important;
   }
-  .bsu-photo-wall-label{
-    margin:18px 0 8px!important;
-    font-size:11px!important;
-    letter-spacing:.28em!important;
-  }
-  .desktop-photo-wall-section{
-    margin-top:0!important;
-    border-radius:0!important;
-  }
-}
 
+  .pasadena-header{
+    column-gap:10px!important;
+  }
 
-/* B SIDE U tweak - reduce work label spacing + taller staff cards */
-@media(min-width:600px){
   .booking-layout{
-    row-gap:6px!important;
+    grid-template-areas:"left right" "photo photo"!important;
   }
 
-  .bsu-photo-wall-label{
-    margin:4px 0 5px!important;
-    padding:0!important;
-    line-height:1!important;
+  .desktop-service-panel{order:1!important;}
+  .desktop-right-panel .date-area{order:2!important;}
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{order:3!important;}
+
+  .staff-card{
+    min-height:170px!important;
+    height:170px!important;
+    border-radius:14px!important;
+    padding:14px 8px 12px!important;
   }
 
-  .desktop-photo-wall-section{
-    margin-top:0!important;
+  .booking-layout>div:nth-child(2){
+    max-width:560px!important;
   }
 
   .staff-strip{
-    gap:12px!important;
-    align-items:stretch!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
   }
 
-  .staff-card,
-  .staff-item{
-    aspect-ratio:0.86/1!important;
-    min-height:0!important;
-    height:auto!important;
-    border-radius:14px!important;
-    padding:14px 10px 12px!important;
+  .bsu-photo-work-block{
+    grid-area:photo!important;
+    display:block!important;
+    width:100%!important;
+    max-width:1076px!important;
+    margin:0!important;
+    padding:0!important;
     box-sizing:border-box!important;
   }
 
-  .staff-card.is-active,
-  .staff-item.is-active{
-    border-radius:14px!important;
-  }
-
-  .avatar{
-    width:66px!important;
-    height:66px!important;
-    margin-bottom:10px!important;
-  }
-}
-
-@media(max-width:599px){
-  .bsu-photo-wall-label{
-    margin:8px 0 5px!important;
+  .bsu-photo-work-block .section-label,
+  .bsu-photo-work-label{
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+    margin:0 0 8px!important;
     padding:0!important;
+    font-size:10px!important;
     line-height:1!important;
-  }
-
-  .desktop-photo-wall-section{
-    margin-top:0!important;
-  }
-
-  .staff-card,
-  .staff-item{
-    border-radius:14px!important;
-  }
-
-  .staff-card.is-active,
-  .staff-item.is-active{
-    border-radius:14px!important;
-  }
-}
-
-
-/* B SIDE U final fix - restore service/date order + exact work label style + mobile loading timeout */
-@media(min-width:600px){
-  .desktop-service-panel{
-    order:1!important;
-    margin:0 0 18px!important;
-  }
-
-  .desktop-right-panel .date-area{
-    order:2!important;
-    margin:0 0 12px!important;
-  }
-
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state{
-    order:3!important;
-  }
-
-  .booking-layout{
-    grid-template-areas:"left right" "worklabel worklabel" "photo photo"!important;
-    grid-template-rows:auto auto auto!important;
-    row-gap:0!important;
-  }
-
-  .bsu-photo-wall-label{
-    grid-area:worklabel!important;
-    max-width:1076px!important;
-    margin:18px 2px 8px!important;
-    padding:0!important;
-  }
-
-  .desktop-photo-wall-section{
-    margin-top:0!important;
-  }
-}
-
-/* Make work title use the same visual rules as Stylists / Services */
-.bsu-photo-wall-label,
-.bsu-photo-wall-label.section-label{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  width:100%!important;
-  gap:10px!important;
-  color:#666!important;
-  font-size:10px!important;
-  line-height:1!important;
-  font-weight:950!important;
-  letter-spacing:.34em!important;
-  text-transform:uppercase!important;
-  box-sizing:border-box!important;
-}
-
-.bsu-photo-wall-label::before{
-  content:""!important;
-  display:block!important;
-  width:9px!important;
-  height:9px!important;
-  flex:0 0 9px!important;
-  border-radius:999px!important;
-  background:#111!important;
-}
-
-@media(max-width:599px){
-  .desktop-service-panel{
-    margin-top:0!important;
-    margin-bottom:14px!important;
-  }
-
-  .bsu-slot-date-wrap{
-    margin-top:4px!important;
-    margin-bottom:12px!important;
-  }
-
-  .bsu-photo-wall-label,
-  .bsu-photo-wall-label.section-label{
-    margin:14px 2px 8px!important;
-    padding:0!important;
-    font-size:10px!important;
+    font-weight:950!important;
     letter-spacing:.34em!important;
+    text-transform:uppercase!important;
+    color:#666!important;
   }
 
+  .bsu-photo-work-block .section-label::before,
+  .bsu-photo-work-label::before{
+    content:""!important;
+    display:block!important;
+    width:8px!important;
+    height:8px!important;
+    border-radius:999px!important;
+    background:#111!important;
+    flex:0 0 8px!important;
+  }
+
+  .bsu-photo-work-block .desktop-photo-wall-section,
   .desktop-photo-wall-section{
-    margin-top:0!important;
-  }
-}
-
-
-/* B SIDE U FINAL - photo wall label uses same section-label style and spacing */
-.bsu-photo-wall-block{
-  width:100%!important;
-  max-width:1076px!important;
-  margin:14px 0 0!important;
-  padding:0!important;
-  box-sizing:border-box!important;
-}
-
-.bsu-photo-wall-block > .section-label.bsu-photo-wall-label{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:flex-start!important;
-  gap:10px!important;
-  width:100%!important;
-  margin:0 2px 8px!important;
-  padding:0!important;
-  font-size:10px!important;
-  line-height:1!important;
-  font-weight:950!important;
-  letter-spacing:.34em!important;
-  text-transform:uppercase!important;
-  color:#666!important;
-  box-sizing:border-box!important;
-}
-
-.bsu-photo-wall-block > .section-label.bsu-photo-wall-label::before{
-  content:""!important;
-  display:block!important;
-  width:9px!important;
-  height:9px!important;
-  flex:0 0 9px!important;
-  border-radius:999px!important;
-  background:#111!important;
-}
-
-.bsu-photo-wall-block > .desktop-photo-wall-section{
-  margin:0!important;
-}
-
-.desktop-photo-wall-section,
-.desktop-photo-wall-section .bsu-team-wall,
-.desktop-photo-wall-section .staff-groups,
-.desktop-photo-wall-section .staff-group,
-.desktop-photo-wall-section .staff-carousel,
-.desktop-photo-wall-section .staff-carousel-item,
-.desktop-photo-wall-section img{
-  border-radius:0!important;
-}
-
-@media(min-width:600px){
-  .booking-layout{
-    grid-template-areas:"left right" "photo photo"!important;
-    grid-template-rows:auto auto!important;
-    row-gap:14px!important;
-  }
-
-  .bsu-photo-wall-block{
-    grid-area:photo!important;
-    margin-top:14px!important;
-  }
-
-  .bsu-photo-wall-label{
     grid-area:auto!important;
+    margin:0!important;
+    border-radius:0!important;
+  }
+
+  .desktop-photo-wall-section,
+  .desktop-photo-wall-section .bsu-team-wall,
+  .desktop-photo-wall-section .staff-groups,
+  .desktop-photo-wall-section .staff-group,
+  .desktop-photo-wall-section .staff-carousel,
+  .desktop-photo-wall-section .staff-carousel-item,
+  .desktop-photo-wall-section img{
+    border-radius:0!important;
   }
 }
 
 @media(max-width:599px){
-  .bsu-photo-wall-block{
-    margin:14px 0 0!important;
+  .desktop-service-panel{order:1!important;}
+  .desktop-right-panel .date-area{order:2!important;}
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{order:3!important;}
+
+  .staff-card{
+    min-height:150px!important;
+    border-radius:14px!important;
   }
 
-  .bsu-photo-wall-block > .section-label.bsu-photo-wall-label{
-    margin:0 2px 8px!important;
+  .bsu-photo-work-block{
+    display:block!important;
+    width:100%!important;
+    margin:14px 0 0!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .bsu-photo-work-block .section-label,
+  .bsu-photo-work-label{
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+    margin:0 0 8px!important;
+    padding:0!important;
     font-size:10px!important;
+    line-height:1!important;
+    font-weight:950!important;
     letter-spacing:.34em!important;
+    text-transform:uppercase!important;
+    color:#666!important;
+  }
+
+  .bsu-photo-work-block .section-label::before,
+  .bsu-photo-work-label::before{
+    content:""!important;
+    display:block!important;
+    width:8px!important;
+    height:8px!important;
+    border-radius:999px!important;
+    background:#111!important;
+    flex:0 0 8px!important;
+  }
+
+  .bsu-photo-work-block .desktop-photo-wall-section,
+  .desktop-photo-wall-section{
+    margin:0!important;
+    border-radius:0!important;
+  }
+
+  .desktop-photo-wall-section,
+  .desktop-photo-wall-section .bsu-team-wall,
+  .desktop-photo-wall-section .staff-groups,
+  .desktop-photo-wall-section .staff-group,
+  .desktop-photo-wall-section .staff-carousel,
+  .desktop-photo-wall-section .staff-carousel-item,
+  .desktop-photo-wall-section img{
+    border-radius:0!important;
   }
 }
 
@@ -2192,8 +1978,6 @@ function patchGalleryStaffAutoStart(){
 
       window.bsuSetGalleryStaff=function(){
         var result=originalSetGalleryStaff.apply(this,arguments);
-        if(arguments&&arguments.length){ lastGalleryStaff=String(arguments[0]||lastGalleryStaff||""); }
-        updatePhotoWorkLabel();
         schedulePhotoWallAutoScroll();
         setTimeout(schedulePhotoWallAutoScroll,120);
         setTimeout(schedulePhotoWallAutoScroll,500);
@@ -2470,80 +2254,6 @@ function markNextAvailableClick(){
   },true);
 }
 
-
-function formatPhotoWorkLabelName(name){
-  name=String(name||"").trim();
-  if(!name)return "SELECTED WORK";
-  return name.toUpperCase()+"'S WORK";
-}
-
-function updatePhotoWorkLabel(){
-  var photo=document.querySelector(".desktop-photo-wall-section");
-  if(!photo)return;
-
-  var booking=document.querySelector(".booking-layout");
-  var block=document.querySelector(".bsu-photo-wall-block");
-
-  if(!block){
-    block=document.createElement("div");
-    block.className="bsu-photo-wall-block";
-  }
-
-  var label=block.querySelector(".bsu-photo-wall-label")||document.querySelector(".bsu-photo-wall-label");
-  if(!label){
-    label=document.createElement("div");
-  }
-
-  label.className="section-label bsu-photo-wall-label";
-
-  var name=getSelectedStaffName()||lastGalleryStaff||window.bsuInitialGalleryStaff||"";
-  var text=formatPhotoWorkLabelName(name);
-  if((label.textContent||"").trim()!==text){
-    label.textContent=text;
-  }
-
-  if(label.parentNode!==block){
-    block.insertBefore(label,block.firstChild);
-  }
-
-  if(photo.parentNode!==block){
-    block.appendChild(photo);
-  }
-
-  if(isMobile()){
-    var anchor=currentResultsAnchor();
-    if(anchor&&anchor.parentNode&&block.previousElementSibling!==anchor){
-      anchor.parentNode.insertBefore(block,anchor.nextSibling);
-    }else if(!block.parentNode&&photo.parentNode){
-      photo.parentNode.insertBefore(block,photo);
-    }
-  }else if(booking&&block.parentNode!==booking){
-    booking.appendChild(block);
-  }
-}
-
-
-function matchPhotoLabelToSectionLabel(){
-  var label=document.querySelector(".bsu-photo-wall-label");
-  if(!label)return;
-
-  var reference=Array.from(document.querySelectorAll(".section-label")).find(function(el){
-    var text=(el.textContent||"").trim().toLowerCase();
-    return el!==label && !el.classList.contains("bsu-photo-wall-label") && (text==="stylists"||text==="services");
-  }) || Array.from(document.querySelectorAll(".section-label")).find(function(el){
-    return el!==label && !el.classList.contains("bsu-photo-wall-label") && (el.textContent||"").trim();
-  });
-
-  if(!reference)return;
-
-  try{
-    var cs=window.getComputedStyle(reference);
-    ["fontSize","fontWeight","letterSpacing","textTransform","color","lineHeight","fontFamily"].forEach(function(prop){
-      label.style.setProperty(prop.replace(/[A-Z]/g,function(m){return "-"+m.toLowerCase();}), cs[prop], "important");
-    });
-  }catch(e){}
-}
-
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
@@ -2552,8 +2262,6 @@ function runFixes(){
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
   movePhotoWall();
-  updatePhotoWorkLabel();
-  matchPhotoLabelToSectionLabel();
   waitForMobilePhotoWallReady();
   bindMobilePhotoWallImageLoadStart();
     insertSuccessPolicyCard();
@@ -2625,6 +2333,62 @@ document.addEventListener("click",function(e){
   setTimeout(waitForMobilePhotoWallReady,900);
   setTimeout(insertSuccessPolicyCard,900);
 },true);
+
+/* B SIDE U final safe JS - photo work label wrapper */
+function bsuGetActiveStaffNameForWorkLabel(){
+  var active=document.querySelector('.staff-card.is-active .staff-name,.staff-item.is-active .staff-name,.staff-card[aria-pressed="true"] .staff-name,.staff-card[aria-selected="true"] .staff-name');
+  var name=active && active.textContent ? active.textContent.trim() : '';
+  if(!name && window.bsuInitialGalleryStaff) name=String(window.bsuInitialGalleryStaff).trim();
+  if(!name) name='William';
+  return name.replace(/\s+/g,' ');
+}
+
+function bsuEnsurePhotoWorkLabel(){
+  var section=document.querySelector('.desktop-photo-wall-section');
+  if(!section)return;
+
+  var block=section.closest('.bsu-photo-work-block');
+  if(!block){
+    block=document.createElement('div');
+    block.className='bsu-photo-work-block';
+    if(section.parentNode){
+      section.parentNode.insertBefore(block,section);
+      block.appendChild(section);
+    }
+  }
+
+  var label=block.querySelector('.bsu-photo-work-label');
+  if(!label){
+    label=document.createElement('div');
+    label.className='section-label bsu-photo-work-label';
+    block.insertBefore(label,section);
+  }
+
+  var name=bsuGetActiveStaffNameForWorkLabel();
+  label.textContent=(name + "'s work").toUpperCase();
+}
+
+var bsuOriginalSetGalleryStaff=window.bsuSetGalleryStaff;
+if(typeof bsuOriginalSetGalleryStaff==='function'&&!window.__bsuWorkLabelWrappedSetGallery){
+  window.__bsuWorkLabelWrappedSetGallery=true;
+  window.bsuSetGalleryStaff=function(){
+    var result=bsuOriginalSetGalleryStaff.apply(this,arguments);
+    setTimeout(bsuEnsurePhotoWorkLabel,0);
+    setTimeout(bsuEnsurePhotoWorkLabel,180);
+    return result;
+  };
+}
+
+setTimeout(bsuEnsurePhotoWorkLabel,80);
+setTimeout(bsuEnsurePhotoWorkLabel,350);
+setTimeout(bsuEnsurePhotoWorkLabel,900);
+setTimeout(bsuEnsurePhotoWorkLabel,1800);
+
+document.addEventListener('click',function(){
+  setTimeout(bsuEnsurePhotoWorkLabel,80);
+  setTimeout(bsuEnsurePhotoWorkLabel,350);
+},true);
+
 })();
 <\/script>
 `;
@@ -2636,7 +2400,7 @@ document.addEventListener("click",function(e){
         document.write(html);
         document.close();
       }catch(error){
-        document.body.innerHTML='<div class="bsu-loading" style="padding:24px;text-align:center;line-height:1.45;">Unable to load booking page.<br><button type="button" onclick="location.reload()" style="margin-top:14px;border:0;border-radius:999px;background:#111;color:#fff;padding:12px 18px;font-weight:900;">Refresh</button></div>';
+        document.body.innerHTML='<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
       }
     })();
   </script>
