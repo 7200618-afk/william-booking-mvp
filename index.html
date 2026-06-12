@@ -16,11 +16,28 @@
 
   <script>
     (async function(){
-      const sourceUrl="https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html";
+      const sourceUrls=[
+        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
+        "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html"
+      ];
       try{
-        const response=await fetch(sourceUrl,{cache:"no-store"});
-        if(!response.ok)throw new Error("Unable to load booking page.");
-        let html=await response.text();
+        let html="";
+        let lastLoadError=null;
+
+        for (const sourceUrl of sourceUrls) {
+          try {
+            const response=await fetch(sourceUrl,{cache:"no-store"});
+            if(!response.ok)throw new Error("Unable to load booking page.");
+            html=await response.text();
+            if(html&&html.indexOf("</body>")!==-1)break;
+          } catch(fetchError) {
+            lastLoadError=fetchError;
+          }
+        }
+
+        if(!html||html.indexOf("</body>")===-1){
+          throw lastLoadError||new Error("Unable to load booking page.");
+        }
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
         // The gallery only loads staff listed inside STAFF_SOURCES.
@@ -49,7 +66,7 @@ ${williamSource}${body.trimStart()}];`;
         html=html.replace(
           /if \(!response\.ok\) return \[\];/g,
           `if (!response.ok) {
-        throw new Error(data.error || "Unable to load availability.");
+        throw new Error("Unable to load availability.");
       }`
         );
 
@@ -1057,6 +1074,67 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
+/* B SIDE U V64 fixes - employee frames, straight photo wall, week/month calendar */
+.staff-strip{
+  background:#fff!important;
+  border:1px solid rgba(17,17,17,.10)!important;
+  border-radius:20px!important;
+  padding:12px!important;
+  box-sizing:border-box!important;
+}
+.staff-card,.staff-item{
+  background:#fff!important;
+  border:1px solid rgba(17,17,17,.11)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.045)!important;
+  box-sizing:border-box!important;
+}
+.staff-card.is-active,.staff-item.is-active{
+  border-color:#111!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.10)!important;
+}
+.desktop-photo-wall-section,
+.desktop-photo-wall-section .bsu-team-wall,
+.desktop-photo-wall-section .staff-groups,
+.desktop-photo-wall-section .staff-group,
+.desktop-photo-wall-section .staff-carousel,
+.desktop-photo-wall-section .staff-carousel-item,
+.desktop-photo-wall-section img{
+  border-radius:0!important;
+}
+.bsu-date-calendar{
+  width:100%!important;
+  margin:8px 0 0!important;
+  padding:10px!important;
+  border:1px solid rgba(17,17,17,.10)!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-sizing:border-box!important;
+  box-shadow:none!important;
+}
+.bsu-date-tabs{display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important;margin-bottom:8px!important}
+.bsu-date-tab{height:32px!important;border:0!important;border-radius:11px!important;background:#f3f3f3!important;color:#111!important;font-size:11px!important;font-weight:950!important;letter-spacing:-.02em!important;cursor:pointer!important}
+.bsu-date-tab.is-active{background:#111!important;color:#fff!important}
+.bsu-week-grid{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:5px!important}
+.bsu-month-head{display:flex!important;align-items:center!important;justify-content:space-between!important;margin:0 0 7px!important;font-size:12px!important;font-weight:950!important;letter-spacing:-.025em!important;color:#111!important}
+.bsu-month-nav{width:28px!important;height:28px!important;border:0!important;border-radius:10px!important;background:#f3f3f3!important;color:#111!important;font-size:16px!important;font-weight:950!important;cursor:pointer!important}
+.bsu-month-weekdays,.bsu-month-grid{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;gap:4px!important}
+.bsu-month-weekdays{margin-bottom:4px!important;color:#777!important;font-size:9px!important;font-weight:950!important;text-align:center!important;text-transform:uppercase!important;letter-spacing:.04em!important}
+.bsu-date-cell{min-width:0!important;height:38px!important;border:0!important;border-radius:12px!important;background:#f5f5f5!important;color:#111!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;font-weight:950!important;cursor:pointer!important;padding:0!important;box-sizing:border-box!important}
+.bsu-date-cell.is-blank{visibility:hidden!important;pointer-events:none!important}
+.bsu-date-cell.is-active{background:#111!important;color:#fff!important}
+.bsu-date-cell.is-today{box-shadow:inset 0 0 0 2px #111!important}
+.bsu-date-cell.is-past{opacity:.35!important}
+.bsu-date-dow{font-size:8.8px!important;line-height:1!important;text-transform:uppercase!important;letter-spacing:.02em!important}
+.bsu-date-num{font-size:13px!important;line-height:1!important}
+@media(max-width:599px){
+  .staff-strip{padding:9px!important;border-radius:17px!important;gap:9px!important}
+  .staff-card,.staff-item{border-radius:16px!important}
+  .bsu-date-calendar{padding:8px!important;border-radius:14px!important;margin-top:7px!important}
+  .bsu-date-cell{height:34px!important;border-radius:10px!important}
+  .bsu-date-dow{font-size:8px!important}.bsu-date-num{font-size:12px!important}
+}
+
+
 `;
 
         const customJs=`
@@ -2044,10 +2122,154 @@ function markNextAvailableClick(){
   },true);
 }
 
+
+
+function normalizeDateOnly(dt){
+  return new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());
+}
+
+function sameDay(a,b){
+  return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+}
+
+function getCurrentCalendarDate(){
+  var parsed=parseDisplayDate&&parseDisplayDate();
+  if(parsed)return normalizeDateOnly(parsed);
+  return normalizeDateOnly(new Date());
+}
+
+function addDays(dt,n){
+  var x=new Date(dt);
+  x.setDate(x.getDate()+n);
+  return normalizeDateOnly(x);
+}
+
+function findDateNavButtons(){
+  var area=document.querySelector(".date-area");
+  if(!area)return {prev:null,next:null};
+  var buttons=Array.from(area.querySelectorAll("button"));
+  var prev=buttons.find(function(btn){return /prev|previous|back/i.test(btn.getAttribute("aria-label")||"")||/[‹←<]/.test(btn.textContent||"");})||buttons[0]||null;
+  var next=buttons.find(function(btn){return /next|forward/i.test(btn.getAttribute("aria-label")||"")||/[›→>]/.test(btn.textContent||"");})||buttons[buttons.length-1]||null;
+  if(prev===next&&buttons.length>1){prev=buttons[0];next=buttons[buttons.length-1];}
+  return {prev:prev,next:next};
+}
+
+function goToCalendarDate(targetDate){
+  targetDate=normalizeDateOnly(targetDate);
+  var guard=0;
+  function step(){
+    var current=getCurrentCalendarDate();
+    var diff=Math.round((targetDate-current)/86400000);
+    if(diff===0||guard>70){
+      setTimeout(function(){ensureDateCalendarPanel(true);},120);
+      return;
+    }
+    var nav=findDateNavButtons();
+    var btn=diff>0?nav.next:nav.prev;
+    if(!btn)return;
+    guard++;
+    btn.click();
+    setTimeout(step,42);
+  }
+  step();
+}
+
+function buildDateCell(dt,currentDate,today,showDow){
+  var btn=document.createElement("button");
+  btn.type="button";
+  btn.className="bsu-date-cell";
+  if(sameDay(dt,currentDate))btn.classList.add("is-active");
+  if(sameDay(dt,today))btn.classList.add("is-today");
+  if(dt<today)btn.classList.add("is-past");
+  btn.innerHTML=(showDow?'<span class="bsu-date-dow">'+DAY_LABELS[dt.getDay()]+'</span>':"")+'<span class="bsu-date-num">'+dt.getDate()+'</span>';
+  btn.addEventListener("click",function(){goToCalendarDate(dt);});
+  return btn;
+}
+
+function ensureDateCalendarPanel(force){
+  var dateArea=document.querySelector(".date-area");
+  if(!dateArea)return;
+
+  var current=getCurrentCalendarDate();
+  var today=normalizeDateOnly(new Date());
+  var existing=dateArea.querySelector(".bsu-date-calendar");
+  var mode=(existing&&existing.dataset.mode)||"week";
+  var monthOffset=Number(existing&&existing.dataset.monthOffset||"0");
+  if(!Number.isFinite(monthOffset))monthOffset=0;
+  var signature=mode+"|"+current.getFullYear()+"-"+current.getMonth()+"-"+current.getDate()+"|"+monthOffset;
+
+  if(existing&&existing.dataset.signature===signature&&!force)return;
+  if(existing)existing.remove();
+
+  var panel=document.createElement("div");
+  panel.className="bsu-date-calendar";
+  panel.dataset.mode=mode;
+  panel.dataset.monthOffset=String(monthOffset);
+  panel.dataset.signature=signature;
+
+  var tabs=document.createElement("div");
+  tabs.className="bsu-date-tabs";
+  var weekTab=document.createElement("button");
+  weekTab.type="button";
+  weekTab.className="bsu-date-tab"+(mode==="week"?" is-active":"");
+  weekTab.textContent="Week";
+  weekTab.addEventListener("click",function(){panel.dataset.mode="week";panel.dataset.monthOffset="0";ensureDateCalendarPanel(true);});
+  var monthTab=document.createElement("button");
+  monthTab.type="button";
+  monthTab.className="bsu-date-tab"+(mode==="month"?" is-active":"");
+  monthTab.textContent="Month";
+  monthTab.addEventListener("click",function(){panel.dataset.mode="month";panel.dataset.monthOffset="0";ensureDateCalendarPanel(true);});
+  tabs.appendChild(weekTab);
+  tabs.appendChild(monthTab);
+  panel.appendChild(tabs);
+
+  if(mode==="month"){
+    var viewMonth=new Date(current.getFullYear(),current.getMonth()+monthOffset,1);
+    var head=document.createElement("div");
+    head.className="bsu-month-head";
+    var prev=document.createElement("button");
+    prev.type="button";prev.className="bsu-month-nav";prev.textContent="‹";
+    var title=document.createElement("div");
+    title.textContent=viewMonth.toLocaleDateString("en-US",{month:"long",year:"numeric"});
+    var next=document.createElement("button");
+    next.type="button";next.className="bsu-month-nav";next.textContent="›";
+    prev.addEventListener("click",function(){panel.dataset.monthOffset=String(monthOffset-1);ensureDateCalendarPanel(true);});
+    next.addEventListener("click",function(){panel.dataset.monthOffset=String(monthOffset+1);ensureDateCalendarPanel(true);});
+    head.appendChild(prev);head.appendChild(title);head.appendChild(next);panel.appendChild(head);
+
+    var weekdays=document.createElement("div");
+    weekdays.className="bsu-month-weekdays";
+    DAY_LABELS.forEach(function(d){var x=document.createElement("div");x.textContent=d;weekdays.appendChild(x);});
+    panel.appendChild(weekdays);
+
+    var grid=document.createElement("div");
+    grid.className="bsu-month-grid";
+    for(var b=0;b<viewMonth.getDay();b++){
+      var blank=document.createElement("button");blank.type="button";blank.className="bsu-date-cell is-blank";grid.appendChild(blank);
+    }
+    var last=new Date(viewMonth.getFullYear(),viewMonth.getMonth()+1,0).getDate();
+    for(var day=1;day<=last;day++){
+      grid.appendChild(buildDateCell(new Date(viewMonth.getFullYear(),viewMonth.getMonth(),day),current,today,false));
+    }
+    panel.appendChild(grid);
+  }else{
+    var grid=document.createElement("div");
+    grid.className="bsu-week-grid";
+    var start=addDays(current,-current.getDay());
+    for(var i=0;i<7;i++){
+      grid.appendChild(buildDateCell(addDays(start,i),current,today,true));
+    }
+    panel.appendChild(grid);
+  }
+
+  dateArea.appendChild(panel);
+}
+
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
   moveDateAboveAvailability();
+  ensureDateCalendarPanel(false);
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
@@ -2082,15 +2304,20 @@ setTimeout(waitForMobilePhotoWallReady,11000);
 setTimeout(insertSuccessPolicyCard,1000);
 setTimeout(insertSuccessPolicyCard,2000);
 
+var bsuObserverTimer=null;
 var observer=new MutationObserver(function(){
-  runFixes();
-  waitForMobilePhotoWallReady();
-  insertSuccessPolicyCard();
-  hideWaitlistButton();
-  hideSanGabrielSwitchButton();
-  hideSuccessManageActions();
+  if(bsuObserverTimer)return;
+  bsuObserverTimer=setTimeout(function(){
+    bsuObserverTimer=null;
+    runFixes();
+    waitForMobilePhotoWallReady();
+    insertSuccessPolicyCard();
+    hideWaitlistButton();
+    hideSanGabrielSwitchButton();
+    hideSuccessManageActions();
+  },120);
 });
-observer.observe(document.body,{childList:true,subtree:true,characterData:true});
+observer.observe(document.body,{childList:true,subtree:true});
 
 window.addEventListener("resize",function(){
   runFixes();
@@ -2134,7 +2361,7 @@ document.addEventListener("click",function(e){
         document.write(html);
         document.close();
       }catch(error){
-        document.body.innerHTML='<div class="bsu-loading">Unable to load booking page. Please refresh.</div>';
+        document.body.innerHTML='<div class="bsu-loading">Unable to load booking page. Please refresh or call the salon.</div>'; console.error(error);
       }
     })();
   </script>
