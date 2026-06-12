@@ -1128,6 +1128,46 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 
 `;
 
+
+/* B SIDE U final fix - header aligns with staff/photo left edge after header frame removal */
+@media(min-width:600px){
+  .pasadena-header{
+    width:100%!important;
+    max-width:1076px!important;
+    margin-left:0!important;
+    margin-right:auto!important;
+    padding:0 0 14px 0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+    transform:translateX(-36px)!important;
+  }
+
+  .pasadena-header::after{
+    display:none!important;
+    content:none!important;
+  }
+
+  .pasadena-title,
+  .pasadena-open,
+  .pasadena-address,
+  .pasadena-links{
+    margin-left:0!important;
+    padding-left:0!important;
+    justify-self:start!important;
+    text-align:left!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:980px){
+  .pasadena-header{
+    transform:none!important;
+  }
+}
+
         const customJs=`
 <script>
 (function(){
