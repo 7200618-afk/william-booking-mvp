@@ -16,11 +16,28 @@
 
   <script>
     (async function(){
-      const sourceUrl="https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html";
+      const sourceUrls=[
+        "https://raw.githubusercontent.com/7200618-afk/william-booking-mvp/booking-core-source/index.html",
+        "https://cdn.jsdelivr.net/gh/7200618-afk/william-booking-mvp@booking-core-source/index.html"
+      ];
       try{
-        const response=await fetch(sourceUrl,{cache:"no-store"});
-        if(!response.ok)throw new Error("Unable to load booking page.");
-        let html=await response.text();
+        let html="";
+        let lastError=null;
+
+        for(const sourceUrl of sourceUrls){
+          try{
+            const response=await fetch(sourceUrl,{cache:"no-store"});
+            if(!response.ok)throw new Error("Unable to load booking page.");
+            html=await response.text();
+            if(html&&html.includes("</body>"))break;
+          }catch(fetchError){
+            lastError=fetchError;
+          }
+        }
+
+        if(!html||!html.includes("</body>")){
+          throw lastError||new Error("Unable to load booking page.");
+        }
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
         // The gallery only loads staff listed inside STAFF_SOURCES.
@@ -1315,14 +1332,14 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
-/* B SIDE U tweak - swap service and date position */
+/* B SIDE U final tweak - restore service/date order, match work label, unify spacing, mobile loading fallback */
 @media(min-width:600px){
-  .desktop-right-panel .date-area{
+  .desktop-service-panel{
     order:1!important;
     margin:0 0 18px!important;
   }
 
-  .desktop-service-panel{
+  .desktop-right-panel .date-area{
     order:2!important;
     margin:0 0 12px!important;
   }
@@ -1331,17 +1348,69 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   .desktop-right-panel .empty-state{
     order:3!important;
   }
+
+  .booking-layout{
+    grid-template-areas:"left right" "worklabel worklabel" "photo photo"!important;
+    grid-template-rows:auto auto auto!important;
+    row-gap:12px!important;
+  }
+
+  .bsu-photo-wall-label{
+    grid-area:worklabel!important;
+    max-width:1076px!important;
+    margin:0 2px 7px!important;
+    padding:0!important;
+    gap:10px!important;
+    color:#666!important;
+    font-size:10px!important;
+    line-height:1!important;
+    font-weight:950!important;
+    letter-spacing:.34em!important;
+    text-transform:uppercase!important;
+  }
+
+  .bsu-photo-wall-label::before{
+    width:9px!important;
+    height:9px!important;
+    flex:0 0 9px!important;
+  }
+
+  .desktop-photo-wall-section{
+    margin-top:0!important;
+  }
 }
 
 @media(max-width:599px){
-  .bsu-slot-date-wrap{
-    margin-top:0!important;
-    margin-bottom:12px!important;
-  }
-
   .desktop-service-panel{
     margin-top:0!important;
     margin-bottom:14px!important;
+  }
+
+  .bsu-slot-date-wrap{
+    margin-top:4px!important;
+    margin-bottom:12px!important;
+  }
+
+  .bsu-photo-wall-label{
+    margin:0 2px 7px!important;
+    padding:0!important;
+    gap:10px!important;
+    color:#666!important;
+    font-size:10px!important;
+    line-height:1!important;
+    font-weight:950!important;
+    letter-spacing:.34em!important;
+    text-transform:uppercase!important;
+  }
+
+  .bsu-photo-wall-label::before{
+    width:9px!important;
+    height:9px!important;
+    flex:0 0 9px!important;
+  }
+
+  .desktop-photo-wall-section{
+    margin-top:0!important;
   }
 }
 
@@ -1437,7 +1506,6 @@ function moveDateAboveAvailability(){
   var slotArea=document.querySelector(".desktop-right-panel .slot-area")||document.querySelector(".desktop-results-area .slot-area")||document.querySelector(".slot-area");
   var emptyState=document.querySelector(".desktop-right-panel .empty-state")||document.querySelector(".desktop-results-area .empty-state")||document.querySelector(".empty-state");
   var servicePanel=document.querySelector(".desktop-service-panel");
-  var serviceLabel=document.querySelector(".desktop-service-panel .section-label")||Array.from(document.querySelectorAll(".section-label")).find(function(el){return /services/i.test(el.textContent||"");});
   var resultsArea=document.querySelector(".desktop-results-area");
   var rightPanel=document.querySelector(".desktop-right-panel");
 
@@ -1448,24 +1516,22 @@ function moveDateAboveAvailability(){
 
   if(!isMobile()&&rightPanel){
     targetParent=rightPanel;
-    beforeNode=servicePanel&&servicePanel.parentNode===rightPanel ? servicePanel : rightPanel.firstChild;
+    beforeNode=slotArea&&slotArea.parentNode===rightPanel ? slotArea : (emptyState&&emptyState.parentNode===rightPanel ? emptyState : null);
   }else{
-    var anchor=serviceLabel||servicePanel||slotArea||emptyState;
-    var wrap=document.querySelector(".bsu-slot-date-wrap")||document.createElement("div");
-    wrap.className="bsu-slot-date-wrap";
-
+    var anchor=slotArea||emptyState;
     if(anchor&&anchor.parentNode){
+      var wrap=document.querySelector(".bsu-slot-date-wrap")||document.createElement("div");
+      wrap.className="bsu-slot-date-wrap";
+
       if(wrap.parentNode!==anchor.parentNode||wrap.nextSibling!==anchor){
         anchor.parentNode.insertBefore(wrap,anchor);
       }
+
       targetParent=wrap;
       beforeNode=null;
     }else if(resultsArea){
-      if(wrap.parentNode!==resultsArea){
-        resultsArea.insertBefore(wrap,resultsArea.firstChild);
-      }
-      targetParent=wrap;
-      beforeNode=null;
+      targetParent=resultsArea;
+      beforeNode=resultsArea.firstChild;
     }
   }
 
@@ -1477,9 +1543,9 @@ function moveDateAboveAvailability(){
     targetParent.insertBefore(dateArea,beforeNode);
   }
 
-  dateArea.classList.add("bsu-date-above-services");
   dateArea.classList.add("bsu-date-above-availability");
 }
+
 function captureSelectedBookingLabel(target){
   try{
     var timeBtn=target&&target.closest?target.closest(".time-btn"):null;
