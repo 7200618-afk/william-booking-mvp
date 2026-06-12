@@ -1147,6 +1147,107 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U fix - opening pill / photo wall square / work label */
+.pasadena-open{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:max-content!important;
+  max-width:none!important;
+  min-width:0!important;
+  min-height:34px!important;
+  height:auto!important;
+  padding:0 18px 0 14px!important;
+  gap:10px!important;
+  border-radius:999px!important;
+  background:#111!important;
+  color:#fff!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+  line-height:1!important;
+}
+.pasadena-open::before{
+  flex:0 0 9px!important;
+  width:9px!important;
+  height:9px!important;
+  margin:0!important;
+}
+.pasadena-open,
+.pasadena-open *{
+  color:#fff!important;
+  line-height:1!important;
+}
+
+.bsu-photo-wall-label{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:100%!important;
+  margin:20px 0 9px!important;
+  padding:0!important;
+  color:#666!important;
+  font-size:12px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  letter-spacing:.34em!important;
+  text-transform:uppercase!important;
+  box-sizing:border-box!important;
+}
+.bsu-photo-wall-label::before{
+  content:""!important;
+  display:block!important;
+  width:9px!important;
+  height:9px!important;
+  border-radius:999px!important;
+  background:#111!important;
+  flex:0 0 9px!important;
+}
+
+.desktop-photo-wall-section,
+.desktop-photo-wall-section .bsu-team-wall,
+.desktop-photo-wall-section .staff-groups,
+.desktop-photo-wall-section .staff-group,
+.desktop-photo-wall-section .staff-carousel,
+.desktop-photo-wall-section .staff-carousel-item,
+.desktop-photo-wall-section img{
+  border-radius:0!important;
+}
+
+@media(min-width:600px){
+  .booking-layout{
+    grid-template-areas:"left right" "worklabel worklabel" "photo photo"!important;
+    grid-template-rows:auto auto auto!important;
+  }
+  .bsu-photo-wall-label{
+    grid-area:worklabel!important;
+    max-width:1076px!important;
+    margin:18px 0 8px!important;
+  }
+  .desktop-photo-wall-section{
+    margin-top:0!important;
+  }
+}
+
+@media(max-width:599px){
+  .pasadena-open{
+    max-width:100%!important;
+    min-height:31px!important;
+    padding:0 13px 0 11px!important;
+    font-size:11.5px!important;
+  }
+  .bsu-photo-wall-label{
+    margin:18px 0 8px!important;
+    font-size:11px!important;
+    letter-spacing:.28em!important;
+  }
+  .desktop-photo-wall-section{
+    margin-top:0!important;
+    border-radius:0!important;
+  }
+}
+
 `;
 
         const customJs=`
@@ -1858,6 +1959,8 @@ function patchGalleryStaffAutoStart(){
 
       window.bsuSetGalleryStaff=function(){
         var result=originalSetGalleryStaff.apply(this,arguments);
+        if(arguments&&arguments.length){ lastGalleryStaff=String(arguments[0]||lastGalleryStaff||""); }
+        updatePhotoWorkLabel();
         schedulePhotoWallAutoScroll();
         setTimeout(schedulePhotoWallAutoScroll,120);
         setTimeout(schedulePhotoWallAutoScroll,500);
@@ -2134,6 +2237,34 @@ function markNextAvailableClick(){
   },true);
 }
 
+
+function formatPhotoWorkLabelName(name){
+  name=String(name||"").trim();
+  if(!name)return "SELECTED WORK";
+  return name.toUpperCase()+"'S WORK";
+}
+
+function updatePhotoWorkLabel(){
+  var photo=document.querySelector(".desktop-photo-wall-section");
+  if(!photo||!photo.parentNode)return;
+
+  var label=document.querySelector(".bsu-photo-wall-label");
+  if(!label){
+    label=document.createElement("div");
+    label.className="bsu-photo-wall-label";
+  }
+
+  var name=getSelectedStaffName()||lastGalleryStaff||window.bsuInitialGalleryStaff||"";
+  var text=formatPhotoWorkLabelName(name);
+  if((label.textContent||"").trim()!==text){
+    label.textContent=text;
+  }
+
+  if(label.parentNode!==photo.parentNode||label.nextSibling!==photo){
+    photo.parentNode.insertBefore(label,photo);
+  }
+}
+
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
@@ -2142,6 +2273,7 @@ function runFixes(){
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
   movePhotoWall();
+  updatePhotoWorkLabel();
   waitForMobilePhotoWallReady();
   bindMobilePhotoWallImageLoadStart();
     insertSuccessPolicyCard();
