@@ -1314,6 +1314,37 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U tweak - swap service and date position */
+@media(min-width:600px){
+  .desktop-right-panel .date-area{
+    order:1!important;
+    margin:0 0 18px!important;
+  }
+
+  .desktop-service-panel{
+    order:2!important;
+    margin:0 0 12px!important;
+  }
+
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state{
+    order:3!important;
+  }
+}
+
+@media(max-width:599px){
+  .bsu-slot-date-wrap{
+    margin-top:0!important;
+    margin-bottom:12px!important;
+  }
+
+  .desktop-service-panel{
+    margin-top:0!important;
+    margin-bottom:14px!important;
+  }
+}
+
 `;
 
         const customJs=`
@@ -1406,6 +1437,7 @@ function moveDateAboveAvailability(){
   var slotArea=document.querySelector(".desktop-right-panel .slot-area")||document.querySelector(".desktop-results-area .slot-area")||document.querySelector(".slot-area");
   var emptyState=document.querySelector(".desktop-right-panel .empty-state")||document.querySelector(".desktop-results-area .empty-state")||document.querySelector(".empty-state");
   var servicePanel=document.querySelector(".desktop-service-panel");
+  var serviceLabel=document.querySelector(".desktop-service-panel .section-label")||Array.from(document.querySelectorAll(".section-label")).find(function(el){return /services/i.test(el.textContent||"");});
   var resultsArea=document.querySelector(".desktop-results-area");
   var rightPanel=document.querySelector(".desktop-right-panel");
 
@@ -1416,22 +1448,24 @@ function moveDateAboveAvailability(){
 
   if(!isMobile()&&rightPanel){
     targetParent=rightPanel;
-    beforeNode=slotArea&&slotArea.parentNode===rightPanel ? slotArea : (emptyState&&emptyState.parentNode===rightPanel ? emptyState : null);
+    beforeNode=servicePanel&&servicePanel.parentNode===rightPanel ? servicePanel : rightPanel.firstChild;
   }else{
-    var anchor=slotArea||emptyState;
-    if(anchor&&anchor.parentNode){
-      var wrap=document.querySelector(".bsu-slot-date-wrap")||document.createElement("div");
-      wrap.className="bsu-slot-date-wrap";
+    var anchor=serviceLabel||servicePanel||slotArea||emptyState;
+    var wrap=document.querySelector(".bsu-slot-date-wrap")||document.createElement("div");
+    wrap.className="bsu-slot-date-wrap";
 
+    if(anchor&&anchor.parentNode){
       if(wrap.parentNode!==anchor.parentNode||wrap.nextSibling!==anchor){
         anchor.parentNode.insertBefore(wrap,anchor);
       }
-
       targetParent=wrap;
       beforeNode=null;
     }else if(resultsArea){
-      targetParent=resultsArea;
-      beforeNode=resultsArea.firstChild;
+      if(wrap.parentNode!==resultsArea){
+        resultsArea.insertBefore(wrap,resultsArea.firstChild);
+      }
+      targetParent=wrap;
+      beforeNode=null;
     }
   }
 
@@ -1443,9 +1477,9 @@ function moveDateAboveAvailability(){
     targetParent.insertBefore(dateArea,beforeNode);
   }
 
+  dateArea.classList.add("bsu-date-above-services");
   dateArea.classList.add("bsu-date-above-availability");
 }
-
 function captureSelectedBookingLabel(target){
   try{
     var timeBtn=target&&target.closest?target.closest(".time-btn"):null;
