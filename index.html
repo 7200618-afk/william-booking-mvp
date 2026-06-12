@@ -1248,6 +1248,72 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
   }
 }
 
+
+/* B SIDE U tweak - reduce work label spacing + taller staff cards */
+@media(min-width:600px){
+  .booking-layout{
+    row-gap:6px!important;
+  }
+
+  .bsu-photo-wall-label{
+    margin:4px 0 5px!important;
+    padding:0!important;
+    line-height:1!important;
+  }
+
+  .desktop-photo-wall-section{
+    margin-top:0!important;
+  }
+
+  .staff-strip{
+    gap:12px!important;
+    align-items:stretch!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    aspect-ratio:0.86/1!important;
+    min-height:0!important;
+    height:auto!important;
+    border-radius:14px!important;
+    padding:14px 10px 12px!important;
+    box-sizing:border-box!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-radius:14px!important;
+  }
+
+  .avatar{
+    width:66px!important;
+    height:66px!important;
+    margin-bottom:10px!important;
+  }
+}
+
+@media(max-width:599px){
+  .bsu-photo-wall-label{
+    margin:8px 0 5px!important;
+    padding:0!important;
+    line-height:1!important;
+  }
+
+  .desktop-photo-wall-section{
+    margin-top:0!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    border-radius:14px!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-radius:14px!important;
+  }
+}
+
 `;
 
         const customJs=`
