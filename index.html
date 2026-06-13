@@ -3574,6 +3574,1271 @@ document.addEventListener("click",function(e){
 }
 
 
+/* =========================================
+   B SIDE U V82
+   Safe desktop rollback after layout conflict
+   - remove experimental desktop grid/panel movement
+   - keep stable original structure
+   - prevent service/calendar/slot overlap on desktop
+   ========================================= */
+.bsu-desktop-select-placeholder,
+.bsu-desktop-step-panel{
+  display:none!important;
+}
+
+@media(min-width:1024px){
+  .page{
+    max-width:1220px!important;
+    margin:0 auto!important;
+  }
+
+  .booking-layout{
+    display:grid!important;
+    grid-template-columns:minmax(520px,1fr) minmax(360px,430px)!important;
+    gap:24px!important;
+    align-items:start!important;
+  }
+
+  .booking-layout > *{
+    position:relative!important;
+    transform:none!important;
+  }
+
+  .booking-layout > div:nth-child(2){
+    grid-column:1!important;
+    grid-row:1!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+
+  .desktop-right-panel,
+  .desktop-results-area{
+    grid-column:2!important;
+    grid-row:1!important;
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    position:sticky!important;
+    top:18px!important;
+    transform:none!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .desktop-service-panel,
+  .desktop-results-area .desktop-service-panel{
+    display:block!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    position:relative!important;
+    transform:none!important;
+  }
+
+  .desktop-right-panel .date-area,
+  .desktop-results-area .date-area,
+  .bsu-slot-date-wrap{
+    display:block!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+  }
+
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state,
+  .desktop-results-area .slot-area,
+  .desktop-results-area .empty-state{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+    min-height:160px!important;
+  }
+
+  .desktop-photo-wall-section{
+    grid-column:1 / -1!important;
+    grid-row:2!important;
+    margin-top:24px!important;
+    position:relative!important;
+    transform:none!important;
+    width:100%!important;
+  }
+
+  .desktop-photo-wall-section img,
+  .desktop-photo-wall-section .staff-carousel-item img{
+    border-radius:0!important;
+  }
+
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:14px!important;
+    align-items:stretch!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    min-height:150px!important;
+  }
+
+  .service-pills{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    margin:0 0 12px!important;
+  }
+
+  .service-pill{
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:10px!important;
+  }
+
+  .service-name{
+    font-size:13px!important;
+  }
+
+  .service-meta{
+    font-size:10.5px!important;
+    margin-top:3px!important;
+  }
+
+  .bsu-date-calendar{
+    margin:0!important;
+    padding:4px 0 10px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .times{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+
+  .time-btn{
+    height:40px!important;
+    min-height:40px!important;
+    border-radius:8px!important;
+    font-size:12.5px!important;
+    padding:0 3px!important;
+  }
+}
+
+@media(max-width:1023px){
+  .booking-layout{
+    display:block!important;
+  }
+}
+
+
+/* =========================================
+   B SIDE U V83
+   Desktop redesign, logic unchanged:
+   - left booking card: services / calendar / available times
+   - right stylist board
+   - photo wall below
+   - CSS-only layout, no desktop JS moving panels
+   ========================================= */
+
+@media(min-width:1024px){
+  .page{
+    max-width:1180px!important;
+    margin:0 auto!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+  }
+
+  .booking-layout{
+    display:grid!important;
+    grid-template-columns:minmax(390px,440px) minmax(0,1fr)!important;
+    grid-template-areas:
+      "booking staff"
+      "photos photos"!important;
+    gap:26px!important;
+    align-items:start!important;
+  }
+
+  .booking-layout > *{
+    min-width:0!important;
+    position:relative!important;
+    transform:none!important;
+  }
+
+  /* Booking controls panel */
+  .desktop-right-panel,
+  .desktop-results-area,
+  .booking-layout > div:has(.service-pills):not(:has(.staff-strip)){
+    grid-area:booking!important;
+    width:100%!important;
+    display:block!important;
+    position:sticky!important;
+    top:18px!important;
+    padding:20px!important;
+    border:1px solid rgba(17,17,17,.08)!important;
+    border-radius:24px!important;
+    background:#fff!important;
+    box-shadow:0 14px 36px rgba(0,0,0,.055)!important;
+    box-sizing:border-box!important;
+    transform:none!important;
+  }
+
+  /* Stylist board */
+  .booking-layout > div:has(.staff-strip){
+    grid-area:staff!important;
+    width:100%!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    position:relative!important;
+    top:auto!important;
+    transform:none!important;
+  }
+
+  /* Keep the photo wall below the booking area */
+  .desktop-photo-wall-section{
+    grid-area:photos!important;
+    width:100%!important;
+    margin-top:6px!important;
+    position:relative!important;
+    transform:none!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel,
+  .desktop-photo-wall-section .bsu-team-wall{
+    border-radius:0!important;
+    overflow:hidden!important;
+  }
+
+  /* Section labels feel more aligned and premium */
+  .section-label{
+    margin:0 0 12px!important;
+    font-size:10.5px!important;
+    line-height:1!important;
+    letter-spacing:.18em!important;
+    font-weight:950!important;
+  }
+
+  .section-divider{
+    margin:16px 0!important;
+  }
+
+  /* Services */
+  .service-pills{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    margin:0 0 16px!important;
+  }
+
+  .service-pill{
+    height:48px!important;
+    min-height:48px!important;
+    border-radius:11px!important;
+    padding:0 10px!important;
+    background:#f4f4f4!important;
+    box-shadow:none!important;
+    border:0!important;
+  }
+
+  .service-pill.is-active,
+  .service-pill.active,
+  .service-pill[aria-pressed="true"],
+  .service-pill[aria-selected="true"]{
+    background:#111!important;
+    color:#fff!important;
+  }
+
+  .service-name{
+    font-size:13.5px!important;
+    line-height:1!important;
+    font-weight:950!important;
+  }
+
+  .service-meta{
+    margin-top:3px!important;
+    font-size:10.8px!important;
+    line-height:1!important;
+    font-weight:800!important;
+  }
+
+  /* Calendar stays compact inside booking panel */
+  .desktop-right-panel .date-area,
+  .desktop-results-area .date-area,
+  .bsu-slot-date-wrap,
+  .date-area{
+    width:100%!important;
+    margin:0 0 16px!important;
+    padding:0!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+  }
+
+  .bsu-date-calendar{
+    margin:0!important;
+    padding:4px 0 12px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .bsu-calendar-main-head,
+  .bsu-date-calendar.is-week .bsu-calendar-main-head{
+    margin:0 0 12px!important;
+  }
+
+  .bsu-date-calendar.is-week .bsu-calendar-main-head{
+    grid-template-columns:minmax(0,1fr) 38px 38px!important;
+  }
+
+  .bsu-calendar-main-head .bsu-date-month-title{
+    font-size:23px!important;
+    line-height:1!important;
+    letter-spacing:-.045em!important;
+    font-weight:950!important;
+  }
+
+  .bsu-calendar-nav,
+  .bsu-date-calendar.is-week .bsu-calendar-nav{
+    width:38px!important;
+    height:38px!important;
+    border-radius:10px!important;
+    font-size:23px!important;
+    background:#f4f4f4!important;
+  }
+
+  .bsu-week-grid{
+    margin:0 0 8px!important;
+    gap:0!important;
+  }
+
+  .bsu-month-weekdays{
+    margin:0 0 10px!important;
+    font-size:11px!important;
+  }
+
+  .bsu-month-grid{
+    gap:7px 0!important;
+  }
+
+  .bsu-date-cell{
+    height:35px!important;
+    min-height:35px!important;
+    border-radius:8px!important;
+    gap:2px!important;
+  }
+
+  .bsu-date-cell.is-active{
+    width:37px!important;
+    max-width:37px!important;
+    border-radius:8px!important;
+  }
+
+  .bsu-date-dow{
+    font-size:10px!important;
+    font-weight:650!important;
+  }
+
+  .bsu-date-num,
+  .bsu-date-calendar.is-month .bsu-date-num{
+    font-size:13.5px!important;
+    font-weight:850!important;
+  }
+
+  .bsu-calendar-collapse-btn{
+    width:30px!important;
+    height:30px!important;
+    margin:10px auto 0!important;
+    font-size:16px!important;
+  }
+
+  .bsu-calendar-timezone{
+    margin:10px 0 0!important;
+    padding:10px 0 0!important;
+    font-size:11.8px!important;
+    line-height:1.2!important;
+  }
+
+  /* Slots */
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state,
+  .desktop-results-area .slot-area,
+  .desktop-results-area .empty-state,
+  .slot-area,
+  .empty-state{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    min-height:0!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+  }
+
+  .slot-group{
+    margin:14px 0 0!important;
+  }
+
+  .slot-group:first-child{
+    margin-top:2px!important;
+  }
+
+  .slot-group-title{
+    margin:0 0 9px!important;
+    font-size:15px!important;
+    line-height:1.05!important;
+    font-weight:850!important;
+    letter-spacing:-.03em!important;
+    text-transform:none!important;
+  }
+
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+
+  .time-btn{
+    height:40px!important;
+    min-height:40px!important;
+    border-radius:8px!important;
+    font-size:12.5px!important;
+    font-weight:950!important;
+    padding:0 3px!important;
+    white-space:nowrap!important;
+  }
+
+  .empty-title{
+    font-size:22px!important;
+    line-height:1!important;
+    margin:4px 0 8px!important;
+  }
+
+  .empty-sub{
+    font-size:13px!important;
+    line-height:1.3!important;
+    margin:0 0 12px!important;
+  }
+
+  .next-available-btn,
+  .waitlist-btn{
+    height:42px!important;
+    min-height:42px!important;
+    border-radius:9px!important;
+    font-size:13px!important;
+  }
+
+  /* Stylists are the main visual board */
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:14px!important;
+    width:100%!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    min-height:150px!important;
+    border-radius:19px!important;
+    background:#fff!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    box-shadow:0 10px 26px rgba(0,0,0,.045)!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:0 12px 32px rgba(0,0,0,.08)!important;
+  }
+
+  .avatar,
+  .staff-avatar{
+    width:64px!important;
+    height:64px!important;
+  }
+}
+
+@media(min-width:1280px){
+  .booking-layout{
+    grid-template-columns:minmax(410px,460px) minmax(0,1fr)!important;
+    gap:30px!important;
+  }
+
+  .staff-strip{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:16px!important;
+  }
+}
+
+/* Mobile: keep current stable compact order */
+@media(max-width:599px){
+  .service-pills{
+    margin-bottom:16px!important;
+  }
+
+  .times{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
+
+
+/* =========================================
+   B SIDE U V84
+   Desktop layout: stylists left, booking panel right
+   Logic unchanged. CSS-only desktop redesign.
+   ========================================= */
+
+@media(min-width:1024px){
+  .page{
+    max-width:1180px!important;
+    margin:0 auto!important;
+    padding-left:22px!important;
+    padding-right:22px!important;
+  }
+
+  .booking-layout{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(390px,440px)!important;
+    grid-template-areas:
+      "staff booking"
+      "photos photos"!important;
+    gap:26px!important;
+    align-items:start!important;
+  }
+
+  .booking-layout > *{
+    min-width:0!important;
+    position:relative!important;
+    transform:none!important;
+  }
+
+  /* LEFT: stylist board */
+  .booking-layout > div:has(.staff-strip){
+    grid-area:staff!important;
+    width:100%!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    position:relative!important;
+    top:auto!important;
+    transform:none!important;
+  }
+
+  .booking-layout > div:has(.staff-strip) .section-label{
+    margin:0 0 12px!important;
+  }
+
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:16px!important;
+    width:100%!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    min-height:152px!important;
+    border-radius:20px!important;
+    background:#fff!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    box-shadow:0 10px 26px rgba(0,0,0,.045)!important;
+  }
+
+  .staff-card.is-active,
+  .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:0 12px 32px rgba(0,0,0,.08)!important;
+  }
+
+  .avatar,
+  .staff-avatar{
+    width:66px!important;
+    height:66px!important;
+  }
+
+  /* RIGHT: booking panel */
+  .desktop-right-panel,
+  .desktop-results-area,
+  .booking-layout > div:has(.service-pills):not(:has(.staff-strip)){
+    grid-area:booking!important;
+    width:100%!important;
+    display:block!important;
+    position:sticky!important;
+    top:18px!important;
+    padding:20px!important;
+    border:1px solid rgba(17,17,17,.08)!important;
+    border-radius:24px!important;
+    background:#fff!important;
+    box-shadow:0 14px 36px rgba(0,0,0,.055)!important;
+    box-sizing:border-box!important;
+    transform:none!important;
+  }
+
+  .desktop-service-panel,
+  .desktop-right-panel .desktop-service-panel,
+  .desktop-results-area .desktop-service-panel{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    position:relative!important;
+    transform:none!important;
+  }
+
+  .section-label{
+    margin:0 0 12px!important;
+    font-size:10.5px!important;
+    line-height:1!important;
+    letter-spacing:.18em!important;
+    font-weight:950!important;
+  }
+
+  .service-pills{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    margin:0 0 16px!important;
+  }
+
+  .service-pill{
+    height:48px!important;
+    min-height:48px!important;
+    border-radius:11px!important;
+    padding:0 10px!important;
+    background:#f4f4f4!important;
+    box-shadow:none!important;
+    border:0!important;
+  }
+
+  .service-pill.is-active,
+  .service-pill.active,
+  .service-pill[aria-pressed="true"],
+  .service-pill[aria-selected="true"]{
+    background:#111!important;
+    color:#fff!important;
+  }
+
+  .service-name{
+    font-size:13.5px!important;
+    line-height:1!important;
+    font-weight:950!important;
+  }
+
+  .service-meta{
+    margin-top:3px!important;
+    font-size:10.8px!important;
+    line-height:1!important;
+    font-weight:800!important;
+  }
+
+  .desktop-right-panel .date-area,
+  .desktop-results-area .date-area,
+  .bsu-slot-date-wrap,
+  .date-area{
+    width:100%!important;
+    margin:0 0 16px!important;
+    padding:0!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+  }
+
+  .bsu-date-calendar{
+    margin:0!important;
+    padding:4px 0 12px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .bsu-calendar-main-head,
+  .bsu-date-calendar.is-week .bsu-calendar-main-head{
+    margin:0 0 12px!important;
+  }
+
+  .bsu-date-calendar.is-week .bsu-calendar-main-head{
+    grid-template-columns:minmax(0,1fr) 38px 38px!important;
+  }
+
+  .bsu-calendar-main-head .bsu-date-month-title{
+    font-size:23px!important;
+    line-height:1!important;
+    letter-spacing:-.045em!important;
+    font-weight:950!important;
+  }
+
+  .bsu-calendar-nav,
+  .bsu-date-calendar.is-week .bsu-calendar-nav{
+    width:38px!important;
+    height:38px!important;
+    border-radius:10px!important;
+    font-size:23px!important;
+    background:#f4f4f4!important;
+  }
+
+  .bsu-week-grid{
+    margin:0 0 8px!important;
+    gap:0!important;
+  }
+
+  .bsu-month-weekdays{
+    margin:0 0 10px!important;
+    font-size:11px!important;
+  }
+
+  .bsu-month-grid{
+    gap:7px 0!important;
+  }
+
+  .bsu-date-cell{
+    height:35px!important;
+    min-height:35px!important;
+    border-radius:8px!important;
+    gap:2px!important;
+  }
+
+  .bsu-date-cell.is-active{
+    width:37px!important;
+    max-width:37px!important;
+    border-radius:8px!important;
+  }
+
+  .bsu-date-dow{
+    font-size:10px!important;
+    font-weight:650!important;
+  }
+
+  .bsu-date-num,
+  .bsu-date-calendar.is-month .bsu-date-num{
+    font-size:13.5px!important;
+    font-weight:850!important;
+  }
+
+  .bsu-calendar-collapse-btn{
+    width:30px!important;
+    height:30px!important;
+    margin:10px auto 0!important;
+    font-size:16px!important;
+  }
+
+  .bsu-calendar-timezone{
+    margin:10px 0 0!important;
+    padding:10px 0 0!important;
+    font-size:11.8px!important;
+    line-height:1.2!important;
+  }
+
+  .desktop-right-panel .slot-area,
+  .desktop-right-panel .empty-state,
+  .desktop-results-area .slot-area,
+  .desktop-results-area .empty-state,
+  .slot-area,
+  .empty-state{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    min-height:0!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+  }
+
+  .slot-group{
+    margin:14px 0 0!important;
+  }
+
+  .slot-group:first-child{
+    margin-top:2px!important;
+  }
+
+  .slot-group-title{
+    margin:0 0 9px!important;
+    font-size:15px!important;
+    line-height:1.05!important;
+    font-weight:850!important;
+    letter-spacing:-.03em!important;
+    text-transform:none!important;
+  }
+
+  .times{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+
+  .time-btn{
+    height:40px!important;
+    min-height:40px!important;
+    border-radius:8px!important;
+    font-size:12.5px!important;
+    font-weight:950!important;
+    padding:0 3px!important;
+    white-space:nowrap!important;
+  }
+
+  .empty-title{
+    font-size:22px!important;
+    line-height:1!important;
+    margin:4px 0 8px!important;
+  }
+
+  .empty-sub{
+    font-size:13px!important;
+    line-height:1.3!important;
+    margin:0 0 12px!important;
+  }
+
+  .next-available-btn,
+  .waitlist-btn{
+    height:42px!important;
+    min-height:42px!important;
+    border-radius:9px!important;
+    font-size:13px!important;
+  }
+
+  /* Photo wall below both columns */
+  .desktop-photo-wall-section{
+    grid-area:photos!important;
+    width:100%!important;
+    margin-top:8px!important;
+    position:relative!important;
+    transform:none!important;
+  }
+
+  .desktop-photo-wall-section .staff-carousel,
+  .desktop-photo-wall-section .bsu-team-wall{
+    border-radius:0!important;
+    overflow:hidden!important;
+  }
+}
+
+@media(min-width:1280px){
+  .booking-layout{
+    grid-template-columns:minmax(0,1fr) minmax(410px,460px)!important;
+    gap:30px!important;
+  }
+}
+
+/* Mobile: keep current stable compact order */
+@media(max-width:599px){
+  .service-pills{
+    margin-bottom:16px!important;
+  }
+
+  .times{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
+
+
+/* =========================================
+   B SIDE U V85
+   Desktop modal booking flow:
+   - desktop shows stylists as the main board
+   - hover effect inspired by Square-style appointment cards
+   - click stylist opens modal with services / calendar / available times
+   - mobile keeps existing vertical booking flow
+   ========================================= */
+
+@media(min-width:1024px){
+  body.bsu-desktop-modal-ready .booking-layout{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-areas:
+      "staff"
+      "photos"!important;
+    gap:24px!important;
+    align-items:start!important;
+  }
+
+  body.bsu-desktop-modal-ready .desktop-right-panel,
+  body.bsu-desktop-modal-ready .desktop-results-area,
+  body.bsu-desktop-modal-ready .booking-layout > div:has(.service-pills):not(:has(.staff-strip)){
+    display:none!important;
+  }
+
+  body.bsu-desktop-modal-ready .booking-layout > div:has(.staff-strip){
+    grid-area:staff!important;
+    width:100%!important;
+    max-width:920px!important;
+    margin:0 auto!important;
+    padding:0!important;
+    border:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:16px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-card,
+  body.bsu-desktop-modal-ready .staff-item{
+    min-height:158px!important;
+    border-radius:22px!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    background:#fff!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.045)!important;
+    transform:translateY(0)!important;
+    transition:
+      transform .18s ease,
+      box-shadow .18s ease,
+      border-color .18s ease,
+      background .18s ease!important;
+    cursor:pointer!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-card:hover,
+  body.bsu-desktop-modal-ready .staff-item:hover{
+    transform:translateY(-4px)!important;
+    border-color:rgba(17,17,17,.28)!important;
+    box-shadow:0 18px 42px rgba(0,0,0,.10)!important;
+    background:#fff!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-card.is-active,
+  body.bsu-desktop-modal-ready .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:0 18px 42px rgba(0,0,0,.12)!important;
+  }
+
+  body.bsu-desktop-modal-ready .desktop-photo-wall-section{
+    grid-area:photos!important;
+    width:100%!important;
+    margin-top:4px!important;
+    border-radius:0!important;
+  }
+
+  body.bsu-desktop-modal-ready .desktop-photo-wall-section img,
+  body.bsu-desktop-modal-ready .desktop-photo-wall-section .staff-carousel-item img{
+    border-radius:0!important;
+  }
+}
+
+.bsu-booking-modal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:999999!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:28px!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-booking-modal.is-open{
+  display:flex!important;
+}
+
+.bsu-booking-modal-backdrop{
+  position:absolute!important;
+  inset:0!important;
+  background:rgba(17,17,17,.42)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+
+.bsu-booking-modal-card{
+  position:relative!important;
+  z-index:1!important;
+  width:min(980px,calc(100vw - 56px))!important;
+  max-height:calc(100vh - 56px)!important;
+  overflow:auto!important;
+  background:#fff!important;
+  border:1px solid rgba(255,255,255,.7)!important;
+  border-radius:28px!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.25)!important;
+  padding:24px!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-booking-modal-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  margin:0 0 18px!important;
+}
+
+.bsu-booking-modal-person{
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-width:0!important;
+}
+
+.bsu-booking-modal-avatar{
+  width:58px!important;
+  height:58px!important;
+  border-radius:999px!important;
+  object-fit:cover!important;
+  background:#f4f4f4!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.08)!important;
+  flex:0 0 auto!important;
+}
+
+.bsu-booking-modal-kicker{
+  font-size:10px!important;
+  line-height:1!important;
+  letter-spacing:.18em!important;
+  font-weight:950!important;
+  color:#777!important;
+  text-transform:uppercase!important;
+  margin:0 0 6px!important;
+}
+
+.bsu-booking-modal-title{
+  font-size:26px!important;
+  line-height:1!important;
+  letter-spacing:-.045em!important;
+  font-weight:950!important;
+  color:#111!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.bsu-booking-modal-close{
+  width:42px!important;
+  height:42px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:#f3f3f3!important;
+  color:#111!important;
+  font-size:24px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+}
+
+.bsu-booking-modal-close:hover{
+  background:#111!important;
+  color:#fff!important;
+}
+
+.bsu-booking-modal-grid{
+  display:grid!important;
+  grid-template-columns:minmax(300px,380px) minmax(0,1fr)!important;
+  gap:20px!important;
+  align-items:start!important;
+}
+
+.bsu-modal-left,
+.bsu-modal-right{
+  min-width:0!important;
+}
+
+.bsu-booking-modal .section-label{
+  margin:0 0 10px!important;
+  font-size:10.5px!important;
+  letter-spacing:.18em!important;
+}
+
+.bsu-booking-modal .service-pills{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin:0 0 16px!important;
+}
+
+.bsu-booking-modal .service-pill{
+  height:48px!important;
+  min-height:48px!important;
+  border-radius:11px!important;
+}
+
+.bsu-booking-modal .date-area,
+.bsu-booking-modal .bsu-slot-date-wrap{
+  margin:0!important;
+  padding:0!important;
+  width:100%!important;
+  position:relative!important;
+  transform:none!important;
+}
+
+.bsu-booking-modal .bsu-date-calendar{
+  margin:0!important;
+  padding:4px 0 12px!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+.bsu-booking-modal .slot-area,
+.bsu-booking-modal .empty-state{
+  width:100%!important;
+  margin:0!important;
+  padding:18px!important;
+  border:1px solid rgba(17,17,17,.08)!important;
+  border-radius:22px!important;
+  background:#fff!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
+  min-height:260px!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-booking-modal .times{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+
+.bsu-booking-modal .time-btn{
+  height:40px!important;
+  min-height:40px!important;
+  font-size:12.5px!important;
+  border-radius:8px!important;
+  padding:0 3px!important;
+  white-space:nowrap!important;
+}
+
+@media(max-width:1023px){
+  .bsu-booking-modal{
+    display:none!important;
+  }
+}
+
+
+/* =========================================
+   B SIDE U V87
+   Modal content fix:
+   - force modal body/grid visible
+   - show services / calendar / availability / selected photo wall inside modal
+   ========================================= */
+@media(min-width:1024px){
+  body.bsu-desktop-modal-ready .desktop-right-panel,
+  body.bsu-desktop-modal-ready .desktop-results-area,
+  body.bsu-desktop-modal-ready .booking-layout > div:has(.service-pills):not(:has(.staff-strip)){
+    display:none!important;
+  }
+
+  .bsu-booking-modal-card{
+    width:min(1040px,calc(100vw - 56px))!important;
+    min-height:520px!important;
+    padding:24px!important;
+  }
+
+  .bsu-booking-modal-grid{
+    display:grid!important;
+    grid-template-columns:minmax(300px,380px) minmax(0,1fr)!important;
+    gap:20px!important;
+    align-items:start!important;
+    min-height:360px!important;
+  }
+
+  .bsu-modal-left,
+  .bsu-modal-right{
+    display:block!important;
+    min-width:0!important;
+  }
+
+  .bsu-modal-left > *,
+  .bsu-modal-right > *{
+    visibility:visible!important;
+  }
+
+  .bsu-booking-modal .service-pills,
+  .bsu-booking-modal .date-area,
+  .bsu-booking-modal .slot-area,
+  .bsu-booking-modal .empty-state,
+  .bsu-booking-modal .desktop-photo-wall-section{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:relative!important;
+    transform:none!important;
+    top:auto!important;
+    left:auto!important;
+  }
+
+  .bsu-booking-modal .service-pills{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    margin:0 0 16px!important;
+  }
+
+  .bsu-booking-modal .date-area{
+    width:100%!important;
+    margin:0!important;
+  }
+
+  .bsu-booking-modal .slot-area,
+  .bsu-booking-modal .empty-state{
+    min-height:220px!important;
+    padding:18px!important;
+    border:1px solid rgba(17,17,17,.08)!important;
+    border-radius:22px!important;
+    background:#fff!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
+  }
+
+  .bsu-modal-photo{
+    grid-column:1 / -1!important;
+    margin-top:18px!important;
+    border-radius:0!important;
+    overflow:hidden!important;
+  }
+
+  .bsu-modal-photo .desktop-photo-wall-section{
+    margin:0!important;
+    width:100%!important;
+    display:block!important;
+  }
+
+  .bsu-modal-photo img,
+  .bsu-modal-photo .staff-carousel-item img{
+    border-radius:0!important;
+  }
+}
+
+
 `;
 
         
@@ -3627,7 +4892,7 @@ document.addEventListener("click",function(e){
         `;
         
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+'\n<script>\n(function(){\n  function isDesktopModal(){\n    return window.innerWidth >= 1024;\n  }\n\n  var modal = null;\n  var modalLeft = null;\n  var modalRight = null;\n  var originalPositions = new Map();\n\n  function saveOriginal(el){\n    if(!el || originalPositions.has(el)) return;\n    originalPositions.set(el, {\n      parent: el.parentNode,\n      next: el.nextSibling\n    });\n  }\n\n  function restoreOriginals(){\n    Array.from(originalPositions.entries()).forEach(function(entry){\n      var el = entry[0];\n      var pos = entry[1];\n      if(!el || !pos.parent) return;\n      try{\n        if(pos.next && pos.next.parentNode === pos.parent){\n          pos.parent.insertBefore(el, pos.next);\n        }else{\n          pos.parent.appendChild(el);\n        }\n      }catch(error){}\n    });\n  }\n\n  function getStaffNameFromCard(card){\n    if(!card) return "Selected stylist";\n    var candidates = Array.from(card.querySelectorAll("*")).map(function(el){\n      return (el.textContent || "").trim();\n    }).filter(Boolean);\n\n    var staffNames = ["William","Ryan","Ken","Fiona","Nami","Jacob","Kendraya"];\n    for(var i=0;i<staffNames.length;i++){\n      if(candidates.some(function(t){ return t === staffNames[i]; })){\n        return staffNames[i];\n      }\n    }\n\n    var text = (card.textContent || "").trim().split(/\\n/).map(function(t){return t.trim();}).filter(Boolean);\n    return text[0] || "Selected stylist";\n  }\n\n  function getStaffImageFromCard(card){\n    var img = card && card.querySelector && card.querySelector("img");\n    return img && img.src ? img.src : "";\n  }\n\n  function ensureModal(){\n    if(modal) return modal;\n\n    modal = document.createElement("div");\n    modal.className = "bsu-booking-modal";\n    modal.innerHTML =\n      \'<div class="bsu-booking-modal-backdrop" data-bsu-modal-close="1"></div>\' +\n      \'<div class="bsu-booking-modal-card" role="dialog" aria-modal="true" aria-label="Book appointment">\' +\n        \'<div class="bsu-booking-modal-head">\' +\n          \'<div class="bsu-booking-modal-person">\' +\n            \'<img class="bsu-booking-modal-avatar" alt="Stylist" />\' +\n            \'<div>\' +\n              \'<div class="bsu-booking-modal-kicker">B SIDE U PASADENA</div>\' +\n              \'<div class="bsu-booking-modal-title">Selected stylist</div>\' +\n            \'</div>\' +\n          \'</div>\' +\n          \'<button class="bsu-booking-modal-close" type="button" aria-label="Close" data-bsu-modal-close="1">×</button>\' +\n        \'</div>\' +\n        \'<div class="bsu-booking-modal-grid">\' +\n          \'<div class="bsu-modal-left"></div>\' +\n          \'<div class="bsu-modal-right"></div>\' +\n        \'</div>\' +\n      \'</div>\';\n\n    document.body.appendChild(modal);\n    modalLeft = modal.querySelector(".bsu-modal-left");\n    modalRight = modal.querySelector(".bsu-modal-right");\n\n    modal.addEventListener("click", function(event){\n      if(event.target && event.target.getAttribute("data-bsu-modal-close")){\n        closeModal();\n      }\n    });\n\n    document.addEventListener("keydown", function(event){\n      if(event.key === "Escape") closeModal();\n    });\n\n    return modal;\n  }\n\n  function findServiceLabel(servicePills){\n    var prev = servicePills && servicePills.previousElementSibling;\n    if(prev && prev.classList && prev.classList.contains("section-label")) return prev;\n\n    return Array.from(document.querySelectorAll(".section-label")).find(function(el){\n      return /service/i.test(el.textContent || "");\n    });\n  }\n\n  function moveBookingControlsIntoModal(){\n    var servicePills = document.querySelector(".service-pills");\n    var serviceLabel = findServiceLabel(servicePills);\n    var message = document.getElementById("message") || document.querySelector(".message");\n    var dateArea = document.querySelector(".date-area");\n    var slotArea = document.querySelector(".slot-area");\n    var emptyState = document.querySelector(".empty-state");\n\n    [serviceLabel, servicePills, message, dateArea, slotArea, emptyState].forEach(saveOriginal);\n\n    if(serviceLabel) modalLeft.appendChild(serviceLabel);\n    if(servicePills) modalLeft.appendChild(servicePills);\n    if(message) modalLeft.appendChild(message);\n    if(dateArea) modalLeft.appendChild(dateArea);\n\n    if(slotArea) modalRight.appendChild(slotArea);\n    if(emptyState) modalRight.appendChild(emptyState);\n  }\n\n  function openModalForStaff(card){\n    if(!isDesktopModal()) return;\n\n    ensureModal();\n\n    var name = getStaffNameFromCard(card);\n    var imgSrc = getStaffImageFromCard(card);\n    var title = modal.querySelector(".bsu-booking-modal-title");\n    var avatar = modal.querySelector(".bsu-booking-modal-avatar");\n\n    if(title) title.textContent = name;\n    if(avatar){\n      if(imgSrc){\n        avatar.src = imgSrc;\n        avatar.style.display = "";\n      }else{\n        avatar.removeAttribute("src");\n        avatar.style.display = "none";\n      }\n    }\n\n    moveBookingControlsIntoModal();\n\n    document.body.classList.add("bsu-modal-open");\n    modal.classList.add("is-open");\n\n    setTimeout(function(){\n      try{\n        var input = document.getElementById("dateInput");\n        if(input) input.dispatchEvent(new Event("change", { bubbles:true }));\n      }catch(error){}\n    }, 80);\n  }\n\n  function closeModal(){\n    if(!modal || !modal.classList.contains("is-open")) return;\n\n    modal.classList.remove("is-open");\n    document.body.classList.remove("bsu-modal-open");\n    restoreOriginals();\n\n    setTimeout(function(){\n      try{\n        if(window.bsuRenderBookingCalendar) window.bsuRenderBookingCalendar();\n      }catch(error){}\n    }, 80);\n  }\n\n  function onStaffClick(event){\n    if(!isDesktopModal()) return;\n\n    var card = event.target && event.target.closest && event.target.closest(".staff-card, .staff-item");\n    if(!card) return;\n    if(!card.closest(".staff-strip")) return;\n\n    setTimeout(function(){\n      openModalForStaff(card);\n    }, 120);\n  }\n\n  function init(){\n    if(isDesktopModal()){\n      document.body.classList.add("bsu-desktop-modal-ready");\n    }else{\n      document.body.classList.remove("bsu-desktop-modal-ready");\n      closeModal();\n    }\n  }\n\n  document.addEventListener("click", onStaffClick, true);\n  window.addEventListener("resize", function(){ setTimeout(init, 100); }, { passive:true });\n  window.addEventListener("load", init);\n  init();\n  setTimeout(init, 500);\n})();\n<\/script>\n'+"\n"+'\n<script>\n(function(){\n  function isDesktop(){\n    return window.innerWidth >= 1024;\n  }\n\n  function q(sel){\n    return document.querySelector(sel);\n  }\n\n  function getModal(){\n    return q(".bsu-booking-modal");\n  }\n\n  function getStaffNameFromActiveOrCard(card){\n    var names = ["William","Ryan","Ken","Fiona","Nami","Jacob","Kendraya"];\n    var text = (card && card.textContent || "").replace(/\\s+/g," ");\n    for(var i=0;i<names.length;i++){\n      if(text.indexOf(names[i]) !== -1) return names[i];\n    }\n    var active = q(".staff-strip .is-active");\n    var activeText = (active && active.textContent || "").replace(/\\s+/g," ");\n    for(var j=0;j<names.length;j++){\n      if(activeText.indexOf(names[j]) !== -1) return names[j];\n    }\n    return "Selected stylist";\n  }\n\n  function makeMissingNote(target){\n    if(!target || target.querySelector(".bsu-modal-loading-note")) return;\n    var note=document.createElement("div");\n    note.className="bsu-modal-loading-note";\n    note.style.cssText="padding:18px;border:1px solid rgba(17,17,17,.08);border-radius:18px;background:#fafafa;font-size:13px;font-weight:800;color:#666;line-height:1.35;";\n    note.textContent="Loading booking options...";\n    target.appendChild(note);\n  }\n\n  function findServicePills(){\n    return q(".service-pills");\n  }\n\n  function findServiceLabel(servicePills){\n    var prev = servicePills && servicePills.previousElementSibling;\n    if(prev && prev.classList && prev.classList.contains("section-label")) return prev;\n    return Array.from(document.querySelectorAll(".section-label")).find(function(el){\n      return /service/i.test(el.textContent || "");\n    });\n  }\n\n  function moveIntoModal(card){\n    var modal = getModal();\n    if(!modal || !modal.classList.contains("is-open")) return;\n\n    var left = modal.querySelector(".bsu-modal-left");\n    var right = modal.querySelector(".bsu-modal-right");\n    var grid = modal.querySelector(".bsu-booking-modal-grid");\n    if(!left || !right || !grid) return;\n\n    var servicePills = findServicePills();\n    var serviceLabel = findServiceLabel(servicePills);\n    var message = document.getElementById("message") || q(".message");\n    var dateArea = q(".date-area");\n    var slotArea = q(".slot-area");\n    var emptyState = q(".empty-state");\n    var photoWall = q(".desktop-photo-wall-section");\n\n    if(serviceLabel && serviceLabel.parentNode !== left) left.appendChild(serviceLabel);\n    if(servicePills && servicePills.parentNode !== left) left.appendChild(servicePills);\n    if(message && message.parentNode !== left) left.appendChild(message);\n    if(dateArea && dateArea.parentNode !== left) left.appendChild(dateArea);\n\n    if(slotArea && slotArea.parentNode !== right) right.appendChild(slotArea);\n    if(emptyState && emptyState.parentNode !== right) right.appendChild(emptyState);\n\n    if(!servicePills || !dateArea) makeMissingNote(left);\n    if(!slotArea && !emptyState) makeMissingNote(right);\n\n    var photoWrap = modal.querySelector(".bsu-modal-photo");\n    if(!photoWrap){\n      photoWrap = document.createElement("div");\n      photoWrap.className = "bsu-modal-photo";\n      grid.appendChild(photoWrap);\n    }\n    if(photoWall && photoWall.parentNode !== photoWrap){\n      photoWrap.appendChild(photoWall);\n    }\n\n    var title = modal.querySelector(".bsu-booking-modal-title");\n    if(title) title.textContent = getStaffNameFromActiveOrCard(card);\n\n    try{\n      var input = document.getElementById("dateInput");\n      if(input){\n        input.dispatchEvent(new Event("change", { bubbles:true }));\n      }\n    }catch(error){}\n  }\n\n  function patchOpenBehavior(){\n    if(!isDesktop()) return;\n    document.body.classList.add("bsu-desktop-modal-ready");\n\n    document.addEventListener("click", function(event){\n      var card = event.target && event.target.closest && event.target.closest(".staff-strip .staff-card, .staff-strip .staff-item");\n      if(!card || !isDesktop()) return;\n\n      setTimeout(function(){ moveIntoModal(card); }, 160);\n      setTimeout(function(){ moveIntoModal(card); }, 420);\n      setTimeout(function(){ moveIntoModal(card); }, 900);\n    }, true);\n  }\n\n  function observeModal(){\n    try{\n      new MutationObserver(function(){\n        var modal = getModal();\n        if(modal && modal.classList.contains("is-open")){\n          setTimeout(function(){ moveIntoModal(null); }, 80);\n        }\n      }).observe(document.documentElement, { childList:true, subtree:true, attributes:true, attributeFilter:["class"] });\n    }catch(error){}\n  }\n\n  window.addEventListener("load", function(){\n    patchOpenBehavior();\n    observeModal();\n  });\n\n  patchOpenBehavior();\n  observeModal();\n})();\n<\/script>\n'+"\n</body>");
 
         document.open();
         document.write(html);
