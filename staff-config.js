@@ -31,7 +31,7 @@ export const STAFF_DATA = {
       },
       scissors: {
         label: "Scissors Cut",
-        price: 70,
+        price: 75,
         duration_minutes: 50,
         service_variation_id: "22YZ5VMOQO4K2IKYY6R2OIPM",
         service_variation_version: 1778926320167
@@ -42,8 +42,8 @@ export const STAFF_DATA = {
   Ryan: {
     name: "Ryan",
     order: 2,
-    days: ["mon", "tue", "wed", "thu", "fri"],
-    image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/123121212_1764920283.JPG?width=400&optimize=medium",
+    days: ["mon", "thu", "fri", "sat", "sun"],
+    image: "https://appointments-production-f.squarecdn.com/files/76e81d0f3b0a6be4ef8c6a21fdb3a216/original.jpeg",
     team_member_id: "TMm7W1ZmprhAbD-Q",
     defaultService: "haircut",
     services: {
@@ -93,7 +93,7 @@ export const STAFF_DATA = {
     name: "Fiona",
     order: 4,
     days: ["mon", "tue", "wed", "fri", "sat"],
-    image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/fiona_1744180262.jpeg",
+    image: "https://appointments-production-f.squarecdn.com/files/a0b65ee114e605dbec1c4da96091d247/original.jpeg",
     team_member_id: "TMZ4Soxe_hDKg3Ht",
     defaultService: "haircut",
     services: {
@@ -124,6 +124,13 @@ export const STAFF_DATA = {
         duration_minutes: 40,
         service_variation_id: "5VLGRSZYIO5AL3SU6AGZU6KP",
         service_variation_version: 1777094072086
+      },
+      color_full: {
+        label: "Full Color",
+        price: 120,
+        duration_minutes: 120,
+        service_variation_id: "FPADYBGJBAVOXMTJHXFQ43H4",
+        service_variation_version: 1769964790194
       }
     }
   },
@@ -132,7 +139,7 @@ export const STAFF_DATA = {
     name: "Nami",
     order: 5,
     days: ["tue", "wed", "thu", "sun"],
-    image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/nami_1744180260.jpeg",
+    image: "https://appointments-production-f.squarecdn.com/files/b16182ed139edfb996e50f0a29550e64/original.jpeg",
     team_member_id: "TMm4INT2vtpvuQRo",
     defaultService: "haircut",
     services: {
@@ -149,6 +156,31 @@ export const STAFF_DATA = {
         duration_minutes: 50,
         service_variation_id: "7RZHSI75HOC3CULO37IDRN3G",
         service_variation_version: 1774412538238
+      }
+    }
+  },
+
+  Kendraya: {
+    name: "Kendraya",
+    order: 6,
+    days: ["mon", "wed", "thu", "sat", "sun"],
+    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f3f3'/%3E%3Ctext x='200' y='224' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='112' font-weight='900' fill='%23111'%3EK%3C/text%3E%3C/svg%3E",
+    team_member_id: "TM997nlZD4qz2O8p",
+    defaultService: "haircut",
+    services: {
+      haircut: {
+        label: "Men’s Haircut",
+        price: 45,
+        duration_minutes: 45,
+        service_variation_id: "OMW6HBOSGIGQ56AVPD2ZTWUY",
+        service_variation_version: 1781066148992
+      },
+      scissors: {
+        label: "Scissors Cut",
+        price: 60,
+        duration_minutes: 45,
+        service_variation_id: "PJ6TIQMJZIVJCUE6V6N26YKM",
+        service_variation_version: 1781067334125
       }
     }
   },
