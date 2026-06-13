@@ -160,6 +160,31 @@ export const STAFF_DATA = {
     }
   },
 
+  Kendraya: {
+    name: "Kendraya",
+    order: 6,
+    days: ["mon", "wed", "thu", "sat", "sun"],
+    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f3f3'/%3E%3Ctext x='200' y='224' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='112' font-weight='900' fill='%23111'%3EK%3C/text%3E%3C/svg%3E",
+    team_member_id: "TM997nlZD4qz2O8p",
+    defaultService: "haircut",
+    services: {
+      haircut: {
+        label: "Men’s Haircut",
+        price: 45,
+        duration_minutes: 45,
+        service_variation_id: "OMW6HBOSGIGQ56AVPD2ZTWUY",
+        service_variation_version: 1781066148992
+      },
+      scissors: {
+        label: "Scissors Cut",
+        price: 60,
+        duration_minutes: 45,
+        service_variation_id: "PJ6TIQMJZIVJCUE6V6N26YKM",
+        service_variation_version: 1781067334125
+      }
+    }
+  },
+
   Jacob: {
     name: "Jacob",
     order: 999,
