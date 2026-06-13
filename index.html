@@ -761,6 +761,130 @@ ${kendrayaSource}${body.trimStart()}];`;
     });`
         );
 
+
+
+        /* V72: stability pass.
+           - Retry transient availability failures once.
+           - Search next available dates sequentially instead of firing 21 requests at once.
+           - Staff-card status checks cannot break the main availability panel. */
+        html=html.replace(
+          /async function fetchAvailabilityFor\(staffKey, serviceType, dateObj, signal\) \{[\s\S]*?\n    \}\n\n    async function findNextAvailableDateFast/,
+          `async function fetchAvailabilityFor(staffKey, serviceType, dateObj, signal) {
+      const payload = {
+        staffKey,
+        serviceType,
+        date: toIsoDateLocal(dateObj)
+      };
+
+      async function requestOnce() {
+        const response = await fetch("/api/search-availability", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal,
+          body: JSON.stringify(payload)
+        });
+
+        let data = {};
+
+        try {
+          data = await response.json();
+        } catch (error) {
+          console.error("Availability JSON parse error:", error);
+        }
+
+        if (!response.ok) {
+          const err = new Error(data.error || "Unable to load availability.");
+          err.status = response.status;
+          err.data = data;
+          console.error("Availability API error:", {
+            status: response.status,
+            staffKey,
+            serviceType,
+            date: payload.date,
+            data
+          });
+          throw err;
+        }
+
+        return data.availabilities || [];
+      }
+
+      try {
+        return await requestOnce();
+      } catch (error) {
+        if (signal?.aborted) throw error;
+        await new Promise(resolve => setTimeout(resolve, 350));
+        return await requestOnce();
+      }
+    }
+
+    async function findNextAvailableDateFast`
+        );
+
+        html=html.replace(
+          /async function findNextAvailableDateFast\(staffKey, serviceType, fromDate, startTomorrow\) \{[\s\S]*?\n    \}\n\n    function showEmptyState/,
+          `async function findNextAvailableDateFast(staffKey, serviceType, fromDate, startTomorrow) {
+      for (let i = startTomorrow ? 1 : 0; i <= 21; i++) {
+        const dateObj = new Date(fromDate);
+        dateObj.setDate(dateObj.getDate() + i);
+
+        try {
+          const openings = await fetchAvailabilityFor(staffKey, serviceType, dateObj);
+
+          if (openings.length > 0) {
+            return {
+              date: dateObj,
+              firstOpening: openings[0]?.start_at || null,
+              openings
+            };
+          }
+        } catch (error) {
+          console.warn("Next available check skipped:", {
+            staffKey,
+            serviceType,
+            date: toIsoDateLocal(dateObj),
+            error
+          });
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 120));
+      }
+
+      return null;
+    }
+
+    function showEmptyState`
+        );
+
+        html=html.replace(
+          /async function loadStaffStatuses\(requestId\) \{[\s\S]*?\n    \}\n\n    function restoreBookingModalForm/,
+          `async function loadStaffStatuses(requestId) {
+      const staffKeys = Object.keys(STAFF_DATA);
+
+      renderStaffStrip(false);
+
+      await Promise.allSettled(
+        staffKeys.map(async staffKey => {
+          if (requestId !== statusRequestId) return;
+          if (staffKey === selectedStaffKey) return;
+
+          try {
+            await computeStaffStatus(staffKey, currentDate);
+          } catch (error) {
+            console.warn("Staff status failed:", staffKey, error);
+          }
+        })
+      );
+
+      if (requestId !== statusRequestId) return;
+
+      renderStaffStrip(false);
+      setTimeout(scrollSelectedStaffIntoView, 80);
+    }
+
+    function restoreBookingModalForm`
+        );
+
         const customCss=`
 /* B SIDE U Pasadena V63 - photo wall auto-scroll with popup click restored */
 .profile-link-under-card,.staff-item.is-active .profile-link-under-card{display:none!important}.bsu-site-nav{display:none!important}
