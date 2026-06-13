@@ -3807,6 +3807,252 @@ document.addEventListener("click",function(e){
 }
 
 
+/* =========================================
+   B SIDE U V80
+   Desktop step booking layout:
+   - Staff is the main first step
+   - Service / calendar / times appear after clicking a stylist
+   - Mobile keeps previous compact vertical layout
+   ========================================= */
+@media(min-width:1024px){
+  .booking-layout{
+    display:grid!important;
+    grid-template-columns:minmax(360px,430px) minmax(0,1fr)!important;
+    gap:24px!important;
+    align-items:start!important;
+  }
+
+  .booking-layout > div:nth-child(2){
+    grid-column:1!important;
+    grid-row:1!important;
+    position:sticky!important;
+    top:18px!important;
+    align-self:start!important;
+    padding:18px!important;
+    border:1px solid rgba(17,17,17,.08)!important;
+    border-radius:22px!important;
+    background:#fff!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
+  }
+
+  .bsu-desktop-select-placeholder{
+    grid-column:2!important;
+    grid-row:1!important;
+    min-height:420px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:1px solid rgba(17,17,17,.08)!important;
+    border-radius:24px!important;
+    background:#fafafa!important;
+    box-shadow:none!important;
+    color:#111!important;
+    text-align:center!important;
+    padding:32px!important;
+    box-sizing:border-box!important;
+  }
+
+  .bsu-desktop-placeholder-inner{
+    max-width:360px!important;
+  }
+
+  .bsu-desktop-placeholder-kicker{
+    font-size:10.5px!important;
+    line-height:1!important;
+    font-weight:950!important;
+    letter-spacing:.18em!important;
+    text-transform:uppercase!important;
+    color:#777!important;
+    margin-bottom:14px!important;
+  }
+
+  .bsu-desktop-placeholder-title{
+    font-size:30px!important;
+    line-height:1!important;
+    font-weight:950!important;
+    letter-spacing:-.055em!important;
+    margin-bottom:12px!important;
+  }
+
+  .bsu-desktop-placeholder-sub{
+    font-size:14px!important;
+    line-height:1.45!important;
+    font-weight:650!important;
+    color:#666!important;
+    letter-spacing:-.02em!important;
+  }
+
+  .bsu-desktop-step-panel{
+    grid-column:2!important;
+    grid-row:1!important;
+    display:grid!important;
+    grid-template-columns:minmax(300px,360px) minmax(0,1fr)!important;
+    gap:18px!important;
+    align-items:start!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  body:not(.bsu-desktop-staff-picked) .bsu-desktop-step-panel{
+    display:none!important;
+  }
+
+  body.bsu-desktop-staff-picked .bsu-desktop-select-placeholder{
+    display:none!important;
+  }
+
+  .bsu-desktop-step-panel .section-label{
+    grid-column:1 / -1!important;
+    margin:0 2px 10px!important;
+  }
+
+  .bsu-desktop-step-panel .service-pills{
+    grid-column:1 / -1!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    margin:0 0 2px!important;
+  }
+
+  .bsu-desktop-step-panel .message{
+    grid-column:1 / -1!important;
+    margin:4px 2px 4px!important;
+    min-height:0!important;
+  }
+
+  .bsu-desktop-step-panel .date-area{
+    grid-column:1!important;
+    grid-row:auto!important;
+    margin:0!important;
+    align-self:start!important;
+  }
+
+  .bsu-desktop-step-panel .slot-area,
+  .bsu-desktop-step-panel .empty-state{
+    grid-column:2!important;
+    grid-row:auto!important;
+    margin:0!important;
+    align-self:start!important;
+    min-height:230px!important;
+    padding:18px!important;
+    border:1px solid rgba(17,17,17,.08)!important;
+    border-radius:22px!important;
+    background:#fff!important;
+    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
+    box-sizing:border-box!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-date-calendar{
+    margin:0!important;
+    padding:4px 0 10px!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-calendar-main-head,
+  .bsu-desktop-step-panel .bsu-date-calendar.is-week .bsu-calendar-main-head{
+    margin-bottom:12px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-calendar-main-head .bsu-date-month-title{
+    font-size:22px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-calendar-nav,
+  .bsu-desktop-step-panel .bsu-date-calendar.is-week .bsu-calendar-nav{
+    width:36px!important;
+    height:36px!important;
+    border-radius:9px!important;
+    font-size:23px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-date-cell{
+    height:34px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-date-cell.is-active{
+    width:36px!important;
+    max-width:36px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-date-dow{
+    font-size:10px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-date-num{
+    font-size:13.5px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-calendar-collapse-btn{
+    width:30px!important;
+    height:30px!important;
+    margin-top:10px!important;
+    font-size:16px!important;
+  }
+
+  .bsu-desktop-step-panel .bsu-calendar-timezone{
+    margin-top:10px!important;
+    padding-top:10px!important;
+    font-size:11.5px!important;
+  }
+
+  .bsu-desktop-step-panel .service-pill{
+    height:46px!important;
+    min-height:46px!important;
+    border-radius:10px!important;
+  }
+
+  .bsu-desktop-step-panel .service-name{
+    font-size:13px!important;
+  }
+
+  .bsu-desktop-step-panel .service-meta{
+    font-size:10.5px!important;
+    margin-top:3px!important;
+  }
+
+  .bsu-desktop-step-panel .slot-group{
+    margin-top:14px!important;
+  }
+
+  .bsu-desktop-step-panel .slot-group:first-child{
+    margin-top:0!important;
+  }
+
+  .bsu-desktop-step-panel .slot-group-title{
+    font-size:15px!important;
+    margin-bottom:10px!important;
+  }
+
+  .bsu-desktop-step-panel .times{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+
+  .bsu-desktop-step-panel .time-btn{
+    height:40px!important;
+    min-height:40px!important;
+    border-radius:8px!important;
+    font-size:12.5px!important;
+    padding:0 3px!important;
+  }
+
+  .desktop-photo-wall-section{
+    grid-column:1 / -1!important;
+    grid-row:2!important;
+    margin-top:22px!important;
+  }
+}
+
+@media(min-width:1280px){
+  .bsu-desktop-step-panel{
+    grid-template-columns:minmax(320px,380px) minmax(0,1fr)!important;
+  }
+}
+
+
 `;
 
         
@@ -3860,7 +4106,7 @@ document.addEventListener("click",function(e){
         `;
         
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+'\n<script>\n(function(){\n  function isDesktopStep(){\n    return window.innerWidth >= 1024;\n  }\n\n  function findSectionLabelNear(el, textPattern){\n    if(!el) return null;\n\n    var prev = el.previousElementSibling;\n    if(prev && prev.classList && prev.classList.contains("section-label")){\n      return prev;\n    }\n\n    var labels = Array.from(document.querySelectorAll(".section-label"));\n    return labels.find(function(label){\n      return textPattern.test(label.textContent || "");\n    }) || null;\n  }\n\n  function ensureDesktopStepLayout(){\n    if(!isDesktopStep()) return;\n\n    var booking = document.querySelector(".booking-layout");\n    if(!booking) return;\n\n    var servicePills = document.querySelector(".service-pills");\n    var dateArea = document.querySelector(".date-area");\n    var slotArea = document.querySelector(".slot-area");\n    var emptyState = document.querySelector(".empty-state");\n    var message = document.getElementById("message") || document.querySelector(".message");\n    var photoWall = document.querySelector(".desktop-photo-wall-section");\n\n    if(!servicePills || !dateArea) return;\n\n    var serviceLabel = findSectionLabelNear(servicePills, /service/i);\n\n    var panel = document.querySelector(".bsu-desktop-step-panel");\n    if(!panel){\n      panel = document.createElement("div");\n      panel.className = "bsu-desktop-step-panel";\n      if(photoWall && photoWall.parentNode === booking){\n        booking.insertBefore(panel, photoWall);\n      }else{\n        booking.appendChild(panel);\n      }\n    }else if(panel.parentNode !== booking){\n      booking.appendChild(panel);\n    }\n\n    var placeholder = document.querySelector(".bsu-desktop-select-placeholder");\n    if(!placeholder){\n      placeholder = document.createElement("div");\n      placeholder.className = "bsu-desktop-select-placeholder";\n      placeholder.innerHTML =\n        \'<div class="bsu-desktop-placeholder-inner">\' +\n          \'<div class="bsu-desktop-placeholder-kicker">B SIDE U PASADENA</div>\' +\n          \'<div class="bsu-desktop-placeholder-title">Select a stylist</div>\' +\n          \'<div class="bsu-desktop-placeholder-sub">Choose a stylist first. Services, calendar, and available times will appear here.</div>\' +\n        \'</div>\';\n\n      if(panel.parentNode === booking){\n        booking.insertBefore(placeholder, panel);\n      }else{\n        booking.appendChild(placeholder);\n      }\n    }else if(placeholder.parentNode !== booking){\n      booking.insertBefore(placeholder, panel);\n    }\n\n    if(serviceLabel && serviceLabel.parentNode !== panel) panel.appendChild(serviceLabel);\n    if(servicePills.parentNode !== panel) panel.appendChild(servicePills);\n    if(message && message.parentNode !== panel) panel.appendChild(message);\n    if(dateArea.parentNode !== panel) panel.appendChild(dateArea);\n    if(slotArea && slotArea.parentNode !== panel) panel.appendChild(slotArea);\n    if(emptyState && emptyState.parentNode !== panel) panel.appendChild(emptyState);\n\n    if(photoWall){\n      if(photoWall.parentNode !== booking){\n        booking.appendChild(photoWall);\n      }\n      if(photoWall.previousElementSibling !== panel && panel.parentNode === booking){\n        booking.insertBefore(photoWall, panel.nextSibling);\n      }\n    }\n  }\n\n  function markStaffPickedFromClick(event){\n    var staffHit = event.target && event.target.closest && event.target.closest(".staff-strip .staff-item, .staff-strip .staff-card");\n    if(!staffHit) return;\n\n    if(isDesktopStep()){\n      document.body.classList.add("bsu-desktop-staff-picked");\n      setTimeout(ensureDesktopStepLayout, 0);\n      setTimeout(ensureDesktopStepLayout, 180);\n      setTimeout(ensureDesktopStepLayout, 600);\n    }\n  }\n\n  var timer = null;\n  function schedule(){\n    if(timer) return;\n    timer = setTimeout(function(){\n      timer = null;\n      ensureDesktopStepLayout();\n    }, 120);\n  }\n\n  window.addEventListener("load", schedule);\n  window.addEventListener("resize", schedule, { passive:true });\n  document.addEventListener("click", markStaffPickedFromClick, true);\n  document.addEventListener("click", function(){ setTimeout(schedule, 80); }, true);\n\n  try{\n    new MutationObserver(schedule).observe(document.documentElement, {\n      childList:true,\n      subtree:true\n    });\n  }catch(error){}\n\n  schedule();\n  setTimeout(schedule, 500);\n  setTimeout(schedule, 1500);\n})();\n</script>\n'+"\n</body>");
 
         document.open();
         document.write(html);
