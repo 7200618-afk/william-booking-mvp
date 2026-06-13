@@ -2441,7 +2441,7 @@ var observer=new MutationObserver(function(){
     hideWaitlistButton();
     hideSanGabrielSwitchButton();
     hideSuccessManageActions();
-  },120);
+  },220);
 });
 observer.observe(document.body,{childList:true,subtree:true});
 
@@ -2480,7 +2480,191 @@ document.addEventListener("click",function(e){
 <\/script>
 `;
 
-        html=html.replace("</style>","\n"+customCss+"\n</style>");
+        const finalCleanCss=`
+
+/* =========================================
+   B SIDE U V66 clean pass
+   - keep Kendraya
+   - remove double employee frame
+   - keep only inner staff card border
+   - straight photo wall
+   - more compact/stable week/month calendar
+   ========================================= */
+.booking-layout > div:nth-child(2),
+.bsu-mobile-sticky-staff-only,
+.staff-strip{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+}
+
+.booking-layout > div:nth-child(2){
+  padding:0!important;
+}
+
+.staff-strip{
+  padding:0!important;
+}
+
+.staff-item,
+.staff-item.is-active{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+  padding:0!important;
+}
+
+.staff-card{
+  background:#fff!important;
+  border:1px solid rgba(17,17,17,.12)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.045)!important;
+  outline:0!important;
+}
+
+.staff-item.is-active .staff-card,
+.staff-card.is-active{
+  border-color:#111!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.10)!important;
+}
+
+.staff-card:hover{
+  transform:none!important;
+}
+
+.desktop-photo-wall-section,
+.desktop-photo-wall-section *,
+.desktop-photo-wall-section .bsu-team-wall,
+.desktop-photo-wall-section .staff-groups,
+.desktop-photo-wall-section .staff-group,
+.desktop-photo-wall-section .staff-carousel,
+.desktop-photo-wall-section .staff-carousel-track,
+.desktop-photo-wall-section .staff-carousel-item,
+.desktop-photo-wall-section img,
+.desktop-photo-wall-section video{
+  border-radius:0!important;
+}
+
+.desktop-photo-wall-section .staff-carousel{
+  overflow:hidden!important;
+}
+
+.bsu-date-calendar{
+  border-radius:14px!important;
+  border:1px solid rgba(17,17,17,.09)!important;
+  background:#fff!important;
+  box-shadow:none!important;
+}
+
+.bsu-date-tabs{
+  margin-bottom:7px!important;
+}
+
+.bsu-date-tab{
+  height:30px!important;
+  border-radius:10px!important;
+  font-size:11px!important;
+}
+
+.bsu-date-cell{
+  height:34px!important;
+  border-radius:10px!important;
+  background:#f5f5f5!important;
+  box-shadow:none!important;
+}
+
+.bsu-date-cell.is-active{
+  background:#111!important;
+  color:#fff!important;
+}
+
+.bsu-date-cell.is-today:not(.is-active){
+  box-shadow:inset 0 0 0 1.5px #111!important;
+}
+
+.bsu-date-cell.is-past{
+  opacity:.42!important;
+}
+
+.bsu-month-grid,
+.bsu-month-weekdays,
+.bsu-week-grid{
+  gap:4px!important;
+}
+
+.bsu-month-head{
+  min-height:28px!important;
+  margin-bottom:6px!important;
+}
+
+.bsu-month-nav{
+  width:28px!important;
+  height:28px!important;
+  border-radius:9px!important;
+}
+
+@media(max-width:599px){
+  .booking-layout > div:nth-child(2){
+    padding:0!important;
+  }
+
+  .staff-strip{
+    padding:0 1px 6px!important;
+    gap:9px!important;
+  }
+
+  .staff-card{
+    min-height:132px!important;
+    border-radius:16px!important;
+    padding:9px 7px 8px!important;
+  }
+
+  .avatar{
+    width:60px!important;
+    height:60px!important;
+    margin-bottom:7px!important;
+  }
+
+  .staff-name{
+    font-size:13px!important;
+  }
+
+  .staff-status{
+    font-size:9.5px!important;
+    min-height:20px!important;
+    margin-top:6px!important;
+  }
+
+  .bsu-date-calendar{
+    margin-top:7px!important;
+    padding:8px!important;
+    border-radius:13px!important;
+  }
+
+  .bsu-date-cell{
+    height:32px!important;
+    border-radius:9px!important;
+  }
+
+  .bsu-date-dow{
+    font-size:7.8px!important;
+  }
+
+  .bsu-date-num{
+    font-size:11.5px!important;
+  }
+}
+
+@media(min-width:600px){
+  .staff-strip{
+    gap:10px!important;
+  }
+}
+
+`;
+
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n</style>");
         html=html.replace("</body>",customJs+"\n</body>");
 
         document.open();
