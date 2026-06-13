@@ -98,9 +98,61 @@
           staffConfigJs=staffConfigJs.replace(/\n\s*Jacob\s*:\s*\{/, kendrayaStaffConfig + "\n  Jacob: {");
         }
 
+
+
+        const squareCatalogSyncCode = `
+async function syncServicesFromSquareCatalog() {
+  try {
+    const response = await fetch("/api/catalog-services", {
+      method: "GET",
+      cache: "no-store"
+    });
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch (error) {
+      console.warn("Square catalog sync JSON error:", error);
+      return;
+    }
+
+    if (!response.ok) {
+      console.warn("Square catalog sync failed:", data);
+      return;
+    }
+
+    if (!data.staffData) {
+      console.warn("Square catalog sync: no staffData returned.");
+      return;
+    }
+
+    Object.entries(data.staffData).forEach(([staffKey, liveStaff]) => {
+      if (!STAFF_DATA[staffKey]) return;
+      if (!liveStaff.services) return;
+
+      Object.entries(liveStaff.services).forEach(([serviceKey, liveService]) => {
+        if (!STAFF_DATA[staffKey].services?.[serviceKey]) return;
+
+        STAFF_DATA[staffKey].services[serviceKey] = {
+          ...STAFF_DATA[staffKey].services[serviceKey],
+          ...liveService
+        };
+      });
+    });
+
+    console.log("Square catalog services synced:", data.synced_at);
+  } catch (error) {
+    console.warn("Square catalog sync error:", error);
+  }
+}
+
+await syncServicesFromSquareCatalog();
+`;
+
         html=html.replace(
           /import\s+\{\s*STAFF_DATA\s*,\s*BUSINESS\s*\}\s+from\s+["']\.\/staff-config\.js["'];/,
-          staffConfigJs
+          staffConfigJs + squareCatalogSyncCode
         );
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
