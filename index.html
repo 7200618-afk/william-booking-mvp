@@ -222,7 +222,10 @@ ${kendrayaSource}${body.trimStart()}];`;
           /let heldScrollPosition = null;/,
           `let heldScrollPosition = null;
     let hasUserSelectedStaff = false;
-    let initialStaffAutoSelectDone = false;`
+    let initialStaffAutoSelectDone = false;
+    let availabilityAbortController = null;
+    let dateChangeLock = false;
+    let dateChangeLockTimer = null;`
         );
 
         html=html.replace(
@@ -230,6 +233,11 @@ ${kendrayaSource}${body.trimStart()}];`;
           `function refreshForDateChange() {
       availabilityRequestId++;
       statusRequestId++;
+
+      if (availabilityAbortController) {
+        try { availabilityAbortController.abort(); } catch (error) {}
+      }
+
       updateDateUI();
       staffStatusCache = {};
 
@@ -259,14 +267,10 @@ ${kendrayaSource}${body.trimStart()}];`;
       window.bsuInitialGalleryStaff = galleryStaffName;
       if (window.bsuSetGalleryStaff) {
         setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 0);
-        setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 250);
       }
 
       clearResults();
       searchAvailability();
-      if (window.innerWidth >= 600) {
-        setTimeout(scrollSelectedStaffIntoView, 120);
-      }
     }
 
     prevDayBtn.addEventListener`
@@ -578,6 +582,182 @@ ${kendrayaSource}${body.trimStart()}];`;
       if (window.innerWidth >= 600) {
         setTimeout(scrollSelectedStaffIntoView, 120);
       }
+    });`
+        );
+
+
+
+        /* V71: stabilize rapid date switching.
+           Old availability requests are aborted and old results cannot overwrite the newest date. */
+        html=html.replace(
+          /async function fetchAvailabilityFor\(staffKey, serviceType, dateObj\) \{[\s\S]*?\n    \}\n\n    async function findNextAvailableDateFast/,
+          `async function fetchAvailabilityFor(staffKey, serviceType, dateObj, signal) {
+      const response = await fetch("/api/search-availability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal,
+        body: JSON.stringify({
+          staffKey,
+          serviceType,
+          date: toIsoDateLocal(dateObj)
+        })
+      });
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch (error) {
+        console.error("Availability JSON parse error:", error);
+      }
+
+      if (!response.ok) {
+        console.error("Availability API error:", {
+          status: response.status,
+          staffKey,
+          serviceType,
+          date: toIsoDateLocal(dateObj),
+          data
+        });
+
+        throw new Error(data.error || "Unable to load availability.");
+      }
+
+      return data.availabilities || [];
+    }
+
+    async function findNextAvailableDateFast`
+        );
+
+        html=html.replace(
+          /async function searchAvailability\(\) \{[\s\S]*?\n    \}\n\n    function renderAvailability/,
+          `async function searchAvailability() {
+      const requestId = ++availabilityRequestId;
+
+      if (availabilityAbortController) {
+        try { availabilityAbortController.abort(); } catch (error) {}
+      }
+
+      availabilityAbortController = new AbortController();
+      const signal = availabilityAbortController.signal;
+
+      const staff = STAFF_DATA[selectedStaffKey];
+      const service = staff?.services?.[selectedServiceKey];
+
+      if (!staff || !service) return;
+
+      showAvailabilityLoadingFrame();
+
+      try {
+        const availabilities = await fetchAvailabilityFor(
+          selectedStaffKey,
+          selectedServiceKey,
+          currentDate,
+          signal
+        );
+
+        if (requestId !== availabilityRequestId || signal.aborted) return;
+
+        const selectedCacheKey = getStatusCacheKey(
+          selectedStaffKey,
+          selectedServiceKey,
+          currentDate
+        );
+
+        if (availabilities.length) {
+          staffStatusCache[selectedCacheKey] = {
+            text: formatPasadenaTime(availabilities[0].start_at),
+            isFull: false,
+            hasOpening: true,
+            openingCount: availabilities.length
+          };
+
+          messageEl.textContent = "";
+          emptyStateEl.classList.remove("is-visible");
+          renderAvailability(availabilities);
+          renderStaffStrip(false);
+          return;
+        }
+
+        staffStatusCache[selectedCacheKey] = {
+          text: "Fully booked",
+          isFull: true,
+          hasOpening: false,
+          openingCount: 0
+        };
+
+        const nextResult = await findNextAvailableDateFast(
+          selectedStaffKey,
+          selectedServiceKey,
+          currentDate,
+          true
+        );
+
+        if (requestId !== availabilityRequestId || signal.aborted) return;
+
+        slotGroupsEl.innerHTML = "";
+        slotCardEl.classList.remove("is-visible");
+        showEmptyState(
+          "No times available",
+          "Please choose another date or stylist.",
+          nextResult
+        );
+        renderStaffStrip(false);
+      } catch (error) {
+        if (signal.aborted || requestId !== availabilityRequestId) return;
+
+        console.error("searchAvailability failed:", error);
+        slotGroupsEl.innerHTML = "";
+        slotCardEl.classList.remove("is-visible");
+        showEmptyState(
+          "Unable to load times",
+          "Please wait a moment and try again.",
+          null
+        );
+        messageEl.textContent = "Booking system is temporarily unavailable. Please refresh or try again.";
+        renderStaffStrip(false);
+      }
+    }
+
+    function renderAvailability`
+        );
+
+        html=html.replace(
+          /prevDayBtn\.addEventListener\("click", \(\) => \{[\s\S]*?dateInputEl\.addEventListener\("change", \(\) => \{[\s\S]*?\n    \}\);/,
+          `function changeDateByDays(days) {
+      if (dateChangeLock) return;
+
+      dateChangeLock = true;
+      prevDayBtn.disabled = true;
+      nextDayBtn.disabled = true;
+
+      if (dateChangeLockTimer) {
+        clearTimeout(dateChangeLockTimer);
+      }
+
+      currentDate = new Date(currentDate);
+      currentDate.setDate(currentDate.getDate() + days);
+      refreshForDateChange();
+
+      dateChangeLockTimer = setTimeout(() => {
+        dateChangeLock = false;
+        prevDayBtn.disabled = false;
+        nextDayBtn.disabled = false;
+      }, 450);
+    }
+
+    prevDayBtn.addEventListener("click", () => {
+      changeDateByDays(-1);
+    });
+
+    nextDayBtn.addEventListener("click", () => {
+      changeDateByDays(1);
+    });
+
+    dateInputEl.addEventListener("change", () => {
+      if (!dateInputEl.value) return;
+      currentDate = fromIsoDateLocal(dateInputEl.value);
+      refreshForDateChange();
     });`
         );
 
