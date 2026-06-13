@@ -3537,6 +3537,43 @@ document.addEventListener("click",function(e){
 }
 
 
+/* =========================================
+   B SIDE U V78
+   - availability slots show 4 columns
+   ========================================= */
+.times{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:7px!important;
+}
+.time-btn{
+  height:42px!important;
+  min-height:42px!important;
+  border-radius:7px!important;
+  font-size:13px!important;
+  padding:0 4px!important;
+  white-space:nowrap!important;
+}
+@media(max-width:599px){
+  .times{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:6px!important;
+  }
+  .time-btn{
+    height:38px!important;
+    min-height:38px!important;
+    border-radius:7px!important;
+    font-size:11.8px!important;
+    letter-spacing:-.025em!important;
+    padding:0 2px!important;
+  }
+}
+@media(max-width:380px){
+  .times{gap:5px!important}
+  .time-btn{font-size:11px!important}
+}
+
+
 `;
 
         
