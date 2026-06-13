@@ -9,7 +9,11 @@
   <title>B SIDE U Pasadena Booking</title>
   <style>
     html,body{margin:0;background:#fff;color:#111;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}.bsu-loading{min-height:100vh;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#666}
-  </style>
+  
+/* V68 stability: hide old injected week/month calendar if browser cached it */
+.bsu-date-calendar{display:none!important}
+
+</style>
 </head>
 <body>
   <div class="bsu-loading">Loading B SIDE U booking...</div>
@@ -152,7 +156,14 @@ ${kendrayaSource}${body.trimStart()}];`;
 
         html=html.replace(
           /messageEl\.textContent = "Network error: " \+ error\.message;/g,
-          `messageEl.textContent = "Booking system is temporarily unavailable. Please refresh or call the salon.";`
+          `messageEl.textContent = "Booking system is temporarily unavailable. Please refresh or call the salon.";
+      slotGroupsEl.innerHTML = "";
+      slotCardEl.classList.remove("is-visible");
+      emptyTitleEl.textContent = "Unable to load times";
+      emptySubEl.textContent = "Please refresh the page or call the salon.";
+      nextAvailableBtn.style.display = "none";
+      waitlistBtn.style.display = "none";
+      emptyStateEl.classList.add("is-visible");`
         );
 
         html=html.replace(
@@ -1154,7 +1165,7 @@ html{scroll-behavior:auto!important}.staff-card,.staff-item,.service-pill,.time-
 }
 
 
-/* B SIDE U V67 clean - Kendraya correct schedule, inner employee frames, straight photo wall, week/month calendar */
+/* B SIDE U V68 stable - Kendraya backend synced, calendar loop removed, inner employee frames, straight photo wall */
 .staff-strip{
   background:#fff!important;
   border:1px solid rgba(17,17,17,.10)!important;
@@ -2250,152 +2261,16 @@ function markNextAvailableClick(){
 
 
 
-function normalizeDateOnly(dt){
-  return new Date(dt.getFullYear(),dt.getMonth(),dt.getDate());
-}
-
-function sameDay(a,b){
-  return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
-}
-
-function getCurrentCalendarDate(){
-  var parsed=parseDisplayDate&&parseDisplayDate();
-  if(parsed)return normalizeDateOnly(parsed);
-  return normalizeDateOnly(new Date());
-}
-
-function addDays(dt,n){
-  var x=new Date(dt);
-  x.setDate(x.getDate()+n);
-  return normalizeDateOnly(x);
-}
-
-function findDateNavButtons(){
-  var area=document.querySelector(".date-area");
-  if(!area)return {prev:null,next:null};
-  var buttons=Array.from(area.querySelectorAll("button"));
-  var prev=buttons.find(function(btn){return /prev|previous|back/i.test(btn.getAttribute("aria-label")||"")||/[‹←<]/.test(btn.textContent||"");})||buttons[0]||null;
-  var next=buttons.find(function(btn){return /next|forward/i.test(btn.getAttribute("aria-label")||"")||/[›→>]/.test(btn.textContent||"");})||buttons[buttons.length-1]||null;
-  if(prev===next&&buttons.length>1){prev=buttons[0];next=buttons[buttons.length-1];}
-  return {prev:prev,next:next};
-}
-
-function goToCalendarDate(targetDate){
-  targetDate=normalizeDateOnly(targetDate);
-  var guard=0;
-  function step(){
-    var current=getCurrentCalendarDate();
-    var diff=Math.round((targetDate-current)/86400000);
-    if(diff===0||guard>70){
-      setTimeout(function(){ensureDateCalendarPanel(true);},120);
-      return;
-    }
-    var nav=findDateNavButtons();
-    var btn=diff>0?nav.next:nav.prev;
-    if(!btn)return;
-    guard++;
-    btn.click();
-    setTimeout(step,42);
-  }
-  step();
-}
-
-function buildDateCell(dt,currentDate,today,showDow){
-  var btn=document.createElement("button");
-  btn.type="button";
-  btn.className="bsu-date-cell";
-  if(sameDay(dt,currentDate))btn.classList.add("is-active");
-  if(sameDay(dt,today))btn.classList.add("is-today");
-  if(dt<today)btn.classList.add("is-past");
-  btn.innerHTML=(showDow?'<span class="bsu-date-dow">'+DAY_LABELS[dt.getDay()]+'</span>':"")+'<span class="bsu-date-num">'+dt.getDate()+'</span>';
-  btn.addEventListener("click",function(){goToCalendarDate(dt);});
-  return btn;
-}
-
-function ensureDateCalendarPanel(force){
-  var dateArea=document.querySelector(".date-area");
-  if(!dateArea)return;
-
-  var current=getCurrentCalendarDate();
-  var today=normalizeDateOnly(new Date());
-  var existing=dateArea.querySelector(".bsu-date-calendar");
-  var mode=(existing&&existing.dataset.mode)||"week";
-  var monthOffset=Number(existing&&existing.dataset.monthOffset||"0");
-  if(!Number.isFinite(monthOffset))monthOffset=0;
-  var signature=mode+"|"+current.getFullYear()+"-"+current.getMonth()+"-"+current.getDate()+"|"+monthOffset;
-
-  if(existing&&existing.dataset.signature===signature&&!force)return;
-  if(existing)existing.remove();
-
-  var panel=document.createElement("div");
-  panel.className="bsu-date-calendar";
-  panel.dataset.mode=mode;
-  panel.dataset.monthOffset=String(monthOffset);
-  panel.dataset.signature=signature;
-
-  var tabs=document.createElement("div");
-  tabs.className="bsu-date-tabs";
-  var weekTab=document.createElement("button");
-  weekTab.type="button";
-  weekTab.className="bsu-date-tab"+(mode==="week"?" is-active":"");
-  weekTab.textContent="Week";
-  weekTab.addEventListener("click",function(){panel.dataset.mode="week";panel.dataset.monthOffset="0";ensureDateCalendarPanel(true);});
-  var monthTab=document.createElement("button");
-  monthTab.type="button";
-  monthTab.className="bsu-date-tab"+(mode==="month"?" is-active":"");
-  monthTab.textContent="Month";
-  monthTab.addEventListener("click",function(){panel.dataset.mode="month";panel.dataset.monthOffset="0";ensureDateCalendarPanel(true);});
-  tabs.appendChild(weekTab);
-  tabs.appendChild(monthTab);
-  panel.appendChild(tabs);
-
-  if(mode==="month"){
-    var viewMonth=new Date(current.getFullYear(),current.getMonth()+monthOffset,1);
-    var head=document.createElement("div");
-    head.className="bsu-month-head";
-    var prev=document.createElement("button");
-    prev.type="button";prev.className="bsu-month-nav";prev.textContent="‹";
-    var title=document.createElement("div");
-    title.textContent=viewMonth.toLocaleDateString("en-US",{month:"long",year:"numeric"});
-    var next=document.createElement("button");
-    next.type="button";next.className="bsu-month-nav";next.textContent="›";
-    prev.addEventListener("click",function(){panel.dataset.monthOffset=String(monthOffset-1);ensureDateCalendarPanel(true);});
-    next.addEventListener("click",function(){panel.dataset.monthOffset=String(monthOffset+1);ensureDateCalendarPanel(true);});
-    head.appendChild(prev);head.appendChild(title);head.appendChild(next);panel.appendChild(head);
-
-    var weekdays=document.createElement("div");
-    weekdays.className="bsu-month-weekdays";
-    DAY_LABELS.forEach(function(d){var x=document.createElement("div");x.textContent=d;weekdays.appendChild(x);});
-    panel.appendChild(weekdays);
-
-    var grid=document.createElement("div");
-    grid.className="bsu-month-grid";
-    for(var b=0;b<viewMonth.getDay();b++){
-      var blank=document.createElement("button");blank.type="button";blank.className="bsu-date-cell is-blank";grid.appendChild(blank);
-    }
-    var last=new Date(viewMonth.getFullYear(),viewMonth.getMonth()+1,0).getDate();
-    for(var day=1;day<=last;day++){
-      grid.appendChild(buildDateCell(new Date(viewMonth.getFullYear(),viewMonth.getMonth(),day),current,today,false));
-    }
-    panel.appendChild(grid);
-  }else{
-    var grid=document.createElement("div");
-    grid.className="bsu-week-grid";
-    var start=addDays(current,-current.getDay());
-    for(var i=0;i<7;i++){
-      grid.appendChild(buildDateCell(addDays(start,i),current,today,true));
-    }
-    panel.appendChild(grid);
-  }
-
-  dateArea.appendChild(panel);
-}
+/* V68 stability note:
+   The custom Week/Month calendar was removed because it changed dates by repeatedly
+   clicking the prev/next buttons. That caused multiple availability searches and
+   page jumping on mobile. The original date controls stay as the single source of
+   truth. */
 
 function runFixes(){
   setupMobileStickyDateAndStaff();
   moveServicesForDesktop();
   moveDateAboveAvailability();
-  ensureDateCalendarPanel(false);
   removeOpeningCounts();
   fixOffDayFullyBookedStatus();
   syncGalleryToSelectedStaff();
@@ -2436,7 +2311,6 @@ var observer=new MutationObserver(function(){
   bsuObserverTimer=setTimeout(function(){
     bsuObserverTimer=null;
     runFixes();
-    waitForMobilePhotoWallReady();
     insertSuccessPolicyCard();
     hideWaitlistButton();
     hideSanGabrielSwitchButton();
