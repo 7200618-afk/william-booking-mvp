@@ -4467,6 +4467,284 @@ document.addEventListener("click",function(e){
 }
 
 
+/* =========================================
+   B SIDE U V85
+   Desktop modal booking flow:
+   - desktop shows stylists as the main board
+   - hover effect inspired by Square-style appointment cards
+   - click stylist opens modal with services / calendar / available times
+   - mobile keeps existing vertical booking flow
+   ========================================= */
+
+@media(min-width:1024px){
+  body.bsu-desktop-modal-ready .booking-layout{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-areas:
+      "staff"
+      "photos"!important;
+    gap:24px!important;
+    align-items:start!important;
+  }
+
+  body.bsu-desktop-modal-ready .desktop-right-panel,
+  body.bsu-desktop-modal-ready .desktop-results-area,
+  body.bsu-desktop-modal-ready .booking-layout > div:has(.service-pills):not(:has(.staff-strip)){
+    display:none!important;
+  }
+
+  body.bsu-desktop-modal-ready .booking-layout > div:has(.staff-strip){
+    grid-area:staff!important;
+    width:100%!important;
+    max-width:920px!important;
+    margin:0 auto!important;
+    padding:0!important;
+    border:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:16px!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-card,
+  body.bsu-desktop-modal-ready .staff-item{
+    min-height:158px!important;
+    border-radius:22px!important;
+    border:1px solid rgba(17,17,17,.10)!important;
+    background:#fff!important;
+    box-shadow:0 10px 28px rgba(0,0,0,.045)!important;
+    transform:translateY(0)!important;
+    transition:
+      transform .18s ease,
+      box-shadow .18s ease,
+      border-color .18s ease,
+      background .18s ease!important;
+    cursor:pointer!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-card:hover,
+  body.bsu-desktop-modal-ready .staff-item:hover{
+    transform:translateY(-4px)!important;
+    border-color:rgba(17,17,17,.28)!important;
+    box-shadow:0 18px 42px rgba(0,0,0,.10)!important;
+    background:#fff!important;
+  }
+
+  body.bsu-desktop-modal-ready .staff-card.is-active,
+  body.bsu-desktop-modal-ready .staff-item.is-active{
+    border-color:#111!important;
+    box-shadow:0 18px 42px rgba(0,0,0,.12)!important;
+  }
+
+  body.bsu-desktop-modal-ready .desktop-photo-wall-section{
+    grid-area:photos!important;
+    width:100%!important;
+    margin-top:4px!important;
+    border-radius:0!important;
+  }
+
+  body.bsu-desktop-modal-ready .desktop-photo-wall-section img,
+  body.bsu-desktop-modal-ready .desktop-photo-wall-section .staff-carousel-item img{
+    border-radius:0!important;
+  }
+}
+
+.bsu-booking-modal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:999999!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:28px!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-booking-modal.is-open{
+  display:flex!important;
+}
+
+.bsu-booking-modal-backdrop{
+  position:absolute!important;
+  inset:0!important;
+  background:rgba(17,17,17,.42)!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
+}
+
+.bsu-booking-modal-card{
+  position:relative!important;
+  z-index:1!important;
+  width:min(980px,calc(100vw - 56px))!important;
+  max-height:calc(100vh - 56px)!important;
+  overflow:auto!important;
+  background:#fff!important;
+  border:1px solid rgba(255,255,255,.7)!important;
+  border-radius:28px!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.25)!important;
+  padding:24px!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-booking-modal-head{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  margin:0 0 18px!important;
+}
+
+.bsu-booking-modal-person{
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  min-width:0!important;
+}
+
+.bsu-booking-modal-avatar{
+  width:58px!important;
+  height:58px!important;
+  border-radius:999px!important;
+  object-fit:cover!important;
+  background:#f4f4f4!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.08)!important;
+  flex:0 0 auto!important;
+}
+
+.bsu-booking-modal-kicker{
+  font-size:10px!important;
+  line-height:1!important;
+  letter-spacing:.18em!important;
+  font-weight:950!important;
+  color:#777!important;
+  text-transform:uppercase!important;
+  margin:0 0 6px!important;
+}
+
+.bsu-booking-modal-title{
+  font-size:26px!important;
+  line-height:1!important;
+  letter-spacing:-.045em!important;
+  font-weight:950!important;
+  color:#111!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.bsu-booking-modal-close{
+  width:42px!important;
+  height:42px!important;
+  border:0!important;
+  border-radius:999px!important;
+  background:#f3f3f3!important;
+  color:#111!important;
+  font-size:24px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex:0 0 auto!important;
+}
+
+.bsu-booking-modal-close:hover{
+  background:#111!important;
+  color:#fff!important;
+}
+
+.bsu-booking-modal-grid{
+  display:grid!important;
+  grid-template-columns:minmax(300px,380px) minmax(0,1fr)!important;
+  gap:20px!important;
+  align-items:start!important;
+}
+
+.bsu-modal-left,
+.bsu-modal-right{
+  min-width:0!important;
+}
+
+.bsu-booking-modal .section-label{
+  margin:0 0 10px!important;
+  font-size:10.5px!important;
+  letter-spacing:.18em!important;
+}
+
+.bsu-booking-modal .service-pills{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin:0 0 16px!important;
+}
+
+.bsu-booking-modal .service-pill{
+  height:48px!important;
+  min-height:48px!important;
+  border-radius:11px!important;
+}
+
+.bsu-booking-modal .date-area,
+.bsu-booking-modal .bsu-slot-date-wrap{
+  margin:0!important;
+  padding:0!important;
+  width:100%!important;
+  position:relative!important;
+  transform:none!important;
+}
+
+.bsu-booking-modal .bsu-date-calendar{
+  margin:0!important;
+  padding:4px 0 12px!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+}
+
+.bsu-booking-modal .slot-area,
+.bsu-booking-modal .empty-state{
+  width:100%!important;
+  margin:0!important;
+  padding:18px!important;
+  border:1px solid rgba(17,17,17,.08)!important;
+  border-radius:22px!important;
+  background:#fff!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
+  min-height:260px!important;
+  box-sizing:border-box!important;
+}
+
+.bsu-booking-modal .times{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+
+.bsu-booking-modal .time-btn{
+  height:40px!important;
+  min-height:40px!important;
+  font-size:12.5px!important;
+  border-radius:8px!important;
+  padding:0 3px!important;
+  white-space:nowrap!important;
+}
+
+@media(max-width:1023px){
+  .bsu-booking-modal{
+    display:none!important;
+  }
+}
+
+
 `;
 
         
@@ -4520,7 +4798,7 @@ document.addEventListener("click",function(e){
         `;
         
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+'\n<script>\n(function(){\n  function isDesktopModal(){\n    return window.innerWidth >= 1024;\n  }\n\n  var modal = null;\n  var modalLeft = null;\n  var modalRight = null;\n  var originalPositions = new Map();\n\n  function saveOriginal(el){\n    if(!el || originalPositions.has(el)) return;\n    originalPositions.set(el, {\n      parent: el.parentNode,\n      next: el.nextSibling\n    });\n  }\n\n  function restoreOriginals(){\n    Array.from(originalPositions.entries()).forEach(function(entry){\n      var el = entry[0];\n      var pos = entry[1];\n      if(!el || !pos.parent) return;\n      try{\n        if(pos.next && pos.next.parentNode === pos.parent){\n          pos.parent.insertBefore(el, pos.next);\n        }else{\n          pos.parent.appendChild(el);\n        }\n      }catch(error){}\n    });\n  }\n\n  function getStaffNameFromCard(card){\n    if(!card) return "Selected stylist";\n    var candidates = Array.from(card.querySelectorAll("*")).map(function(el){\n      return (el.textContent || "").trim();\n    }).filter(Boolean);\n\n    var staffNames = ["William","Ryan","Ken","Fiona","Nami","Jacob","Kendraya"];\n    for(var i=0;i<staffNames.length;i++){\n      if(candidates.some(function(t){ return t === staffNames[i]; })){\n        return staffNames[i];\n      }\n    }\n\n    var text = (card.textContent || "").trim().split(/\\n/).map(function(t){return t.trim();}).filter(Boolean);\n    return text[0] || "Selected stylist";\n  }\n\n  function getStaffImageFromCard(card){\n    var img = card && card.querySelector && card.querySelector("img");\n    return img && img.src ? img.src : "";\n  }\n\n  function ensureModal(){\n    if(modal) return modal;\n\n    modal = document.createElement("div");\n    modal.className = "bsu-booking-modal";\n    modal.innerHTML =\n      \'<div class="bsu-booking-modal-backdrop" data-bsu-modal-close="1"></div>\' +\n      \'<div class="bsu-booking-modal-card" role="dialog" aria-modal="true" aria-label="Book appointment">\' +\n        \'<div class="bsu-booking-modal-head">\' +\n          \'<div class="bsu-booking-modal-person">\' +\n            \'<img class="bsu-booking-modal-avatar" alt="Stylist" />\' +\n            \'<div>\' +\n              \'<div class="bsu-booking-modal-kicker">B SIDE U PASADENA</div>\' +\n              \'<div class="bsu-booking-modal-title">Selected stylist</div>\' +\n            \'</div>\' +\n          \'</div>\' +\n          \'<button class="bsu-booking-modal-close" type="button" aria-label="Close" data-bsu-modal-close="1">×</button>\' +\n        \'</div>\' +\n        \'<div class="bsu-booking-modal-grid">\' +\n          \'<div class="bsu-modal-left"></div>\' +\n          \'<div class="bsu-modal-right"></div>\' +\n        \'</div>\' +\n      \'</div>\';\n\n    document.body.appendChild(modal);\n    modalLeft = modal.querySelector(".bsu-modal-left");\n    modalRight = modal.querySelector(".bsu-modal-right");\n\n    modal.addEventListener("click", function(event){\n      if(event.target && event.target.getAttribute("data-bsu-modal-close")){\n        closeModal();\n      }\n    });\n\n    document.addEventListener("keydown", function(event){\n      if(event.key === "Escape") closeModal();\n    });\n\n    return modal;\n  }\n\n  function findServiceLabel(servicePills){\n    var prev = servicePills && servicePills.previousElementSibling;\n    if(prev && prev.classList && prev.classList.contains("section-label")) return prev;\n\n    return Array.from(document.querySelectorAll(".section-label")).find(function(el){\n      return /service/i.test(el.textContent || "");\n    });\n  }\n\n  function moveBookingControlsIntoModal(){\n    var servicePills = document.querySelector(".service-pills");\n    var serviceLabel = findServiceLabel(servicePills);\n    var message = document.getElementById("message") || document.querySelector(".message");\n    var dateArea = document.querySelector(".date-area");\n    var slotArea = document.querySelector(".slot-area");\n    var emptyState = document.querySelector(".empty-state");\n\n    [serviceLabel, servicePills, message, dateArea, slotArea, emptyState].forEach(saveOriginal);\n\n    if(serviceLabel) modalLeft.appendChild(serviceLabel);\n    if(servicePills) modalLeft.appendChild(servicePills);\n    if(message) modalLeft.appendChild(message);\n    if(dateArea) modalLeft.appendChild(dateArea);\n\n    if(slotArea) modalRight.appendChild(slotArea);\n    if(emptyState) modalRight.appendChild(emptyState);\n  }\n\n  function openModalForStaff(card){\n    if(!isDesktopModal()) return;\n\n    ensureModal();\n\n    var name = getStaffNameFromCard(card);\n    var imgSrc = getStaffImageFromCard(card);\n    var title = modal.querySelector(".bsu-booking-modal-title");\n    var avatar = modal.querySelector(".bsu-booking-modal-avatar");\n\n    if(title) title.textContent = name;\n    if(avatar){\n      if(imgSrc){\n        avatar.src = imgSrc;\n        avatar.style.display = "";\n      }else{\n        avatar.removeAttribute("src");\n        avatar.style.display = "none";\n      }\n    }\n\n    moveBookingControlsIntoModal();\n\n    document.body.classList.add("bsu-modal-open");\n    modal.classList.add("is-open");\n\n    setTimeout(function(){\n      try{\n        var input = document.getElementById("dateInput");\n        if(input) input.dispatchEvent(new Event("change", { bubbles:true }));\n      }catch(error){}\n    }, 80);\n  }\n\n  function closeModal(){\n    if(!modal || !modal.classList.contains("is-open")) return;\n\n    modal.classList.remove("is-open");\n    document.body.classList.remove("bsu-modal-open");\n    restoreOriginals();\n\n    setTimeout(function(){\n      try{\n        if(window.bsuRenderBookingCalendar) window.bsuRenderBookingCalendar();\n      }catch(error){}\n    }, 80);\n  }\n\n  function onStaffClick(event){\n    if(!isDesktopModal()) return;\n\n    var card = event.target && event.target.closest && event.target.closest(".staff-card, .staff-item");\n    if(!card) return;\n    if(!card.closest(".staff-strip")) return;\n\n    setTimeout(function(){\n      openModalForStaff(card);\n    }, 120);\n  }\n\n  function init(){\n    if(isDesktopModal()){\n      document.body.classList.add("bsu-desktop-modal-ready");\n    }else{\n      document.body.classList.remove("bsu-desktop-modal-ready");\n      closeModal();\n    }\n  }\n\n  document.addEventListener("click", onStaffClick, true);\n  window.addEventListener("resize", function(){ setTimeout(init, 100); }, { passive:true });\n  window.addEventListener("load", init);\n  init();\n  setTimeout(init, 500);\n})();\n<\\/script>\n'+"\n</body>");
 
         document.open();
         document.write(html);
