@@ -3575,303 +3575,62 @@ document.addEventListener("click",function(e){
 
 
 /* =========================================
-   B SIDE U V79
-   - add breathing room between mobile services and calendar
-   - cleaner desktop booking dashboard
+   B SIDE U V82
+   Safe desktop rollback after layout conflict
+   - remove experimental desktop grid/panel movement
+   - keep stable original structure
+   - prevent service/calendar/slot overlap on desktop
    ========================================= */
-
-/* Mobile: service box and calendar need a little separation */
-@media(max-width:599px){
-  .bsu-mobile-booking-stack .service-pills,
-  .service-pills{
-    margin-bottom:16px!important;
-  }
-
-  .bsu-slot-date-wrap,
-  .desktop-right-panel .date-area,
-  .bsu-mobile-booking-stack .date-area{
-    margin-top:6px!important;
-  }
-
-  .bsu-date-calendar{
-    margin-top:4px!important;
-  }
+.bsu-desktop-select-placeholder,
+.bsu-desktop-step-panel{
+  display:none!important;
 }
 
-/* Desktop: cleaner two-column dashboard.
-   Left = stylists / services. Right = calendar / available times.
-   Photo wall stays below the right booking controls, not mixed into the form. */
 @media(min-width:1024px){
   .page{
-    max-width:1240px!important;
-    padding-top:26px!important;
-  }
-
-  .booking-layout{
-    display:grid!important;
-    grid-template-columns:minmax(360px,420px) minmax(0,1fr)!important;
-    grid-template-rows:auto!important;
-    gap:22px!important;
-    align-items:start!important;
-  }
-
-  .booking-layout > div:nth-child(2){
-    grid-column:1!important;
-    grid-row:1!important;
-    position:sticky!important;
-    top:18px!important;
-    align-self:start!important;
-    padding:18px!important;
-    border:1px solid rgba(17,17,17,.08)!important;
-    border-radius:22px!important;
-    background:#fff!important;
-    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
-  }
-
-  .desktop-results-area,
-  .desktop-right-panel{
-    grid-column:2!important;
-    grid-row:1!important;
-    display:grid!important;
-    grid-template-columns:minmax(300px,360px) minmax(0,1fr)!important;
-    grid-template-rows:auto auto!important;
-    gap:18px!important;
-    align-items:start!important;
-    width:100%!important;
-    min-width:0!important;
-  }
-
-  .desktop-right-panel .date-area,
-  .bsu-slot-date-wrap,
-  .desktop-results-area .date-area{
-    grid-column:1!important;
-    grid-row:1!important;
-    margin:0!important;
-  }
-
-  .desktop-right-panel .slot-area,
-  .desktop-right-panel .empty-state,
-  .desktop-results-area .slot-area,
-  .desktop-results-area .empty-state{
-    grid-column:2!important;
-    grid-row:1!important;
-    align-self:start!important;
-    margin:0!important;
-    min-height:220px!important;
-    padding:18px!important;
-    border:1px solid rgba(17,17,17,.08)!important;
-    border-radius:22px!important;
-    background:#fff!important;
-    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
-  }
-
-  .desktop-photo-wall-section{
-    grid-column:1 / -1!important;
-    grid-row:2!important;
-    margin-top:0!important;
-  }
-
-  .desktop-photo-wall-section .staff-carousel{
-    height:260px!important;
-    min-height:260px!important;
-    max-height:260px!important;
-  }
-
-  .section-label{
-    margin:0 2px 10px!important;
-    font-size:10.5px!important;
-    letter-spacing:.16em!important;
-  }
-
-  .section-divider{
-    margin:16px 0!important;
-  }
-
-  .staff-strip{
-    gap:10px!important;
-  }
-
-  .staff-card{
-    min-height:132px!important;
-    border-radius:18px!important;
-  }
-
-  .avatar{
-    width:64px!important;
-    height:64px!important;
-  }
-
-  .service-pills{
-    gap:8px!important;
-    margin-bottom:0!important;
-  }
-
-  .service-pill{
-    height:48px!important;
-    min-height:48px!important;
-    border-radius:10px!important;
-  }
-
-  .bsu-date-calendar{
-    padding:4px 0 10px!important;
-    margin:0!important;
-    border:0!important;
-    border-radius:0!important;
-    background:transparent!important;
-  }
-
-  .bsu-calendar-main-head{
-    margin-bottom:12px!important;
-  }
-
-  .bsu-date-calendar.is-week .bsu-calendar-main-head{
-    margin-bottom:12px!important;
-  }
-
-  .bsu-calendar-main-head .bsu-date-month-title{
-    font-size:23px!important;
-  }
-
-  .bsu-calendar-nav{
-    width:38px!important;
-    height:38px!important;
-    font-size:24px!important;
-    border-radius:9px!important;
-  }
-
-  .bsu-date-cell{
-    height:36px!important;
-  }
-
-  .bsu-date-cell.is-active{
-    width:38px!important;
-    max-width:38px!important;
-  }
-
-  .bsu-date-dow{
-    font-size:11px!important;
-  }
-
-  .bsu-date-num{
-    font-size:14px!important;
-  }
-
-  .bsu-calendar-collapse-btn{
-    width:32px!important;
-    height:32px!important;
-    margin-top:12px!important;
-    font-size:17px!important;
-  }
-
-  .bsu-calendar-timezone{
-    margin-top:12px!important;
-    padding-top:12px!important;
-    font-size:12px!important;
-  }
-
-  .slot-group{
-    margin-top:14px!important;
-  }
-
-  .slot-group:first-child{
-    margin-top:0!important;
-  }
-
-  .slot-group-title{
-    font-size:15px!important;
-    margin-bottom:10px!important;
-  }
-
-  .times{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    gap:8px!important;
-  }
-
-  .time-btn{
-    height:42px!important;
-    min-height:42px!important;
-    border-radius:8px!important;
-    font-size:13px!important;
-  }
-}
-
-@media(min-width:1280px){
-  .desktop-results-area,
-  .desktop-right-panel{
-    grid-template-columns:minmax(320px,380px) minmax(0,1fr)!important;
-  }
-
-  .times{
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  }
-}
-
-
-/* =========================================
-   B SIDE U V81
-   Stable desktop rollback:
-   - remove experimental step/placeholder behavior
-   - fixed desktop order: staff + services on left, calendar + slots on right, photo wall below
-   - prevent desktop jumping caused by moving panels
-   ========================================= */
-@media(min-width:1024px){
-  body.bsu-desktop-staff-picked .bsu-desktop-select-placeholder,
-  .bsu-desktop-select-placeholder,
-  .bsu-desktop-step-panel{
-    display:none!important;
-  }
-
-  .page{
-    max-width:1240px!important;
+    max-width:1220px!important;
     margin:0 auto!important;
   }
 
   .booking-layout{
     display:grid!important;
-    grid-template-columns:minmax(360px,430px) minmax(0,1fr)!important;
-    grid-template-areas:
-      "left right"
-      "photos photos"!important;
-    gap:22px!important;
+    grid-template-columns:minmax(520px,1fr) minmax(360px,430px)!important;
+    gap:24px!important;
     align-items:start!important;
   }
 
+  .booking-layout > *{
+    position:relative!important;
+    transform:none!important;
+  }
+
   .booking-layout > div:nth-child(2){
-    grid-area:left!important;
-    position:sticky!important;
-    top:18px!important;
-    align-self:start!important;
-    padding:18px!important;
-    border:1px solid rgba(17,17,17,.08)!important;
-    border-radius:22px!important;
-    background:#fff!important;
-    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
-    min-height:0!important;
+    grid-column:1!important;
+    grid-row:1!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
   }
 
   .desktop-right-panel,
   .desktop-results-area{
-    grid-area:right!important;
-    display:grid!important;
-    grid-template-columns:minmax(300px,360px) minmax(0,1fr)!important;
-    grid-template-areas:
-      "services services"
-      "calendar slots"!important;
-    gap:16px!important;
-    align-items:start!important;
-    min-width:0!important;
+    grid-column:2!important;
+    grid-row:1!important;
+    display:block!important;
     width:100%!important;
-    position:relative!important;
+    min-width:0!important;
+    position:sticky!important;
+    top:18px!important;
     transform:none!important;
   }
 
   .desktop-service-panel,
   .desktop-right-panel .desktop-service-panel,
   .desktop-results-area .desktop-service-panel{
-    grid-area:services!important;
+    display:block!important;
     width:100%!important;
-    margin:0!important;
-    padding:0!important;
+    margin:0 0 12px!important;
     position:relative!important;
     transform:none!important;
   }
@@ -3879,10 +3638,9 @@ document.addEventListener("click",function(e){
   .desktop-right-panel .date-area,
   .desktop-results-area .date-area,
   .bsu-slot-date-wrap{
-    grid-area:calendar!important;
+    display:block!important;
     width:100%!important;
-    margin:0!important;
-    padding:0!important;
+    margin:0 0 12px!important;
     position:relative!important;
     transform:none!important;
     top:auto!important;
@@ -3893,41 +3651,47 @@ document.addEventListener("click",function(e){
   .desktop-right-panel .empty-state,
   .desktop-results-area .slot-area,
   .desktop-results-area .empty-state{
-    grid-area:slots!important;
+    display:block!important;
     width:100%!important;
     margin:0!important;
-    padding:18px!important;
-    border:1px solid rgba(17,17,17,.08)!important;
-    border-radius:22px!important;
-    background:#fff!important;
-    box-shadow:0 10px 30px rgba(0,0,0,.045)!important;
-    min-height:230px!important;
     position:relative!important;
     transform:none!important;
     top:auto!important;
     left:auto!important;
-    box-sizing:border-box!important;
+    min-height:160px!important;
   }
 
   .desktop-photo-wall-section{
-    grid-area:photos!important;
-    width:100%!important;
-    margin-top:6px!important;
+    grid-column:1 / -1!important;
+    grid-row:2!important;
+    margin-top:24px!important;
     position:relative!important;
     transform:none!important;
+    width:100%!important;
   }
 
-  .desktop-photo-wall-section .staff-carousel{
-    height:260px!important;
-    min-height:260px!important;
-    max-height:260px!important;
+  .desktop-photo-wall-section img,
+  .desktop-photo-wall-section .staff-carousel-item img{
+    border-radius:0!important;
+  }
+
+  .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:14px!important;
+    align-items:stretch!important;
+  }
+
+  .staff-card,
+  .staff-item{
+    min-height:150px!important;
   }
 
   .service-pills{
     display:grid!important;
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
     gap:8px!important;
-    margin:0!important;
+    margin:0 0 12px!important;
   }
 
   .service-pill{
@@ -3954,66 +3718,6 @@ document.addEventListener("click",function(e){
     box-shadow:none!important;
   }
 
-  .bsu-calendar-main-head,
-  .bsu-date-calendar.is-week .bsu-calendar-main-head{
-    margin-bottom:12px!important;
-  }
-
-  .bsu-calendar-main-head .bsu-date-month-title{
-    font-size:22px!important;
-  }
-
-  .bsu-calendar-nav,
-  .bsu-date-calendar.is-week .bsu-calendar-nav{
-    width:36px!important;
-    height:36px!important;
-    border-radius:9px!important;
-    font-size:23px!important;
-  }
-
-  .bsu-date-cell{
-    height:34px!important;
-  }
-
-  .bsu-date-cell.is-active{
-    width:36px!important;
-    max-width:36px!important;
-  }
-
-  .bsu-date-dow{
-    font-size:10px!important;
-  }
-
-  .bsu-date-num{
-    font-size:13.5px!important;
-  }
-
-  .bsu-calendar-collapse-btn{
-    width:30px!important;
-    height:30px!important;
-    margin-top:10px!important;
-    font-size:16px!important;
-  }
-
-  .bsu-calendar-timezone{
-    margin-top:10px!important;
-    padding-top:10px!important;
-    font-size:11.5px!important;
-  }
-
-  .slot-group{
-    margin-top:14px!important;
-  }
-
-  .slot-group:first-child{
-    margin-top:0!important;
-  }
-
-  .slot-group-title{
-    font-size:15px!important;
-    margin-bottom:10px!important;
-  }
-
   .times{
     grid-template-columns:repeat(4,minmax(0,1fr))!important;
     gap:8px!important;
@@ -4028,10 +3732,10 @@ document.addEventListener("click",function(e){
   }
 }
 
-/* Mobile keeps v79/v78 compact behavior */
-@media(max-width:599px){
-  .service-pills{margin-bottom:16px!important}
-  .times{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:1023px){
+  .booking-layout{
+    display:block!important;
+  }
 }
 
 
