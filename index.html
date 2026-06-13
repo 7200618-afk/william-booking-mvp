@@ -1732,11 +1732,44 @@ function bsuRenderBookingCalendar(){
   cal.className="bsu-date-calendar is-"+bsuCalendarView;
   cal.innerHTML="";
 
-  var top=document.createElement("div");
-  top.className="bsu-date-calendar-top";
+  var head=document.createElement("div");
+  head.className="bsu-calendar-main-head";
+
+  var prev=document.createElement("button");
+  prev.type="button";
+  prev.className="bsu-calendar-nav bsu-calendar-nav-prev";
+  prev.textContent="‹";
+  prev.addEventListener("click",function(){
+    if(bsuCalendarView==="month"){
+      bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()-1,1);
+      bsuRenderBookingCalendar();
+    }else{
+      bsuSelectCalendarDate(bsuAddDays(selected,-7));
+    }
+  });
+
   var title=document.createElement("div");
   title.className="bsu-date-month-title";
   title.textContent=bsuCalendarView==="month"?bsuLongMonthTitle(bsuCalendarMonthAnchor):bsuMonthTitle(selected);
+
+  var next=document.createElement("button");
+  next.type="button";
+  next.className="bsu-calendar-nav bsu-calendar-nav-next";
+  next.textContent="›";
+  next.addEventListener("click",function(){
+    if(bsuCalendarView==="month"){
+      bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()+1,1);
+      bsuRenderBookingCalendar();
+    }else{
+      bsuSelectCalendarDate(bsuAddDays(selected,7));
+    }
+  });
+
+  head.appendChild(prev);
+  head.appendChild(title);
+  head.appendChild(next);
+  cal.appendChild(head);
+
   var tabs=document.createElement("div");
   tabs.className="bsu-date-tabs";
   ["week","month"].forEach(function(view){
@@ -1751,35 +1784,9 @@ function bsuRenderBookingCalendar(){
     });
     tabs.appendChild(btn);
   });
-  top.appendChild(title);
-  top.appendChild(tabs);
-  cal.appendChild(top);
+  cal.appendChild(tabs);
 
   if(bsuCalendarView==="month"){
-    var head=document.createElement("div");
-    head.className="bsu-month-head";
-    var prev=document.createElement("button");
-    prev.type="button";
-    prev.className="bsu-month-nav";
-    prev.textContent="‹";
-    prev.addEventListener("click",function(){
-      bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()-1,1);
-      bsuRenderBookingCalendar();
-    });
-    var monthName=document.createElement("div");
-    monthName.className="bsu-date-month-title";
-    monthName.textContent=bsuLongMonthTitle(bsuCalendarMonthAnchor);
-    var next=document.createElement("button");
-    next.type="button";
-    next.className="bsu-month-nav";
-    next.textContent="›";
-    next.addEventListener("click",function(){
-      bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()+1,1);
-      bsuRenderBookingCalendar();
-    });
-    head.appendChild(prev);head.appendChild(monthName);head.appendChild(next);
-    cal.appendChild(head);
-
     var weekdays=document.createElement("div");
     weekdays.className="bsu-month-weekdays";
     ["Su","Mo","Tu","We","Th","Fr","Sa"].forEach(function(v){var d=document.createElement("div");d.textContent=v;weekdays.appendChild(d);});
@@ -1799,6 +1806,7 @@ function bsuRenderBookingCalendar(){
     for(var w=0;w<7;w++)week.appendChild(bsuBuildDateCell(bsuAddDays(start,w),selected,today,true));
     cal.appendChild(week);
   }
+
   var toggle=document.createElement("button");
   toggle.type="button";
   toggle.className="bsu-calendar-collapse-btn";
@@ -3313,6 +3321,86 @@ document.addEventListener("click",function(e){
   .bsu-month-grid .bsu-date-cell{
     height:34px!important;
     font-size:14px!important;
+  }
+}
+
+
+/* B SIDE U V74: replace the old date bar with the new Week / Month calendar */
+.date-area .date-bar,
+.date-area > .date-bar,
+.bsu-slot-date-wrap .date-bar,
+.desktop-right-panel .date-bar{
+  display:none!important;
+}
+.date-area,
+.date-area.is-fixed-fallback{
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  padding:0!important;
+  margin:0 0 14px!important;
+}
+.bsu-date-calendar{
+  margin:0!important;
+  border-top:0!important;
+  padding:0 0 14px!important;
+  background:#fff!important;
+}
+.bsu-calendar-main-head{
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr) 52px!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin:0 0 14px!important;
+}
+.bsu-calendar-nav{
+  width:52px!important;
+  height:52px!important;
+  border:0!important;
+  border-radius:14px!important;
+  background:#f3f3f3!important;
+  color:#111!important;
+  font-size:32px!important;
+  font-weight:500!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+  line-height:1!important;
+}
+.bsu-calendar-main-head .bsu-date-month-title{
+  text-align:center!important;
+  font-size:24px!important;
+  letter-spacing:-.05em!important;
+}
+.bsu-date-tabs{
+  width:max-content!important;
+  margin:0 auto 16px!important;
+}
+.bsu-date-calendar.is-week .bsu-week-grid{
+  margin-top:4px!important;
+}
+.bsu-month-weekdays{
+  margin-top:4px!important;
+}
+@media(max-width:599px){
+  .bsu-calendar-main-head{
+    grid-template-columns:44px minmax(0,1fr) 44px!important;
+    gap:10px!important;
+    margin-bottom:12px!important;
+  }
+  .bsu-calendar-nav{
+    width:44px!important;
+    height:44px!important;
+    border-radius:12px!important;
+    font-size:28px!important;
+  }
+  .bsu-calendar-main-head .bsu-date-month-title{
+    font-size:22px!important;
+  }
+  .bsu-date-calendar{
+    padding-bottom:12px!important;
   }
 }
 
