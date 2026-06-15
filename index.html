@@ -3763,6 +3763,388 @@ document.addEventListener("click",function(e){
 `;
 
         
+
+        const desktopStaffPopupCss=`
+/* =========================================
+   B SIDE U Desktop Staff Popup Booking
+   - Desktop: click staff card, open service/date/time in modal
+   - Mobile: unchanged
+   ========================================= */
+@media(min-width:900px){
+  body.bsu-desktop-popup-enabled.bsu-booking-popup-open{
+    overflow:hidden!important;
+  }
+
+  body.bsu-desktop-popup-enabled .booking-layout{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"left" "photo"!important;
+    gap:14px!important;
+    justify-content:stretch!important;
+    align-items:start!important;
+    width:100%!important;
+    max-width:1240px!important;
+    margin:0 auto!important;
+  }
+
+  body.bsu-desktop-popup-enabled .booking-layout>div:nth-child(2){
+    grid-area:left!important;
+    width:100%!important;
+  }
+
+  body.bsu-desktop-popup-enabled .staff-strip{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:12px!important;
+    width:100%!important;
+  }
+
+  body.bsu-desktop-popup-enabled .staff-card,
+  body.bsu-desktop-popup-enabled .staff-item{
+    cursor:pointer!important;
+  }
+
+  body.bsu-desktop-popup-enabled .staff-card:hover,
+  body.bsu-desktop-popup-enabled .staff-item:hover{
+    transform:translateY(-1px)!important;
+    box-shadow:0 10px 26px rgba(0,0,0,.075)!important;
+  }
+
+  body.bsu-desktop-popup-enabled .desktop-photo-wall-section{
+    grid-area:photo!important;
+    width:100%!important;
+    margin-top:4px!important;
+  }
+
+  .bsu-desktop-booking-overlay{
+    position:fixed!important;
+    inset:0!important;
+    z-index:2147483000!important;
+    display:none!important;
+    align-items:center!important;
+    justify-content:center!important;
+    padding:24px!important;
+    background:rgba(10,10,10,.42)!important;
+    backdrop-filter:blur(12px)!important;
+    -webkit-backdrop-filter:blur(12px)!important;
+    box-sizing:border-box!important;
+  }
+
+  .bsu-desktop-booking-overlay.is-visible{
+    display:flex!important;
+  }
+
+  .bsu-desktop-booking-card{
+    position:relative!important;
+    width:min(470px,calc(100vw - 48px))!important;
+    max-height:calc(100vh - 48px)!important;
+    overflow:auto!important;
+    border-radius:28px!important;
+    background:#fff!important;
+    border:1px solid rgba(255,255,255,.75)!important;
+    box-shadow:0 34px 110px rgba(0,0,0,.28)!important;
+    padding:18px!important;
+    box-sizing:border-box!important;
+    animation:bsuDesktopBookingPop .18s cubic-bezier(.2,.8,.2,1)!important;
+  }
+
+  @keyframes bsuDesktopBookingPop{
+    from{opacity:0;transform:translateY(10px) scale(.985)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  .bsu-desktop-booking-head{
+    display:flex!important;
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    gap:14px!important;
+    margin:0 0 14px!important;
+    padding:2px 2px 14px!important;
+    border-bottom:1px solid rgba(17,17,17,.08)!important;
+  }
+
+  .bsu-desktop-booking-kicker{
+    margin:0 0 5px!important;
+    color:#777!important;
+    font-size:10px!important;
+    line-height:1!important;
+    font-weight:950!important;
+    letter-spacing:.14em!important;
+    text-transform:uppercase!important;
+  }
+
+  .bsu-desktop-booking-title{
+    margin:0!important;
+    color:#111!important;
+    font-size:28px!important;
+    line-height:.95!important;
+    font-weight:950!important;
+    letter-spacing:-.06em!important;
+  }
+
+  .bsu-desktop-booking-close{
+    flex:0 0 auto!important;
+    width:38px!important;
+    height:38px!important;
+    border:0!important;
+    border-radius:999px!important;
+    background:#f3f3f3!important;
+    color:#111!important;
+    font-size:24px!important;
+    line-height:1!important;
+    font-weight:800!important;
+    cursor:pointer!important;
+  }
+
+  .bsu-desktop-booking-close:hover{
+    background:#111!important;
+    color:#fff!important;
+  }
+
+  .bsu-desktop-booking-content .desktop-right-panel{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    opacity:1!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+
+  .bsu-desktop-booking-content .desktop-service-panel{
+    margin:0 0 14px!important;
+  }
+
+  .bsu-desktop-booking-content .section-label{
+    margin:0 2px 7px!important;
+    font-size:10px!important;
+    letter-spacing:.14em!important;
+    color:#777!important;
+  }
+
+  .bsu-desktop-booking-content .service-pills{
+    gap:6px!important;
+    margin-bottom:12px!important;
+  }
+
+  .bsu-desktop-booking-content .service-pill{
+    min-height:42px!important;
+    height:42px!important;
+    border-radius:12px!important;
+    padding:6px 10px!important;
+  }
+
+  .bsu-desktop-booking-content .date-area{
+    margin:0 0 12px!important;
+  }
+
+  .bsu-desktop-booking-content .bsu-date-calendar{
+    margin-top:8px!important;
+    padding:10px!important;
+    border-radius:16px!important;
+  }
+
+  .bsu-desktop-booking-content .slot-area,
+  .bsu-desktop-booking-content .empty-state{
+    min-height:138px!important;
+  }
+
+  .bsu-desktop-booking-content .times{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+
+  .bsu-desktop-booking-content .time-btn{
+    min-height:40px!important;
+    height:40px!important;
+    border-radius:9px!important;
+    font-size:12.8px!important;
+  }
+}
+
+@media(min-width:900px) and (max-width:1180px){
+  body.bsu-desktop-popup-enabled .booking-layout{
+    max-width:1080px!important;
+  }
+
+  body.bsu-desktop-popup-enabled .staff-strip{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
+`;
+
+        const desktopStaffPopupJs=`
+<script>
+(function(){
+  var desktopMinWidth=900;
+  var overlay=null;
+  var card=null;
+  var content=null;
+  var titleEl=null;
+  var originalParent=null;
+  var originalNextSibling=null;
+  var movingPanel=false;
+
+  function isDesktop(){return window.innerWidth>=desktopMinWidth;}
+
+  function getStaffNameFromCard(staffCard){
+    var nameEl=staffCard&&staffCard.querySelector('.staff-name,.name,[data-staff-name]');
+    var name=nameEl?(nameEl.textContent||'').trim():'';
+    if(!name){
+      var active=document.querySelector('.staff-card.is-active .staff-name,.staff-item.is-active .staff-name');
+      name=active?(active.textContent||'').trim():'';
+    }
+    return name||'Stylist';
+  }
+
+  function ensureOverlay(){
+    if(overlay)return overlay;
+
+    overlay=document.createElement('div');
+    overlay.className='bsu-desktop-booking-overlay';
+    overlay.setAttribute('aria-hidden','true');
+
+    card=document.createElement('div');
+    card.className='bsu-desktop-booking-card';
+    card.setAttribute('role','dialog');
+    card.setAttribute('aria-modal','true');
+    card.setAttribute('aria-label','Booking options');
+
+    var head=document.createElement('div');
+    head.className='bsu-desktop-booking-head';
+
+    var copy=document.createElement('div');
+    var kicker=document.createElement('p');
+    kicker.className='bsu-desktop-booking-kicker';
+    kicker.textContent='Select service & time';
+
+    titleEl=document.createElement('h2');
+    titleEl.className='bsu-desktop-booking-title';
+    titleEl.textContent='Book Stylist';
+
+    var close=document.createElement('button');
+    close.type='button';
+    close.className='bsu-desktop-booking-close';
+    close.setAttribute('aria-label','Close booking popup');
+    close.innerHTML='&times;';
+
+    content=document.createElement('div');
+    content.className='bsu-desktop-booking-content';
+
+    copy.appendChild(kicker);
+    copy.appendChild(titleEl);
+    head.appendChild(copy);
+    head.appendChild(close);
+    card.appendChild(head);
+    card.appendChild(content);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    close.addEventListener('click',closePopup);
+    overlay.addEventListener('click',function(event){
+      if(event.target===overlay)closePopup();
+    });
+
+    return overlay;
+  }
+
+  function movePanelIntoPopup(){
+    var panel=document.querySelector('.desktop-right-panel');
+    if(!panel||!content||content.contains(panel))return panel;
+
+    if(!originalParent){
+      originalParent=panel.parentNode;
+      originalNextSibling=panel.nextSibling;
+    }
+
+    movingPanel=true;
+    content.appendChild(panel);
+    movingPanel=false;
+    return panel;
+  }
+
+  function restorePanel(){
+    var panel=content&&content.querySelector('.desktop-right-panel');
+    if(!panel||!originalParent||movingPanel)return;
+    movingPanel=true;
+    if(originalNextSibling&&originalNextSibling.parentNode===originalParent){
+      originalParent.insertBefore(panel,originalNextSibling);
+    }else{
+      originalParent.appendChild(panel);
+    }
+    movingPanel=false;
+  }
+
+  function openPopup(staffName){
+    if(!isDesktop())return;
+    ensureOverlay();
+    movePanelIntoPopup();
+    titleEl.textContent='Book '+(staffName||'Stylist');
+    overlay.classList.add('is-visible');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.classList.add('bsu-booking-popup-open');
+    setTimeout(function(){
+      var first=overlay.querySelector('.service-pill,.bsu-date-cell,.time-btn,.bsu-desktop-booking-close');
+      if(first&&first.focus)first.focus({preventScroll:true});
+    },80);
+  }
+
+  function closePopup(){
+    if(!overlay)return;
+    overlay.classList.remove('is-visible');
+    overlay.setAttribute('aria-hidden','true');
+    document.body.classList.remove('bsu-booking-popup-open');
+  }
+
+  function enable(){
+    document.body.classList.add('bsu-desktop-popup-enabled');
+    ensureOverlay();
+    if(isDesktop()){
+      movePanelIntoPopup();
+    }else{
+      closePopup();
+      restorePanel();
+    }
+  }
+
+  document.addEventListener('click',function(event){
+    var staffCard=event.target.closest&&event.target.closest('.staff-card,.staff-item');
+    if(!staffCard||!isDesktop())return;
+    if(staffCard.closest('.bsu-desktop-booking-overlay'))return;
+    var staffName=getStaffNameFromCard(staffCard);
+    setTimeout(function(){openPopup(staffName);},90);
+  },false);
+
+  document.addEventListener('keydown',function(event){
+    if(event.key==='Escape')closePopup();
+  });
+
+  window.addEventListener('resize',function(){
+    if(!isDesktop()){
+      closePopup();
+      restorePanel();
+    }else if(document.body.classList.contains('bsu-desktop-popup-enabled')){
+      movePanelIntoPopup();
+    }
+  },{passive:true});
+
+  var timer=null;
+  function scheduleEnable(){
+    if(timer)return;
+    timer=setTimeout(function(){timer=null;enable();},120);
+  }
+
+  window.addEventListener('load',scheduleEnable);
+  new MutationObserver(function(){scheduleEnable();}).observe(document.documentElement,{childList:true,subtree:true});
+  scheduleEnable();
+  setTimeout(scheduleEnable,700);
+  setTimeout(scheduleEnable,1800);
+})();
+<\/script>
+`;
+
         const v76Js=`
         <script>
         (function(){
@@ -3812,8 +4194,8 @@ document.addEventListener("click",function(e){
         <\/script>
         `;
         
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+desktopStaffPopupCss+"\n</style>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+desktopStaffPopupJs+"\n</body>");
 
         document.open();
         document.write(html);
