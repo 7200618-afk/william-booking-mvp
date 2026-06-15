@@ -1,3 +1,14 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B SIDE U Pasadena Appointment</title>
+</head>
+<body>
+
+
 <style>
   body, html {
     margin: 0;
@@ -1240,26 +1251,46 @@
   font-weight:900!important;
   color:#111!important;
 }
-.service-modal__photo-grid{
-  display:grid!important;
-  grid-template-columns:repeat(6,minmax(0,1fr))!important;
-  gap:5px!important;
-  height:132px!important;
+.service-modal__photo-carousel{
+  width:100%!important;
+  height:142px!important;
   overflow:hidden!important;
   border-radius:10px!important;
   background:#f6f6f6!important;
+  position:relative!important;
+  touch-action:pan-y!important;
+}
+.service-modal__photo-track{
+  height:100%!important;
+  display:flex!important;
+  align-items:stretch!important;
+  gap:5px!important;
+  width:max-content!important;
+  will-change:transform!important;
+  animation:bsuModalPhotoCarousel 34s linear infinite!important;
+}
+.service-modal__photo-carousel:hover .service-modal__photo-track{
+  animation-play-state:paused!important;
 }
 .service-modal__photo-item{
-  min-width:0!important;
+  flex:0 0 112px!important;
+  width:112px!important;
   height:100%!important;
   overflow:hidden!important;
   background:#eee!important;
+  border-radius:0!important;
 }
 .service-modal__photo-item img{
   width:100%!important;
   height:100%!important;
   display:block!important;
   object-fit:cover!important;
+  -webkit-user-drag:none!important;
+  user-select:none!important;
+}
+@keyframes bsuModalPhotoCarousel{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-50%,0,0)}
 }
 @media(max-width:768px){
   .service-modal__times{
@@ -1273,9 +1304,13 @@
     min-height:38px!important;
     font-size:12px!important;
   }
-  .service-modal__photo-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
-    height:168px!important;
+  .service-modal__photo-carousel{
+    height:156px!important;
+  }
+  .service-modal__photo-item{
+    flex-basis:42vw!important;
+    width:42vw!important;
+    max-width:168px!important;
   }
 }
 
@@ -1382,7 +1417,9 @@
         <div class="service-modal__photo-wall-title">Photo</div>
         <div class="service-modal__photo-wall-name" id="service-modal-photo-wall-name"></div>
       </div>
-      <div class="service-modal__photo-grid" id="service-modal-photo-grid"></div>
+      <div class="service-modal__photo-carousel" aria-label="B SIDE U work photo carousel">
+        <div class="service-modal__photo-track" id="service-modal-photo-grid"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1843,11 +1880,11 @@
         if(url && !images.includes(url)) images.push(url);
       });
 
-      while(images.length && images.length < 12){
+      while(images.length && images.length < 10){
         images.push(images[images.length % Math.max(1, pool.length || images.length)]);
       }
 
-      return images.slice(0, 12);
+      return images.slice(0, 10);
     }
 
     function renderModalPhotoWall(stylist){
@@ -1860,9 +1897,15 @@
         return;
       }
 
-      modalPhotoGrid.innerHTML = images.map(function(url){
-        return `<div class="service-modal__photo-item"><img src="${url}" alt="B SIDE U photo" loading="lazy"></div>`;
+      const carouselImages = images.concat(images);
+      modalPhotoGrid.style.animation = 'none';
+      modalPhotoGrid.innerHTML = carouselImages.map(function(url, index){
+        return `<div class="service-modal__photo-item"><img src="${url}" alt="B SIDE U work photo" loading="lazy" draggable="false"></div>`;
       }).join('');
+
+      requestAnimationFrame(function(){
+        modalPhotoGrid.style.animation = '';
+      });
     }
 
     function renderModalDateUI(){
@@ -2565,3 +2608,5 @@
   else init();
 })();
 </script>
+</body>
+</html>
