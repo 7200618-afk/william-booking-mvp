@@ -994,6 +994,90 @@
     }
   }
 
+
+  /* V2 popup refinement: no Continue button, 2-column services, 3-column times, compact date only, sticky close */
+  .service-modal__dialog {
+    top: 50% !important;
+    left: 50% !important;
+    width: min(620px, calc(100vw - 24px)) !important;
+    max-height: calc(100dvh - 24px) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    padding: 0 18px 18px !important;
+  }
+  .service-modal__top {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 20 !important;
+    background: #fff !important;
+    padding: 16px 0 12px !important;
+    margin: 0 0 10px !important;
+    border-bottom: 1px solid #eee !important;
+  }
+  .service-modal__close {
+    flex: 0 0 auto !important;
+  }
+  .service-modal__list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+  .service-modal__week {
+    display: none !important;
+  }
+  .service-modal__datebar {
+    margin-bottom: 2px !important;
+  }
+  .service-modal__times {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    min-height: 92px !important;
+  }
+  .service-modal__time-btn {
+    min-height: 40px !important;
+  }
+  .service-modal__time-btn::after {
+    content: '' !important;
+  }
+  .service-modal__footer {
+    grid-template-columns: 1fr !important;
+  }
+  .service-modal__continue {
+    display: none !important;
+  }
+  .service-modal__selected-note {
+    grid-column: 1 / -1 !important;
+  }
+  @media (max-width: 768px) {
+    .service-modal__dialog {
+      width: calc(100vw - 16px) !important;
+      max-height: calc(100dvh - 16px) !important;
+      padding: 0 16px 16px !important;
+      border-radius: 16px !important;
+    }
+    .service-modal__top {
+      padding: 14px 0 11px !important;
+    }
+    .service-modal__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 7px !important;
+    }
+    .service-modal__item {
+      padding: 10px 11px !important;
+    }
+    .service-modal__item-title {
+      font-size: 13px !important;
+    }
+    .service-modal__item-meta {
+      font-size: 11px !important;
+    }
+    .service-modal__times {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 7px !important;
+    }
+  }
+
 </style>
 
 <div class="content-wrapper">
@@ -1057,7 +1141,7 @@
       <h3 id="service-modal-title" class="service-modal__title">Choose a Service</h3>
       <button type="button" class="service-modal__close" id="service-modal-close" aria-label="Close">×</button>
     </div>
-    <div class="service-modal__sub" id="service-modal-sub">Select a service, date, and available time.</div>
+    <div class="service-modal__sub" id="service-modal-sub">Select a service and date, then tap an available time to book.</div>
 
     <div class="service-modal__section-title">Service</div>
     <div class="service-modal__list" id="service-modal-list"></div>
@@ -1071,8 +1155,6 @@
       </div>
       <button id="service-modal-next-date" class="service-modal__date-nav" type="button" aria-label="Next date">›</button>
     </div>
-    <div class="service-modal__week" id="service-modal-week"></div>
-
     <div class="service-modal__section-title">Available Times</div>
     <div class="service-modal__times" id="service-modal-times">
       <div class="service-modal__message">Choose a service to see available times.</div>
@@ -1080,7 +1162,6 @@
 
     <div class="service-modal__footer">
       <a id="service-modal-profile" class="service-modal__profile" href="#" target="_blank" rel="noopener noreferrer">View Profile</a>
-      <a id="service-modal-continue" class="service-modal__continue is-disabled" href="#" target="_blank" rel="noopener noreferrer">Continue Booking</a>
       <div id="service-modal-selected-note" class="service-modal__selected-note"></div>
     </div>
   </div>
@@ -1105,6 +1186,7 @@
 
     const PHONE_TEXT = "(213) 273-5462";
     const PHONE_TEL  = "+12132735462";
+    const INTERNAL_BOOKING_PAGE_URL = "/appointment-pasadena-booking";
 
     function toIsoDateLocal(date){
       const y = date.getFullYear();
@@ -1528,34 +1610,9 @@
     }
 
     function renderModalDateUI(){
-      if(!modalDateLabel || !modalDateInput || !modalWeek) return;
+      if(!modalDateLabel || !modalDateInput) return;
       modalDateInput.value = toIsoDateLocal(activeModalDate);
       modalDateLabel.textContent = formatModalDate(activeModalDate);
-
-      modalWeek.innerHTML = '';
-      const start = new Date(activeModalDate);
-      start.setDate(activeModalDate.getDate() - activeModalDate.getDay());
-      const today = new Date();
-      today.setHours(0,0,0,0);
-
-      for(let i=0;i<7;i++){
-        const d = new Date(start);
-        d.setDate(start.getDate()+i);
-        const day = document.createElement('button');
-        day.type = 'button';
-        day.className = 'service-modal__day';
-        if(toIsoDateLocal(d) === toIsoDateLocal(activeModalDate)) day.classList.add('is-selected');
-        const dayStart = new Date(d); dayStart.setHours(0,0,0,0);
-        if(dayStart.getTime() < today.getTime()) day.classList.add('is-past');
-        day.innerHTML = `<span class="service-modal__day-dow">${daysShortDisplay[d.getDay()]}</span><span class="service-modal__day-num">${d.getDate()}</span>`;
-        day.addEventListener('click', function(){
-          if(day.classList.contains('is-past')) return;
-          activeModalDate = d;
-          renderModalDateUI();
-          loadModalAvailability();
-        });
-        modalWeek.appendChild(day);
-      }
     }
 
     function setModalMessage(text){
@@ -1563,25 +1620,33 @@
     }
 
     function setContinueState(){
-      const links = activeModalStylist ? bookingLinks[activeModalStylist.name] : null;
-      const serviceUrl = links && activeModalServiceKey ? links[activeModalServiceKey] : '';
-      if(!modalContinue) return;
-
-      if(serviceUrl){
-        modalContinue.href = serviceUrl;
-        modalContinue.classList.remove('is-disabled');
-      }else{
-        modalContinue.href = '#';
-        modalContinue.classList.add('is-disabled');
-      }
-
+      if(!modalSelectedNote) return;
       if(activeModalSlot){
         modalSelectedNote.textContent = `${activeModalStylist.name} • ${serviceLabelMap[activeModalServiceKey] || activeModalServiceKey} • ${formatModalLongDate(activeModalDate)} ${formatTimeFromIso(activeModalSlot.start_at)}`;
       }else if(activeModalServiceKey){
-        modalSelectedNote.textContent = `${activeModalStylist.name} • ${serviceLabelMap[activeModalServiceKey] || activeModalServiceKey} • ${formatModalLongDate(activeModalDate)}`;
+        modalSelectedNote.textContent = `${activeModalStylist.name} • ${serviceLabelMap[activeModalServiceKey] || activeModalServiceKey} • ${formatModalLongDate(activeModalDate)} — choose an available time to continue.`;
       }else{
         modalSelectedNote.textContent = '';
       }
+    }
+
+    function buildInternalBookingUrl(slot){
+      const params = new URLSearchParams();
+      params.set('location', 'pasadena');
+      params.set('staff', activeModalStylist ? activeModalStylist.name : '');
+      params.set('service', activeModalServiceKey || '');
+      params.set('serviceLabel', serviceLabelMap[activeModalServiceKey] || activeModalServiceKey || '');
+      params.set('date', toIsoDateLocal(activeModalDate));
+      if(slot && slot.start_at) params.set('start_at', slot.start_at);
+      if(slot && slot.appointment_segments) {
+        try { params.set('segments', JSON.stringify(slot.appointment_segments)); } catch(error) {}
+      }
+      return INTERNAL_BOOKING_PAGE_URL + '?' + params.toString();
+    }
+
+    function goToInternalBooking(slot){
+      if(!slot || !activeModalStylist || !activeModalServiceKey) return;
+      window.location.href = buildInternalBookingUrl(slot);
     }
 
     async function fetchModalAvailability(stylist, serviceKey, dateObj, signal){
@@ -1643,15 +1708,15 @@
 
         modalTimes.querySelectorAll('.service-modal__time-btn').forEach(function(btn){
           btn.addEventListener('click', function(){
-            modalTimes.querySelectorAll('.service-modal__time-btn').forEach(x=>x.classList.remove('is-selected'));
-            btn.classList.add('is-selected');
-            activeModalSlot = openings[Number(btn.getAttribute('data-slot-index'))] || null;
+            const slot = openings[Number(btn.getAttribute('data-slot-index'))] || null;
+            activeModalSlot = slot;
             setContinueState();
+            goToInternalBooking(slot);
           });
         });
       }catch(error){
         if(signal.aborted || requestId !== availabilityRequestId) return;
-        setModalMessage('Availability is temporarily unavailable. You can still continue to Square to book this service.');
+        setModalMessage('Availability is temporarily unavailable. Please try another date or refresh the page.');
         setContinueState();
       }
     }
@@ -1702,7 +1767,7 @@
       activeModalSlot = null;
 
       modalTitle.textContent = `Book ${stylist.name}`;
-      modalSub.textContent = 'Select a service, date, and available time.';
+      modalSub.textContent = 'Select a service and date, then tap an available time to book.';
       modalProfile.href = getProfileUrl(stylist.name);
 
       renderModalServices(stylist);
