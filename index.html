@@ -903,7 +903,7 @@
   .service-modal__times {
     min-height: 92px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
   }
   .service-modal__time-btn {
@@ -1078,6 +1078,133 @@
     }
   }
 
+
+
+/* B SIDE U fix: slot click opens internal booking form, no missing route redirect */
+.service-modal__dialog{
+  width:min(760px,calc(100vw - 24px))!important;
+  max-height:calc(100vh - 28px)!important;
+  overflow:auto!important;
+  overscroll-behavior:contain!important;
+}
+.service-modal__top{
+  position:sticky!important;
+  top:-18px!important;
+  z-index:20!important;
+  background:#fff!important;
+  padding:0 0 10px!important;
+  margin-bottom:10px!important;
+}
+.service-modal__close{
+  flex:0 0 auto!important;
+  position:relative!important;
+  z-index:25!important;
+}
+.service-modal__list{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+.service-modal__times{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+.service-modal__footer{
+  display:block!important;
+}
+.service-modal__profile{
+  display:none!important;
+}
+.service-modal__selected-note{
+  margin:0 0 10px!important;
+}
+.service-modal__booking-form{
+  border:1px solid #eee!important;
+  border-radius:14px!important;
+  padding:12px!important;
+  background:#fafafa!important;
+  box-sizing:border-box!important;
+}
+.service-modal__booking-title{
+  font-size:13px!important;
+  font-weight:900!important;
+  color:#111!important;
+  margin:0 0 9px!important;
+}
+.service-modal__booking-grid{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+.service-modal__input{
+  width:100%!important;
+  min-height:40px!important;
+  border:1px solid #e3e3e3!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#111!important;
+  font-size:14px!important;
+  font-weight:700!important;
+  padding:0 11px!important;
+  box-sizing:border-box!important;
+  font-family:inherit!important;
+  outline:none!important;
+}
+.service-modal__input:focus{
+  border-color:#111!important;
+}
+.service-modal__input--wide{
+  grid-column:1 / -1!important;
+}
+.service-modal__textarea{
+  min-height:68px!important;
+  padding-top:10px!important;
+  resize:vertical!important;
+}
+.service-modal__submit{
+  width:100%!important;
+  min-height:43px!important;
+  margin-top:9px!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:#111!important;
+  color:#fff!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+}
+.service-modal__submit:disabled{
+  opacity:.55!important;
+  cursor:not-allowed!important;
+}
+.service-modal__form-message{
+  min-height:18px!important;
+  margin-top:8px!important;
+  font-size:12px!important;
+  font-weight:800!important;
+  color:#666!important;
+  line-height:1.35!important;
+}
+.service-modal__form-message.is-error{
+  color:#b00020!important;
+}
+.service-modal__form-message.is-success{
+  color:#116b2f!important;
+}
+@media(max-width:768px){
+  .service-modal__dialog{
+    max-height:calc(100vh - 16px)!important;
+  }
+  .service-modal__top{
+    top:-16px!important;
+  }
+  .service-modal__list,
+  .service-modal__booking-grid{
+    grid-template-columns:1fr!important;
+  }
+  .service-modal__times{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+}
+
 </style>
 
 <div class="content-wrapper">
@@ -1163,6 +1290,17 @@
     <div class="service-modal__footer">
       <a id="service-modal-profile" class="service-modal__profile" href="#" target="_blank" rel="noopener noreferrer">View Profile</a>
       <div id="service-modal-selected-note" class="service-modal__selected-note"></div>
+      <form id="service-modal-booking-form" class="service-modal__booking-form" hidden>
+        <div class="service-modal__booking-title">Your Information</div>
+        <div class="service-modal__booking-grid">
+          <input id="service-modal-customer-name" class="service-modal__input" name="customerName" type="text" autocomplete="name" placeholder="Name" required />
+          <input id="service-modal-customer-phone" class="service-modal__input" name="customerPhone" type="tel" autocomplete="tel" placeholder="Phone" required />
+          <input id="service-modal-customer-email" class="service-modal__input service-modal__input--wide" name="customerEmail" type="email" autocomplete="email" placeholder="Email" required />
+          <textarea id="service-modal-customer-note" class="service-modal__input service-modal__input--wide service-modal__textarea" name="customerNote" placeholder="Note (optional)"></textarea>
+        </div>
+        <button id="service-modal-submit-booking" class="service-modal__submit" type="submit">Confirm Booking</button>
+        <div id="service-modal-form-message" class="service-modal__form-message" aria-live="polite"></div>
+      </form>
     </div>
   </div>
 </div>
@@ -1186,7 +1324,7 @@
 
     const PHONE_TEXT = "(213) 273-5462";
     const PHONE_TEL  = "+12132735462";
-    const INTERNAL_BOOKING_PAGE_URL = "/appointment-pasadena-booking";
+    const INTERNAL_BOOKING_PAGE_URL = "/appointment-pasadena-booking"; // kept for compatibility; slot click now uses inline booking form to avoid 404 on missing route
 
     function toIsoDateLocal(date){
       const y = date.getFullYear();
@@ -1644,9 +1782,108 @@
       return INTERNAL_BOOKING_PAGE_URL + '?' + params.toString();
     }
 
-    function goToInternalBooking(slot){
+    function showInlineBookingForm(slot){
       if(!slot || !activeModalStylist || !activeModalServiceKey) return;
-      window.location.href = buildInternalBookingUrl(slot);
+      activeModalSlot = slot;
+      setContinueState();
+
+      modalTimes.querySelectorAll('.service-modal__time-btn').forEach(function(btn){
+        btn.classList.toggle('is-selected', btn.dataset.startAt === slot.start_at);
+      });
+
+      const form = document.getElementById('service-modal-booking-form');
+      const msg = document.getElementById('service-modal-form-message');
+      if(form){
+        form.hidden = false;
+        setTimeout(function(){
+          const first = document.getElementById('service-modal-customer-name');
+          if(first && !first.value) first.focus({ preventScroll:true });
+          form.scrollIntoView({ block:'nearest', behavior:'smooth' });
+        }, 30);
+      }
+      if(msg){
+        msg.textContent = 'Enter your information to confirm this appointment.';
+        msg.className = 'service-modal__form-message';
+      }
+    }
+
+    function hideInlineBookingForm(){
+      const form = document.getElementById('service-modal-booking-form');
+      const msg = document.getElementById('service-modal-form-message');
+      const submitBtn = document.getElementById('service-modal-submit-booking');
+      if(form){
+        form.hidden = true;
+        form.querySelectorAll('input, textarea, button').forEach(function(el){ el.disabled = false; });
+      }
+      if(submitBtn) submitBtn.textContent = 'Confirm Booking';
+      if(msg){
+        msg.textContent = '';
+        msg.className = 'service-modal__form-message';
+      }
+    }
+
+    async function submitInlineBooking(event){
+      event.preventDefault();
+      if(!activeModalSlot || !activeModalStylist || !activeModalServiceKey) return;
+
+      const form = event.currentTarget;
+      const submitBtn = document.getElementById('service-modal-submit-booking');
+      const msg = document.getElementById('service-modal-form-message');
+      const customerName = (document.getElementById('service-modal-customer-name')?.value || '').trim();
+      const customerPhone = (document.getElementById('service-modal-customer-phone')?.value || '').trim();
+      const customerEmail = (document.getElementById('service-modal-customer-email')?.value || '').trim();
+      const customerNote = (document.getElementById('service-modal-customer-note')?.value || '').trim();
+
+      if(!customerName || !customerPhone || !customerEmail){
+        if(msg){
+          msg.textContent = 'Please enter your name, phone number, and email.';
+          msg.className = 'service-modal__form-message is-error';
+        }
+        return;
+      }
+
+      if(submitBtn) submitBtn.disabled = true;
+      if(msg){
+        msg.textContent = 'Confirming your appointment...';
+        msg.className = 'service-modal__form-message';
+      }
+
+      try{
+        const response = await fetch('/api/create-booking', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body:JSON.stringify({
+            staffKey: activeModalStylist.name,
+            serviceType: activeModalServiceKey,
+            start_at: activeModalSlot.start_at,
+            customerName,
+            customerPhone,
+            customerEmail,
+            customerNote
+          })
+        });
+
+        let data = {};
+        try{ data = await response.json(); }catch(error){}
+
+        if(!response.ok || !data.success){
+          throw new Error(data.error || 'Booking failed. Please choose another time.');
+        }
+
+        if(msg){
+          msg.textContent = 'Appointment confirmed. Thank you!';
+          msg.className = 'service-modal__form-message is-success';
+        }
+        if(submitBtn) submitBtn.textContent = 'Booked';
+        form.querySelectorAll('input, textarea, button').forEach(function(el){ el.disabled = true; });
+        setTimeout(function(){ closeServiceModal(); }, 1400);
+      }catch(error){
+        if(msg){
+          msg.textContent = error.message || 'Booking failed. Please try again.';
+          msg.className = 'service-modal__form-message is-error';
+        }
+        if(submitBtn) submitBtn.disabled = false;
+      }
     }
 
     async function fetchModalAvailability(stylist, serviceKey, dateObj, signal){
@@ -1673,6 +1910,7 @@
       const requestId = ++availabilityRequestId;
       activeModalSlot = null;
       setContinueState();
+      hideInlineBookingForm();
 
       if(availabilityAbortController){
         try { availabilityAbortController.abort(); } catch(error) {}
@@ -1703,7 +1941,7 @@
 
         modalTimes.innerHTML = openings.map(function(slot, index){
           const timeText = formatTimeFromIso(slot.start_at);
-          return `<button type="button" class="service-modal__time-btn" data-slot-index="${index}">${timeText}</button>`;
+          return `<button type="button" class="service-modal__time-btn" data-slot-index="${index}" data-start-at="${slot.start_at || ''}">${timeText}</button>`;
         }).join('');
 
         modalTimes.querySelectorAll('.service-modal__time-btn').forEach(function(btn){
@@ -1711,7 +1949,7 @@
             const slot = openings[Number(btn.getAttribute('data-slot-index'))] || null;
             activeModalSlot = slot;
             setContinueState();
-            goToInternalBooking(slot);
+            showInlineBookingForm(slot);
           });
         });
       }catch(error){
@@ -1745,6 +1983,7 @@
         btn.addEventListener('click', function(){
           activeModalServiceKey = btn.getAttribute('data-service-key');
           activeModalSlot = null;
+          hideInlineBookingForm();
           renderModalServices(stylist);
           setContinueState();
           loadModalAvailability();
@@ -1765,6 +2004,7 @@
       const serviceOrder = ['haircut','scissors','covergray','perm','balayage','bleach','color'];
       activeModalServiceKey = serviceOrder.find(key => !!links[key]) || null;
       activeModalSlot = null;
+      hideInlineBookingForm();
 
       modalTitle.textContent = `Book ${stylist.name}`;
       modalSub.textContent = 'Select a service and date, then tap an available time to book.';
@@ -1845,6 +2085,11 @@
         closeServiceModal();
       }
     });
+
+    const modalBookingForm = document.getElementById('service-modal-booking-form');
+    if(modalBookingForm){
+      modalBookingForm.addEventListener('submit', submitInlineBooking);
+    }
 
     document.addEventListener('keydown', function(e){
       if(e.key === 'Escape' && modal.classList.contains('is-open')){
