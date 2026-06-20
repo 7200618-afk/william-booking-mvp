@@ -554,13 +554,38 @@
   .stylist-card .profile-bang--desktop { display: none; }
 
   .stylist-card.not-today {
-    opacity: 0.5;
-    pointer-events: none;
+    opacity: 0.78;
     cursor: default;
     background: #ffffff;
     border-radius: 8px;
     border: 1px solid #eaeaea;
     transition: none;
+  }
+  .stylist-card.not-today .avatar-wrap,
+  .stylist-card.not-today .name-not-today,
+  .stylist-card.not-today .avail {
+    pointer-events: none;
+  }
+  .next-available-btn,
+  .service-modal__next-available {
+    border: 1px solid #111 !important;
+    border-radius: 10px !important;
+    background: #111 !important;
+    color: #fff !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+  }
+  .next-available-btn {
+    margin-top: 8px;
+    min-height: 34px;
+    padding: 0 12px;
+  }
+  .service-modal__next-available {
+    min-height: 38px !important;
+    padding: 0 14px !important;
+    margin-left: 8px !important;
   }
 
   .section-label.rest {
@@ -982,7 +1007,7 @@
       grid-template-columns: 1fr;
     }
     .service-modal__times {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 7px;
     }
     .service-modal__time-btn {
@@ -1196,24 +1221,26 @@
   .service-modal__top{
     top:-16px!important;
   }
-  .service-modal__list,
+  .service-modal__list{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
   .service-modal__booking-grid{
     grid-template-columns:1fr!important;
   }
   .service-modal__times{
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
   }
 }
 
 
 
-/* B SIDE U popup polish: available times 3 columns x 4 visible rows + photo wall at bottom */
+/* B SIDE U popup polish: available times 4 columns x 3 visible rows + photo wall at bottom */
 .service-modal__times{
   display:grid!important;
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
   grid-auto-rows:40px!important;
   gap:8px!important;
-  max-height:184px!important; /* 4 rows: 40*4 + 8*3 */
+  max-height:136px!important; /* 3 rows: 40*3 + 8*2 */
   min-height:0!important;
   overflow-y:auto!important;
   padding-right:2px!important;
@@ -1294,10 +1321,10 @@
 }
 @media(max-width:768px){
   .service-modal__times{
-    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
     grid-auto-rows:38px!important;
     gap:7px!important;
-    max-height:173px!important; /* 4 rows: 38*4 + 7*3 */
+    max-height:128px!important; /* 3 rows: 38*3 + 7*2 */
   }
   .service-modal__time-btn{
     height:38px!important;
@@ -1552,6 +1579,19 @@
       { name:'William', location:'Pasadena', days:'mon,thu,fri,sat,sun', image:'https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2177_1779099876.jpeg?width=400&optimize=medium' },
       { name:'Kendraya', location:'Pasadena', days:'mon,wed,thu,sat,sun' },
     ];
+
+
+    // Add each stylist's real work / portfolio photos here.
+    // Do not put staff headshots here. The popup photo wall only reads this object.
+    const stylistWorkImages = {
+      Nami: [],
+      Fiona: [],
+      Jacob: [],
+      Ken: [],
+      Ryan: [],
+      William: [],
+      Kendraya: []
+    };
 
     const bookingLinks = {
       Ryan: {
@@ -1869,43 +1909,39 @@
     }
 
     function getModalPhotoWallImages(stylist){
-      const selectedImage = stylist && stylist.image ? stylist.image : '';
-      const pool = stylists
-        .filter(function(item){ return item && item.location === 'Pasadena' && item.image; })
-        .map(function(item){ return item.image; });
+      const name = stylist && stylist.name ? stylist.name : '';
+      const images = (stylistWorkImages[name] || [])
+        .filter(function(url){ return typeof url === 'string' && url.trim(); })
+        .map(function(url){ return url.trim(); });
 
-      const images = [];
-      if(selectedImage) images.push(selectedImage);
-      pool.forEach(function(url){
-        if(url && !images.includes(url)) images.push(url);
-      });
-
-      while(images.length && images.length < 10){
-        images.push(images[images.length % Math.max(1, pool.length || images.length)]);
-      }
-
-      return images.slice(0, 10);
+      return Array.from(new Set(images));
     }
 
     function renderModalPhotoWall(stylist){
+      const wall = document.getElementById('service-modal-photo-wall');
       if(!modalPhotoGrid) return;
       if(modalPhotoWallName) modalPhotoWallName.textContent = stylist && stylist.name ? stylist.name + "'s Work" : '';
       const images = getModalPhotoWallImages(stylist || {});
 
       if(!images.length){
         modalPhotoGrid.innerHTML = '';
+        if(wall) wall.hidden = true;
         return;
       }
+      if(wall) wall.hidden = false;
 
-      const carouselImages = images.concat(images);
-      modalPhotoGrid.style.animation = 'none';
+      const carouselImages = images.length >= 2 ? images.concat(images) : images;
+      modalPhotoGrid.style.animation = images.length >= 2 ? 'none' : 'none';
       modalPhotoGrid.innerHTML = carouselImages.map(function(url, index){
-        return `<div class="service-modal__photo-item"><img src="${url}" alt="B SIDE U work photo" loading="lazy" draggable="false"></div>`;
+        const altName = stylist && stylist.name ? stylist.name : 'B SIDE U';
+        return `<div class="service-modal__photo-item"><img src="${url}" alt="${altName} work photo" loading="lazy" draggable="false"></div>`;
       }).join('');
 
-      requestAnimationFrame(function(){
-        modalPhotoGrid.style.animation = '';
-      });
+      if(images.length >= 2){
+        requestAnimationFrame(function(){
+          modalPhotoGrid.style.animation = '';
+        });
+      }
     }
 
     function renderModalDateUI(){
@@ -1916,6 +1952,25 @@
 
     function setModalMessage(text){
       modalTimes.innerHTML = `<div class="service-modal__message">${text}</div>`;
+    }
+
+    function setNotWorkingMessage(){
+      const nextDate = activeModalStylist ? getNextWorkingDate(activeModalStylist, activeModalDate) : null;
+      const nextLabel = nextDate ? formatModalLongDate(nextDate) : '';
+      modalTimes.innerHTML = `
+        <div class="service-modal__message">
+          <span>${activeModalStylist.name} is not working on ${formatModalLongDate(activeModalDate)}.</span>
+          ${nextDate ? `<button type="button" class="service-modal__next-available" id="service-modal-next-available">Next Available ${nextLabel}</button>` : ``}
+        </div>
+      `;
+      const btn = document.getElementById('service-modal-next-available');
+      if(btn){
+        btn.addEventListener('click', function(){
+          activeModalDate = nextDate;
+          renderModalDateUI();
+          loadModalAvailability();
+        });
+      }
     }
 
     function setContinueState(){
@@ -2080,7 +2135,7 @@
       }
 
       if(!worksOnDate(activeModalStylist, activeModalDate)){
-        setModalMessage(`${activeModalStylist.name} is not working on ${formatModalLongDate(activeModalDate)}. Please choose another date.`);
+        setNotWorkingMessage();
         return;
       }
 
@@ -2485,7 +2540,19 @@
             ${getAvatarHTML(stylist)}
             <div class="name-not-today">${stylist.name}</div>
             <div class="avail">${availText}</div>
+            ${nextDate ? `<button type="button" class="next-available-btn">Next Available</button>` : ``}
           `;
+          const nextBtn = card.querySelector('.next-available-btn');
+          if(nextBtn){
+            nextBtn.addEventListener('click', function(e){
+              e.preventDefault();
+              e.stopPropagation();
+              currentDate = new Date(nextDate);
+              updateDayDisplay();
+              renderCards();
+              openServiceModal(stylist, null);
+            });
+          }
           grid.appendChild(card);
         });
       }
