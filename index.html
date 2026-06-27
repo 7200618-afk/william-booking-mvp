@@ -3626,13 +3626,11 @@ document.addEventListener("click",function(e){
         <\/script>
         `;
         
-
-        const referenceHeadCss=`
+        const referenceHeadCss = `
 
 /* =========================================
-   B SIDE U - Reference header + page width
-   Uses the simple appointment header style,
-   keeps V73 booking layout/design below.
+   SAFE reference header style + page width
+   CSS only: does not replace app HTML or booking JS, so staff stays visible.
    ========================================= */
 html,body{
   margin:0!important;
@@ -3646,8 +3644,7 @@ html,body{
   overflow-x:hidden!important;
   text-align:left!important;
 }
-.pasadena-header,
-.pasadena-header.bsu-simple-reference-header{
+.pasadena-header{
   display:block!important;
   grid-template-columns:none!important;
   grid-template-areas:none!important;
@@ -3698,19 +3695,19 @@ html,body{
   letter-spacing:0!important;
   white-space:normal!important;
 }
-.pasadena-open::before{
-  display:none!important;
-  content:none!important;
-}
+.pasadena-open::before{display:none!important;content:none!important;}
+.pasadena-open a,
 .pasadena-open .phone-link,
-.bsu-simple-phone-link{
+.pasadena-header a[href^="tel:"]{
   color:#111!important;
   text-decoration:underline!important;
   font-weight:800!important;
 }
-.bsu-simple-header-description{
+/* Add the reference description visually without changing the app DOM */
+.pasadena-open::after{
+  content:"Get a haircut that suits your hair type, lifestyle, and look.";
   display:block!important;
-  margin:0 0 8px 0!important;
+  margin:6px 0 8px 0!important;
   color:#666!important;
   font-size:14px!important;
   line-height:1.35!important;
@@ -3765,85 +3762,18 @@ html,body{
   white-space:nowrap!important;
 }
 @media(min-width:600px){
-  .page{
-    max-width:1200px!important;
-    padding-left:1px!important;
-    padding-right:1px!important;
-  }
+  .page{max-width:1200px!important;padding-left:1px!important;padding-right:1px!important;}
 }
 @media(max-width:599px){
-  .page{
-    max-width:100vw!important;
-    padding-left:8px!important;
-    padding-right:8px!important;
-  }
-  .pasadena-header,
-  .pasadena-header.bsu-simple-reference-header{
-    padding:10px 0 8px 0!important;
-    margin-bottom:14px!important;
-  }
-  .pasadena-title,
-  .pasadena-header .pasadena-title{
-    font-size:26px!important;
-  }
-  .pasadena-address,
-  .pasadena-header .pasadena-address{
-    margin-bottom:10px!important;
-  }
-  .pasadena-links,
-  .pasadena-header .pasadena-links{
-    gap:10px 28px!important;
-  }
+  .page{max-width:100vw!important;padding-left:8px!important;padding-right:8px!important;}
+  .pasadena-header{padding:10px 0 8px 0!important;margin-bottom:14px!important;}
+  .pasadena-title,.pasadena-header .pasadena-title{font-size:26px!important;}
+  .pasadena-address,.pasadena-header .pasadena-address{margin-bottom:10px!important;}
+  .pasadena-links,.pasadena-header .pasadena-links{gap:10px 28px!important;}
 }
 `;
-
-        const referenceHeadJs=`
-
-<script>
-(function(){
-  function bsuSimpleHeaderOpening(){
-    var phone='<a class="bsu-simple-phone-link phone-link" href="tel:+12132735462">(213) 273-5462</a>';
-    var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var now=new Date();
-    var h=now.getHours();
-    var day=now.getDay();
-    if(h>=18){return 'Opening '+days[(day+1)%7]+' 10:00 am · '+phone;}
-    if(h>=10){return 'Open · '+phone;}
-    return 'Opening '+days[day]+' 10:00 am · '+phone;
-  }
-
-  function bsuApplySimpleReferenceHeader(){
-    var header=document.querySelector('.pasadena-header');
-    if(!header || header.dataset.bsuSimpleHeaderApplied==='1') return;
-    header.dataset.bsuSimpleHeaderApplied='1';
-    header.classList.add('bsu-simple-reference-header');
-    header.innerHTML = ''+
-      '<h1 class="pasadena-title">Have a Good Hair Day</h1>'+ 
-      '<p class="pasadena-open">'+bsuSimpleHeaderOpening()+'</p>'+ 
-      '<p class="bsu-simple-header-description">Get a haircut that suits your hair type, lifestyle, and look.</p>'+ 
-      '<div class="pasadena-address-row"><p class="pasadena-address">350 S Lake Ave Ste 115, Pasadena, CA 91101</p></div>'+ 
-      '<div class="pasadena-links">'+
-        '<a href="https://www.google.com/maps/dir/?api=1&destination=350+Shoppers+Ln,+Pasadena,+CA+91101" target="_blank" rel="noopener noreferrer">Parking Direction</a>'+ 
-        '<a href="https://bsideuhair.com/appointment-sangabriel" target="_blank" rel="noopener noreferrer">Switch to San Gabriel</a>'+ 
-      '</div>';
-  }
-
-  function schedule(){
-    bsuApplySimpleReferenceHeader();
-    setTimeout(bsuApplySimpleReferenceHeader,80);
-    setTimeout(bsuApplySimpleReferenceHeader,300);
-    setTimeout(bsuApplySimpleReferenceHeader,900);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',schedule);
-  else schedule();
-  window.addEventListener('load',schedule);
-  new MutationObserver(function(){bsuApplySimpleReferenceHeader();}).observe(document.documentElement,{childList:true,subtree:true});
-})();
-<\/script>
-
-        `;
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+referenceHeadJs+"\n</body>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
 
         document.open();
         document.write(html);
