@@ -3839,7 +3839,7 @@ html,body{
   window.addEventListener('load',schedule);
   new MutationObserver(function(){bsuApplySimpleReferenceHeader();}).observe(document.documentElement,{childList:true,subtree:true});
 })();
-</script>
+<\/script>
 
         `;
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n</style>");
