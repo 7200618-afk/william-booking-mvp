@@ -66,6 +66,17 @@
         // Inline staff-config.js so the page works on Weebly/mobile without a local ./staff-config.js file.
         staffConfigJs=staffConfigJs.replace(/export\s+const/g,"const");
 
+        // Keep current design unchanged. Only update staff avatar images.
+        staffConfigJs=staffConfigJs.replace(
+          /(William\s*:\s*\{[\s\S]*?image\s*:\s*)["'][^"']*["']/i,
+          `$1"https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium"`
+        );
+        staffConfigJs=staffConfigJs.replace(
+          /(Kendraya\s*:\s*\{[\s\S]*?image\s*:\s*)["'][^"']*["']/i,
+          `$1"https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium"`
+        );
+
+
         const kendrayaStaffConfig = `
   Kendraya: {
     name: "Kendraya",
@@ -149,18 +160,9 @@ async function syncServicesFromSquareCatalog() {
 await syncServicesFromSquareCatalog();
 `;
 
-
-
-        const bsuAvatarOverrideCode = `
-if (typeof STAFF_DATA !== "undefined") {
-  if (STAFF_DATA.William) STAFF_DATA.William.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium";
-  if (STAFF_DATA.Kendraya) STAFF_DATA.Kendraya.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium";
-}
-`;
-
         html=html.replace(
           /import\s+\{\s*STAFF_DATA\s*,\s*BUSINESS\s*\}\s+from\s+["']\.\/staff-config\.js["'];/,
-          staffConfigJs + bsuAvatarOverrideCode + squareCatalogSyncCode
+          staffConfigJs + squareCatalogSyncCode
         );
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
@@ -2683,14 +2685,6 @@ function movePhotoWall(){
   if(!photo||!booking)return;
 
   if(isMobile()){
-    var mobileStack=document.querySelector(".bsu-mobile-booking-stack");
-    if(mobileStack&&mobileStack.parentNode===booking){
-      if(photo.parentNode!==booking||mobileStack.nextSibling!==photo){
-        booking.insertBefore(photo,mobileStack.nextSibling);
-        waitForMobilePhotoWallReady();
-      }
-      return;
-    }
     var anchor=currentResultsAnchor();
     if(anchor&&anchor.parentNode&&photo.previousElementSibling!==anchor){
       anchor.parentNode.insertBefore(photo,anchor.nextSibling);
@@ -3608,73 +3602,47 @@ document.addEventListener("click",function(e){
           function findServiceLabel(){
             return Array.from(document.querySelectorAll('.section-label')).find(function(el){return /services/i.test(el.textContent||'');});
           }
-          function directChildOfBooking(el,booking){
-            var node=el;
-            while(node&&node.parentNode&&node.parentNode!==booking){node=node.parentNode;}
-            return node&&node.parentNode===booking?node:null;
-          }
           function ensureMobileBookingOrder(){
             if(!isMobile()) return;
             var booking=document.querySelector('.booking-layout');
             var photo=document.querySelector('.desktop-photo-wall-section');
-            var sticky=document.querySelector('.bsu-mobile-sticky-date-staff');
             var staffStrip=document.querySelector('.staff-strip');
             var serviceLabel=findServiceLabel();
             var servicePills=document.querySelector('.service-pills');
             var message=document.querySelector('.message');
-            var dateArea=document.querySelector('.bsu-slot-date-wrap .date-area')||document.querySelector('.desktop-right-panel .date-area')||document.querySelector('.date-area');
-            var slotArea=document.querySelector('.desktop-right-panel .slot-area')||document.querySelector('.desktop-results-area .slot-area')||document.querySelector('.slot-area');
-            var emptyState=document.querySelector('.desktop-right-panel .empty-state')||document.querySelector('.desktop-results-area .empty-state')||document.querySelector('.empty-state');
+            var dateArea=document.querySelector('.date-area');
+            var slotArea=document.querySelector('.slot-area');
+            var emptyState=document.querySelector('.empty-state');
             if(!booking||!servicePills||!dateArea) return;
-
             var stack=document.querySelector('.bsu-mobile-booking-stack');
             if(!stack){stack=document.createElement('div');stack.className='bsu-mobile-booking-stack';}
-
-            var staffDirect=sticky&&sticky.parentNode===booking?sticky:directChildOfBooking(staffStrip,booking);
-            var insertBefore=null;
-            if(staffDirect){
-              insertBefore=staffDirect.nextSibling;
-            }else{
-              insertBefore=photo||booking.children[1]||null;
+            var staffContainer=staffStrip?staffStrip.parentNode:null;
+            if(staffContainer&&staffContainer.parentNode===booking){
+              if(stack.parentNode!==booking||staffContainer.nextSibling!==stack){booking.insertBefore(stack,staffContainer.nextSibling);}
+            }else if(stack.parentNode!==booking){
+              booking.insertBefore(stack,photo||booking.children[1]||null);
             }
-            if(stack.parentNode!==booking){
-              booking.insertBefore(stack,insertBefore);
-            }else if(staffDirect&&staffDirect.nextSibling!==stack){
-              booking.insertBefore(stack,staffDirect.nextSibling);
-            }else if(!staffDirect&&photo&&photo.previousSibling!==stack){
-              booking.insertBefore(stack,photo);
-            }
-
             if(serviceLabel&&serviceLabel.parentNode!==stack) stack.appendChild(serviceLabel);
             if(servicePills.parentNode!==stack) stack.appendChild(servicePills);
             if(message&&message.parentNode!==stack) stack.appendChild(message);
             if(dateArea.parentNode!==stack) stack.appendChild(dateArea);
             if(slotArea&&slotArea.parentNode!==stack) stack.appendChild(slotArea);
             if(emptyState&&emptyState.parentNode!==stack) stack.appendChild(emptyState);
-
             if(photo){
               if(photo.parentNode!==booking){booking.appendChild(photo);}
-              if(stack.parentNode===booking&&stack.nextSibling!==photo){booking.insertBefore(photo,stack.nextSibling);}
+              else if(stack.nextSibling!==photo){booking.insertBefore(photo,stack.nextSibling);}
             }
           }
           var timer=null;
-          function runSoon(delay){setTimeout(ensureMobileBookingOrder,delay||0);}
-          function schedule(){if(timer)return;timer=setTimeout(function(){timer=null;ensureMobileBookingOrder();},60);}
+          function schedule(){if(timer)return;timer=setTimeout(function(){timer=null;ensureMobileBookingOrder();},80);}
           window.addEventListener('load',schedule);
           window.addEventListener('resize',schedule,{passive:true});
-          document.addEventListener('click',function(e){
-            schedule();
-            runSoon(20);runSoon(180);runSoon(420);
-            if(e.target&&e.target.closest&&e.target.closest('.next-available-btn')){
-              runSoon(0);runSoon(80);runSoon(260);runSoon(650);runSoon(1200);
-            }
-          },true);
+          document.addEventListener('click',function(){setTimeout(schedule,20);setTimeout(schedule,260);},true);
           new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-          schedule();runSoon(300);runSoon(900);runSoon(1800);runSoon(3200);
+          schedule();setTimeout(schedule,500);setTimeout(schedule,1400);setTimeout(schedule,3000);
         })();
         <\/script>
         `;
-        
         
         const referenceHeadCss = `
 
