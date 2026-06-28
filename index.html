@@ -4167,8 +4167,185 @@ html,body{
   .bsu-date-calendar.is-week .bsu-month-weekdays{display:none!important;}
 }
 `;
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
+        const v81Css = `
+
+/* B SIDE U V81 - mobile booking order guard
+   Keep mobile layout stable: Staff > Service > Calendar > Times/Next available > Photos. */
+@media(max-width:599px){
+  .bsu-mobile-booking-stack{
+    width:100%!important;
+    display:block!important;
+    clear:both!important;
+    position:relative!important;
+    z-index:3!important;
+    margin:0 0 14px!important;
+  }
+  .bsu-mobile-booking-stack .date-area,
+  .bsu-mobile-booking-stack .date-area.is-fixed-fallback,
+  .bsu-mobile-booking-stack .bsu-date-calendar{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+  .bsu-mobile-booking-stack .date-area,
+  .bsu-mobile-booking-stack .date-area.is-fixed-fallback{
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    transform:none!important;
+    width:100%!important;
+    margin:8px 0 12px!important;
+    z-index:2!important;
+  }
+  .bsu-mobile-booking-stack .desktop-service-panel,
+  .bsu-mobile-booking-stack .service-pills{
+    margin-bottom:10px!important;
+  }
+  .bsu-mobile-booking-stack .slot-area,
+  .bsu-mobile-booking-stack .empty-state{
+    position:relative!important;
+    z-index:1!important;
+    margin-top:0!important;
+  }
+  .desktop-photo-wall-section{
+    clear:both!important;
+    position:relative!important;
+    z-index:1!important;
+  }
+  .bsu-slot-date-wrap:empty,
+  .bsu-date-placeholder:empty,
+  .bsu-staff-label-placeholder:empty,
+  .bsu-staff-strip-placeholder:empty{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+}
+`;
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
+        const v81Js = `
+<script>
+(function(){
+  function isMobile(){return window.innerWidth<600;}
+  function isVisible(el){
+    if(!el)return false;
+    var style=window.getComputedStyle(el);
+    if(style.display==='none'||style.visibility==='hidden')return false;
+    var r=el.getBoundingClientRect();
+    return r.width>0&&r.height>0;
+  }
+  function textMatches(el,pattern){return el&&pattern.test((el.textContent||'').trim());}
+  function findServiceLabel(){
+    var labels=Array.from(document.querySelectorAll('.section-label'));
+    return labels.find(function(el){return textMatches(el,/^service|services$/i)||/service/i.test(el.textContent||'');});
+  }
+  function firstRealChild(parent){
+    if(!parent)return null;
+    return Array.from(parent.childNodes).find(function(n){return n.nodeType===1;})||null;
+  }
+  function insertAfter(parent,node,after){
+    if(!parent||!node)return;
+    if(after&&after.parentNode===parent){
+      if(after.nextSibling!==node)parent.insertBefore(node,after.nextSibling);
+    }else if(node.parentNode!==parent){
+      parent.insertBefore(node,firstRealChild(parent));
+    }
+  }
+  function ensureMobileOrder(){
+    var booking=document.querySelector('.booking-layout');
+    if(!booking)return;
+
+    if(!isMobile()){
+      var desktopRight=document.querySelector('.desktop-right-panel');
+      var dateAreaDesktop=document.querySelector('.date-area');
+      var slotDesktop=document.querySelector('.desktop-right-panel .slot-area')||document.querySelector('.slot-area');
+      if(desktopRight&&dateAreaDesktop&&dateAreaDesktop.parentNode!==desktopRight){
+        desktopRight.insertBefore(dateAreaDesktop,slotDesktop&&slotDesktop.parentNode===desktopRight?slotDesktop:null);
+      }
+      return;
+    }
+
+    var sticky=document.querySelector('.bsu-mobile-sticky-date-staff');
+    var staffStrip=document.querySelector('.staff-strip');
+    var staffContainer=sticky||(staffStrip&&staffStrip.parentNode)||null;
+    var photo=document.querySelector('.desktop-photo-wall-section');
+    var serviceLabel=findServiceLabel();
+    var servicePanel=document.querySelector('.desktop-service-panel');
+    var servicePills=document.querySelector('.service-pills');
+    var message=document.querySelector('.message');
+    var dateArea=document.querySelector('.date-area');
+    var slotArea=document.querySelector('.slot-area');
+    var emptyState=document.querySelector('.empty-state');
+    var context=document.querySelector('.bsu-selected-context');
+
+    if(!dateArea||(!servicePills&&!servicePanel))return;
+
+    var stack=document.querySelector('.bsu-mobile-booking-stack');
+    if(!stack){
+      stack=document.createElement('div');
+      stack.className='bsu-mobile-booking-stack';
+    }
+
+    if(staffContainer&&staffContainer.parentNode===booking){
+      insertAfter(booking,stack,staffContainer);
+    }else if(stack.parentNode!==booking){
+      booking.insertBefore(stack,photo||booking.children[1]||null);
+    }
+
+    if(context&&context.parentNode!==stack)stack.appendChild(context);
+
+    if(servicePanel){
+      if(servicePanel.parentNode!==stack)stack.appendChild(servicePanel);
+    }else{
+      if(serviceLabel&&serviceLabel.parentNode!==stack)stack.appendChild(serviceLabel);
+      if(servicePills&&servicePills.parentNode!==stack)stack.appendChild(servicePills);
+    }
+
+    if(message&&message.parentNode!==stack)stack.appendChild(message);
+    if(dateArea.parentNode!==stack)stack.appendChild(dateArea);
+    if(slotArea&&slotArea.parentNode!==stack)stack.appendChild(slotArea);
+    if(emptyState&&emptyState.parentNode!==stack)stack.appendChild(emptyState);
+
+    dateArea.classList.add('bsu-mobile-date-fixed-order');
+    dateArea.style.setProperty('display','block','important');
+    dateArea.style.setProperty('visibility','visible','important');
+    dateArea.style.setProperty('opacity','1','important');
+
+    if(photo){
+      if(photo.parentNode!==booking)booking.appendChild(photo);
+      if(stack.parentNode===booking&&stack.nextSibling!==photo)booking.insertBefore(photo,stack.nextSibling);
+    }
+
+    document.querySelectorAll('.bsu-slot-date-wrap').forEach(function(wrap){
+      if(!wrap.children.length)wrap.style.setProperty('display','none','important');
+    });
+  }
+
+  var timer=null;
+  function schedule(delay){
+    if(timer)clearTimeout(timer);
+    timer=setTimeout(function(){timer=null;ensureMobileOrder();},delay==null?50:delay);
+  }
+
+  window.bsuEnsureMobileBookingOrderStable=ensureMobileOrder;
+  window.addEventListener('load',function(){schedule(50);schedule(350);schedule(1000);});
+  window.addEventListener('resize',function(){schedule(80);},{passive:true});
+  document.addEventListener('click',function(){schedule(30);setTimeout(ensureMobileOrder,240);setTimeout(ensureMobileOrder,700);},true);
+  document.addEventListener('change',function(e){if(e.target&&e.target.id==='dateInput'){schedule(20);setTimeout(ensureMobileOrder,250);}},true);
+  document.addEventListener('bsu:date-updated',function(){schedule(20);setTimeout(ensureMobileOrder,260);},true);
+  document.addEventListener('bsu:selected-staff-updated',function(){schedule(20);setTimeout(ensureMobileOrder,260);},true);
+  new MutationObserver(function(){schedule(90);}).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style','hidden','aria-hidden']});
+  schedule(20);setTimeout(ensureMobileOrder,500);setTimeout(ensureMobileOrder,1500);setTimeout(ensureMobileOrder,3500);
+})();
+<\/script>
+`;
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n"+v81Js+"\n</body>");
 
         document.open();
         document.write(html);
