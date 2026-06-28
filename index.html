@@ -4376,7 +4376,38 @@ html,body{
 <\/script>
 `;
 
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
+
+        const v82Css = `
+
+/* =========================================
+   B SIDE U V82 spacing restore
+   - restore the previous desktop space between employee cards and service panel
+   - add back mobile breathing room between staff area and service/calendar stack
+   ========================================= */
+@media(min-width:900px){
+  .booking-layout{
+    gap:14px 44px!important;
+  }
+}
+
+@media(min-width:600px) and (max-width:899px){
+  .booking-layout{
+    gap:22px!important;
+  }
+}
+
+@media(max-width:599px){
+  .bsu-mobile-booking-stack{
+    margin-top:16px!important;
+  }
+
+  .bsu-mobile-sticky-date-staff{
+    margin-bottom:14px!important;
+  }
+}
+`;
+
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n"+v82Css+"\n</style>");
         html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n"+v81Js+"\n</body>");
 
         document.open();
