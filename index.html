@@ -66,17 +66,6 @@
         // Inline staff-config.js so the page works on Weebly/mobile without a local ./staff-config.js file.
         staffConfigJs=staffConfigJs.replace(/export\s+const/g,"const");
 
-        // Keep current design unchanged. Only update staff avatar images.
-        staffConfigJs=staffConfigJs.replace(
-          /(William\s*:\s*\{[\s\S]*?image\s*:\s*)["'][^"']*["']/i,
-          `$1"https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium"`
-        );
-        staffConfigJs=staffConfigJs.replace(
-          /(Kendraya\s*:\s*\{[\s\S]*?image\s*:\s*)["'][^"']*["']/i,
-          `$1"https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium"`
-        );
-
-
         const kendrayaStaffConfig = `
   Kendraya: {
     name: "Kendraya",
@@ -108,8 +97,26 @@
           staffConfigJs=staffConfigJs.replace(/\n\s*Jacob\s*:\s*\{/, kendrayaStaffConfig + "\n  Jacob: {");
         }
 
+        const avatarOverrideCode = `
+(function() {
+  const B_SIDE_U_AVATAR_OVERRIDES = {
+    William: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium",
+    Kendraya: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium"
+  };
 
+  Object.entries(B_SIDE_U_AVATAR_OVERRIDES).forEach(([staffName, avatarUrl]) => {
+    const staffKey = Object.keys(STAFF_DATA).find(key => {
+      const data = STAFF_DATA[key] || {};
+      return String(key || "").toLowerCase() === staffName.toLowerCase() ||
+        String(data.name || "").toLowerCase() === staffName.toLowerCase();
+    });
 
+    if (staffKey && STAFF_DATA[staffKey]) {
+      STAFF_DATA[staffKey].image = avatarUrl;
+    }
+  });
+})();
+`;
         const squareCatalogSyncCode = `
 async function syncServicesFromSquareCatalog() {
   try {
@@ -162,7 +169,7 @@ await syncServicesFromSquareCatalog();
 
         html=html.replace(
           /import\s+\{\s*STAFF_DATA\s*,\s*BUSINESS\s*\}\s+from\s+["']\.\/staff-config\.js["'];/,
-          staffConfigJs + squareCatalogSyncCode
+          staffConfigJs + avatarOverrideCode + squareCatalogSyncCode
         );
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
