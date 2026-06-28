@@ -147,23 +147,20 @@ async function syncServicesFromSquareCatalog() {
 }
 
 await syncServicesFromSquareCatalog();
+`;
 
-const BSU_STAFF_AVATARS = {
-  William: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium",
-  Kendraya: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium"
-};
 
-Object.entries(BSU_STAFF_AVATARS).forEach(([staffKey, imageUrl]) => {
-  if (!STAFF_DATA[staffKey]) return;
-  STAFF_DATA[staffKey].image = imageUrl;
-  STAFF_DATA[staffKey].avatar = imageUrl;
-  STAFF_DATA[staffKey].photo = imageUrl;
-});
+
+        const bsuAvatarOverrideCode = `
+if (typeof STAFF_DATA !== "undefined") {
+  if (STAFF_DATA.William) STAFF_DATA.William.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium";
+  if (STAFF_DATA.Kendraya) STAFF_DATA.Kendraya.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium";
+}
 `;
 
         html=html.replace(
           /import\s+\{\s*STAFF_DATA\s*,\s*BUSINESS\s*\}\s+from\s+["']\.\/staff-config\.js["'];/,
-          staffConfigJs + squareCatalogSyncCode
+          staffConfigJs + bsuAvatarOverrideCode + squareCatalogSyncCode
         );
 
         // Ensure William's Cloudinary tag is included in the embedded photo wall.
@@ -2686,6 +2683,14 @@ function movePhotoWall(){
   if(!photo||!booking)return;
 
   if(isMobile()){
+    var mobileStack=document.querySelector(".bsu-mobile-booking-stack");
+    if(mobileStack&&mobileStack.parentNode===booking){
+      if(photo.parentNode!==booking||mobileStack.nextSibling!==photo){
+        booking.insertBefore(photo,mobileStack.nextSibling);
+        waitForMobilePhotoWallReady();
+      }
+      return;
+    }
     var anchor=currentResultsAnchor();
     if(anchor&&anchor.parentNode&&photo.previousElementSibling!==anchor){
       anchor.parentNode.insertBefore(photo,anchor.nextSibling);
@@ -3603,47 +3608,73 @@ document.addEventListener("click",function(e){
           function findServiceLabel(){
             return Array.from(document.querySelectorAll('.section-label')).find(function(el){return /services/i.test(el.textContent||'');});
           }
+          function directChildOfBooking(el,booking){
+            var node=el;
+            while(node&&node.parentNode&&node.parentNode!==booking){node=node.parentNode;}
+            return node&&node.parentNode===booking?node:null;
+          }
           function ensureMobileBookingOrder(){
             if(!isMobile()) return;
             var booking=document.querySelector('.booking-layout');
             var photo=document.querySelector('.desktop-photo-wall-section');
+            var sticky=document.querySelector('.bsu-mobile-sticky-date-staff');
             var staffStrip=document.querySelector('.staff-strip');
             var serviceLabel=findServiceLabel();
             var servicePills=document.querySelector('.service-pills');
             var message=document.querySelector('.message');
-            var dateArea=document.querySelector('.date-area');
-            var slotArea=document.querySelector('.slot-area');
-            var emptyState=document.querySelector('.empty-state');
+            var dateArea=document.querySelector('.bsu-slot-date-wrap .date-area')||document.querySelector('.desktop-right-panel .date-area')||document.querySelector('.date-area');
+            var slotArea=document.querySelector('.desktop-right-panel .slot-area')||document.querySelector('.desktop-results-area .slot-area')||document.querySelector('.slot-area');
+            var emptyState=document.querySelector('.desktop-right-panel .empty-state')||document.querySelector('.desktop-results-area .empty-state')||document.querySelector('.empty-state');
             if(!booking||!servicePills||!dateArea) return;
+
             var stack=document.querySelector('.bsu-mobile-booking-stack');
             if(!stack){stack=document.createElement('div');stack.className='bsu-mobile-booking-stack';}
-            var staffContainer=staffStrip?staffStrip.parentNode:null;
-            if(staffContainer&&staffContainer.parentNode===booking){
-              if(stack.parentNode!==booking||staffContainer.nextSibling!==stack){booking.insertBefore(stack,staffContainer.nextSibling);}
-            }else if(stack.parentNode!==booking){
-              booking.insertBefore(stack,photo||booking.children[1]||null);
+
+            var staffDirect=sticky&&sticky.parentNode===booking?sticky:directChildOfBooking(staffStrip,booking);
+            var insertBefore=null;
+            if(staffDirect){
+              insertBefore=staffDirect.nextSibling;
+            }else{
+              insertBefore=photo||booking.children[1]||null;
             }
+            if(stack.parentNode!==booking){
+              booking.insertBefore(stack,insertBefore);
+            }else if(staffDirect&&staffDirect.nextSibling!==stack){
+              booking.insertBefore(stack,staffDirect.nextSibling);
+            }else if(!staffDirect&&photo&&photo.previousSibling!==stack){
+              booking.insertBefore(stack,photo);
+            }
+
             if(serviceLabel&&serviceLabel.parentNode!==stack) stack.appendChild(serviceLabel);
             if(servicePills.parentNode!==stack) stack.appendChild(servicePills);
             if(message&&message.parentNode!==stack) stack.appendChild(message);
             if(dateArea.parentNode!==stack) stack.appendChild(dateArea);
             if(slotArea&&slotArea.parentNode!==stack) stack.appendChild(slotArea);
             if(emptyState&&emptyState.parentNode!==stack) stack.appendChild(emptyState);
+
             if(photo){
               if(photo.parentNode!==booking){booking.appendChild(photo);}
-              else if(stack.nextSibling!==photo){booking.insertBefore(photo,stack.nextSibling);}
+              if(stack.parentNode===booking&&stack.nextSibling!==photo){booking.insertBefore(photo,stack.nextSibling);}
             }
           }
           var timer=null;
-          function schedule(){if(timer)return;timer=setTimeout(function(){timer=null;ensureMobileBookingOrder();},80);}
+          function runSoon(delay){setTimeout(ensureMobileBookingOrder,delay||0);}
+          function schedule(){if(timer)return;timer=setTimeout(function(){timer=null;ensureMobileBookingOrder();},60);}
           window.addEventListener('load',schedule);
           window.addEventListener('resize',schedule,{passive:true});
-          document.addEventListener('click',function(){setTimeout(schedule,20);setTimeout(schedule,260);},true);
+          document.addEventListener('click',function(e){
+            schedule();
+            runSoon(20);runSoon(180);runSoon(420);
+            if(e.target&&e.target.closest&&e.target.closest('.next-available-btn')){
+              runSoon(0);runSoon(80);runSoon(260);runSoon(650);runSoon(1200);
+            }
+          },true);
           new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-          schedule();setTimeout(schedule,500);setTimeout(schedule,1400);setTimeout(schedule,3000);
+          schedule();runSoon(300);runSoon(900);runSoon(1800);runSoon(3200);
         })();
         <\/script>
         `;
+        
         
         const referenceHeadCss = `
 
@@ -4161,223 +4192,8 @@ html,body{
   .bsu-date-calendar.is-week .bsu-month-weekdays{display:none!important;}
 }
 `;
-        const v81Css = `
-
-/* B SIDE U V81 - avatar updates + mobile Next Available layout fix */
-@media(max-width:599px){
-  .booking-layout{
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:stretch!important;
-  }
-
-  .bsu-mobile-booking-stack{
-    order:20!important;
-    width:100%!important;
-    display:block!important;
-    position:relative!important;
-    z-index:30!important;
-    background:#fff!important;
-    clear:both!important;
-    margin:0 0 14px!important;
-  }
-
-  .desktop-photo-wall-section{
-    order:90!important;
-    width:100%!important;
-    clear:both!important;
-    position:relative!important;
-    z-index:1!important;
-    margin-top:12px!important;
-  }
-
-  .bsu-mobile-booking-stack .date-area,
-  .bsu-mobile-booking-stack .date-area.is-fixed-fallback,
-  .bsu-mobile-booking-stack .slot-area,
-  .bsu-mobile-booking-stack .empty-state,
-  .bsu-mobile-booking-stack .desktop-results-area .slot-area{
-    display:block!important;
-    visibility:visible!important;
-    opacity:1!important;
-    position:relative!important;
-    top:auto!important;
-    left:auto!important;
-    right:auto!important;
-    bottom:auto!important;
-    transform:none!important;
-    width:100%!important;
-    max-width:100%!important;
-    height:auto!important;
-    max-height:none!important;
-    overflow:visible!important;
-    clear:both!important;
-  }
-
-  .bsu-mobile-booking-stack .date-area,
-  .bsu-mobile-booking-stack .date-area.is-fixed-fallback{
-    margin:6px 0 10px!important;
-  }
-
-  .bsu-mobile-booking-stack .empty-state.is-visible{
-    margin-top:2px!important;
-  }
-}
-`;
-        const v81Js = `
-<script>
-(function(){
-  var STAFF_AVATARS={
-    William:'https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium',
-    Kendraya:'https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium'
-  };
-
-  function isMobile(){return window.innerWidth<600;}
-
-  function textOf(el){return (el&&el.textContent||'').replace(/\s+/g,' ').trim();}
-
-  function cardName(card){
-    if(!card)return '';
-    var attr=(card.getAttribute('data-staff-name')||card.getAttribute('data-stylist-name')||'').trim();
-    if(attr)return attr;
-    var nameEl=card.querySelector('.staff-name,.name-main,.name-not-today');
-    var name=textOf(nameEl);
-    if(name)return name.split(' ')[0];
-    var raw=textOf(card);
-    if(/William/i.test(raw))return 'William';
-    if(/Kendraya/i.test(raw))return 'Kendraya';
-    return '';
-  }
-
-  function updateStaffAvatars(){
-    document.querySelectorAll('.staff-card,.staff-item,.stylist-card').forEach(function(card){
-      var name=cardName(card);
-      var url=STAFF_AVATARS[name];
-      if(!url)return;
-      var img=card.querySelector('.avatar img,.avatar-wrap img,img');
-      if(img&&img.src!==url){
-        img.src=url;
-        img.setAttribute('src',url);
-      }
-      var letter=card.querySelector('.letter-avatar');
-      if(letter&&!img){
-        var wrap=letter.parentNode;
-        if(wrap){
-          var newImg=document.createElement('img');
-          newImg.src=url;
-          newImg.alt=name;
-          newImg.loading='lazy';
-          wrap.replaceChild(newImg,letter);
-        }
-      }
-    });
-  }
-
-  function firstVisible(selectors){
-    for(var i=0;i<selectors.length;i++){
-      var list=document.querySelectorAll(selectors[i]);
-      for(var j=0;j<list.length;j++){
-        var el=list[j];
-        if(el&&el.offsetParent!==null)return el;
-      }
-    }
-    return null;
-  }
-
-  function serviceLabel(){
-    return Array.from(document.querySelectorAll('.section-label')).find(function(el){
-      return /service/i.test(el.textContent||'')&&!el.closest('.bsu-mobile-sticky-staff-only');
-    });
-  }
-
-  function staffContainerInBooking(booking){
-    var staff=document.querySelector('.staff-strip');
-    if(!staff)return null;
-    var node=staff;
-    while(node&&node.parentNode&&node.parentNode!==booking)node=node.parentNode;
-    return node&&node.parentNode===booking?node:staff.parentNode;
-  }
-
-  function ensureMobileBookingStack(){
-    if(!isMobile())return;
-    var booking=document.querySelector('.booking-layout');
-    if(!booking)return;
-
-    var photo=document.querySelector('.desktop-photo-wall-section');
-    var stack=document.querySelector('.bsu-mobile-booking-stack');
-    if(!stack){
-      stack=document.createElement('div');
-      stack.className='bsu-mobile-booking-stack';
-    }
-
-    var staffBlock=staffContainerInBooking(booking);
-    if(staffBlock&&staffBlock.parentNode===booking){
-      if(stack.parentNode!==booking||staffBlock.nextSibling!==stack){
-        booking.insertBefore(stack,staffBlock.nextSibling);
-      }
-    }else if(stack.parentNode!==booking){
-      booking.insertBefore(stack,photo||booking.firstChild);
-    }
-
-    var label=document.querySelector('.bsu-selected-context');
-    var sLabel=serviceLabel();
-    var pills=document.querySelector('.service-pills');
-    var message=document.querySelector('.message');
-    var dateArea=document.querySelector('.date-area');
-    var slotArea=firstVisible(['.desktop-right-panel .slot-area','.desktop-results-area .slot-area','.slot-area']);
-    var emptyState=document.querySelector('.desktop-right-panel .empty-state')||document.querySelector('.desktop-results-area .empty-state')||document.querySelector('.empty-state');
-
-    [label,sLabel,pills,message,dateArea,slotArea,emptyState].forEach(function(el){
-      if(el&&el.parentNode!==stack)stack.appendChild(el);
-    });
-
-    if(photo){
-      if(photo.parentNode!==booking)booking.appendChild(photo);
-      if(stack.parentNode===booking&&stack.nextSibling!==photo)booking.insertBefore(photo,stack.nextSibling);
-    }
-
-    if(dateArea){
-      dateArea.style.setProperty('display','block','important');
-      dateArea.style.setProperty('visibility','visible','important');
-      dateArea.style.setProperty('position','relative','important');
-      dateArea.style.setProperty('transform','none','important');
-      dateArea.style.setProperty('width','100%','important');
-    }
-  }
-
-  function scheduleLayout(){
-    setTimeout(function(){updateStaffAvatars();ensureMobileBookingStack();},0);
-    setTimeout(function(){updateStaffAvatars();ensureMobileBookingStack();},120);
-    setTimeout(function(){updateStaffAvatars();ensureMobileBookingStack();},420);
-  }
-
-  document.addEventListener('click',function(e){
-    if(e.target&&e.target.closest&&e.target.closest('.next-available-btn')){
-      scheduleLayout();
-      setTimeout(ensureMobileBookingStack,900);
-    }else{
-      setTimeout(updateStaffAvatars,80);
-    }
-  },true);
-
-  document.addEventListener('change',scheduleLayout,true);
-  window.addEventListener('load',scheduleLayout);
-  window.addEventListener('resize',scheduleLayout,{passive:true});
-
-  var tries=0;
-  var timer=setInterval(function(){
-    tries++;
-    updateStaffAvatars();
-    ensureMobileBookingStack();
-    if(tries>24)clearInterval(timer);
-  },250);
-
-  new MutationObserver(function(){scheduleLayout();}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','src']});
-})();
-<\/script>
-`;
-
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n"+v81Js+"\n</body>");
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n</style>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
 
         document.open();
         document.write(html);
