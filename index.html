@@ -71,7 +71,7 @@
     name: "Kendraya",
     order: 6,
     days: ["mon", "wed", "thu", "sat", "sun"],
-    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f3f3f3'/%3E%3Ctext x='200' y='224' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='112' font-weight='900' fill='%23111'%3EK%3C/text%3E%3C/svg%3E",
+    image: "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium",
     team_member_id: "TM997nlZD4qz2O8p",
     defaultService: "haircut",
     services: {
@@ -147,6 +147,17 @@ async function syncServicesFromSquareCatalog() {
 }
 
 await syncServicesFromSquareCatalog();
+
+// B SIDE U avatar override - William / Kendraya
+if (typeof STAFF_DATA !== "undefined") {
+  if (STAFF_DATA.William) {
+    STAFF_DATA.William.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium";
+  }
+  if (STAFF_DATA.Kendraya) {
+    STAFF_DATA.Kendraya.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium";
+  }
+}
+
 `;
 
         html=html.replace(
@@ -4149,7 +4160,77 @@ html,body{
   .bsu-date-calendar.is-week .bsu-month-weekdays{display:none!important;}
 }
 `;
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n</style>");
+
+        const v81Css = `
+
+/* B SIDE U V81 - mobile staff avatars stay fixed/sticky in the page */
+@media(max-width:599px){
+  html,
+  body{
+    overflow-x:hidden!important;
+  }
+
+  .page,
+  .booking-layout,
+  .desktop-results-area,
+  .desktop-right-panel{
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-sticky-date-staff{
+    position:sticky!important;
+    top:0!important;
+    z-index:6000!important;
+    background:#fff!important;
+    padding:8px 0 7px!important;
+    margin:0 0 10px!important;
+    border-bottom:1px solid rgba(17,17,17,.06)!important;
+    box-shadow:0 8px 18px rgba(255,255,255,.96)!important;
+    transform:none!important;
+    isolation:isolate!important;
+  }
+
+  .bsu-mobile-sticky-staff-only{
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    background:#fff!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-sticky-staff-only .section-label{
+    margin:0 2px 7px!important;
+    font-size:10.5px!important;
+    line-height:1!important;
+    letter-spacing:.15em!important;
+  }
+
+  .bsu-mobile-sticky-staff-only .staff-strip{
+    width:100%!important;
+    display:flex!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch!important;
+    scroll-snap-type:x proximity!important;
+    scrollbar-width:none!important;
+    padding:0 0 6px!important;
+    margin:0!important;
+    background:#fff!important;
+  }
+
+  .bsu-mobile-sticky-staff-only .staff-strip::-webkit-scrollbar{
+    display:none!important;
+  }
+
+  .bsu-mobile-sticky-staff-only .staff-item,
+  .bsu-mobile-sticky-staff-only .staff-card{
+    flex:0 0 auto!important;
+    scroll-snap-align:start!important;
+  }
+}
+`;
+
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
         html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
 
         document.open();
