@@ -241,10 +241,10 @@ ${kendrayaSource}${body.trimStart()}];`;
       staffStatusCache = {};
 
       // Date changes should not lock the previous stylist.
-      // Pick the best available/default stylist again for the newly selected date.
+      // Pick the first stylist from the requested order again for the newly selected date.
       hasUserSelectedStaff = false;
       initialStaffAutoSelectDone = false;
-      selectBestDefaultStaff();
+      selectFirstOrderedStaffForDate(currentDate);
 
       renderStaffStrip(true);
       renderServicePills();
@@ -309,122 +309,92 @@ ${kendrayaSource}${body.trimStart()}];`;
 
         html=html.replace(
           /function getOrderedStaffKeys\(date\) \{[\s\S]*?\n    \}\n\n    function getProfileUrl/,
-          `function getOpeningCountFromCache(staffKey, date) {
-      const staff = STAFF_DATA[staffKey];
+          `function bsuOrderSeed(date, salt) {
+      const d = new Date(date);
+      const key = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + "|" + salt;
+      let hash = 2166136261;
 
-      if (!staff) return -1;
-
-      const statusServiceKey =
-        staffKey === selectedStaffKey && selectedServiceKey
-          ? selectedServiceKey
-          : staff.defaultService;
-
-      const cacheKey = getStatusCacheKey(staffKey, statusServiceKey, date);
-      const cached = staffStatusCache[cacheKey];
-
-      if (!cached) return -1;
-
-      if (typeof cached.openingCount === "number") {
-        return cached.openingCount;
+      for (let i = 0; i < key.length; i++) {
+        hash ^= key.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
       }
 
-      return cached.hasOpening ? 1 : 0;
+      return hash >>> 0;
     }
 
-    function getStaffTiePriority(staffKey) {
-      const fixedOrder = ["william", "ryan", "ken", "kendraya", "nami", "fiona", "jacob"];
-      const normalizedKey = String(staffKey || "").toLowerCase();
-      const index = fixedOrder.indexOf(normalizedKey);
+    function bsuMaybeSwapPair(keys, date, salt) {
+      const list = keys.filter(Boolean);
 
-      if (index === -1) {
-        return -1000 + (STAFF_DATA[staffKey]?.order || 0);
+      if (list.length <= 1) {
+        return list;
       }
 
-      return index;
+      return bsuOrderSeed(date, salt) % 2 === 0 ? list : list.reverse();
     }
 
-    function sortByOpeningCountThenStaffOrder(a, b, date) {
-      const countA = getOpeningCountFromCache(a, date);
-      const countB = getOpeningCountFromCache(b, date);
+    function getBsuOrderedGroups(keys, date, wantWorking) {
+      const keyMap = {};
 
-      if (countB !== countA) {
-        return countB - countA;
-      }
+      keys.forEach(key => {
+        keyMap[String(key || "").toLowerCase()] = key;
+      });
 
-      const priorityA = getStaffTiePriority(a);
-      const priorityB = getStaffTiePriority(b);
+      const groups = [
+        { salt: "kw", keys: ["kendraya", "william"] },
+        { salt: "rk", keys: ["ryan", "ken"] },
+        { salt: "fn", keys: ["fiona", "nami"] },
+        { salt: "jacob", keys: ["jacob"] }
+      ];
 
-      if (priorityA !== priorityB) {
-        return priorityA - priorityB;
-      }
+      const used = new Set();
+      const ordered = [];
 
-      return (STAFF_DATA[a]?.order || 0) - (STAFF_DATA[b]?.order || 0);
-    }
+      groups.forEach(group => {
+        const groupKeys = group.keys
+          .map(name => keyMap[name])
+          .filter(Boolean)
+          .filter(key => {
+            used.add(key);
+            return wantWorking ? isWorking(key, date) : !isWorking(key, date);
+          });
 
-    function sortByStaffTieOrder(a, b) {
-      const priorityA = getStaffTiePriority(a);
-      const priorityB = getStaffTiePriority(b);
+        ordered.push(...bsuMaybeSwapPair(groupKeys, date, group.salt));
+      });
 
-      if (priorityA !== priorityB) {
-        return priorityA - priorityB;
-      }
+      const extraKeys = keys
+        .filter(key => !used.has(key))
+        .filter(key => wantWorking ? isWorking(key, date) : !isWorking(key, date))
+        .sort((a, b) => (STAFF_DATA[a]?.order || 0) - (STAFF_DATA[b]?.order || 0));
 
-      return (STAFF_DATA[a]?.order || 0) - (STAFF_DATA[b]?.order || 0);
+      ordered.push(...extraKeys);
+      return ordered;
     }
 
     function getOrderedStaffKeys(date) {
       const keys = Object.keys(STAFF_DATA);
+      const working = getBsuOrderedGroups(keys, date, true);
+      const notWorking = getBsuOrderedGroups(keys, date, false);
 
-      const workingOpenNonJacob = [];
-      const jacobWorking = [];
-      const workingFullNonJacob = [];
-      const notWorking = [];
+      return [...working, ...notWorking];
+    }
 
-      keys.forEach(key => {
-        const staff = STAFF_DATA[key];
-        const isJacob = String(key || "").toLowerCase() === "jacob";
-        const workingToday = isWorking(key, date);
+    function selectFirstOrderedStaffForDate(date) {
+      const orderedKeys = getOrderedStaffKeys(date);
+      const firstWorkingKey = orderedKeys.find(key => STAFF_DATA[key] && isWorking(key, date));
+      const firstKey = firstWorkingKey || orderedKeys.find(key => STAFF_DATA[key]);
 
-        const statusServiceKey =
-          key === selectedStaffKey && selectedServiceKey
-            ? selectedServiceKey
-            : staff.defaultService;
+      if (!firstKey || !STAFF_DATA[firstKey]) return;
 
-        const cacheKey = getStatusCacheKey(key, statusServiceKey, date);
-        const cached = staffStatusCache[cacheKey];
+      selectedStaffKey = firstKey;
+      selectedServiceKey = STAFF_DATA[firstKey].defaultService;
 
-        if (!workingToday && !(cached && cached.hasOpening)) {
-          notWorking.push(key);
-          return;
-        }
+      const galleryStaffName = STAFF_DATA[selectedStaffKey]?.name || selectedStaffKey;
+      window.bsuInitialGalleryStaff = galleryStaffName;
 
-        if (isJacob) {
-          jacobWorking.push(key);
-          return;
-        }
-
-        if (cached && cached.isFull) {
-          workingFullNonJacob.push(key);
-          return;
-        }
-
-        workingOpenNonJacob.push(key);
-      });
-
-      workingOpenNonJacob.sort((a, b) => {
-        return sortByOpeningCountThenStaffOrder(a, b, date);
-      });
-
-      jacobWorking.sort(sortByStaffTieOrder);
-      workingFullNonJacob.sort(sortByStaffTieOrder);
-      notWorking.sort(sortByStaffTieOrder);
-
-      return [
-        ...workingOpenNonJacob,
-        ...jacobWorking,
-        ...workingFullNonJacob,
-        ...notWorking
-      ];
+      if (window.bsuSetGalleryStaff) {
+        setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 0);
+        setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 220);
+      }
     }
 
     function getProfileUrl`
@@ -497,9 +467,9 @@ ${kendrayaSource}${body.trimStart()}];`;
           /if \(requestId !== statusRequestId\) return;\s*renderStaffStrip\(false\);\s*setTimeout\(scrollSelectedStaffIntoView, 80\);/,
           `if (requestId !== statusRequestId) return;
 
-      if (!hasUserSelectedStaff) {
+      if (!hasUserSelectedStaff && !initialStaffAutoSelectDone) {
         const orderedKeys = getOrderedStaffKeys(currentDate);
-        const bestStaffKey = orderedKeys[0];
+        const bestStaffKey = orderedKeys.find(key => STAFF_DATA[key] && isWorking(key, currentDate)) || orderedKeys[0];
 
         initialStaffAutoSelectDone = true;
 
@@ -520,11 +490,13 @@ ${kendrayaSource}${body.trimStart()}];`;
           searchAvailability();
 
           setTimeout(scrollSelectedStaffIntoView, 80);
+          document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
           return;
         }
       }
 
       renderStaffStrip(false);
+      document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
       setTimeout(scrollSelectedStaffIntoView, 80);`
         );
 
@@ -562,7 +534,7 @@ ${kendrayaSource}${body.trimStart()}];`;
             ? lockedServiceKey
             : STAFF_DATA[lockedStaffKey].defaultService;
       } else {
-        selectBestDefaultStaff();
+        selectFirstOrderedStaffForDate(currentDate);
       }
 
       renderStaffStrip(true);
@@ -871,14 +843,15 @@ ${kendrayaSource}${body.trimStart()}];`;
         html=html.replace(
           /async function loadStaffStatuses\(requestId\) \{[\s\S]*?\n    \}\n\n    function restoreBookingModalForm/,
           `async function loadStaffStatuses(requestId) {
-      const staffKeys = Object.keys(STAFF_DATA);
+      const staffKeys = getOrderedStaffKeys(currentDate).filter(staffKey => staffKey !== selectedStaffKey);
 
       renderStaffStrip(false);
+      document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
 
+      // Load staff status in the background only. Do not re-select a stylist after statuses return.
       await Promise.allSettled(
         staffKeys.map(async staffKey => {
           if (requestId !== statusRequestId) return;
-          if (staffKey === selectedStaffKey) return;
 
           try {
             await computeStaffStatus(staffKey, currentDate);
@@ -889,33 +862,6 @@ ${kendrayaSource}${body.trimStart()}];`;
       );
 
       if (requestId !== statusRequestId) return;
-
-      if (!hasUserSelectedStaff) {
-        const orderedKeys = getOrderedStaffKeys(currentDate);
-        const firstStaffKey = orderedKeys.find(key => {
-          const staff = STAFF_DATA[key];
-          return staff && String(key || "").toLowerCase() !== "gift card";
-        });
-
-        if (firstStaffKey && STAFF_DATA[firstStaffKey] && firstStaffKey !== selectedStaffKey) {
-          selectedStaffKey = firstStaffKey;
-          selectedServiceKey = STAFF_DATA[firstStaffKey].defaultService;
-          initialStaffAutoSelectDone = true;
-          renderStaffStrip(false);
-          renderServicePills();
-          clearResults();
-          searchAvailability();
-          const galleryStaffName = STAFF_DATA[selectedStaffKey]?.name || selectedStaffKey;
-          window.bsuInitialGalleryStaff = galleryStaffName;
-          if (window.bsuSetGalleryStaff) {
-            setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 0);
-            setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 250);
-          }
-          setTimeout(scrollSelectedStaffIntoView, 80);
-          document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
-          return;
-        }
-      }
 
       renderStaffStrip(false);
       document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
@@ -1689,7 +1635,10 @@ const DAY_KEYS=["sun","mon","tue","wed","thu","fri","sat"];const DAY_LABELS=["Su
 /* B SIDE U V73: stable direct Week / Month calendar.
    It changes the hidden date input directly and dispatches one change event.
    It does not click the prev/next buttons, so it avoids the old loop/race bug. */
-let bsuCalendarView = localStorage.getItem("bsu_booking_calendar_view_v73") || "week";
+if (window.innerWidth < 600) {
+  try { localStorage.setItem("bsu_booking_calendar_view_v73", "week"); } catch (error) {}
+}
+let bsuCalendarView = window.innerWidth < 600 ? "week" : (localStorage.getItem("bsu_booking_calendar_view_v73") || "week");
 let bsuCalendarMonthAnchor = null;
 let bsuCalendarLastValue = "";
 
@@ -4098,25 +4047,10 @@ html,body{
         const v79Js = `
 <script>
 (function(){
-  var userStaffInteracted=false;
-  var defaultUntil=Date.now()+4500;
-  var lastForcedName="";
-
   function visible(el){
     if(!el)return false;
     var r=el.getBoundingClientRect();
     return r.width>0&&r.height>0;
-  }
-
-  function staffCards(){
-    return Array.from(document.querySelectorAll('.staff-card,.staff-item')).filter(function(card){
-      if(!visible(card))return false;
-      if(card.classList.contains('not-today'))return false;
-      var text=(card.textContent||'').trim();
-      if(!text)return false;
-      if(/gift\s*card/i.test(text))return false;
-      return true;
-    });
   }
 
   function staffNameFromCard(card){
@@ -4141,7 +4075,7 @@ html,body{
     var card=activeCard();
     var name=staffNameFromCard(card);
     if(name)return name;
-    var first=staffCards()[0];
+    var first=Array.from(document.querySelectorAll('.staff-card,.staff-item')).filter(function(el){return visible(el)&&!/gift\s*card/i.test(el.textContent||'');})[0];
     return staffNameFromCard(first)||'Selected stylist';
   }
 
@@ -4171,34 +4105,7 @@ html,body{
     if(nameEl)nameEl.textContent=name + "'s booking";
   }
 
-  function forceFirstStaffInitial(){
-    if(userStaffInteracted||Date.now()>defaultUntil)return;
-    var cards=staffCards();
-    if(!cards.length)return;
-    var first=cards[0];
-    var active=activeCard();
-    if(active!==first){
-      var firstName=staffNameFromCard(first);
-      if(firstName!==lastForcedName || !active){
-        lastForcedName=firstName;
-        first.click();
-      }
-    }
-    ensureContextLabel();
-  }
-
-  document.addEventListener('pointerdown',function(e){
-    if(e.isTrusted&&e.target&&e.target.closest&&e.target.closest('.staff-card,.staff-item'))userStaffInteracted=true;
-  },true);
-  document.addEventListener('touchstart',function(e){
-    if(e.isTrusted&&e.target&&e.target.closest&&e.target.closest('.staff-card,.staff-item'))userStaffInteracted=true;
-  },true);
-  document.addEventListener('click',function(e){
-    if(e.isTrusted&&e.target&&e.target.closest&&e.target.closest('.staff-card,.staff-item'))userStaffInteracted=true;
-    setTimeout(ensureContextLabel,30);
-    setTimeout(ensureContextLabel,260);
-  },true);
-
+  document.addEventListener('click',function(){setTimeout(ensureContextLabel,40);setTimeout(ensureContextLabel,260);},true);
   document.addEventListener('change',function(e){
     var input=e.target;
     if(!input||input.id!=='dateInput'||!input.value)return;
@@ -4215,28 +4122,34 @@ html,body{
   document.addEventListener('bsu:selected-staff-updated',function(){setTimeout(ensureContextLabel,0);setTimeout(ensureContextLabel,220);},true);
   document.addEventListener('bsu:date-updated',function(){setTimeout(ensureContextLabel,0);setTimeout(ensureContextLabel,220);},true);
 
-  var tick=setInterval(function(){
-    forceFirstStaffInitial();
+  var tries=0;
+  var timer=setInterval(function(){
+    tries++;
     ensureContextLabel();
-    if(Date.now()>defaultUntil)clearInterval(tick);
-  },300);
-
-  new MutationObserver(function(){
-    setTimeout(ensureContextLabel,40);
-    forceFirstStaffInitial();
-  }).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','aria-selected']});
-
-  window.addEventListener('load',function(){setTimeout(forceFirstStaffInitial,250);setTimeout(ensureContextLabel,350);});
+    if(document.querySelector('.staff-card,.staff-item')&&tries>8)clearInterval(timer);
+    if(tries>30)clearInterval(timer);
+  },250);
+  new MutationObserver(function(){setTimeout(ensureContextLabel,80);}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','aria-selected']});
+  window.addEventListener('load',function(){setTimeout(ensureContextLabel,350);});
   window.addEventListener('resize',function(){setTimeout(ensureContextLabel,120);},{passive:true});
-  setTimeout(forceFirstStaffInitial,700);
-  setTimeout(forceFirstStaffInitial,1600);
-  setTimeout(forceFirstStaffInitial,3200);
-  setTimeout(ensureContextLabel,700);
-  setTimeout(ensureContextLabel,1600);
 })();
 <\/script>
 `;
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n</style>");
+        const v80Css = `
+
+/* B SIDE U V80 - faster first paint, mobile default week, requested staff order */
+@media(min-width:1024px){
+  .page{width:calc(100vw - 64px)!important;max-width:1440px!important;}
+  .booking-layout{grid-template-columns:minmax(720px,820px) minmax(330px,420px)!important;gap:32px!important;}
+  .desktop-photo-wall-section{width:100%!important;}
+}
+@media(max-width:599px){
+  .bsu-date-calendar.is-week .bsu-week-grid{display:grid!important;}
+  .bsu-date-calendar.is-week .bsu-month-grid,
+  .bsu-date-calendar.is-week .bsu-month-weekdays{display:none!important;}
+}
+`;
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n</style>");
         html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
 
         document.open();
