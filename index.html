@@ -760,7 +760,15 @@ ${kendrayaSource}${body.trimStart()}];`;
 
     dateInputEl.addEventListener("change", () => {
       if (!dateInputEl.value) return;
-      currentDate = fromIsoDateLocal(dateInputEl.value);
+      const pickedDate = fromIsoDateLocal(dateInputEl.value);
+      const todayDate = new Date();
+      todayDate.setHours(0, 0, 0, 0);
+      if (pickedDate < todayDate) {
+        currentDate = todayDate;
+        dateInputEl.value = toIsoDateLocal(currentDate);
+      } else {
+        currentDate = pickedDate;
+      }
       refreshForDateChange();
     });`
         );
@@ -882,7 +890,35 @@ ${kendrayaSource}${body.trimStart()}];`;
 
       if (requestId !== statusRequestId) return;
 
+      if (!hasUserSelectedStaff) {
+        const orderedKeys = getOrderedStaffKeys(currentDate);
+        const firstStaffKey = orderedKeys.find(key => {
+          const staff = STAFF_DATA[key];
+          return staff && String(key || "").toLowerCase() !== "gift card";
+        });
+
+        if (firstStaffKey && STAFF_DATA[firstStaffKey] && firstStaffKey !== selectedStaffKey) {
+          selectedStaffKey = firstStaffKey;
+          selectedServiceKey = STAFF_DATA[firstStaffKey].defaultService;
+          initialStaffAutoSelectDone = true;
+          renderStaffStrip(false);
+          renderServicePills();
+          clearResults();
+          searchAvailability();
+          const galleryStaffName = STAFF_DATA[selectedStaffKey]?.name || selectedStaffKey;
+          window.bsuInitialGalleryStaff = galleryStaffName;
+          if (window.bsuSetGalleryStaff) {
+            setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 0);
+            setTimeout(() => window.bsuSetGalleryStaff(galleryStaffName), 250);
+          }
+          setTimeout(scrollSelectedStaffIntoView, 80);
+          document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
+          return;
+        }
+      }
+
       renderStaffStrip(false);
+      document.dispatchEvent(new CustomEvent("bsu:selected-staff-updated"));
       setTimeout(scrollSelectedStaffIntoView, 80);
     }
 
@@ -1678,6 +1714,11 @@ function bsuIsSameDate(a,b){return bsuDateToIso(a)===bsuDateToIso(b)}
 function bsuSelectCalendarDate(date){
   var input=document.getElementById("dateInput");
   if(!input)return;
+  var today=bsuStartOfDay(new Date());
+  if(bsuStartOfDay(date)<today){
+    bsuRenderBookingCalendar();
+    return;
+  }
   var iso=bsuDateToIso(date);
   if(input.value===iso){
     bsuRenderBookingCalendar();
@@ -1708,6 +1749,10 @@ function bsuBuildDateCell(date,selected,today,showDow){
   cell.appendChild(num);
   cell.addEventListener("click",function(){
     if(cell.classList.contains("is-past"))return;
+    if(bsuCalendarView==="month"){
+      bsuCalendarView="week";
+      localStorage.setItem("bsu_booking_calendar_view_v73","week");
+    }
     bsuSelectCalendarDate(date);
   });
   return cell;
@@ -1749,9 +1794,14 @@ function bsuRenderBookingCalendar(){
       bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()-1,1);
       bsuRenderBookingCalendar();
     }else{
+      if(bsuStartOfDay(selected)<=today)return;
       bsuSelectCalendarDate(bsuAddDays(selected,-1));
     }
   });
+  if(bsuCalendarView!=="month"&&bsuStartOfDay(selected)<=today){
+    prev.disabled=true;
+    prev.classList.add("is-disabled");
+  }
 
   var title=document.createElement("div");
   title.className="bsu-date-month-title";
@@ -3972,8 +4022,222 @@ html,body{
 }
 
 `;
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
+        const v79Css = `
+
+/* =========================================
+   B SIDE U V79
+   - selected stylist context label
+   - keep mobile calendar visible with Next available
+   - prevent past-day navigation styling
+   ========================================= */
+.bsu-selected-context{
+  width:100%!important;
+  margin:0 0 12px!important;
+  padding:11px 13px!important;
+  box-sizing:border-box!important;
+  border:1px solid rgba(17,17,17,.08)!important;
+  border-radius:12px!important;
+  background:#fafafa!important;
+  color:#111!important;
+}
+.bsu-selected-context-kicker{
+  display:block!important;
+  margin:0 0 4px!important;
+  color:#777!important;
+  font-size:9.5px!important;
+  line-height:1!important;
+  font-weight:950!important;
+  letter-spacing:.15em!important;
+  text-transform:uppercase!important;
+}
+.bsu-selected-context-name{
+  display:block!important;
+  color:#111!important;
+  font-size:18px!important;
+  line-height:1.05!important;
+  font-weight:950!important;
+  letter-spacing:-.04em!important;
+}
+.bsu-selected-context-note{
+  display:block!important;
+  margin-top:5px!important;
+  color:#666!important;
+  font-size:12px!important;
+  line-height:1.25!important;
+  font-weight:750!important;
+  letter-spacing:-.02em!important;
+}
+.bsu-calendar-nav:disabled,
+.bsu-calendar-nav.is-disabled{
+  pointer-events:none!important;
+  opacity:.38!important;
+}
+@media(max-width:599px){
+  .bsu-mobile-booking-stack .date-area,
+  .bsu-mobile-booking-stack .date-area.is-fixed-fallback,
+  .bsu-slot-date-wrap .date-area,
+  .bsu-slot-date-wrap .date-area.is-fixed-fallback{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    margin-top:6px!important;
+    margin-bottom:10px!important;
+  }
+  .bsu-selected-context{
+    margin:0 0 10px!important;
+    padding:10px 11px!important;
+    border-radius:11px!important;
+  }
+  .bsu-selected-context-name{font-size:16px!important}
+  .bsu-selected-context-note{font-size:11.5px!important}
+}
+`;
+        const v79Js = `
+<script>
+(function(){
+  var userStaffInteracted=false;
+  var defaultUntil=Date.now()+4500;
+  var lastForcedName="";
+
+  function visible(el){
+    if(!el)return false;
+    var r=el.getBoundingClientRect();
+    return r.width>0&&r.height>0;
+  }
+
+  function staffCards(){
+    return Array.from(document.querySelectorAll('.staff-card,.staff-item')).filter(function(card){
+      if(!visible(card))return false;
+      if(card.classList.contains('not-today'))return false;
+      var text=(card.textContent||'').trim();
+      if(!text)return false;
+      if(/gift\s*card/i.test(text))return false;
+      return true;
+    });
+  }
+
+  function staffNameFromCard(card){
+    if(!card)return '';
+    var nameEl=card.querySelector('.staff-name,.name-main,.name-not-today,[data-staff-name]');
+    var name=(nameEl&&nameEl.textContent?nameEl.textContent:'').trim();
+    if(!name){
+      name=(card.getAttribute('data-staff-name')||card.getAttribute('data-stylist-name')||'').trim();
+    }
+    if(!name){
+      var raw=(card.textContent||'').replace(/\s+/g,' ').trim();
+      name=(raw.split(' ')[0]||'').trim();
+    }
+    return name;
+  }
+
+  function activeCard(){
+    return document.querySelector('.staff-card.is-active,.staff-item.is-active,.staff-card.active,.staff-item.active,[aria-selected="true"].staff-card,[aria-selected="true"].staff-item');
+  }
+
+  function selectedName(){
+    var card=activeCard();
+    var name=staffNameFromCard(card);
+    if(name)return name;
+    var first=staffCards()[0];
+    return staffNameFromCard(first)||'Selected stylist';
+  }
+
+  function ensureContextLabel(){
+    var name=selectedName();
+    var right=document.querySelector('.desktop-right-panel')||document.querySelector('.desktop-service-panel')?.parentNode||document.querySelector('.bsu-mobile-booking-stack');
+    if(!right)return;
+
+    var label=document.querySelector('.bsu-selected-context');
+    if(!label){
+      label=document.createElement('div');
+      label.className='bsu-selected-context';
+      label.innerHTML='<span class="bsu-selected-context-kicker">Selected stylist</span><strong class="bsu-selected-context-name"></strong><span class="bsu-selected-context-note">Services, calendar, available times, and photos below are for this stylist.</span>';
+    }
+
+    var mobileStack=document.querySelector('.bsu-mobile-booking-stack');
+    var servicePanel=document.querySelector('.desktop-service-panel');
+    if(window.innerWidth<600&&mobileStack){
+      if(label.parentNode!==mobileStack||mobileStack.firstChild!==label)mobileStack.insertBefore(label,mobileStack.firstChild);
+    }else if(servicePanel&&servicePanel.parentNode){
+      if(label.parentNode!==servicePanel.parentNode||label.nextSibling!==servicePanel)servicePanel.parentNode.insertBefore(label,servicePanel);
+    }else if(label.parentNode!==right){
+      right.insertBefore(label,right.firstChild);
+    }
+
+    var nameEl=label.querySelector('.bsu-selected-context-name');
+    if(nameEl)nameEl.textContent=name + "'s booking";
+  }
+
+  function forceFirstStaffInitial(){
+    if(userStaffInteracted||Date.now()>defaultUntil)return;
+    var cards=staffCards();
+    if(!cards.length)return;
+    var first=cards[0];
+    var active=activeCard();
+    if(active!==first){
+      var firstName=staffNameFromCard(first);
+      if(firstName!==lastForcedName || !active){
+        lastForcedName=firstName;
+        first.click();
+      }
+    }
+    ensureContextLabel();
+  }
+
+  document.addEventListener('pointerdown',function(e){
+    if(e.isTrusted&&e.target&&e.target.closest&&e.target.closest('.staff-card,.staff-item'))userStaffInteracted=true;
+  },true);
+  document.addEventListener('touchstart',function(e){
+    if(e.isTrusted&&e.target&&e.target.closest&&e.target.closest('.staff-card,.staff-item'))userStaffInteracted=true;
+  },true);
+  document.addEventListener('click',function(e){
+    if(e.isTrusted&&e.target&&e.target.closest&&e.target.closest('.staff-card,.staff-item'))userStaffInteracted=true;
+    setTimeout(ensureContextLabel,30);
+    setTimeout(ensureContextLabel,260);
+  },true);
+
+  document.addEventListener('change',function(e){
+    var input=e.target;
+    if(!input||input.id!=='dateInput'||!input.value)return;
+    var parts=input.value.split('-').map(Number);
+    var picked=new Date(parts[0],parts[1]-1,parts[2]);
+    var today=new Date(); today.setHours(0,0,0,0);
+    if(picked<today){
+      input.value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+      input.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+    setTimeout(ensureContextLabel,80);
+  },true);
+
+  document.addEventListener('bsu:selected-staff-updated',function(){setTimeout(ensureContextLabel,0);setTimeout(ensureContextLabel,220);},true);
+  document.addEventListener('bsu:date-updated',function(){setTimeout(ensureContextLabel,0);setTimeout(ensureContextLabel,220);},true);
+
+  var tick=setInterval(function(){
+    forceFirstStaffInitial();
+    ensureContextLabel();
+    if(Date.now()>defaultUntil)clearInterval(tick);
+  },300);
+
+  new MutationObserver(function(){
+    setTimeout(ensureContextLabel,40);
+    forceFirstStaffInitial();
+  }).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','aria-selected']});
+
+  window.addEventListener('load',function(){setTimeout(forceFirstStaffInitial,250);setTimeout(ensureContextLabel,350);});
+  window.addEventListener('resize',function(){setTimeout(ensureContextLabel,120);},{passive:true});
+  setTimeout(forceFirstStaffInitial,700);
+  setTimeout(forceFirstStaffInitial,1600);
+  setTimeout(forceFirstStaffInitial,3200);
+  setTimeout(ensureContextLabel,700);
+  setTimeout(ensureContextLabel,1600);
+})();
+<\/script>
+`;
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n</style>");
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
 
         document.open();
         document.write(html);
