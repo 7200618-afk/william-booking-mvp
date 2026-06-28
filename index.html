@@ -4345,7 +4345,187 @@ html,body{
 })();
 <\/script>
 `;
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n"+v81Js+"\n</body>");
+        
+        const v82Js = `
+<script>
+(function(){
+  var arranging=false;
+  var raf=0;
+  var observedLayout=null;
+  var layoutObserver=null;
+
+  function isMobile(){return window.innerWidth<600;}
+  function qs(sel,root){return (root||document).querySelector(sel);}
+  function visible(el){
+    if(!el)return false;
+    var s=window.getComputedStyle(el);
+    if(s.display==='none'||s.visibility==='hidden')return false;
+    return true;
+  }
+  function textHas(el,word){return el&&String(el.textContent||'').toLowerCase().indexOf(word)>=0;}
+  function findServiceLabel(){
+    return Array.from(document.querySelectorAll('.section-label')).find(function(el){return textHas(el,'service');})||null;
+  }
+  function realChildren(parent){
+    return parent?Array.from(parent.children).filter(function(el){return el&&el.nodeType===1;}):[];
+  }
+  function insertAfter(parent,node,after){
+    if(!parent||!node)return false;
+    var before=(after&&after.parentNode===parent)?after.nextSibling:null;
+    if(node.parentNode===parent&&node.previousSibling===after)return false;
+    parent.insertBefore(node,before);
+    return true;
+  }
+  function appendIfNeeded(parent,node){
+    if(!parent||!node)return false;
+    if(node.parentNode===parent&&parent.lastElementChild===node)return false;
+    parent.appendChild(node);
+    return true;
+  }
+  function desiredNodes(stack){
+    var context=qs('.bsu-selected-context');
+    var servicePanel=qs('.desktop-service-panel');
+    var serviceLabel=findServiceLabel();
+    var servicePills=qs('.service-pills');
+    var message=qs('.message');
+    var dateArea=qs('.date-area');
+    var slotArea=qs('.slot-area');
+    var emptyState=qs('.empty-state');
+    var nodes=[];
+    if(context)nodes.push(context);
+    if(servicePanel)nodes.push(servicePanel);
+    else{
+      if(serviceLabel)nodes.push(serviceLabel);
+      if(servicePills)nodes.push(servicePills);
+    }
+    if(message)nodes.push(message);
+    if(dateArea)nodes.push(dateArea);
+    if(slotArea)nodes.push(slotArea);
+    if(emptyState)nodes.push(emptyState);
+    return nodes.filter(function(n,i,a){return n&&a.indexOf(n)===i;});
+  }
+  function isAlreadyOrdered(stack,nodes){
+    if(!stack)return false;
+    var kids=realChildren(stack);
+    var pos=-1;
+    for(var i=0;i<nodes.length;i++){
+      var idx=kids.indexOf(nodes[i]);
+      if(idx<0||idx<pos)return false;
+      pos=idx;
+    }
+    return true;
+  }
+  function ensureOrder(){
+    raf=0;
+    var booking=qs('.booking-layout');
+    if(!booking)return;
+
+    if(!isMobile()){
+      var desktopRight=qs('.desktop-right-panel');
+      var dateAreaDesktop=qs('.date-area');
+      var slotDesktop=qs('.desktop-right-panel .slot-area')||qs('.slot-area');
+      if(desktopRight&&dateAreaDesktop&&dateAreaDesktop.parentNode!==desktopRight){
+        arranging=true;
+        desktopRight.insertBefore(dateAreaDesktop,(slotDesktop&&slotDesktop.parentNode===desktopRight)?slotDesktop:null);
+        setTimeout(function(){arranging=false;},0);
+      }
+      return;
+    }
+
+    var dateArea=qs('.date-area');
+    var servicePanel=qs('.desktop-service-panel');
+    var servicePills=qs('.service-pills');
+    if(!dateArea||(!servicePanel&&!servicePills))return;
+
+    var staffStrip=qs('.staff-strip');
+    var sticky=qs('.bsu-mobile-sticky-date-staff');
+    var staffContainer=(sticky&&sticky.parentNode===booking)?sticky:((staffStrip&&staffStrip.parentNode&&staffStrip.parentNode.parentNode===booking)?staffStrip.parentNode:null);
+    var photo=qs('.desktop-photo-wall-section');
+    var stack=qs('.bsu-mobile-booking-stack');
+    if(!stack){
+      stack=document.createElement('div');
+      stack.className='bsu-mobile-booking-stack';
+    }
+
+    var moved=false;
+    arranging=true;
+    var beforeY=window.scrollY;
+    var anchorTop=null;
+    if(stack.parentNode){anchorTop=stack.getBoundingClientRect().top;}
+
+    if(staffContainer&&staffContainer.parentNode===booking){
+      moved=insertAfter(booking,stack,staffContainer)||moved;
+    }else if(stack.parentNode!==booking){
+      booking.insertBefore(stack,photo||booking.firstElementChild||null);
+      moved=true;
+    }
+
+    var nodes=desiredNodes(stack);
+    if(!isAlreadyOrdered(stack,nodes)){
+      nodes.forEach(function(node){moved=appendIfNeeded(stack,node)||moved;});
+    }
+
+    dateArea.classList.add('bsu-mobile-date-fixed-order');
+    dateArea.style.setProperty('display','block','important');
+    dateArea.style.setProperty('visibility','visible','important');
+    dateArea.style.setProperty('opacity','1','important');
+
+    if(photo){
+      if(photo.parentNode!==booking){booking.appendChild(photo);moved=true;}
+      if(stack.parentNode===booking&&stack.nextElementSibling!==photo){
+        booking.insertBefore(photo,stack.nextSibling);
+        moved=true;
+      }
+    }
+
+    document.querySelectorAll('.bsu-slot-date-wrap').forEach(function(wrap){
+      if(!wrap.children.length)wrap.style.setProperty('display','none','important');
+    });
+
+    if(moved&&anchorTop!==null){
+      var newTop=stack.getBoundingClientRect().top;
+      var delta=newTop-anchorTop;
+      if(Math.abs(delta)>1)window.scrollTo(window.scrollX,window.scrollY+delta);
+      else if(Math.abs(window.scrollY-beforeY)>1)window.scrollTo(window.scrollX,beforeY);
+    }
+
+    setTimeout(function(){arranging=false;},0);
+    observeLayout(booking);
+  }
+  function schedule(){
+    if(raf)return;
+    raf=requestAnimationFrame(ensureOrder);
+  }
+  function observeLayout(booking){
+    if(observedLayout===booking)return;
+    if(layoutObserver)layoutObserver.disconnect();
+    observedLayout=booking;
+    layoutObserver=new MutationObserver(function(){
+      if(arranging)return;
+      schedule();
+    });
+    layoutObserver.observe(booking,{childList:true,subtree:true});
+  }
+
+  window.bsuEnsureMobileBookingOrderStable=ensureOrder;
+  window.addEventListener('load',schedule,{once:false});
+  window.addEventListener('resize',schedule,{passive:true});
+  document.addEventListener('DOMContentLoaded',schedule);
+  document.addEventListener('bsu:date-updated',schedule,true);
+  document.addEventListener('bsu:selected-staff-updated',schedule,true);
+  document.addEventListener('change',function(e){if(e.target&&e.target.id==='dateInput')schedule();},true);
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t&&t.closest&&t.closest('.staff-card,.staff-item,.service-pill,.bsu-date-cell,.next-available-btn,.bsu-calendar-nav,.bsu-calendar-collapse-btn'))schedule();
+  },true);
+  schedule();
+  setTimeout(schedule,250);
+  setTimeout(schedule,900);
+})();
+<\/script>
+`;
+
+        html=html.replace("</body>",customJs+"\n"+v79Js+"\n"+v82Js+"\n</body>");
 
         document.open();
         document.write(html);
