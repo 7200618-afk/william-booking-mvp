@@ -240,24 +240,11 @@ ${kendrayaSource}${body.trimStart()}];`;
       updateDateUI();
       staffStatusCache = {};
 
-      const lockedStaffKey = selectedStaffKey;
-      const lockedServiceKey = selectedServiceKey;
-
-      if (window.__bsuKeepCurrentStaffOnNextAvailable) {
-        window.__bsuKeepCurrentStaffOnNextAvailable = false;
-      }
-
-      if (lockedStaffKey && STAFF_DATA[lockedStaffKey]) {
-        selectedStaffKey = lockedStaffKey;
-        selectedServiceKey =
-          lockedServiceKey && STAFF_DATA[lockedStaffKey].services[lockedServiceKey]
-            ? lockedServiceKey
-            : STAFF_DATA[lockedStaffKey].defaultService;
-        hasUserSelectedStaff = true;
-        initialStaffAutoSelectDone = true;
-      } else {
-        selectBestDefaultStaff();
-      }
+      // Date changes should not lock the previous stylist.
+      // Pick the best available/default stylist again for the newly selected date.
+      hasUserSelectedStaff = false;
+      initialStaffAutoSelectDone = false;
+      selectBestDefaultStaff();
 
       renderStaffStrip(true);
       renderServicePills();
@@ -270,6 +257,7 @@ ${kendrayaSource}${body.trimStart()}];`;
 
       clearResults();
       searchAvailability();
+      loadStaffStatuses(statusRequestId);
     }
 
     prevDayBtn.addEventListener`
@@ -1744,7 +1732,7 @@ function bsuRenderBookingCalendar(){
       bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()-1,1);
       bsuRenderBookingCalendar();
     }else{
-      bsuSelectCalendarDate(bsuAddDays(selected,-7));
+      bsuSelectCalendarDate(bsuAddDays(selected,-1));
     }
   });
 
@@ -1761,7 +1749,7 @@ function bsuRenderBookingCalendar(){
       bsuCalendarMonthAnchor=new Date(bsuCalendarMonthAnchor.getFullYear(),bsuCalendarMonthAnchor.getMonth()+1,1);
       bsuRenderBookingCalendar();
     }else{
-      bsuSelectCalendarDate(bsuAddDays(selected,7));
+      bsuSelectCalendarDate(bsuAddDays(selected,1));
     }
   });
 
@@ -3878,6 +3866,91 @@ html,body{
     margin-top:20px!important;
   }
 }
+
+
+/* =========================================
+   B SIDE U V78 desktop width + date behavior polish
+   - wider desktop layout while keeping Square embed full-width safe
+   - calendar week arrows move 1 day, not 1 week
+   - date changes re-select best stylist instead of locking previous stylist
+   - centered month/week toggle icon
+   ========================================= */
+@media(min-width:900px){
+  .page{
+    width:calc(100vw - 72px)!important;
+    max-width:1360px!important;
+    padding-left:0!important;
+    padding-right:0!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+
+  .pasadena-header,
+  .booking-layout,
+  .desktop-photo-wall-section{
+    width:100%!important;
+    max-width:1240px!important;
+  }
+
+  .booking-layout{
+    grid-template-columns:minmax(660px,780px) minmax(350px,390px)!important;
+    gap:14px 34px!important;
+    justify-content:center!important;
+  }
+
+  .booking-layout>div:nth-child(2){
+    max-width:780px!important;
+  }
+
+  .desktop-right-panel{
+    max-width:390px!important;
+  }
+
+  .desktop-photo-wall-section{
+    margin-top:44px!important;
+  }
+}
+
+@media(min-width:1400px){
+  .page{
+    width:calc(100vw - 96px)!important;
+  }
+}
+
+.bsu-calendar-nav{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  text-align:center!important;
+}
+
+.bsu-calendar-collapse-btn{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0!important;
+  font-size:0!important;
+  line-height:0!important;
+  text-align:center!important;
+}
+
+.bsu-calendar-collapse-btn::before{
+  content:""!important;
+  display:block!important;
+  width:9px!important;
+  height:9px!important;
+  border-right:2px solid #111!important;
+  border-bottom:2px solid #111!important;
+  transform:rotate(45deg) translate(-1px,-1px)!important;
+  transform-origin:center!important;
+}
+
+.bsu-date-calendar.is-month .bsu-calendar-collapse-btn::before{
+  transform:rotate(-135deg) translate(-1px,-1px)!important;
+}
+
 `;
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n</style>");
         html=html.replace("</body>",customJs+"\n"+v76Js+"\n</body>");
