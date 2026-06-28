@@ -4048,12 +4048,8 @@ html,body{
     margin-bottom:10px!important;
   }
   .bsu-selected-context{
-    margin:0 0 10px!important;
-    padding:10px 11px!important;
-    border-radius:11px!important;
+    display:none!important;
   }
-  .bsu-selected-context-name{font-size:16px!important}
-  .bsu-selected-context-note{font-size:11.5px!important}
 }
 `;
         const v79Js = `
@@ -4096,6 +4092,13 @@ html,body{
     var right=document.querySelector('.desktop-right-panel')||document.querySelector('.desktop-service-panel')?.parentNode||document.querySelector('.bsu-mobile-booking-stack');
     if(!right)return;
 
+    var mobileStack=document.querySelector('.bsu-mobile-booking-stack');
+    var oldMobileLabel=document.querySelector('.bsu-mobile-booking-stack .bsu-selected-context');
+    if(window.innerWidth<600){
+      if(oldMobileLabel) oldMobileLabel.remove();
+      return;
+    }
+
     var label=document.querySelector('.bsu-selected-context');
     if(!label){
       label=document.createElement('div');
@@ -4103,11 +4106,8 @@ html,body{
       label.innerHTML='<span class="bsu-selected-context-kicker">Selected stylist</span><strong class="bsu-selected-context-name"></strong><span class="bsu-selected-context-note">Services, calendar, available times, and photos below are for this stylist.</span>';
     }
 
-    var mobileStack=document.querySelector('.bsu-mobile-booking-stack');
     var servicePanel=document.querySelector('.desktop-service-panel');
-    if(window.innerWidth<600&&mobileStack){
-      if(label.parentNode!==mobileStack||mobileStack.firstChild!==label)mobileStack.insertBefore(label,mobileStack.firstChild);
-    }else if(servicePanel&&servicePanel.parentNode){
+    if(servicePanel&&servicePanel.parentNode){
       if(label.parentNode!==servicePanel.parentNode||label.nextSibling!==servicePanel)servicePanel.parentNode.insertBefore(label,servicePanel);
     }else if(label.parentNode!==right){
       right.insertBefore(label,right.firstChild);
