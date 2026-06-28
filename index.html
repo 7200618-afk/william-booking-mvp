@@ -4228,7 +4228,83 @@ html,body{
   }
 }
 `;
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
+        const v84Css = `
+
+/* B SIDE U V84 - mobile test order without jumping
+   Mobile order: Service > Calendar > Staff > Times / Next available > Photo wall. */
+@media(max-width:599px){
+  .bsu-mobile-booking-stack{
+    width:100%!important;
+    display:block!important;
+    clear:both!important;
+    position:relative!important;
+    z-index:3!important;
+    margin:0 0 14px!important;
+  }
+
+  .bsu-mobile-booking-stack .desktop-service-panel,
+  .bsu-mobile-booking-stack .service-pills{
+    margin-bottom:10px!important;
+  }
+
+  .bsu-mobile-booking-stack .date-area,
+  .bsu-mobile-booking-stack .date-area.is-fixed-fallback{
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    transform:none!important;
+    width:100%!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    margin:6px 0 12px!important;
+    z-index:2!important;
+  }
+
+  .bsu-mobile-booking-stack .bsu-date-calendar{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+
+  .bsu-mobile-booking-stack .bsu-mobile-sticky-date-staff,
+  .bsu-mobile-booking-stack .bsu-mobile-sticky-staff-only{
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    transform:none!important;
+    width:100%!important;
+    display:block!important;
+    background:#fff!important;
+    padding:0!important;
+    margin:10px 0 12px!important;
+    box-shadow:none!important;
+    z-index:1!important;
+  }
+
+  .bsu-mobile-booking-stack .staff-strip{
+    padding-bottom:0!important;
+  }
+
+  .bsu-mobile-booking-stack .slot-area,
+  .bsu-mobile-booking-stack .empty-state{
+    position:relative!important;
+    z-index:1!important;
+    margin-top:0!important;
+  }
+
+  .desktop-photo-wall-section{
+    clear:both!important;
+    position:relative!important;
+    z-index:1!important;
+  }
+}
+`;
+
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n"+v84Css+"\n</style>");
         const v81Js = `
 <script>
 (function(){
@@ -4525,68 +4601,44 @@ html,body{
 <\/script>
 `;
 
-
-        const v83Js = `
+        const v84Js = `
 <script>
 (function(){
   var raf=0;
-  var arranging=false;
+  var lastRun=0;
+
   function mobile(){return window.innerWidth<600;}
   function qs(sel,root){return (root||document).querySelector(sel);}
+  function qsa(sel,root){return Array.from((root||document).querySelectorAll(sel));}
+
   function findServiceLabel(){
-    return Array.from(document.querySelectorAll('.section-label')).find(function(el){
-      return /service/i.test(el.textContent||'');
+    return qsa('.section-label').find(function(el){
+      var text=(el.textContent||'').trim();
+      return /^services?$/i.test(text)||/service/i.test(text);
     })||null;
   }
-  function insertBefore(parent,node,before){
-    if(!parent||!node)return false;
-    if(node.parentNode===parent && node.nextSibling===before)return false;
-    parent.insertBefore(node,before||null);
-    return true;
+
+  function getStaffContainer(){
+    var sticky=qs('.bsu-mobile-sticky-date-staff');
+    if(sticky)return sticky;
+
+    var staffOnly=qs('.bsu-mobile-sticky-staff-only');
+    if(staffOnly)return staffOnly;
+
+    var staffStrip=qs('.staff-strip');
+    if(staffStrip&&staffStrip.parentNode)return staffStrip.parentNode;
+
+    return null;
   }
-  function append(parent,node){
+
+  function appendIfNeeded(parent,node){
     if(!parent||!node)return false;
-    if(node.parentNode===parent && parent.lastElementChild===node)return false;
+    if(node.parentNode===parent&&parent.lastElementChild===node)return false;
     parent.appendChild(node);
     return true;
   }
-  function getStaffContainer(booking,stack){
-    var sticky=qs('.bsu-mobile-sticky-date-staff');
-    var staffStrip=qs('.staff-strip');
-    if(sticky)return sticky;
-    if(staffStrip){
-      if(staffStrip.closest('.bsu-mobile-sticky-staff-only'))return staffStrip.closest('.bsu-mobile-sticky-date-staff')||staffStrip.closest('.bsu-mobile-sticky-staff-only');
-      if(staffStrip.parentNode)return staffStrip.parentNode;
-    }
-    return null;
-  }
-  function orderedNodes(booking,stack){
-    var nodes=[];
-    var servicePanel=qs('.desktop-service-panel');
-    var serviceLabel=findServiceLabel();
-    var servicePills=qs('.service-pills');
-    var message=qs('.message');
-    var dateArea=qs('.date-area');
-    var staff=getStaffContainer(booking,stack);
-    var context=qs('.bsu-selected-context');
-    var slotArea=qs('.slot-area');
-    var emptyState=qs('.empty-state');
 
-    // Mobile test order: Service -> Calendar -> Staff -> Times / Next available -> Photo wall.
-    if(servicePanel)nodes.push(servicePanel);
-    else{
-      if(serviceLabel)nodes.push(serviceLabel);
-      if(servicePills)nodes.push(servicePills);
-    }
-    if(message)nodes.push(message);
-    if(dateArea)nodes.push(dateArea);
-    if(staff)nodes.push(staff);
-    if(context)nodes.push(context);
-    if(slotArea)nodes.push(slotArea);
-    if(emptyState)nodes.push(emptyState);
-    return nodes.filter(function(n,i,a){return n&&a.indexOf(n)===i;});
-  }
-  function isOrdered(parent,nodes){
+  function isAlreadyOrdered(parent,nodes){
     if(!parent)return false;
     var kids=Array.from(parent.children);
     var pos=-1;
@@ -4597,17 +4649,51 @@ html,body{
     }
     return true;
   }
+
+  function desiredNodes(){
+    var servicePanel=qs('.desktop-service-panel');
+    var serviceLabel=findServiceLabel();
+    var servicePills=qs('.service-pills');
+    var message=qs('.message');
+    var dateArea=qs('.date-area');
+    var staff=getStaffContainer();
+    var context=qs('.bsu-selected-context');
+    var slotArea=qs('.slot-area');
+    var emptyState=qs('.empty-state');
+
+    var nodes=[];
+
+    // Requested mobile order:
+    // Service -> Calendar -> Staff -> Available times / Next available -> Photo wall.
+    if(servicePanel)nodes.push(servicePanel);
+    else{
+      if(serviceLabel)nodes.push(serviceLabel);
+      if(servicePills)nodes.push(servicePills);
+    }
+
+    if(message)nodes.push(message);
+    if(dateArea)nodes.push(dateArea);
+    if(staff)nodes.push(staff);
+    if(context)nodes.push(context);
+    if(slotArea)nodes.push(slotArea);
+    if(emptyState)nodes.push(emptyState);
+
+    return nodes.filter(function(n,i,a){return n&&a.indexOf(n)===i;});
+  }
+
   function ensure(){
     raf=0;
-    var booking=qs('.booking-layout');
-    if(!booking)return;
+    lastRun=Date.now();
 
     if(!mobile())return;
+
+    var booking=qs('.booking-layout');
+    if(!booking)return;
 
     var dateArea=qs('.date-area');
     var servicePanel=qs('.desktop-service-panel');
     var servicePills=qs('.service-pills');
-    var staff= getStaffContainer(booking,null);
+    var staff=getStaffContainer();
     if(!dateArea||(!servicePanel&&!servicePills)||!staff)return;
 
     var photo=qs('.desktop-photo-wall-section');
@@ -4617,12 +4703,8 @@ html,body{
       stack.className='bsu-mobile-booking-stack';
     }
 
-    arranging=true;
     var moved=false;
-    var beforeY=window.scrollY;
-    var anchorTop=stack.parentNode?stack.getBoundingClientRect().top:null;
 
-    // Put the stack before the photo wall; all mobile booking pieces live inside it.
     if(stack.parentNode!==booking){
       booking.insertBefore(stack,photo||booking.firstElementChild||null);
       moved=true;
@@ -4631,9 +4713,9 @@ html,body{
       moved=true;
     }
 
-    var nodes=orderedNodes(booking,stack);
-    if(!isOrdered(stack,nodes)){
-      nodes.forEach(function(node){moved=append(stack,node)||moved;});
+    var nodes=desiredNodes();
+    if(!isAlreadyOrdered(stack,nodes)){
+      nodes.forEach(function(node){moved=appendIfNeeded(stack,node)||moved;});
     }
 
     dateArea.classList.add('bsu-mobile-date-fixed-order');
@@ -4646,41 +4728,52 @@ html,body{
       if(stack.nextElementSibling!==photo){booking.insertBefore(photo,stack.nextSibling);moved=true;}
     }
 
-    document.querySelectorAll('.bsu-slot-date-wrap').forEach(function(wrap){
-      if(!wrap.children.length)wrap.style.setProperty('display','none','important');
+    qsa('.bsu-slot-date-wrap').forEach(function(wrap){
+      if(!wrap.children.length){
+        wrap.style.setProperty('display','none','important');
+        wrap.style.setProperty('height','0','important');
+        wrap.style.setProperty('margin','0','important');
+        wrap.style.setProperty('padding','0','important');
+      }
     });
-
-    if(moved&&anchorTop!==null){
-      var newTop=stack.getBoundingClientRect().top;
-      var delta=newTop-anchorTop;
-      if(Math.abs(delta)>1)window.scrollTo(window.scrollX,window.scrollY+delta);
-      else if(Math.abs(window.scrollY-beforeY)>1)window.scrollTo(window.scrollX,beforeY);
-    }
-    setTimeout(function(){arranging=false;},0);
   }
-  function schedule(){
+
+  function schedule(delay){
+    if(delay){
+      setTimeout(schedule,delay);
+      return;
+    }
     if(raf)return;
     raf=requestAnimationFrame(ensure);
   }
-  window.bsuEnsureMobileBookingOrderServiceCalendarStaff=ensure;
-  window.addEventListener('load',schedule,{once:false});
-  window.addEventListener('resize',schedule,{passive:true});
+
+  window.bsuEnsureMobileBookingOrderServiceCalendarStaffNoJump=ensure;
+
+  window.addEventListener('load',function(){schedule();schedule(250);schedule(900);},{once:false});
+  window.addEventListener('resize',function(){schedule();},{passive:true});
   document.addEventListener('DOMContentLoaded',schedule);
-  document.addEventListener('bsu:date-updated',schedule,true);
-  document.addEventListener('bsu:selected-staff-updated',schedule,true);
-  document.addEventListener('change',function(e){if(e.target&&e.target.id==='dateInput')schedule();},true);
+  document.addEventListener('bsu:date-updated',function(){schedule();schedule(260);},true);
+  document.addEventListener('bsu:selected-staff-updated',function(){schedule();schedule(260);},true);
+  document.addEventListener('change',function(e){
+    if(e.target&&e.target.id==='dateInput'){
+      schedule();schedule(260);
+    }
+  },true);
   document.addEventListener('click',function(e){
     var t=e.target;
-    if(t&&t.closest&&t.closest('.staff-card,.staff-item,.service-pill,.bsu-date-cell,.next-available-btn,.bsu-calendar-nav,.bsu-calendar-collapse-btn'))schedule();
+    if(t&&t.closest&&t.closest('.staff-card,.staff-item,.service-pill,.bsu-date-cell,.next-available-btn,.bsu-calendar-nav,.bsu-calendar-collapse-btn')){
+      schedule();schedule(260);
+    }
   },true);
+
   schedule();
-  setTimeout(schedule,250);
-  setTimeout(schedule,900);
+  schedule(250);
+  schedule(900);
 })();
 <\/script>
 `;
 
-        html=html.replace("</body>",customJs+"\n"+v79Js+"\n"+v82Js+"\n"+v83Js+"\n</body>");
+        html=html.replace("</body>",customJs+"\n"+v79Js+"\n"+v84Js+"\n</body>");
 
         document.open();
         document.write(html);
