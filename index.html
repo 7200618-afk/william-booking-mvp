@@ -497,7 +497,7 @@ ${kendrayaSource}${body.trimStart()}];`;
           /if \(requestId !== statusRequestId\) return;\s*renderStaffStrip\(false\);\s*setTimeout\(scrollSelectedStaffIntoView, 80\);/,
           `if (requestId !== statusRequestId) return;
 
-      if (!hasUserSelectedStaff && !initialStaffAutoSelectDone) {
+      if (!hasUserSelectedStaff) {
         const orderedKeys = getOrderedStaffKeys(currentDate);
         const bestStaffKey = orderedKeys[0];
 
@@ -539,7 +539,18 @@ ${kendrayaSource}${body.trimStart()}];`;
       currentDate = new Date(nextAvailableTargetDate);
       availabilityRequestId++;
       statusRequestId++;
+
+      if (dateInputEl) {
+        dateInputEl.value = toIsoDateLocal(currentDate);
+      }
+
       updateDateUI();
+
+      if (window.bsuRenderBookingCalendar) {
+        setTimeout(window.bsuRenderBookingCalendar, 0);
+        setTimeout(window.bsuRenderBookingCalendar, 250);
+      }
+      document.dispatchEvent(new CustomEvent("bsu:date-updated"));
       staffStatusCache = {};
       hasUserSelectedStaff = true;
       initialStaffAutoSelectDone = true;
@@ -566,6 +577,12 @@ ${kendrayaSource}${body.trimStart()}];`;
 
       clearResults();
       searchAvailability();
+
+      if (window.bsuRenderBookingCalendar) {
+        setTimeout(window.bsuRenderBookingCalendar, 60);
+        setTimeout(window.bsuRenderBookingCalendar, 350);
+      }
+
       if (window.innerWidth >= 600) {
         setTimeout(scrollSelectedStaffIntoView, 120);
       }
@@ -1811,6 +1828,8 @@ function bsuRenderBookingCalendar(){
   tz.innerHTML="Times are shown in <strong>PDT</strong>.";
   cal.appendChild(tz);
 }
+window.bsuRenderBookingCalendar = bsuRenderBookingCalendar;
+window.bsuSelectBookingCalendarDate = bsuSelectCalendarDate;
 function bsuStartCalendarWatcher(){
   var tries=0;
   var timer=setInterval(function(){
@@ -1824,6 +1843,7 @@ function bsuStartCalendarWatcher(){
   document.addEventListener("change",function(e){if(e.target&&e.target.id==="dateInput")setTimeout(bsuRenderBookingCalendar,0);},true);
   document.addEventListener("click",function(e){if(e.target&&e.target.closest&&e.target.closest(".date-nav"))setTimeout(bsuRenderBookingCalendar,80);},true);
   window.addEventListener("resize",function(){setTimeout(bsuRenderBookingCalendar,80);},{passive:true});
+  document.addEventListener("bsu:date-updated",function(){setTimeout(bsuRenderBookingCalendar,0);setTimeout(bsuRenderBookingCalendar,220);},true);
 }
 bsuStartCalendarWatcher();
 
