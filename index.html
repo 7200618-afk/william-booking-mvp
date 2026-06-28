@@ -4230,8 +4230,258 @@ html,body{
 }
 `;
 
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
+
+        const v82Css = `
+
+/* B SIDE U V82 - mobile staff truly fixed + date stays under service when full */
+@media(max-width:599px){
+  .bsu-mobile-sticky-date-staff{
+    position:fixed!important;
+    top:0!important;
+    left:0!important;
+    right:0!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    z-index:2147483000!important;
+    background:#fff!important;
+    padding:8px 10px 7px!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+    border-bottom:1px solid rgba(17,17,17,.07)!important;
+    box-shadow:0 8px 18px rgba(255,255,255,.96)!important;
+    transform:none!important;
+    isolation:isolate!important;
+  }
+
+  .bsu-mobile-fixed-staff-spacer{
+    display:block!important;
+    width:100%!important;
+    height:var(--bsu-mobile-fixed-staff-height,104px)!important;
+    min-height:var(--bsu-mobile-fixed-staff-height,104px)!important;
+    flex:0 0 auto!important;
+  }
+
+  .bsu-mobile-sticky-date-staff .bsu-mobile-sticky-staff-only{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    background:#fff!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-sticky-date-staff .staff-strip{
+    width:100%!important;
+    display:flex!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+    padding:0 0 6px!important;
+    margin:0!important;
+    background:#fff!important;
+    gap:9px!important;
+  }
+
+  .bsu-mobile-sticky-date-staff .staff-strip::-webkit-scrollbar{display:none!important;}
+
+  .bsu-mobile-sticky-date-staff .staff-card,
+  .bsu-mobile-sticky-date-staff .staff-item{
+    flex:0 0 auto!important;
+  }
+
+  .bsu-mobile-booking-stack{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    gap:0!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-booking-stack .bsu-selected-context{order:1!important;}
+  .bsu-mobile-booking-stack .desktop-service-panel{
+    display:block!important;
+    order:10!important;
+    width:100%!important;
+  }
+  .bsu-mobile-booking-stack .date-area,
+  .bsu-mobile-booking-stack .date-area.is-fixed-fallback{
+    display:block!important;
+    order:20!important;
+    width:100%!important;
+    visibility:visible!important;
+    opacity:1!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    margin:8px 0 12px!important;
+  }
+  .bsu-mobile-booking-stack .slot-area{order:30!important;}
+  .bsu-mobile-booking-stack .empty-state{order:31!important;}
+
+  .bsu-slot-date-wrap{
+    display:contents!important;
+  }
+
+  .desktop-photo-wall-section{
+    order:90!important;
+    clear:both!important;
+  }
+}
+`;
+
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n"+v82Css+"\n</style>");
+
+        const v82Js = `
+<script>
+(function(){
+  function isMobile(){return window.innerWidth<600;}
+
+  function textMatches(el,pattern){
+    return el && pattern.test((el.textContent||'').trim());
+  }
+
+  function findServiceLabel(){
+    return Array.from(document.querySelectorAll('.section-label')).find(function(el){
+      return textMatches(el,/service/i);
+    });
+  }
+
+  function ensureStaffFixed(){
+    var booking=document.querySelector('.booking-layout');
+    var staffStrip=document.querySelector('.staff-strip');
+
+    if(!isMobile()){
+      var oldSpacer=document.querySelector('.bsu-mobile-fixed-staff-spacer');
+      if(oldSpacer)oldSpacer.remove();
+      document.documentElement.style.removeProperty('--bsu-mobile-fixed-staff-height');
+      return;
+    }
+
+    if(!booking||!staffStrip)return;
+
+    var stickyWrap=document.querySelector('.bsu-mobile-sticky-date-staff');
+    if(!stickyWrap){
+      stickyWrap=document.createElement('div');
+      stickyWrap.className='bsu-mobile-sticky-date-staff';
+      booking.insertBefore(stickyWrap,booking.firstChild);
+    }
+
+    var staffOnly=stickyWrap.querySelector('.bsu-mobile-sticky-staff-only');
+    if(!staffOnly){
+      staffOnly=document.createElement('div');
+      staffOnly.className='bsu-mobile-sticky-staff-only';
+      stickyWrap.appendChild(staffOnly);
+    }
+
+    var staffLabel=staffStrip.previousElementSibling;
+    if(!staffLabel||!staffLabel.classList||!staffLabel.classList.contains('section-label')){
+      staffLabel=Array.from(document.querySelectorAll('.section-label')).find(function(el){
+        return /staff|stylist|barber/i.test(el.textContent||'');
+      });
+    }
+
+    if(staffLabel&&staffLabel.parentNode!==staffOnly)staffOnly.appendChild(staffLabel);
+    if(staffStrip.parentNode!==staffOnly)staffOnly.appendChild(staffStrip);
+
+    var spacer=document.querySelector('.bsu-mobile-fixed-staff-spacer');
+    if(!spacer){
+      spacer=document.createElement('div');
+      spacer.className='bsu-mobile-fixed-staff-spacer';
+    }
+    if(stickyWrap.parentNode&&spacer.parentNode!==stickyWrap.parentNode){
+      stickyWrap.parentNode.insertBefore(spacer,stickyWrap.nextSibling);
+    }else if(stickyWrap.nextSibling!==spacer&&stickyWrap.parentNode){
+      stickyWrap.parentNode.insertBefore(spacer,stickyWrap.nextSibling);
+    }
+
+    requestAnimationFrame(function(){
+      var h=Math.ceil(stickyWrap.getBoundingClientRect().height||104);
+      if(h<74)h=104;
+      document.documentElement.style.setProperty('--bsu-mobile-fixed-staff-height',h+'px');
+      spacer.style.height=h+'px';
+      spacer.style.minHeight=h+'px';
+    });
+  }
+
+  function ensureDateUnderService(){
+    if(!isMobile())return;
+
+    var booking=document.querySelector('.booking-layout');
+    var dateArea=document.querySelector('.date-area');
+    if(!booking||!dateArea)return;
+
+    var stack=document.querySelector('.bsu-mobile-booking-stack');
+    if(!stack){
+      stack=document.createElement('div');
+      stack.className='bsu-mobile-booking-stack';
+      var photo=document.querySelector('.desktop-photo-wall-section');
+      booking.insertBefore(stack,photo||booking.children[1]||null);
+    }
+
+    var context=document.querySelector('.bsu-selected-context');
+    var servicePanel=document.querySelector('.desktop-service-panel');
+    var serviceLabel=findServiceLabel();
+    var servicePills=document.querySelector('.service-pills');
+    var message=document.querySelector('.message');
+    var slotArea=document.querySelector('.slot-area');
+    var emptyState=document.querySelector('.empty-state');
+    var photoWall=document.querySelector('.desktop-photo-wall-section');
+
+    if(context&&context.parentNode!==stack)stack.appendChild(context);
+
+    if(servicePanel){
+      if(servicePanel.parentNode!==stack)stack.appendChild(servicePanel);
+    }else{
+      if(serviceLabel&&serviceLabel.parentNode!==stack)stack.appendChild(serviceLabel);
+      if(servicePills&&servicePills.parentNode!==stack)stack.appendChild(servicePills);
+    }
+
+    if(message&&message.parentNode!==stack)stack.appendChild(message);
+    if(dateArea.parentNode!==stack)stack.appendChild(dateArea);
+    if(slotArea&&slotArea.parentNode!==stack)stack.appendChild(slotArea);
+    if(emptyState&&emptyState.parentNode!==stack)stack.appendChild(emptyState);
+
+    if(photoWall){
+      if(photoWall.parentNode!==booking)booking.appendChild(photoWall);
+      if(stack.nextSibling!==photoWall)booking.insertBefore(photoWall,stack.nextSibling);
+    }
+
+    Array.from(document.querySelectorAll('.bsu-slot-date-wrap')).forEach(function(wrap){
+      if(!wrap.contains(dateArea)&&!(wrap.textContent||'').trim()&&wrap.children.length===0)wrap.remove();
+    });
+  }
+
+  function applyFixes(){
+    ensureStaffFixed();
+    ensureDateUnderService();
+  }
+
+  var scheduled=false;
+  function schedule(){
+    if(scheduled)return;
+    scheduled=true;
+    setTimeout(function(){scheduled=false;applyFixes();},60);
+  }
+
+  window.addEventListener('load',function(){setTimeout(applyFixes,80);setTimeout(applyFixes,500);});
+  window.addEventListener('resize',schedule,{passive:true});
+  window.addEventListener('orientationchange',function(){setTimeout(applyFixes,250);});
+  document.addEventListener('click',function(){setTimeout(applyFixes,30);setTimeout(applyFixes,320);},true);
+  document.addEventListener('change',function(){setTimeout(applyFixes,30);setTimeout(applyFixes,320);},true);
+
+  new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden','aria-hidden']});
+
+  applyFixes();
+  setTimeout(applyFixes,250);
+  setTimeout(applyFixes,900);
+  setTimeout(applyFixes,1800);
+  setTimeout(applyFixes,3200);
+})();
+<\/script>
+`;
+
+        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n"+v82Js+"\n</body>");
 
         document.open();
         document.write(html);
