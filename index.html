@@ -128,49 +128,6 @@
   }
 }
 
-
-
-/* B SIDE U final actual page order on mobile: Calendar -> Staff -> Service -> Availability -> Photo */
-@media(max-width:599px){
-  .bsu-mobile-visual-order-stack{
-    display:flex!important;
-    flex-direction:column!important;
-    width:100%!important;
-    gap:0!important;
-    overflow:visible!important;
-    position:relative!important;
-    z-index:2!important;
-  }
-  .bsu-mobile-visual-order-stack > .date-area,
-  .bsu-mobile-visual-order-stack > .date-area.is-fixed-fallback{
-    order:1!important;
-    width:100%!important;
-    margin:0 0 12px!important;
-  }
-  .bsu-mobile-visual-order-stack > .bsu-mobile-staff-real,
-  .bsu-mobile-visual-order-stack > div:has(.staff-strip){
-    order:2!important;
-    width:100%!important;
-    margin:0 0 14px!important;
-  }
-  .bsu-mobile-visual-order-stack > .desktop-service-panel{
-    order:3!important;
-    width:100%!important;
-    margin:0 0 12px!important;
-  }
-  .bsu-mobile-visual-order-stack > .slot-area,
-  .bsu-mobile-visual-order-stack > .empty-state{
-    order:4!important;
-    width:100%!important;
-    margin:0 0 12px!important;
-  }
-  .bsu-mobile-visual-order-stack > .desktop-photo-wall-section{
-    order:5!important;
-    width:100%!important;
-    margin:16px 0 0!important;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -4186,6 +4143,256 @@ html,body{
 })();
 <\/script>
 `;
+
+        const v81Css = `
+
+/* B SIDE U V81 - actual mobile layout order, no scroll lock, no flicker
+   Mobile order: Calendar -> Staff -> Services -> Availability / Next available -> Photo wall */
+@media(max-width:599px){
+  html,body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    position:static!important;
+    overscroll-behavior-y:auto!important;
+    touch-action:auto!important;
+  }
+
+  .page,
+  .booking-layout{
+    width:100%!important;
+    max-width:100%!important;
+    overflow:visible!important;
+  }
+
+  .booking-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    gap:0!important;
+  }
+
+  .date-area,
+  .date-area.is-fixed-fallback{
+    order:1!important;
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:none!important;
+    z-index:10!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-staff-panel{
+    order:2!important;
+    width:100%!important;
+    margin:0 0 14px!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-service-panel{
+    order:3!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-availability-panel{
+    order:4!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+
+  .bsu-mobile-availability-panel > .slot-area,
+  .bsu-mobile-availability-panel > .empty-state,
+  #slotCard,
+  #emptyState{
+    width:100%!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+
+  #desktopPhotoWall,
+  .desktop-photo-wall-section{
+    order:5!important;
+    width:100%!important;
+    margin:16px 0 0!important;
+    display:block!important;
+    overflow:hidden!important;
+  }
+
+  .desktop-results-area:empty,
+  .bsu-mobile-empty-original-shell:empty{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+
+  .date-sticky-spacer,
+  .date-sticky-spacer.is-active,
+  .bsu-date-placeholder,
+  .bsu-staff-label-placeholder,
+  .bsu-staff-strip-placeholder,
+  .bsu-mobile-sticky-date-staff:empty,
+  .bsu-mobile-sticky-staff-only:empty,
+  .bsu-slot-date-wrap:empty{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .bsu-selected-context,
+  .bsu-selected-context *{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+}
+`;
+
+        const v81Js = `
+<script>
+(function(){
+  var didApply = false;
+
+  function isMobile(){
+    return window.matchMedia && window.matchMedia('(max-width: 599px)').matches;
+  }
+
+  function findLabelBefore(el, textPattern){
+    if(!el) return null;
+    var p = el.previousElementSibling;
+    while(p){
+      if(p.classList && p.classList.contains('section-label') && (!textPattern || textPattern.test(p.textContent || ''))){
+        return p;
+      }
+      p = p.previousElementSibling;
+    }
+    return Array.prototype.find.call(document.querySelectorAll('.section-label'), function(label){
+      return textPattern ? textPattern.test(label.textContent || '') : false;
+    }) || null;
+  }
+
+  function append(parent, el){
+    if(parent && el && el.parentNode !== parent){
+      parent.appendChild(el);
+    }
+  }
+
+  function insertAfter(ref, el){
+    if(!ref || !el || !ref.parentNode) return;
+    if(el.previousElementSibling === ref && el.parentNode === ref.parentNode) return;
+    ref.parentNode.insertBefore(el, ref.nextSibling);
+  }
+
+  function applyMobileDomOrder(){
+    if(!isMobile()) return;
+
+    var layout = document.querySelector('.booking-layout');
+    var dateArea = document.querySelector('.date-area');
+    var staffStrip = document.getElementById('staffStrip') || document.querySelector('.staff-strip');
+    var servicePills = document.getElementById('servicePills') || document.querySelector('.service-pills');
+    var message = document.getElementById('message') || document.querySelector('.message');
+    var slotCard = document.getElementById('slotCard') || document.querySelector('.slot-area');
+    var emptyState = document.getElementById('emptyState') || document.querySelector('.empty-state');
+    var photoWall = document.getElementById('desktopPhotoWall') || document.querySelector('.desktop-photo-wall-section');
+
+    if(!layout || !dateArea || !staffStrip || !servicePills || !slotCard || !emptyState || !photoWall) return;
+
+    var staffLabel = findLabelBefore(staffStrip, /staff|stylist|barber/i);
+    var serviceLabel = findLabelBefore(servicePills, /service/i);
+
+    var staffPanel = document.querySelector('.bsu-mobile-staff-panel');
+    if(!staffPanel){
+      staffPanel = document.createElement('div');
+      staffPanel.className = 'bsu-mobile-staff-panel';
+    }
+
+    var servicePanel = document.querySelector('.bsu-mobile-service-panel');
+    if(!servicePanel){
+      servicePanel = document.createElement('div');
+      servicePanel.className = 'bsu-mobile-service-panel';
+    }
+
+    var availabilityPanel = document.querySelector('.bsu-mobile-availability-panel');
+    if(!availabilityPanel){
+      availabilityPanel = document.createElement('div');
+      availabilityPanel.className = 'bsu-mobile-availability-panel';
+    }
+
+    append(staffPanel, staffLabel);
+    append(staffPanel, staffStrip);
+
+    append(servicePanel, serviceLabel);
+    append(servicePanel, servicePills);
+    append(servicePanel, message);
+
+    append(availabilityPanel, slotCard);
+    append(availabilityPanel, emptyState);
+
+    if(dateArea.parentNode !== layout){
+      layout.insertBefore(dateArea, layout.firstChild);
+    }
+    insertAfter(dateArea, staffPanel);
+    insertAfter(staffPanel, servicePanel);
+    insertAfter(servicePanel, availabilityPanel);
+    insertAfter(availabilityPanel, photoWall);
+
+    Array.prototype.forEach.call(layout.children, function(child){
+      if(child !== dateArea && child !== staffPanel && child !== servicePanel && child !== availabilityPanel && child !== photoWall){
+        child.classList.add('bsu-mobile-empty-original-shell');
+      }
+    });
+
+    didApply = true;
+    document.body.classList.add('bsu-mobile-dom-order-applied');
+  }
+
+  function applySoon(delay){
+    setTimeout(applyMobileDomOrder, delay || 0);
+  }
+
+  // Run a few times only while the remote page finishes creating its pieces.
+  [0, 120, 350, 800, 1400, 2400].forEach(applySoon);
+  window.addEventListener('load', function(){ applySoon(0); applySoon(500); }, {passive:true});
+
+  // Re-apply after user actions that can make the remote page reveal empty/slot states.
+  document.addEventListener('click', function(e){
+    var target = e.target && e.target.closest && e.target.closest('.staff-card,.staff-item,.service-pill,.date-nav,.bsu-date-cell,.next-available-btn');
+    if(target){ applySoon(80); applySoon(360); }
+  }, true);
+
+  document.addEventListener('change', function(e){
+    if(e.target && e.target.id === 'dateInput'){
+      applySoon(80); applySoon(360);
+    }
+  }, true);
+})();
+<\/script>
+`;
+
         const v80Css = `
 
 /* Remove selected stylist helper text on desktop and mobile */
@@ -4323,8 +4530,8 @@ html,body{
   .bsu-date-calendar.is-week .bsu-month-weekdays{display:none!important;}
 }
 `;
-        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+'\n\n/* B SIDE U final actual page order on mobile: Calendar -> Staff -> Service -> Availability -> Photo */\n@media(max-width:599px){\n  .bsu-mobile-visual-order-stack{\n    display:flex!important;\n    flex-direction:column!important;\n    width:100%!important;\n    gap:0!important;\n    overflow:visible!important;\n    position:relative!important;\n    z-index:2!important;\n  }\n  .bsu-mobile-visual-order-stack > .date-area,\n  .bsu-mobile-visual-order-stack > .date-area.is-fixed-fallback{\n    order:1!important;\n    width:100%!important;\n    margin:0 0 12px!important;\n  }\n  .bsu-mobile-visual-order-stack > .bsu-mobile-staff-real,\n  .bsu-mobile-visual-order-stack > div:has(.staff-strip){\n    order:2!important;\n    width:100%!important;\n    margin:0 0 14px!important;\n  }\n  .bsu-mobile-visual-order-stack > .desktop-service-panel{\n    order:3!important;\n    width:100%!important;\n    margin:0 0 12px!important;\n  }\n  .bsu-mobile-visual-order-stack > .slot-area,\n  .bsu-mobile-visual-order-stack > .empty-state{\n    order:4!important;\n    width:100%!important;\n    margin:0 0 12px!important;\n  }\n  .bsu-mobile-visual-order-stack > .desktop-photo-wall-section{\n    order:5!important;\n    width:100%!important;\n    margin:16px 0 0!important;\n  }\n}\n'+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v79Js+"\n"+"\n\n<script>\n(function(){\n  var MOBILE_QUERY = '(max-width: 599px)';\n  var scheduled = false;\n\n  function isMobile(){\n    return window.matchMedia && window.matchMedia(MOBILE_QUERY).matches;\n  }\n\n  function findStaffPanel(){\n    var strip = document.querySelector('.staff-strip');\n    if(!strip) return null;\n\n    var el = strip;\n    while(el && el.parentElement && !el.parentElement.classList.contains('booking-layout')){\n      el = el.parentElement;\n    }\n\n    if(el && el !== strip){\n      el.classList.add('bsu-mobile-staff-real');\n      return el;\n    }\n\n    var wrapper = strip.closest('.bsu-mobile-sticky-staff-only') || strip.parentElement;\n    if(wrapper){\n      wrapper.classList.add('bsu-mobile-staff-real');\n    }\n    return wrapper;\n  }\n\n  function firstVisibleSlotBlock(){\n    var slot = document.querySelector('.desktop-right-panel .slot-area') ||\n               document.querySelector('.desktop-results-area .slot-area') ||\n               document.querySelector('.slot-area');\n    var empty = document.querySelector('.desktop-right-panel .empty-state') ||\n                document.querySelector('.desktop-results-area .empty-state') ||\n                document.querySelector('.empty-state');\n    return { slot: slot, empty: empty };\n  }\n\n  function appendIfNeeded(parent, el){\n    if(!parent || !el) return;\n    if(el.parentNode !== parent){\n      parent.appendChild(el);\n    }\n  }\n\n  function applyMobileOrder(){\n    if(!isMobile()) return;\n\n    var layout = document.querySelector('.booking-layout');\n    if(!layout) return;\n\n    var dateArea = document.querySelector('.date-area');\n    var staffPanel = findStaffPanel();\n    var servicePanel = document.querySelector('.desktop-service-panel');\n    var blocks = firstVisibleSlotBlock();\n    var photoWall = document.querySelector('.desktop-photo-wall-section');\n\n    if(!dateArea || !staffPanel || !servicePanel) return;\n\n    var stack = document.querySelector('.bsu-mobile-visual-order-stack');\n    if(!stack){\n      stack = document.createElement('div');\n      stack.className = 'bsu-mobile-visual-order-stack';\n      layout.insertBefore(stack, layout.firstChild);\n    }\n\n    /* Actual DOM order, not only CSS order:\n       1 Calendar -> 2 Staff -> 3 Service -> 4 Availability / Next available -> 5 Photo wall */\n    appendIfNeeded(stack, dateArea);\n    appendIfNeeded(stack, staffPanel);\n    appendIfNeeded(stack, servicePanel);\n    appendIfNeeded(stack, blocks.slot);\n    appendIfNeeded(stack, blocks.empty);\n    appendIfNeeded(stack, photoWall);\n\n    document.body.classList.add('bsu-mobile-visual-order-active');\n  }\n\n  function scheduleMobileOrder(delay){\n    if(!isMobile()) return;\n    if(delay){\n      setTimeout(scheduleMobileOrder, delay);\n      return;\n    }\n    if(scheduled) return;\n    scheduled = true;\n    requestAnimationFrame(function(){\n      scheduled = false;\n      applyMobileOrder();\n    });\n  }\n\n  [0, 250, 700, 1300, 2200, 3600].forEach(function(delay){\n    setTimeout(function(){ scheduleMobileOrder(); }, delay);\n  });\n\n  window.addEventListener('load', function(){ scheduleMobileOrder(); setTimeout(scheduleMobileOrder, 600); }, {passive:true});\n  window.addEventListener('resize', function(){ setTimeout(scheduleMobileOrder, 120); }, {passive:true});\n\n  document.addEventListener('click', function(e){\n    var target = e.target && e.target.closest && e.target.closest('.staff-card,.staff-item,.service-pill,.date-nav,.bsu-date-cell,.next-available-btn,.bsu-calendar-collapse-btn');\n    if(target){\n      setTimeout(scheduleMobileOrder, 120);\n      setTimeout(scheduleMobileOrder, 500);\n    }\n  }, true);\n\n  document.addEventListener('change', function(e){\n    if(e.target && e.target.id === 'dateInput'){\n      setTimeout(scheduleMobileOrder, 120);\n      setTimeout(scheduleMobileOrder, 500);\n    }\n  }, true);\n})();\n<\\/script>\n"+"\n<script>\n(function(){\n  function unlockPageScroll(){\n    try{\n      var modalOpen=document.querySelector('.booking-modal.is-open,.booking-modal.is-visible,.service-modal.is-open,.service-modal.is-visible,.bsu-booking-fail-overlay.is-visible');\n      if(!modalOpen){\n        document.documentElement.style.overflowY='auto';\n        document.body.style.overflowY='auto';\n        if(document.body.style.overflow==='hidden') document.body.style.overflow='';\n        if(document.documentElement.style.overflow==='hidden') document.documentElement.style.overflow='';\n      }\n    }catch(e){}\n  }\n  window.addEventListener('load',unlockPageScroll,{passive:true});\n  window.addEventListener('resize',unlockPageScroll,{passive:true});\n  document.addEventListener('touchstart',unlockPageScroll,{passive:true,capture:true});\n  document.addEventListener('scroll',unlockPageScroll,{passive:true,capture:true});\n  setTimeout(unlockPageScroll,300);\n  setTimeout(unlockPageScroll,1200);\n})();\n<\\/script>\n"+"\n</body>");
+        html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n"+v81Css+"\n</style>");
+        html=html.replace("</body>",customJs+"\n"+v79Js+"\n"+v81Js+"\n"+"\n<script>\n(function(){\n  function unlockPageScroll(){\n    try{\n      var modalOpen=document.querySelector('.booking-modal.is-open,.booking-modal.is-visible,.service-modal.is-open,.service-modal.is-visible,.bsu-booking-fail-overlay.is-visible');\n      if(!modalOpen){\n        document.documentElement.style.overflowY='auto';\n        document.body.style.overflowY='auto';\n        if(document.body.style.overflow==='hidden') document.body.style.overflow='';\n        if(document.documentElement.style.overflow==='hidden') document.documentElement.style.overflow='';\n      }\n    }catch(e){}\n  }\n  window.addEventListener('load',unlockPageScroll,{passive:true});\n  window.addEventListener('resize',unlockPageScroll,{passive:true});\n  document.addEventListener('touchstart',unlockPageScroll,{passive:true,capture:true});\n  document.addEventListener('scroll',unlockPageScroll,{passive:true,capture:true});\n  setTimeout(unlockPageScroll,300);\n  setTimeout(unlockPageScroll,1200);\n})();\n<\\/script>\n"+"\n</body>");
 
 
         // Disable vertical auto-scroll caused by the remote staff strip helper.
