@@ -3650,17 +3650,10 @@ document.addEventListener("click",function(e){
             return true;
           }
           function moveWithScrollHold(fn){
-            var y=window.scrollY;
-            var active=document.activeElement;
-            var changed=fn();
-            if(changed && isMobile()){
-              requestAnimationFrame(function(){
-                if(active && typeof active.focus==='function' && document.contains(active)){
-                  try{active.focus({preventScroll:true});}catch(e){}
-                }
-                window.scrollTo(window.scrollX,y);
-              });
-            }
+            // Do not force window.scrollTo here.
+            // Restoring an old scroll position after a delayed mobile reorder
+            // made the page jump back to the top while the user was scrolling.
+            fn();
           }
           function ensureMobileOrder(){
             raf=0;
@@ -4175,95 +4168,21 @@ html,body{
         const v79Js = `
 <script>
 (function(){
-  function visible(el){
-    if(!el)return false;
-    var r=el.getBoundingClientRect();
-    return r.width>0&&r.height>0;
+  function removeSelectedContext(){
+    document.querySelectorAll('.bsu-selected-context').forEach(function(el){ el.remove(); });
   }
-
-  function staffNameFromCard(card){
-    if(!card)return '';
-    var nameEl=card.querySelector('.staff-name,.name-main,.name-not-today,[data-staff-name]');
-    var name=(nameEl&&nameEl.textContent?nameEl.textContent:'').trim();
-    if(!name){
-      name=(card.getAttribute('data-staff-name')||card.getAttribute('data-stylist-name')||'').trim();
-    }
-    if(!name){
-      var raw=(card.textContent||'').replace(/\s+/g,' ').trim();
-      name=(raw.split(' ')[0]||'').trim();
-    }
-    return name;
-  }
-
-  function activeCard(){
-    return document.querySelector('.staff-card.is-active,.staff-item.is-active,.staff-card.active,.staff-item.active,[aria-selected="true"].staff-card,[aria-selected="true"].staff-item');
-  }
-
-  function selectedName(){
-    var card=activeCard();
-    var name=staffNameFromCard(card);
-    if(name)return name;
-    var first=Array.from(document.querySelectorAll('.staff-card,.staff-item')).filter(function(el){return visible(el)&&!/gift\s*card/i.test(el.textContent||'');})[0];
-    return staffNameFromCard(first)||'Selected stylist';
-  }
-
-  function ensureContextLabel(){
-    var name=selectedName();
-    var right=document.querySelector('.desktop-right-panel')||document.querySelector('.desktop-service-panel')?.parentNode||document.querySelector('.bsu-mobile-booking-stack');
-    if(!right)return;
-
-    var label=document.querySelector('.bsu-selected-context');
-    if(!label){
-      label=document.createElement('div');
-      label.className='bsu-selected-context';
-      label.innerHTML='<span class="bsu-selected-context-kicker">Selected stylist</span><strong class="bsu-selected-context-name"></strong><span class="bsu-selected-context-note">Services, calendar, available times, and photos below are for this stylist.</span>';
-    }
-
-    var mobileStack=document.querySelector('.bsu-mobile-booking-stack');
-    var servicePanel=document.querySelector('.desktop-service-panel');
-    if(window.innerWidth<600&&mobileStack){
-      if(label.parentNode!==mobileStack||mobileStack.firstChild!==label)mobileStack.insertBefore(label,mobileStack.firstChild);
-    }else if(servicePanel&&servicePanel.parentNode){
-      if(label.parentNode!==servicePanel.parentNode||label.nextSibling!==servicePanel)servicePanel.parentNode.insertBefore(label,servicePanel);
-    }else if(label.parentNode!==right){
-      right.insertBefore(label,right.firstChild);
-    }
-
-    var nameEl=label.querySelector('.bsu-selected-context-name');
-    if(nameEl)nameEl.textContent=name + "'s booking";
-  }
-
-  document.addEventListener('click',function(){setTimeout(ensureContextLabel,40);setTimeout(ensureContextLabel,260);},true);
-  document.addEventListener('change',function(e){
-    var input=e.target;
-    if(!input||input.id!=='dateInput'||!input.value)return;
-    var parts=input.value.split('-').map(Number);
-    var picked=new Date(parts[0],parts[1]-1,parts[2]);
-    var today=new Date(); today.setHours(0,0,0,0);
-    if(picked<today){
-      input.value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
-      input.dispatchEvent(new Event('change',{bubbles:true}));
-    }
-    setTimeout(ensureContextLabel,80);
-  },true);
-
-  document.addEventListener('bsu:selected-staff-updated',function(){setTimeout(ensureContextLabel,0);setTimeout(ensureContextLabel,220);},true);
-  document.addEventListener('bsu:date-updated',function(){setTimeout(ensureContextLabel,0);setTimeout(ensureContextLabel,220);},true);
-
-  var tries=0;
-  var timer=setInterval(function(){
-    tries++;
-    ensureContextLabel();
-    if(document.querySelector('.staff-card,.staff-item')&&tries>8)clearInterval(timer);
-    if(tries>30)clearInterval(timer);
-  },250);
-  new MutationObserver(function(){setTimeout(ensureContextLabel,80);}).observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class','aria-selected']});
-  window.addEventListener('load',function(){setTimeout(ensureContextLabel,350);});
-  window.addEventListener('resize',function(){setTimeout(ensureContextLabel,120);},{passive:true});
+  document.addEventListener('DOMContentLoaded', removeSelectedContext);
+  window.addEventListener('load', function(){ setTimeout(removeSelectedContext, 50); setTimeout(removeSelectedContext, 400); });
+  document.addEventListener('click', function(){ setTimeout(removeSelectedContext, 80); }, true);
+  document.addEventListener('change', function(){ setTimeout(removeSelectedContext, 80); }, true);
 })();
 <\/script>
 `;
         const v80Css = `
+
+/* Remove selected stylist helper text on desktop and mobile */
+.bsu-selected-context{display:none!important;height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;}
+
 
 /* B SIDE U V80 - faster first paint, mobile default week, requested staff order */
 @media(min-width:1024px){
