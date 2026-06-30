@@ -14,16 +14,118 @@
 
 
 
-/* B SIDE U stable mobile order: Calendar -> Staff -> Service -> Availability -> Photo */
+
+/* B SIDE U final mobile order without JS moves: Calendar -> Staff -> Service -> Availability -> Photo */
 @media(max-width:599px){
-  .bsu-mobile-booking-stack{display:flex!important;flex-direction:column!important;width:100%!important;gap:0!important;clear:both!important;position:relative!important;z-index:2!important;margin:0 0 12px!important;overflow:visible!important;transform:none!important;}
-  .bsu-mobile-booking-stack .date-area,.bsu-mobile-booking-stack .date-area.is-fixed-fallback{order:1!important;display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;top:auto!important;left:auto!important;transform:none!important;width:100%!important;margin:0 0 12px!important;}
-  .bsu-mobile-staff-stack{order:2!important;width:100%!important;margin:0 0 14px!important;display:block!important;}
-  .bsu-mobile-service-stack,.bsu-mobile-booking-stack .desktop-service-panel{order:3!important;width:100%!important;margin:0 0 12px!important;display:block!important;}
-  .bsu-mobile-booking-stack .message{order:4!important;}
-  .bsu-mobile-booking-stack .slot-area,.bsu-mobile-booking-stack .empty-state{order:5!important;width:100%!important;margin:0 0 12px!important;display:block!important;}
-  .desktop-photo-wall-section{order:99!important;margin-top:16px!important;}
-  .bsu-mobile-sticky-date-staff:empty,.bsu-mobile-sticky-staff-only:empty,.bsu-slot-date-wrap:empty{display:none!important;height:0!important;margin:0!important;padding:0!important;min-height:0!important;}
+  html,body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-y:auto!important;
+    position:static!important;
+    overscroll-behavior-y:auto!important;
+    touch-action:auto!important;
+  }
+
+  .page{overflow:visible!important;}
+
+  .booking-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    gap:0!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    overflow:visible!important;
+  }
+
+  /* Flatten right panel on mobile so date/service/slots can be ordered by CSS only. */
+  .desktop-right-panel,
+  .desktop-results-area{
+    display:contents!important;
+  }
+
+  /* 1. Calendar */
+  .date-area,
+  .date-area.is-fixed-fallback,
+  .bsu-slot-date-wrap .date-area,
+  .bsu-slot-date-wrap .date-area.is-fixed-fallback{
+    order:1!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:none!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    overflow:visible!important;
+    z-index:auto!important;
+  }
+
+  /* 2. Staff */
+  .booking-layout>div:nth-child(2),
+  .bsu-mobile-staff-stack{
+    order:2!important;
+    width:100%!important;
+    margin:0 0 14px!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+
+  /* 3. Services */
+  .desktop-service-panel,
+  .bsu-mobile-service-stack{
+    order:3!important;
+    width:100%!important;
+    display:block!important;
+    margin:0 0 12px!important;
+    overflow:visible!important;
+  }
+
+  /* 4. Availability / Next available */
+  .message{order:4!important;}
+  .slot-area,
+  .empty-state{
+    order:5!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    overflow:visible!important;
+  }
+
+  /* 5. Photo wall */
+  .desktop-photo-wall-section{
+    order:6!important;
+    width:100%!important;
+    margin:16px 0 0!important;
+    overflow:hidden!important;
+  }
+
+  /* Old wrappers are not used anymore. Keep them invisible only when empty. */
+  .bsu-mobile-sticky-date-staff:empty,
+  .bsu-mobile-sticky-staff-only:empty,
+  .bsu-slot-date-wrap:empty{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  .bsu-selected-context,
+  .bsu-selected-context *{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
 }
 
 </style>
@@ -161,6 +263,23 @@ async function syncServicesFromSquareCatalog() {
 }
 
 await syncServicesFromSquareCatalog();
+
+// Force current B SIDE U staff avatars after any remote config load.
+// This fixes cases where the remote staff-config already contains Kendraya/William
+// and the earlier "insert if missing" block does not run.
+try {
+  if (typeof STAFF_DATA !== "undefined") {
+    if (STAFF_DATA.William) {
+      STAFF_DATA.William.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/555F8BEA-1A88-4D01-B537-C7B85B77FF85_1782536389.jpg?width=400&optimize=medium";
+    }
+    if (STAFF_DATA.Kendraya) {
+      STAFF_DATA.Kendraya.image = "https://images.editor.website/uploads/b/559d7de91ca0c03e99beec1fe8bb19300c68147e7c0e8b214d463495239f943c/IMG_2884_1782205562.jpeg?width=400&optimize=medium";
+    }
+  }
+} catch (error) {
+  console.warn("B SIDE U avatar patch skipped:", error);
+}
+
 `;
 
         html=html.replace(
@@ -2856,7 +2975,7 @@ function runFixes(){
 }
 
 patchCreateBookingFailureModal();
-markNextAvailableClick();
+/* disabled markNextAvailableClick: date changes should not create hidden staff locks */
 patchGalleryStaffAutoStart();
 runFixes();
 schedulePhotoWallAutoScroll();
@@ -3598,161 +3717,7 @@ document.addEventListener("click",function(e){
 `;
 
         
-        const v76Js=`
-        <script>
-        (function(){
-          var raf=0;
-          var lastMode=null;
-          function isMobile(){return window.innerWidth<600;}
-          function qs(sel,root){return (root||document).querySelector(sel);}
-          function qsa(sel,root){return Array.from((root||document).querySelectorAll(sel));}
-          function findServiceLabel(){
-            return qsa('.section-label').find(function(el){
-              return /services?/i.test((el.textContent||'').trim());
-            })||null;
-          }
-          function findStaffBlock(){
-            var existing=qs('.bsu-mobile-staff-stack');
-            if(existing)return existing;
-            var strip=qs('.staff-strip');
-            if(!strip)return null;
-            var label=null;
-            if(strip.previousElementSibling && strip.previousElementSibling.classList && strip.previousElementSibling.classList.contains('section-label')){
-              label=strip.previousElementSibling;
-            }
-            if(!label){
-              label=qsa('.section-label').find(function(el){return /stylist|staff/i.test(el.textContent||'');})||null;
-            }
-            var block=document.createElement('div');
-            block.className='bsu-mobile-staff-stack';
-            if(label)block.appendChild(label);
-            block.appendChild(strip);
-            return block;
-          }
-          function findServiceBlock(){
-            var panel=qs('.desktop-service-panel');
-            if(panel)return panel;
-            var existing=qs('.bsu-mobile-service-stack');
-            if(existing)return existing;
-            var label=findServiceLabel();
-            var pills=qs('.service-pills');
-            if(!label && !pills)return null;
-            var block=document.createElement('div');
-            block.className='bsu-mobile-service-stack';
-            if(label)block.appendChild(label);
-            if(pills)block.appendChild(pills);
-            return block;
-          }
-          function appendIfNeeded(parent,node){
-            if(!parent||!node)return false;
-            if(node.parentNode===parent && parent.lastElementChild===node)return false;
-            parent.appendChild(node);
-            return true;
-          }
-          function moveWithScrollHold(fn){
-            // Do not force window.scrollTo here.
-            // Restoring an old scroll position after a delayed mobile reorder
-            // made the page jump back to the top while the user was scrolling.
-            fn();
-          }
-          function ensureMobileOrder(){
-            raf=0;
-            var booking=qs('.booking-layout');
-            if(!booking)return;
-            var dateArea=qs('.date-area');
-            var staffBlock=findStaffBlock();
-            var serviceBlock=findServiceBlock();
-            var slotArea=qs('.slot-area');
-            var emptyState=qs('.empty-state');
-            var message=qs('.message');
-            var photo=qs('.desktop-photo-wall-section');
-
-            if(!isMobile()){
-              lastMode='desktop';
-              var right=qs('.desktop-right-panel');
-              if(right && dateArea && dateArea.parentNode!==right){
-                var before=qs('.slot-area',right)||qs('.empty-state',right)||null;
-                right.insertBefore(dateArea,before);
-              }
-              return;
-            }
-
-            if(!dateArea||!staffBlock||!serviceBlock)return;
-
-            moveWithScrollHold(function(){
-              var changed=false;
-              var stack=qs('.bsu-mobile-booking-stack');
-              if(!stack){
-                stack=document.createElement('div');
-                stack.className='bsu-mobile-booking-stack';
-                changed=true;
-              }
-              if(stack.parentNode!==booking){
-                booking.insertBefore(stack,booking.firstElementChild||null);
-                changed=true;
-              }else if(booking.firstElementChild!==stack){
-                booking.insertBefore(stack,booking.firstElementChild);
-                changed=true;
-              }
-
-              changed=appendIfNeeded(stack,dateArea)||changed;
-              changed=appendIfNeeded(stack,staffBlock)||changed;
-              changed=appendIfNeeded(stack,serviceBlock)||changed;
-              if(message)changed=appendIfNeeded(stack,message)||changed;
-              if(slotArea)changed=appendIfNeeded(stack,slotArea)||changed;
-              if(emptyState)changed=appendIfNeeded(stack,emptyState)||changed;
-
-              dateArea.classList.add('bsu-mobile-date-fixed-order');
-              dateArea.style.setProperty('display','block','important');
-              dateArea.style.setProperty('visibility','visible','important');
-              dateArea.style.setProperty('opacity','1','important');
-
-              qsa('.bsu-slot-date-wrap').forEach(function(wrap){
-                if(!wrap.children.length){
-                  wrap.style.setProperty('display','none','important');
-                  wrap.style.setProperty('height','0','important');
-                  wrap.style.setProperty('margin','0','important');
-                  wrap.style.setProperty('padding','0','important');
-                }
-              });
-
-              if(photo){
-                if(photo.parentNode!==booking){booking.appendChild(photo);changed=true;}
-                if(stack.nextElementSibling!==photo){booking.insertBefore(photo,stack.nextSibling);changed=true;}
-              }
-              lastMode='mobile';
-              return changed;
-            });
-          }
-          function schedule(delay){
-            if(delay){setTimeout(schedule,delay);return;}
-            if(raf)return;
-            raf=requestAnimationFrame(ensureMobileOrder);
-          }
-          window.bsuEnsureMobileCalendarStaffServiceOrder=ensureMobileOrder;
-          window.addEventListener('load',function(){schedule();schedule(450);},{once:false});
-          window.addEventListener('resize',function(){schedule();},{passive:true});
-          document.addEventListener('DOMContentLoaded',schedule);
-          document.addEventListener('click',function(e){
-            var t=e.target;
-            if(t&&t.closest&&t.closest('.staff-card,.staff-item,.service-pill,.bsu-date-cell,.next-available-btn,.bsu-calendar-nav,.bsu-calendar-collapse-btn')){
-              schedule();
-              schedule(300);
-            }
-          },true);
-          document.addEventListener('change',function(e){
-            if(e.target&&e.target.id==='dateInput'){
-              schedule();
-              schedule(300);
-            }
-          },true);
-          document.addEventListener('bsu:date-updated',function(){schedule();schedule(300);},true);
-          document.addEventListener('bsu:selected-staff-updated',function(){schedule();schedule(300);},true);
-          schedule();
-          schedule(450);
-        })();
-        <\/script>
-        `;
+        const v76Js=``;
         
         const referenceHeadCss = `
 
@@ -4183,6 +4148,125 @@ html,body{
 /* Remove selected stylist helper text on desktop and mobile */
 .bsu-selected-context{display:none!important;height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;}
 
+/* B SIDE U FINAL safety: remove selected-stylist helper text and never lock page scroll */
+.bsu-selected-context,
+.bsu-selected-context *{
+  display:none!important;
+  height:0!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+html,body{
+  overflow-y:auto!important;
+  height:auto!important;
+  position:static!important;
+}
+@media(max-width:599px){
+  body{touch-action:auto!important;}
+}
+
+
+
+
+
+/* B SIDE U final mobile order without JS moves: Calendar -> Staff -> Service -> Availability -> Photo */
+@media(max-width:599px){
+  html,body{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-y:auto!important;
+    position:static!important;
+    overscroll-behavior-y:auto!important;
+    touch-action:auto!important;
+  }
+  .page{overflow:visible!important;}
+  .booking-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    gap:0!important;
+    align-items:stretch!important;
+    justify-content:flex-start!important;
+    overflow:visible!important;
+  }
+  .desktop-right-panel,
+  .desktop-results-area{
+    display:contents!important;
+  }
+  .date-area,
+  .date-area.is-fixed-fallback,
+  .bsu-slot-date-wrap .date-area,
+  .bsu-slot-date-wrap .date-area.is-fixed-fallback{
+    order:1!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:none!important;
+    width:100%!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0 0 12px!important;
+    padding:0!important;
+    overflow:visible!important;
+    z-index:auto!important;
+  }
+  .booking-layout>div:nth-child(2),
+  .bsu-mobile-staff-stack{
+    order:2!important;
+    width:100%!important;
+    margin:0 0 14px!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+  .desktop-service-panel,
+  .bsu-mobile-service-stack{
+    order:3!important;
+    width:100%!important;
+    display:block!important;
+    margin:0 0 12px!important;
+    overflow:visible!important;
+  }
+  .message{order:4!important;}
+  .slot-area,
+  .empty-state{
+    order:5!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    overflow:visible!important;
+  }
+  .desktop-photo-wall-section{
+    order:6!important;
+    width:100%!important;
+    margin:16px 0 0!important;
+    overflow:hidden!important;
+  }
+  .bsu-mobile-sticky-date-staff:empty,
+  .bsu-mobile-sticky-staff-only:empty,
+  .bsu-slot-date-wrap:empty{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  .bsu-selected-context,
+  .bsu-selected-context *{
+    display:none!important;
+    height:0!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+  }
+}
+
 
 /* B SIDE U V80 - faster first paint, mobile default week, requested staff order */
 @media(min-width:1024px){
@@ -4197,7 +4281,13 @@ html,body{
 }
 `;
         html=html.replace("</style>","\n"+customCss+"\n"+finalCleanCss+"\n"+referenceHeadCss+"\n"+alignmentCss+"\n"+v79Css+"\n"+v80Css+"\n</style>");
-        html=html.replace("</body>",customJs+"\n"+v76Js+"\n"+v79Js+"\n</body>");
+        html=html.replace("</body>",customJs+"\n"+v79Js+"\n"+"\n<script>\n(function(){\n  function unlockPageScroll(){\n    try{\n      var modalOpen=document.querySelector('.booking-modal.is-open,.booking-modal.is-visible,.service-modal.is-open,.service-modal.is-visible,.bsu-booking-fail-overlay.is-visible');\n      if(!modalOpen){\n        document.documentElement.style.overflowY='auto';\n        document.body.style.overflowY='auto';\n        if(document.body.style.overflow==='hidden') document.body.style.overflow='';\n        if(document.documentElement.style.overflow==='hidden') document.documentElement.style.overflow='';\n      }\n    }catch(e){}\n  }\n  window.addEventListener('load',unlockPageScroll,{passive:true});\n  window.addEventListener('resize',unlockPageScroll,{passive:true});\n  document.addEventListener('touchstart',unlockPageScroll,{passive:true,capture:true});\n  document.addEventListener('scroll',unlockPageScroll,{passive:true,capture:true});\n  setTimeout(unlockPageScroll,300);\n  setTimeout(unlockPageScroll,1200);\n})();\n<\\/script>\n"+"\n</body>");
+
+
+        // Disable vertical auto-scroll caused by the remote staff strip helper.
+        // It was the remaining reason mobile pages snapped back while the user tried to scroll.
+        html = html.replace(/setTimeout\(scrollSelectedStaffIntoView,\s*\d+\);/g, "");
+        html = html.replace(/scrollSelectedStaffIntoView\(\);/g, "");
 
         document.open();
         document.write(html);
